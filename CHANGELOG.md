@@ -2,6 +2,20 @@
 
 All notable changes to this repository are documented in this file.
 
+## [1.1.0] - 2026-08-01
+
+### Added
+
+- Russian translation of `RMT_LLM_Arxiv_Preprint` (EN → RU)
+- Russian translation of `RMT_LLM_BlackGold_Preprint_v1` (EN → RU)
+- Russian translation of `RMT_LLM_BlackGold_Preprint_v2` (EN → RU)
+- Every document is now available in both English and Russian (12 documents total: 6 EN + 6 RU)
+- Updated README documents table and badge count (9 → 12)
+
+### Changed
+
+- Author attribution corrected to `Isaev Ishak Hamzatovich` across README.md, LICENSE, and git commit metadata
+
 ## [1.0.0] - 2026-07-29
 
 ### Added
