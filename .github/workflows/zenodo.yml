@@ -168,7 +168,7 @@ jobs:
           BUCKET_URL=${{ steps.deposit.outputs.bucket_url }}
           ARCHIVE=${{ steps.archive.outputs.path }}
           FILENAME=${{ steps.archive.outputs.filename }}
-          echo "Uploading $ARCHIVE ($FILESIZE) to bucket $BUCKET_URL ..."
+          echo "Uploading $ARCHIVE to bucket $BUCKET_URL ..."
 
           # Modern Invenio file upload: PUT to /api/files/{bucket_id}/{filename}
           # Supports files up to 50 GB; uses multipart data-binary, not form.
