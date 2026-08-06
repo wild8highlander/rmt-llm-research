@@ -88,25 +88,41 @@ jobs:
             RESPONSE=$(curl -sS \
               "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID?access_token=$ZENODO_TOKEN")
           else
-            echo "Creating new Zenodo deposit..."
-            RESPONSE=$(curl -sS -X POST \
-              -H "Content-Type: application/json" \
-              -d "{}" \
-              "$ZENODO_API?access_token=$ZENODO_TOKEN")
-            DEPOSIT_ID=$(echo "$RESPONSE" | jq -r .id)
+            echo "Creating new Zenodo deposit (with retry)..."
+            for ATTEMPT in 1 2 3 4 5; do
+              echo "  attempt $ATTEMPT..."
+              RESPONSE=$(curl -sS --max-time 60 --retry 2 --retry-delay 5 -X POST \
+                -H "Content-Type: application/json" \
+                -d "{}" \
+                "$ZENODO_API?access_token=$ZENODO_TOKEN") || true
+              DEPOSIT_ID=$(echo "$RESPONSE" | jq -r .id 2>/dev/null || echo "")
+              if [ -n "$DEPOSIT_ID" ] && [ "$DEPOSIT_ID" != "null" ]; then
+                break
+              fi
+              echo "  attempt $ATTEMPT failed; raw response:"
+              echo "$RESPONSE" | head -c 500
+              echo ""
+              sleep $((ATTEMPT * 10))
+            done
             if [ -z "$DEPOSIT_ID" ] || [ "$DEPOSIT_ID" = "null" ]; then
-              echo "::error::Failed to create Zenodo deposit"
-              echo "$RESPONSE" | jq . || echo "$RESPONSE"
+              echo "::error::Failed to create Zenodo deposit after 5 attempts"
               exit 1
             fi
             echo "Created new deposit ID: $DEPOSIT_ID"
           fi
 
           # Extract bucket URL (modern file-upload endpoint)
-          BUCKET_URL=$(echo "$RESPONSE" | jq -r .links.bucket)
+          BUCKET_URL=$(echo "$RESPONSE" | jq -r .links.bucket 2>/dev/null || echo "")
+          if [ -z "$BUCKET_URL" ] || [ "$BUCKET_URL" = "null" ]; then
+            # Fetch fresh deposit to get bucket URL
+            echo "  bucket URL not in create response; fetching deposit..."
+            RESPONSE=$(curl -sS --max-time 60 \
+              "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID?access_token=$ZENODO_TOKEN")
+            BUCKET_URL=$(echo "$RESPONSE" | jq -r .links.bucket 2>/dev/null || echo "")
+          fi
           if [ -z "$BUCKET_URL" ] || [ "$BUCKET_URL" = "null" ]; then
             echo "::error::No bucket URL in deposit response. Cannot upload files."
-            echo "$RESPONSE" | jq .
+            echo "$RESPONSE" | head -c 1000
             exit 1
           fi
           echo "Bucket URL: $BUCKET_URL"
