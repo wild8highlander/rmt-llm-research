@@ -3,20 +3,17 @@ name: Publish to Zenodo on release
 # Automatically uploads the repository archive to Zenodo when a new
 # GitHub Release is published. Produces a citable DOI for each release.
 #
-# PREREQUISITE (one-time setup, ~3 minutes):
-#   1. Sign in to https://zenodo.org with your GitHub account (or create one).
-#   2. Visit https://zenodo.org/account/settings/applications/tokens/new/
-#   3. Create a new personal access token with scope "deposit:actions"
-#      and "deposit:write".
-#   4. In your GitHub repository, go to:
-#        Settings → Secrets and variables → Actions → New repository secret
-#   5. Name: ZENODO_TOKEN   Value: <paste the Zenodo token>
-#   6. (Optional) If you want to update an existing Zenodo record instead of
-#      creating a new one for each release, also add a secret named
-#      ZENODO_RECORD_ID with the numeric ID of the existing deposit.
+# Uses the modern Zenodo Invenio API (bucket-based file upload) which
+# supports files up to 50 GB. The legacy /deposit/depositions/{id}/files
+# endpoint is deprecated and returns 413 for files > ~50 MB.
 #
-# After the first run, Zenodo will publish a DOI that you can add to
-# your README.md and CITATION.cff.
+# PREREQUISITE (one-time setup):
+#   1. Sign in to https://zenodo.org with your GitHub account.
+#   2. Create a Zenodo personal access token with scopes
+#      "deposit:actions" + "deposit:write".
+#   3. Add it as a GitHub Actions secret named ZENODO_TOKEN.
+#   4. (Optional) To reuse one Zenodo record across releases, also add
+#      ZENODO_RECORD_ID with the numeric ID of the existing deposit.
 
 on:
   release:
@@ -24,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Release tag to upload (e.g. v1.2.0)'
+        description: 'Release tag to upload (e.g. v1.0.0)'
         required: true
         type: string
 
@@ -35,11 +32,13 @@ jobs:
   zenodo:
     name: Upload to Zenodo
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.release_tag || github.event.release.tag_name }}
+          fetch-depth: 0
 
       - name: Resolve release tag
         id: tag
@@ -51,17 +50,21 @@ jobs:
           fi
 
       - name: Create source archive
+        id: archive
         run: |
           mkdir -p /tmp/archive
-          git archive --format=tar.gz --prefix=rmt-llm-research-${{ steps.tag.outputs.tag }}/${{ steps.tag.outputs.tag }}/ HEAD -o /tmp/archive/rmt-llm-research-${{ steps.tag.outputs.tag }}.tar.gz
-          ls -lh /tmp/archive/
+          ARCHIVE=/tmp/archive/rmt-llm-research-${{ steps.tag.outputs.tag }}.tar.gz
+          git archive --format=tar.gz \
+            --prefix=rmt-llm-research-${{ steps.tag.outputs.tag }}/ \
+            HEAD -o "$ARCHIVE"
+          ls -lh "$ARCHIVE"
+          echo "path=$ARCHIVE" >> "$GITHUB_OUTPUT"
+          echo "filename=$(basename "$ARCHIVE")" >> "$GITHUB_OUTPUT"
 
-      - name: Install Zenodo CLI helper (curl + jq)
+      - name: Install jq
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq jq curl zip
-          curl --version | head -1
-          jq --version
+          sudo apt-get install -y -qq jq curl
 
       - name: Create or update Zenodo deposit
         id: deposit
@@ -69,25 +72,61 @@ jobs:
           ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
           ZENODO_RECORD_ID: ${{ secrets.ZENODO_RECORD_ID }}
           RELEASE_TAG: ${{ steps.tag.outputs.tag }}
-          RELEASE_NAME: ${{ github.event.release.name || steps.tag.outputs.tag }}
-          RELEASE_BODY: ${{ github.event.release.body }}
         run: |
           set -euo pipefail
           if [ -z "$ZENODO_TOKEN" ]; then
-            echo "::error::ZENODO_TOKEN secret is not set. See .github/workflows/zenodo.yml for setup instructions."
+            echo "::error::ZENODO_TOKEN secret is not set."
             exit 1
           fi
 
           ZENODO_API="https://zenodo.org/api/deposit/depositions"
-          AUTH="access_token=$ZENODO_TOKEN"
 
-          BODY_JSON=$(printf '%s' "$RELEASE_BODY" | jq -Rs .)
+          if [ -n "$ZENODO_RECORD_ID" ]; then
+            echo "Reusing Zenodo deposit $ZENODO_RECORD_ID..."
+            DEPOSIT_ID="$ZENODO_RECORD_ID"
+            # Get the deposit (also retrieves bucket URL)
+            RESPONSE=$(curl -sS \
+              "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID?access_token=$ZENODO_TOKEN")
+          else
+            echo "Creating new Zenodo deposit..."
+            RESPONSE=$(curl -sS -X POST \
+              -H "Content-Type: application/json" \
+              -d "{}" \
+              "$ZENODO_API?access_token=$ZENODO_TOKEN")
+            DEPOSIT_ID=$(echo "$RESPONSE" | jq -r .id)
+            if [ -z "$DEPOSIT_ID" ] || [ "$DEPOSIT_ID" = "null" ]; then
+              echo "::error::Failed to create Zenodo deposit"
+              echo "$RESPONSE" | jq . || echo "$RESPONSE"
+              exit 1
+            fi
+            echo "Created new deposit ID: $DEPOSIT_ID"
+          fi
+
+          # Extract bucket URL (modern file-upload endpoint)
+          BUCKET_URL=$(echo "$RESPONSE" | jq -r .links.bucket)
+          if [ -z "$BUCKET_URL" ] || [ "$BUCKET_URL" = "null" ]; then
+            echo "::error::No bucket URL in deposit response. Cannot upload files."
+            echo "$RESPONSE" | jq .
+            exit 1
+          fi
+          echo "Bucket URL: $BUCKET_URL"
+
+          echo "deposit_id=$DEPOSIT_ID" >> "$GITHUB_OUTPUT"
+          echo "bucket_url=$BUCKET_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Update deposit metadata
+        env:
+          ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+        run: |
+          set -euo pipefail
+          DEPOSIT_ID=${{ steps.deposit.outputs.deposit_id }}
+          RELEASE_TAG=${{ steps.tag.outputs.tag }}
 
           METADATA=$(cat <<EOF
           {
             "metadata": {
-              "title": "rmt-llm-research — Random Matrix Theory meets Large Language Models (${RELEASE_TAG})",
-              "description": "<p>A research repository by <strong>Iskhak Hamzatovich Isaev</strong>.</p><p><strong>Thread 1.</strong> Spectral statistics of LLM activations via Marchenko-Pastur, BBP, Tracy-Widom.</p><p><strong>Thread 2.</strong> Ten independent mathematical paths converge on the critical token count N_crit for hallucination onset.</p><p><strong>Thread 3.</strong> RLHF utility trap — ⟨T_crit⟩ ∝ (μ_eff)^(-1/β), β ≈ 0.5, quadratically accelerated collapse.</p><p>Release: ${RELEASE_TAG}</p>",
+              "title": "rmt-llm-research — Random Matrix Theory meets Large Language Models: spectral analysis of activations and the mathematical inevitability of hallucinations (${RELEASE_TAG})",
+              "description": "<p>A research repository by <strong>Iskhak Hamzatovich Isaev</strong>.</p><p>Release: ${RELEASE_TAG}. Source archive uploaded for permanent citable DOI.</p><p>GitHub: <a href=\"https://github.com/wild8highlander/rmt-llm-research\">https://github.com/wild8highlander/rmt-llm-research</a></p>",
               "upload_type": "publication",
               "publication_type": "article",
               "version": "${RELEASE_TAG}",
@@ -98,29 +137,9 @@ jobs:
                   "affiliation": "Independent researcher, Russia"
                 }
               ],
-              "keywords": [
-                "random-matrix-theory",
-                "large-language-models",
-                "Marchenko-Pastur",
-                "BBP-transition",
-                "Tracy-Widom",
-                "non-Hermitian-skin-effect",
-                "NHSE",
-                "Caputo-fractional-calculus",
-                "Keating-Snaith",
-                "hallucinations",
-                "RLHF",
-                "cognitive-mode-detection",
-                "spectral-analysis",
-                "autoregressive-models",
-                "mathematical-physics",
-                "reproducible-research"
-              ],
+              "keywords": ["random-matrix-theory", "large-language-models", "Marchenko-Pastur", "BBP-transition", "Tracy-Widom", "non-Hermitian-skin-effect", "NHSE", "Caputo-fractional-calculus", "Keating-Snaith", "hallucinations", "RLHF", "cognitive-mode-detection", "spectral-analysis", "autoregressive-models", "mathematical-physics"],
               "license": "CC-BY-NC-SA-4.0",
               "access_right": "open",
-              "communities": [
-                {"identifier": "zenodo"}
-              ],
               "related_identifiers": [
                 {
                   "identifier": "https://github.com/wild8highlander/rmt-llm-research",
@@ -134,51 +153,41 @@ jobs:
           EOF
           )
 
-          if [ -n "$ZENODO_RECORD_ID" ]; then
-            echo "Updating existing Zenodo deposit $ZENODO_RECORD_ID..."
-            DEPOSIT_ID="$ZENODO_RECORD_ID"
-            curl -sS -X PUT \
-              -H "Content-Type: application/json" \
-              -d "$METADATA" \
-              "$ZENODO_API/$DEPOSIT_ID?$AUTH" | jq .
-          else
-            echo "Creating new Zenodo deposit..."
-            RESPONSE=$(curl -sS -X POST \
-              -H "Content-Type: application/json" \
-              -d "{}" \
-              "$ZENODO_API?$AUTH")
-            DEPOSIT_ID=$(echo "$RESPONSE" | jq -r .id)
-            if [ -z "$DEPOSIT_ID" ] || [ "$DEPOSIT_ID" = "null" ]; then
-              echo "::error::Failed to create Zenodo deposit"
-              echo "$RESPONSE" | jq .
-              exit 1
-            fi
-            echo "Created new deposit ID: $DEPOSIT_ID"
-            curl -sS -X PUT \
-              -H "Content-Type: application/json" \
-              -d "$METADATA" \
-              "$ZENODO_API/$DEPOSIT_ID?$AUTH" | jq . > /dev/null
-          fi
+          curl -sS -X PUT \
+            -H "Content-Type: application/json" \
+            -d "$METADATA" \
+            "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID?access_token=$ZENODO_TOKEN" \
+            | jq . > /dev/null
+          echo "Metadata updated."
 
-          echo "deposit_id=$DEPOSIT_ID" >> "$GITHUB_OUTPUT"
-          echo "Deposition ID: $DEPOSIT_ID"
-
-      - name: Upload archive to Zenodo
+      - name: Upload archive via bucket URL
         env:
           ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
         run: |
           set -euo pipefail
-          DEPOSIT_ID=${{ steps.deposit.outputs.deposit_id }}
-          ARCHIVE=/tmp/archive/rmt-llm-research-${{ steps.tag.outputs.tag }}.tar.gz
-          echo "Uploading $ARCHIVE to Zenodo deposit $DEPOSIT_ID..."
+          BUCKET_URL=${{ steps.deposit.outputs.bucket_url }}
+          ARCHIVE=${{ steps.archive.outputs.path }}
+          FILENAME=${{ steps.archive.outputs.filename }}
+          echo "Uploading $ARCHIVE ($FILESIZE) to bucket $BUCKET_URL ..."
 
-          RESPONSE=$(curl -sS -X POST \
-            -H "Authorization: Bearer $ZENODO_TOKEN" \
-            -F "file=@$ARCHIVE" \
-            "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID/files")
-          echo "$RESPONSE" | jq . || echo "$RESPONSE"
+          # Modern Invenio file upload: PUT to /api/files/{bucket_id}/{filename}
+          # Supports files up to 50 GB; uses multipart data-binary, not form.
+          HTTP_CODE=$(curl -sS -w "%{http_code}" -o /tmp/upload_response.txt \
+            -X PUT \
+            --data-binary "@$ARCHIVE" \
+            "$BUCKET_URL/$FILENAME?access_token=$ZENODO_TOKEN")
+
+          echo "HTTP status: $HTTP_CODE"
+          cat /tmp/upload_response.txt | jq . 2>/dev/null || cat /tmp/upload_response.txt
+
+          if [ "$HTTP_CODE" != "201" ] && [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Upload failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
+          echo "Upload successful."
 
       - name: Publish Zenodo deposit
+        id: publish
         env:
           ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
         run: |
@@ -187,17 +196,39 @@ jobs:
           echo "Publishing Zenodo deposit $DEPOSIT_ID..."
 
           RESPONSE=$(curl -sS -X POST \
-            -H "Authorization: Bearer $ZENODO_TOKEN" \
-            "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID/actions/publish")
-          DOI=$(echo "$RESPONSE" | jq -r .doi)
+            "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID/actions/publish?access_token=$ZENODO_TOKEN")
           echo "$RESPONSE" | jq . || echo "$RESPONSE"
+
+          DOI=$(echo "$RESPONSE" | jq -r .doi)
+          if [ -z "$DOI" ] || [ "$DOI" = "null" ]; then
+            echo "::error::Failed to publish deposit — DOI is null"
+            exit 1
+          fi
+          echo "doi=$DOI" >> "$GITHUB_OUTPUT"
           echo "Published DOI: $DOI"
-          echo "Zenodo DOI: https://doi.org/$DOI"
+          echo "Zenodo DOI URL: https://doi.org/$DOI"
 
       - name: Summary
         run: |
-          echo "## Zenodo upload complete" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Deposit ID: ${{ steps.deposit.outputs.deposit_id }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "View on Zenodo: https://zenodo.org/record/${{ steps.deposit.outputs.deposit_id }}" >> "$GITHUB_STEP_SUMMARY"
+          DOI=${{ steps.publish.outputs.doi }}
+          DEPOSIT_ID=${{ steps.deposit.outputs.deposit_id }}
+          {
+            echo "## Zenodo upload complete"
+            echo ""
+            echo "**DOI:** [\`$DOI\`](https://doi.org/$DOI)"
+            echo ""
+            echo "**Zenodo record:** https://zenodo.org/record/$DEPOSIT_ID"
+            echo ""
+            echo "**Add this to your README badge:**"
+            echo "\`\`\`"
+            echo "[![DOI](https://img.shields.io/badge/DOI-$DOI-blue)](https://doi.org/$DOI)"
+            echo "\`\`\`"
+            echo ""
+            echo "**Add this to your CITATION.cff:**"
+            echo "\`\`\`yaml"
+            echo "identifiers:"
+            echo "  - type: doi"
+            echo "    value: \"$DOI\""
+            echo "    description: \"Archived DOI for this release\""
+            echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"
