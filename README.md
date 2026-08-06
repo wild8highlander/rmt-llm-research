@@ -126,7 +126,7 @@ rmt-llm-research/
 ```bibtex
 @article{rmt-llm-research-2026,
   title   = {Spectral Statistics of LLM Activation Matrices: A Random Matrix Theory Approach to Cognitive Mode Detection},
-  author  = {Isaev Ishak Hamzatovich},
+  author  = {Isaev, Iskhak Hamzatovich},
   year    = {2026},
   journal = {Preprint},
   url     = {https://github.com/wild8highlander/rmt-llm-research}
@@ -148,5 +148,5 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 ---
 
 <p align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/wild8highlander">Isaev Ishak Hamzatovich</a></sub>
+  <sub>Built with ❤️ by <a href="https://github.com/wild8highlander">Iskhak Hamzatovich Isaev</a></sub>
 </p>

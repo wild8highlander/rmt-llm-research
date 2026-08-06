@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rmt-llm-research — Random Matrix Theory meets Large Language Models</title>
+    <meta name="description" content="Spectral analysis of LLM activations through Random Matrix Theory — detecting hallucinations, cognitive mode transitions, and the mathematical inevitability of autoregressive collapse. Author: Iskhak Hamzatovich Isaev.">
+    <meta name="author" content="Iskhak Hamzatovich Isaev">
+    <meta name="keywords" content="Random Matrix Theory, RMT, LLM, hallucinations, Marchenko-Pastur, BBP transition, Tracy-Widom, NHSE, Caputo, Keating-Snaith, autoregressive models">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-brand">rmt-<span class="accent">llm-research</span></a>
+        <ul class="nav-links">
+            <li><a href="#tldr">TL;DR</a></li>
+            <li><a href="#results">Key results</a></li>
+            <li><a href="#paths">10 paths to N_crit</a></li>
+            <li><a href="#demo">Interactive demo</a></li>
+            <li><a href="#docs">Documents</a></li>
+            <li><a href="#citation">Citation</a></li>
+            <li><a href="https://github.com/wild8highlander/rmt-llm-research">GitHub ↗</a></li>
+            <li><span class="nav-version">v1.2.0</span></li>
+        </ul>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-inner">
+        <h1>Random Matrix Theory<br>meets Large Language Models</h1>
+        <p class="subtitle">Spectral analysis of LLM activations through the lens of <strong>Random Matrix Theory</strong> — detecting hallucinations, cognitive mode transitions, and the <strong>mathematical inevitability</strong> of autoregressive collapse. Ten independent paths converge on a single critical token count <code>N_crit</code>.</p>
+        <div class="cta-row">
+            <a href="#demo" class="cta">▶ Interactive demo</a>
+            <a href="https://github.com/wild8highlander/rmt-llm-research" class="cta secondary">↓ View on GitHub</a>
+            <a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/papers/LLM_Analysis_Merged.pdf" class="cta secondary">📄 Read paper (PDF)</a>
+        </div>
+        <div class="badges">
+            <img alt="Documents" src="https://img.shields.io/badge/DOCX-12-green.svg">
+            <img alt="Papers" src="https://img.shields.io/badge/Papers-1-blue.svg">
+            <img alt="Languages" src="https://img.shields.io/badge/languages-EN%20%2F%20RU-yellow.svg">
+            <img alt="License: CC BY-NC-SA 4.0" src="https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey.svg">
+            <img alt="Author" src="https://img.shields.io/badge/author-Iskhak%20Hamzatovich%20Isaev-blueviolet.svg">
+            <img alt="Paths to N_crit" src="https://img.shields.io/badge/paths%20to%20N__crit-10-purple.svg">
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="main-grid">
+        <aside class="toc">
+            <h3>On this page</h3>
+            <ul>
+                <li><a href="#tldr">TL;DR</a></li>
+                <li><a href="#results">Key results</a></li>
+                <li><a href="#paths">10 paths to N_crit</a></li>
+                <li><a href="#demo">Interactive demo</a></li>
+                <li><a href="#docs">Documents (DOCX)</a></li>
+                <li><a href="#papers">Papers (PDF)</a></li>
+                <li><a href="#author">Author</a></li>
+                <li><a href="#citation">Citation</a></li>
+                <li><a href="#license">License</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+
+<section id="tldr">
+    <h1>TL;DR <span class="subtitle">Why LLMs hallucinate, mathematically.</span></h1>
+
+    <p>Large language models exhibit fundamentally different <strong>spectral statistics</strong> depending on whether they are in factual recall or creative generation mode. By computing the covariance matrix <code>M = X<sup>n</sup><sup>T</sup> X<sup>n</sup> / T</code> of hidden-state activations and analysing its eigenvalue distribution, we can:</p>
+
+    <ul>
+        <li><strong>Detect cognitive mode</strong> — factual generation produces a Marchenko-Pastur bulk + a separated outlier (BBP transition); creative generation produces a Tracy-Widom-distributed largest eigenvalue with no clear signal-bulk separation.</li>
+        <li><strong>Predict hallucination onset</strong> — ten independent mathematical arguments converge on the same critical token count <code>N_crit</code>, beyond which autoregressive generation inevitably collapses.</li>
+        <li><strong>Quantify RLHF damage</strong> — RLHF optimization creates an artificial drift in the Fokker-Planck equation; with Caputo memory parameter <code>β ≈ 0.5</code>, the mean collapse time scales as <code>⟨T_crit⟩ ∝ (μ_eff)<sup>-2</sup></code> — even small RLHF pressure quadratically accelerates hallucination.</li>
+    </ul>
+
+    <div class="alert">
+        <strong>The core claim.</strong> Hallucinations in autoregressive LLMs are <em>not a bug</em> — they are a <strong>mathematical inevitability</strong> of finite-context, finite-precision autoregression. The same spectral mechanism that lets the model generate fluent text also guarantees that beyond <code>N_crit</code> tokens, the probability of factually correct output decays faster than exponentially.
+    </div>
+</section>
+
+<section id="results">
+    <h2>Key results</h2>
+
+    <table>
+        <thead>
+            <tr><th>Result</th><th>Equation</th><th>Meaning</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>NHSE collapse</td><td><code>w: 0 → 1 at N = N_crit</code></td><td>Winding number transition → Im(λ) → 0, all eigenvalues collapse to the real axis</td></tr>
+            <tr><td>Caputo mean collapse time</td><td><code>⟨T_crit⟩ ∝ (μ_eff)<sup>-1/β</sup></code></td><td>RLHF quadratically accelerates hallucination onset (β ≈ 0.5)</td></tr>
+            <tr><td>EP-surface sensitivity</td><td><code>δλ ~ ε<sup>1/k</sup>, k ~ O(N)</code></td><td>Rounding error → macroscopic spectral shift via exceptional-point degeneracy</td></tr>
+            <tr><td>Free energy</td><td><code>F = U − T·S_spec</code></td><td>Factual = "crystal" (low entropy), Creative = "gas" (high entropy)</td></tr>
+            <tr><td>BBP transition</td><td><code>λ_max &gt; λ_+ when θ &gt; √q</code></td><td>Signal separates from random bulk — cognitive mode marker</td></tr>
+            <tr><td>Keating-Snaith correction</td><td><code>γ₁(N) = 14.1347 + c₁/N + c₂/N²</code></td><td>Finite-context correction to N_crit from zeta-zero statistics</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Three research threads</h3>
+    <div class="card-grid">
+        <div class="card">
+            <span class="badge">thread 1</span>
+            <h4>Spectral statistics of LLM activations</h4>
+            <p>Covariance matrices of GPT-2 hidden-state activations exhibit fundamentally different spectral properties depending on whether the model is in factual recall or creative generation mode. The BBP phase transition, Marchenko-Pastur bounds, and Tracy-Widom fluctuations provide quantitative markers for cognitive mode detection.</p>
+        </div>
+        <div class="card">
+            <span class="badge">thread 2</span>
+            <h4>Inevitable hallucinations</h4>
+            <p>Ten independent mathematical paths converge on a single critical token count N_crit: complex phase, operator dynamics, GUE spectral statistics, thermodynamic entropy, Lévy-Langevin fractional dynamics, EP-surfaces, Tracy-Widom, quantum channel degradation, NHSE winding number, and Caputo fractional-time memory.</p>
+        </div>
+        <div class="card">
+            <span class="badge">thread 3</span>
+            <h4>The utility trap: RLHF and entropic collapse</h4>
+            <p>RLHF optimization creates an artificial drift in the Fokker-Planck equation, forcing the model to "lie beautifully once" rather than risk a self-correction cycle. The Caputo memory parameter β ≈ 0.5 makes ⟨T_crit⟩ ∝ (μ_eff)<sup>-2</sup>.</p>
+        </div>
+    </div>
+</section>
+
+<section id="paths">
+    <h2>Ten independent paths to N_crit</h2>
+    <p>Each path below is a mathematically independent derivation of the same critical token count <code>N_crit</code>. The convergence of all ten on the same value is the strongest evidence that hallucination onset is not model-specific but a universal feature of autoregressive generation.</p>
+
+    <div class="paths-list">
+        <div class="path-item">
+            <div class="path-num">Level 1 · Phase</div>
+            <div class="path-name">φ(N) → γ₁(N)</div>
+            <div class="path-desc">Complex phase argument approaches the first Riemann zeta zero γ₁ ≈ 14.1347</div>
+        </div>
+        <div class="path-item">
+            <div class="path-num">Level 2 · Operator</div>
+            <div class="path-name">b(N) = (ε̄/κ)·(1 − (1−κ)<sup>N</sup>)</div>
+            <div class="path-desc">Operator dynamics: b(N) saturates at N = N_crit</div>
+        </div>
+        <div class="path-item">
+            <div class="path-num">Level 3 · Spectral GUE</div>
+            <div class="path-name">D_KL(ρ ‖ ρ_GUE) → min</div>
+            <div class="path-desc">Kullback-Leibler divergence to GUE reaches minimum at N_crit</div>
+        </div>
+        <div class="path-item">
+            <div class="path-num">Level 4 · Thermodynamic</div>
+            <div class="path-name">λ_sink, S(N)</div>
+            <div class="path-desc">Thermodynamic entropy sink — free energy F = U − T·S_spec crosses zero</div>
+        </div>
+        <div class="path-item">
+            <div class="path-num">Level 5 · Fractional-stochastic</div>
+            <div class="path-name">Lévy + Langevin</div>
+            <div class="path-desc">Lévy-Langevin fractional stochastic dynamics — first-passage time</div>
+        </div>
+        <div class="path-item">
+            <div class="path-num">Level 6 · EP-surfaces</div>
+            <div class="path-name">δλ ~ ε<sup>1/k</sup>, k → ∞</div>
+            <div class="path-desc">Exceptional-point surface — spectral sensitivity diverges with k ~ O(N)</div>
+        </div>
+        <div class="path-item">
+            <div class="path-num">Level 7 · Tracy-Widom GUE</div>
+            <div class="path-name">F₂(s)</div>
+            <div class="path-desc">Tracy-Widom GUE distribution of largest eigenvalue crosses threshold</div>
+        </div>
+        <div class="path-item">
+            <div class="path-num">Level 8 · Quantum channel</div>
+            <div class="path-name">Kraus, F &lt; 0.85</div>
+            <div class="path-desc">Quantum channel fidelity F drops below 0.85 (percolation threshold)</div>
+        </div>
+        <div class="path-item">
+            <div class="path-num">Level 9 · NHSE</div>
+            <div class="path-name">winding number w: 0 → 1</div>
+            <div class="path-desc">Non-Hermitian skin effect — topological transition, Im(λ) → 0</div>
+        </div>
+        <div class="path-item">
+            <div class="path-num">Level 10 · Caputo</div>
+            <div class="path-name">fractional-time memory, β ∈ (0,1)</div>
+            <div class="path-desc">Caputo fractional-time memory — ⟨T_crit⟩ ∝ (μ_eff)<sup>-1/β</sup></div>
+        </div>
+    </div>
+</section>
+
+<section id="demo">
+    <h2>Interactive demo</h2>
+    <p>Explore the four key mathematical objects underlying the theory. All computations run in your browser — no server, no API calls.</p>
+
+    <div class="demo-grid">
+        <div class="demo-card">
+            <h3>1. Marchenko-Pastur law</h3>
+            <div class="formula-small">ρ(λ) = (1/(2π σ² λ q)) · √((λ_+ − λ)(λ − λ_-)),  λ_± = σ²(1 ± √q)²</div>
+            <canvas id="mp-canvas" width="500" height="220"></canvas>
+            <div class="demo-controls">
+                <label>Aspect ratio q = N/T <span class="value" id="mp-q-val">0.50</span></label>
+                <input type="range" id="mp-q" min="0.05" max="1.0" step="0.01" value="0.5">
+                <label>Variance σ² <span class="value" id="mp-sigma-val">1.00</span></label>
+                <input type="range" id="mp-sigma" min="0.1" max="3.0" step="0.05" value="1.0">
+            </div>
+            <div class="demo-output" id="mp-output">λ_- = 0.086,  λ_+ = 2.914</div>
+        </div>
+
+        <div class="demo-card">
+            <h3>2. BBP phase transition</h3>
+            <div class="formula-small">λ_max → { λ_+ (θ ≤ √q)  |  σ²(1 + θ²/q) (θ > √q) }</div>
+            <canvas id="bbp-canvas" width="500" height="220"></canvas>
+            <div class="demo-controls">
+                <label>Signal strength θ <span class="value" id="bbp-theta-val">0.80</span></label>
+                <input type="range" id="bbp-theta" min="0.0" max="2.0" step="0.01" value="0.8">
+                <label>Aspect ratio q <span class="value" id="bbp-q-val">0.50</span></label>
+                <input type="range" id="bbp-q" min="0.05" max="1.0" step="0.01" value="0.5">
+            </div>
+            <div class="demo-output" id="bbp-output">θ = 0.80,  √q = 0.707 → TRANSITION (λ_max = 1.28 above bulk edge)</div>
+        </div>
+
+        <div class="demo-card">
+            <h3>3. Tracy-Widom F₂(s)</h3>
+            <div class="formula-small">F₂(s) = exp(-∫_s^∞ (x − t)² μ₂(t) dt) — GUE largest-eigenvalue CDF</div>
+            <canvas id="tw-canvas" width="500" height="220"></canvas>
+            <div class="demo-controls">
+                <label>Threshold s <span class="value" id="tw-s-val">0.00</span></label>
+                <input type="range" id="tw-s" min="-3.0" max="3.0" step="0.05" value="0.0">
+            </div>
+            <div class="demo-output" id="tw-output">F₂(0.00) = 0.8319 — 83.2% of random matrices have λ_max below this threshold</div>
+        </div>
+
+        <div class="demo-card">
+            <h3>4. NHSE winding number</h3>
+            <div class="formula-small">w = (1/2π) ∮ arg(det(H(z) − λ)) dz — transition w: 0 → 1 at N = N_crit</div>
+            <canvas id="nhse-canvas" width="500" height="220"></canvas>
+            <div class="demo-controls">
+                <label>Token count N / N_crit <span class="value" id="nhse-n-val">0.50</span></label>
+                <input type="range" id="nhse-n" min="0.0" max="2.0" step="0.01" value="0.5">
+                <label>Non-Hermiticity γ <span class="value" id="nhse-g-val">0.30</span></label>
+                <input type="range" id="nhse-g" min="0.0" max="1.0" step="0.01" value="0.3">
+            </div>
+            <div class="demo-output" id="nhse-output">w = 0 (below transition) — eigenvalues on a 2D ring, Im(λ) ≠ 0</div>
+        </div>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 0.9em; color: var(--text-dim);">
+        <strong>How to use:</strong> drag the sliders to explore each mathematical object. The Marchenko-Pastur visualiser shows the bulk eigenvalue density of a random covariance matrix — adjust q to see the bulk shrink or grow. The BBP transition shows how a "signal" eigenvalue pops out of the bulk when θ &gt; √q. The Tracy-Widom distribution governs the fluctuations of the largest eigenvalue around the BBP threshold. The NHSE simulator shows the topological transition that drives hallucination onset.
+    </p>
+</section>
+
+<section id="docs">
+    <h2>Documents (DOCX)</h2>
+    <p>The repository ships <strong>12 editable DOCX sources</strong> in English and Russian. Each has the author <code>Iskhak Hamzatovich Isaev</code> set in the document metadata and printed on the title page.</p>
+
+    <h3>English</h3>
+    <ul class="doc-list">
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/en/RMT_LLM_Spectral_Analysis.docx">RMT_LLM_Spectral_Analysis.docx</a> <span class="doc-meta">— full monograph, 8 chapters + appendices</span></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/en/Complex_Analytical_Model_Inevitable_Hallucinations.docx">Complex_Analytical_Model_Inevitable_Hallucinations.docx</a> <span class="doc-meta">— 10 paths to N_crit</span></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/en/LLM_Analysis_Merged.docx">LLM_Analysis_Merged.docx</a> <span class="doc-meta">— RLHF utility trap, Landauer principle</span></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/en/RMT_LLM_Arxiv_Preprint.docx">RMT_LLM_Arxiv_Preprint.docx</a> <span class="doc-meta">— arXiv preprint</span></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/en/RMT_LLM_BlackGold_Preprint_v1.docx">RMT_LLM_BlackGold_Preprint_v1.docx</a> <span class="doc-meta">— BlackGold v1</span></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/en/RMT_LLM_BlackGold_Preprint_v2.docx">RMT_LLM_BlackGold_Preprint_v2.docx</a> <span class="doc-meta">— BlackGold v2 (expanded BBP analysis)</span></span>
+        </li>
+    </ul>
+
+    <h3>Русские версии</h3>
+    <ul class="doc-list">
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ru/RMT_LLM_Spectral_Analysis_RU.docx">RMT_LLM_Spectral_Analysis_RU.docx</a> <span class="doc-meta">— полная монография</span></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ru/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx">Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx</a></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ru/LLM_Analysis_Merged_RU.docx">LLM_Analysis_Merged_RU.docx</a></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ru/RMT_LLM_Arxiv_Preprint_RU.docx">RMT_LLM_Arxiv_Preprint_RU.docx</a></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ru/RMT_LLM_BlackGold_Preprint_v1_RU.docx">RMT_LLM_BlackGold_Preprint_v1_RU.docx</a></span>
+        </li>
+        <li>
+            <span class="doc-icon">DOCX</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ru/RMT_LLM_BlackGold_Preprint_v2_RU.docx">RMT_LLM_BlackGold_Preprint_v2_RU.docx</a></span>
+        </li>
+    </ul>
+</section>
+
+<section id="papers">
+    <h2>Papers (PDF)</h2>
+    <ul class="doc-list">
+        <li>
+            <span class="doc-icon">PDF</span>
+            <span class="doc-name"><a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/papers/LLM_Analysis_Merged.pdf">LLM_Analysis_Merged.pdf</a> <span class="doc-meta">— 6 pages, Russian, the merged analysis paper</span></span>
+        </li>
+    </ul>
+</section>
+
+<section id="author">
+    <h2>Author</h2>
+    <p>All documents, papers, and the interactive demo in this repository are the work of:</p>
+    <div class="formula" style="font-size: 1.15em;">
+        <strong>Iskhak Hamzatovich Isaev</strong>
+    </div>
+    <p>The author name is set consistently across all artefacts:</p>
+    <ul>
+        <li>PDF metadata (<code>dc:author</code>) — 1 PDF</li>
+        <li>DOCX metadata (<code>dc:creator</code>) and visible title-page paragraph — 12 DOCXs</li>
+        <li>BibTeX <code>author = {}</code> field — 1 citation in <code>README.md</code></li>
+        <li>Copyright line in <code>LICENSE</code></li>
+        <li>Attribution note in <code>CHANGELOG.md</code></li>
+        <li>HTML <code>&lt;meta name="author"&gt;</code> tag in this site</li>
+        <li><code>CITATION.cff</code> and <code>AUTHORS.md</code></li>
+        <li>Zenodo metadata in <code>.zenodo.json</code></li>
+    </ul>
+</section>
+
+<section id="citation">
+    <h2>Citation</h2>
+    <p>If you use any part of this repository in your research, please cite:</p>
+    <pre><code>@article{rmt-llm-research-2026,
+  title   = {Spectral Statistics of LLM Activation Matrices:
+             A Random Matrix Theory Approach to Cognitive Mode Detection},
+  author  = {Isaev, Iskhak Hamzatovich},
+  year    = {2026},
+  journal = {Preprint},
+  url     = {https://github.com/wild8highlander/rmt-llm-research}
+}</code></pre>
+</section>
+
+<section id="license">
+    <h2>License</h2>
+    <p>All documents and papers are licensed under <strong>Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International</strong> (CC BY-NC-SA 4.0). See <a href="https://github.com/wild8highlander/rmt-llm-research/blob/main/LICENSE">LICENSE</a> for full text. The interactive demo (HTML/CSS/JavaScript in <code>docs/site/</code>) is also CC BY-NC-SA 4.0.</p>
+</section>
+
+        </main>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>© 2026 <strong>Iskhak Hamzatovich Isaev</strong> · <a href="https://github.com/wild8highlander/rmt-llm-research">github.com/wild8highlander/rmt-llm-research</a></p>
+    <p style="margin-top: 8px;">Built with care · CC BY-NC-SA 4.0 · Interactive demo runs entirely in your browser</p>
+</footer>
+
+<script src="demo/demo.js"></script>
+
+</body>
+</html>

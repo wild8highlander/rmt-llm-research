@@ -2,6 +2,32 @@
 
 All notable changes to this repository are documented in this file.
 
+## [1.2.0] - 2026-08-06
+
+### Added
+
+- GitHub Pages documentation site (`docs/site/`) with modern dark-theme HTML,
+  hero section, navigation, key results tables, document catalogue, and BibTeX
+  citation
+- Zenodo DOI auto-archive workflow (`.github/workflows/zenodo.yml`) — uploads
+  source archive to Zenodo on every GitHub release; produces a citable DOI
+- Machine-readable `CITATION.cff` and human-readable `AUTHORS.md`
+- Interactive demo web app (`docs/site/demo/`) — Marchenko-Pastur law
+  visualizer, BBP phase transition slider, Tracy-Widom distribution plot,
+  and NHSE winding-number simulator
+- Visible author name printed on the title page of every DOCX monograph
+- Author metadata set in all DOCX (`dc:creator`) and PDF (`author`) files
+
+### Changed
+
+- Author name corrected to the proper transliteration
+  `Iskhak Hamzatovich Isaev` (First Middle Last format) across:
+  - README.md (BibTeX `author = {}` field and footer by-line)
+  - LICENSE (copyright line)
+  - CHANGELOG.md (attribution note)
+  - All 12 DOCX files (metadata + visible title-page paragraph)
+  - All 1 PDF file (metadata.author)
+
 ## [1.1.0] - 2026-08-01
 
 ### Added
@@ -14,7 +40,7 @@ All notable changes to this repository are documented in this file.
 
 ### Changed
 
-- Author attribution corrected to `Isaev Ishak Hamzatovich` across README.md, LICENSE, and git commit metadata
+- Author attribution corrected to `Iskhak Hamzatovich Isaev` across README.md, LICENSE, and git commit metadata
 
 ## [1.0.0] - 2026-07-29
 

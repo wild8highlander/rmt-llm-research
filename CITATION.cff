@@ -1,0 +1,56 @@
+cff-version: 1.2.0
+message: "If you use this software or any of the accompanying papers, please cite it as below."
+title: >-
+  rmt-llm-research — Random Matrix Theory meets Large Language Models:
+  spectral analysis of activations and the mathematical inevitability
+  of hallucinations
+abstract: >-
+  A research repository by Iskhak Hamzatovich Isaev applying Random Matrix
+  Theory (RMT) to the analysis of large language models (LLMs). Three
+  interconnected threads: (1) spectral statistics of LLM activations via
+  Marchenko-Pastur law, BBP phase transition, and Tracy-Widom fluctuations;
+  (2) ten independent mathematical paths converging on a single critical
+  token count N_crit for hallucination onset (NHSE, Caputo fractional
+  dynamics, EP-surfaces, Keating-Snaith, etc.); (3) the RLHF utility trap
+  — Caputo memory parameter beta ≈ 0.5 makes <T_crit> ∝ (μ_eff)^(-1/β),
+  quadratically accelerating hallucination onset under even small RLHF
+  pressure. The repository ships 12 DOCX monographs (EN/RU), 1 PDF paper,
+  a GitHub Pages documentation site, and an interactive in-browser demo.
+authors:
+  - family-names: Isaev
+    given-names: Iskhak Hamzatovich
+    affiliation: "Independent researcher, Russia"
+keywords:
+  - random-matrix-theory
+  - large-language-models
+  - Marchenko-Pastur
+  - BBP-transition
+  - Tracy-Widom
+  - non-Hermitian-skin-effect
+  - NHSE
+  - Caputo-fractional-calculus
+  - Keating-Snaith
+  - hallucinations
+  - RLHF
+  - cognitive-mode-detection
+  - spectral-analysis
+  - autoregressive-models
+  - mathematical-physics
+  - reproducible-research
+license: "CC-BY-NC-SA-4.0"
+license-url: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+type: software
+version: "1.2.0"
+date-released: "2026-08-06"
+repository-code: "https://github.com/wild8highlander/rmt-llm-research"
+url: "https://github.com/wild8highlander/rmt-llm-research"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Isaev
+      given-names: Iskhak Hamzatovich
+  title: >-
+    Spectral Statistics of LLM Activation Matrices: A Random Matrix
+    Theory Approach to Cognitive Mode Detection
+  year: 2026
+  url: "https://github.com/wild8highlander/rmt-llm-research"
