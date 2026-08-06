@@ -1,4 +1,9 @@
 cff-version: 1.2.0
+
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.21825389"
+    description: "Archived DOI for this release"
 message: "If you use this software or any of the accompanying papers, please cite it as below."
 title: >-
   rmt-llm-research — Random Matrix Theory meets Large Language Models:

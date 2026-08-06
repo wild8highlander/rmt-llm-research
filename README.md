@@ -4,6 +4,7 @@
 [![Documents](https://img.shields.io/badge/Documents-12-green.svg)](./docs/)
 [![Papers](https://img.shields.io/badge/Papers-1-blue.svg)](./papers/)
 [![Languages](https://img.shields.io/badge/Languages-EN%20%2F%20RU-yellow.svg)]()
+[![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.21825389-blue)](https://doi.org/10.5281/zenodo.21825389)
 
 > **Spectral analysis of LLM activations through the lens of Random Matrix Theory** — detecting hallucinations, cognitive mode transitions, and the mathematical inevitability of autoregressive collapse.
 
