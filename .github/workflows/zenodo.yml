@@ -12,8 +12,6 @@ name: Publish to Zenodo on release
 #   2. Create a Zenodo personal access token with scopes
 #      "deposit:actions" + "deposit:write".
 #   3. Add it as a GitHub Actions secret named ZENODO_TOKEN.
-#   4. (Optional) To reuse one Zenodo record across releases, also add
-#      ZENODO_RECORD_ID with the numeric ID of the existing deposit.
 
 on:
   release:
@@ -32,7 +30,7 @@ jobs:
   zenodo:
     name: Upload to Zenodo
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -66,12 +64,10 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq jq curl
 
-      - name: Create or update Zenodo deposit
+      - name: Create Zenodo deposit (with retry)
         id: deposit
         env:
           ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
-          ZENODO_RECORD_ID: ${{ secrets.ZENODO_RECORD_ID }}
-          RELEASE_TAG: ${{ steps.tag.outputs.tag }}
         run: |
           set -euo pipefail
           if [ -z "$ZENODO_TOKEN" ]; then
@@ -80,48 +76,42 @@ jobs:
           fi
 
           ZENODO_API="https://zenodo.org/api/deposit/depositions"
+          echo "Creating new Zenodo deposit (with retry)..."
 
-          if [ -n "$ZENODO_RECORD_ID" ]; then
-            echo "Reusing Zenodo deposit $ZENODO_RECORD_ID..."
-            DEPOSIT_ID="$ZENODO_RECORD_ID"
-            # Get the deposit (also retrieves bucket URL)
-            RESPONSE=$(curl -sS \
-              "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID?access_token=$ZENODO_TOKEN")
-          else
-            echo "Creating new Zenodo deposit (with retry)..."
-            for ATTEMPT in 1 2 3 4 5; do
-              echo "  attempt $ATTEMPT..."
-              RESPONSE=$(curl -sS --max-time 60 --retry 2 --retry-delay 5 -X POST \
-                -H "Content-Type: application/json" \
-                -d "{}" \
-                "$ZENODO_API?access_token=$ZENODO_TOKEN") || true
-              DEPOSIT_ID=$(echo "$RESPONSE" | jq -r .id 2>/dev/null || echo "")
-              if [ -n "$DEPOSIT_ID" ] && [ "$DEPOSIT_ID" != "null" ]; then
-                break
-              fi
-              echo "  attempt $ATTEMPT failed; raw response:"
-              echo "$RESPONSE" | head -c 500
-              echo ""
-              sleep $((ATTEMPT * 10))
-            done
-            if [ -z "$DEPOSIT_ID" ] || [ "$DEPOSIT_ID" = "null" ]; then
-              echo "::error::Failed to create Zenodo deposit after 5 attempts"
-              exit 1
+          RESPONSE=""
+          DEPOSIT_ID=""
+          for ATTEMPT in 1 2 3 4 5; do
+            echo "  attempt $ATTEMPT..."
+            RESPONSE=$(curl -sS --max-time 60 -X POST \
+              -H "Content-Type: application/json" \
+              -d "{}" \
+              "$ZENODO_API?access_token=$ZENODO_TOKEN") || RESPONSE=""
+            DEPOSIT_ID=$(echo "$RESPONSE" | jq -r .id 2>/dev/null || echo "")
+            if [ -n "$DEPOSIT_ID" ] && [ "$DEPOSIT_ID" != "null" ]; then
+              break
             fi
-            echo "Created new deposit ID: $DEPOSIT_ID"
-          fi
+            echo "  attempt $ATTEMPT failed; raw response (first 500 chars):"
+            echo "$RESPONSE" | head -c 500
+            echo ""
+            sleep $((ATTEMPT * 10))
+          done
 
-          # Extract bucket URL (modern file-upload endpoint)
+          if [ -z "$DEPOSIT_ID" ] || [ "$DEPOSIT_ID" = "null" ]; then
+            echo "::error::Failed to create Zenodo deposit after 5 attempts"
+            exit 1
+          fi
+          echo "Created new deposit ID: $DEPOSIT_ID"
+
+          # Extract bucket URL (may need to refetch deposit)
           BUCKET_URL=$(echo "$RESPONSE" | jq -r .links.bucket 2>/dev/null || echo "")
           if [ -z "$BUCKET_URL" ] || [ "$BUCKET_URL" = "null" ]; then
-            # Fetch fresh deposit to get bucket URL
             echo "  bucket URL not in create response; fetching deposit..."
             RESPONSE=$(curl -sS --max-time 60 \
               "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID?access_token=$ZENODO_TOKEN")
             BUCKET_URL=$(echo "$RESPONSE" | jq -r .links.bucket 2>/dev/null || echo "")
           fi
           if [ -z "$BUCKET_URL" ] || [ "$BUCKET_URL" = "null" ]; then
-            echo "::error::No bucket URL in deposit response. Cannot upload files."
+            echo "::error::No bucket URL available. Raw response:"
             echo "$RESPONSE" | head -c 1000
             exit 1
           fi
@@ -142,7 +132,7 @@ jobs:
           {
             "metadata": {
               "title": "rmt-llm-research — Random Matrix Theory meets Large Language Models: spectral analysis of activations and the mathematical inevitability of hallucinations (${RELEASE_TAG})",
-              "description": "<p>A research repository by <strong>Iskhak Hamzatovich Isaev</strong>.</p><p>Release: ${RELEASE_TAG}. Source archive uploaded for permanent citable DOI.</p><p>GitHub: <a href=\"https://github.com/wild8highlander/rmt-llm-research\">https://github.com/wild8highlander/rmt-llm-research</a></p>",
+              "description": "<p>A research repository by <strong>Iskhak Hamzatovich Isaev</strong>.</p><p>Release: ${RELEASE_TAG}. Source archive uploaded for permanent citable DOI.</p><p>GitHub: <a href=\\"https://github.com/wild8highlander/rmt-llm-research\\">https://github.com/wild8highlander/rmt-llm-research</a></p>",
               "upload_type": "publication",
               "publication_type": "article",
               "version": "${RELEASE_TAG}",
@@ -169,12 +159,18 @@ jobs:
           EOF
           )
 
-          curl -sS -X PUT \
-            -H "Content-Type: application/octet-stream" \
+          echo "Updating metadata for deposit $DEPOSIT_ID..."
+          HTTP_CODE=$(curl -sS -w "%{http_code}" -o /tmp/meta_response.txt \
+            -X PUT \
             -H "Content-Type: application/json" \
             -d "$METADATA" \
-            "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID?access_token=$ZENODO_TOKEN" \
-            | jq . > /dev/null
+            "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID?access_token=$ZENODO_TOKEN")
+          echo "HTTP status: $HTTP_CODE"
+          cat /tmp/meta_response.txt | jq . 2>/dev/null || cat /tmp/meta_response.txt
+          if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "201" ] && [ "$HTTP_CODE" != "202" ]; then
+            echo "::error::Metadata update failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
           echo "Metadata updated."
 
       - name: Upload archive via bucket URL
@@ -187,9 +183,9 @@ jobs:
           FILENAME=${{ steps.archive.outputs.filename }}
           echo "Uploading $ARCHIVE to bucket $BUCKET_URL ..."
 
-          # Modern Invenio file upload: PUT to /api/files/{bucket_id}/{filename}
-          # Supports files up to 50 GB; uses multipart data-binary, not form.
           HTTP_CODE=$(curl -sS -w "%{http_code}" -o /tmp/upload_response.txt \
+            --max-time 600 \
+            --retry 2 --retry-delay 10 \
             -X PUT \
             -H "Content-Type: application/octet-stream" \
             --data-binary "@$ARCHIVE" \
@@ -198,7 +194,7 @@ jobs:
           echo "HTTP status: $HTTP_CODE"
           cat /tmp/upload_response.txt | jq . 2>/dev/null || cat /tmp/upload_response.txt
 
-          if [ "$HTTP_CODE" != "201" ] && [ "$HTTP_CODE" != "200" ]; then
+          if [ "$HTTP_CODE" != "201" ] && [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "202" ]; then
             echo "::error::Upload failed with HTTP $HTTP_CODE"
             exit 1
           fi
@@ -213,11 +209,12 @@ jobs:
           DEPOSIT_ID=${{ steps.deposit.outputs.deposit_id }}
           echo "Publishing Zenodo deposit $DEPOSIT_ID..."
 
-          RESPONSE=$(curl -sS -X POST \
+          RESPONSE=$(curl -sS --max-time 60 \
+            -X POST \
             "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID/actions/publish?access_token=$ZENODO_TOKEN")
-          echo "$RESPONSE" | jq . || echo "$RESPONSE"
+          echo "$RESPONSE" | jq . 2>/dev/null || echo "$RESPONSE"
 
-          DOI=$(echo "$RESPONSE" | jq -r .doi)
+          DOI=$(echo "$RESPONSE" | jq -r .doi 2>/dev/null || echo "")
           if [ -z "$DOI" ] || [ "$DOI" = "null" ]; then
             echo "::error::Failed to publish deposit — DOI is null"
             exit 1
@@ -227,26 +224,27 @@ jobs:
           echo "Zenodo DOI URL: https://doi.org/$DOI"
 
       - name: Summary
+        if: always()
         run: |
           DOI=${{ steps.publish.outputs.doi }}
           DEPOSIT_ID=${{ steps.deposit.outputs.deposit_id }}
           {
-            echo "## Zenodo upload complete"
+            echo "## Zenodo upload"
             echo ""
-            echo "**DOI:** [\`$DOI\`](https://doi.org/$DOI)"
-            echo ""
-            echo "**Zenodo record:** https://zenodo.org/record/$DEPOSIT_ID"
-            echo ""
-            echo "**Add this to your README badge:**"
-            echo "\`\`\`"
-            echo "[![DOI](https://img.shields.io/badge/DOI-$DOI-blue)](https://doi.org/$DOI)"
-            echo "\`\`\`"
-            echo ""
-            echo "**Add this to your CITATION.cff:**"
-            echo "\`\`\`yaml"
-            echo "identifiers:"
-            echo "  - type: doi"
-            echo "    value: \"$DOI\""
-            echo "    description: \"Archived DOI for this release\""
-            echo "\`\`\`"
+            if [ -n "$DOI" ] && [ "$DOI" != "null" ]; then
+              echo "**DOI:** [\`$DOI\`](https://doi.org/$DOI)"
+              echo ""
+              echo "**Zenodo record:** https://zenodo.org/record/$DEPOSIT_ID"
+              echo ""
+              echo "**README badge:**"
+              echo "\`\`\`markdown"
+              echo "[![DOI](https://img.shields.io/badge/DOI-$DOI-blue)](https://doi.org/$DOI)"
+              echo "\`\`\`"
+            else
+              echo "Workflow did not complete. Check the failed step above."
+              if [ -n "$DEPOSIT_ID" ] && [ "$DEPOSIT_ID" != "null" ]; then
+                echo ""
+                echo "Draft deposit (may need manual fixing): https://zenodo.org/deposit/$DEPOSIT_ID"
+              fi
+            fi
           } >> "$GITHUB_STEP_SUMMARY"
