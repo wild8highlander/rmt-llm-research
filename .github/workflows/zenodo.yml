@@ -154,6 +154,7 @@ jobs:
           )
 
           curl -sS -X PUT \
+            -H "Content-Type: application/octet-stream" \
             -H "Content-Type: application/json" \
             -d "$METADATA" \
             "https://zenodo.org/api/deposit/depositions/$DEPOSIT_ID?access_token=$ZENODO_TOKEN" \
@@ -174,6 +175,7 @@ jobs:
           # Supports files up to 50 GB; uses multipart data-binary, not form.
           HTTP_CODE=$(curl -sS -w "%{http_code}" -o /tmp/upload_response.txt \
             -X PUT \
+            -H "Content-Type: application/octet-stream" \
             --data-binary "@$ARCHIVE" \
             "$BUCKET_URL/$FILENAME?access_token=$ZENODO_TOKEN")
 
