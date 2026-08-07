@@ -10,6 +10,9 @@
 [![Codecov](https://codecov.io/gh/wild8highlander/rmt-llm-research/branch/main/graph/badge.svg)](https://codecov.io/gh/wild8highlander/rmt-llm-research)
 [![pytest](https://img.shields.io/badge/tests-70+-green.svg)](./src/rmt_llm/tests/)
 [![Julia](https://img.shields.io/badge/Julia-RMTLLMVerify-9558B2.svg)](./julia/RMTLLMVerify/)
+[![Java](https://img.shields.io/badge/Java-RMTLLMViz-ED8B00.svg)](./java/rmt-llm-viz/)
+[![Python Viz](https://img.shields.io/badge/Python-RMTLLMViz-3776AB.svg)](./python/rmt_llm_viz/)
+[![Julia Viz](https://img.shields.io/badge/Julia-RMTLLMViz-9558B2.svg)](./julia/RMTLLMViz/)
 
 > **Spectral analysis of LLM activations through the lens of Random Matrix Theory** — detecting hallucinations, cognitive mode transitions, and the mathematical inevitability of autoregressive collapse.
 
@@ -21,6 +24,7 @@
 - [Research Topics](#-research-topics)
 - [Repository Structure](#-repository-structure)
 - [Verification Package](#-verification-package)
+- [Advanced Visualization Suites](#-advanced-visualization-suites)
 - [Documents](#-documents)
 - [Papers](#-papers)
 - [Key Results](#-key-results)
@@ -63,6 +67,9 @@ graph TD
     A --> E[notebooks/]
     A --> F[papers/]
     A --> G[.github/workflows/]
+    A --> P[python/rmt_llm_viz/]
+    A --> J[julia/RMTLLMViz/]
+    A --> K[java/rmt-llm-viz/]
 
     B --> B1[en/ — 6 English DOCX]
     B --> B2[ru/ — 6 Russian DOCX]
@@ -88,6 +95,17 @@ graph TD
     G --> G2[scorecard.yml — OpenSSF]
     G --> G3[zenodo.yml — DOI archive]
     G --> G4[deploy-docs.yml — Pages]
+
+    P --> P1[main.py — Interactive CLI menu]
+    P --> P2[8 3D visualizations + dashboard]
+
+    J --> J1[RMTLLMViz.jl — Interactive REPL]
+    J --> J2[8 3D visualizations + dashboard]
+
+    K --> K1[RMTLLMVizApp.java — JavaFX GUI]
+    K --> K2[RMTMath.java — Pure math engine]
+    K --> K3[RMTVerifier.java — Headless checks]
+    K --> K4[RMTConstants.java + Complex.java]
 ```
 
 ---
@@ -120,6 +138,60 @@ pytest --cov=rmt_llm --cov-report=term-missing   # with coverage
 cd julia/RMTLLMVerify
 julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 ```
+
+---
+
+## 🎨 Advanced Visualization Suites
+
+Three full-featured interactive implementations with menus, 3D visualizations, and cross-module consistency dashboards:
+
+### Python — `python/rmt_llm_viz/`
+
+Interactive CLI with 8 visualizations + consistency dashboard:
+```bash
+cd python/rmt_llm_viz
+python main.py               # Interactive menu
+python main.py --viz 1       # MP 3D surface directly
+python main.py --viz 9       # Run all
+python main.py --save        # Save to PNG
+```
+
+| # | Visualization | Description |
+|---|--------------|-------------|
+| 1 | Marchenko-Pastur 3D Density | ρ(λ, q) surface over λ-q plane |
+| 2 | BBP Phase Transition 3D | λ_max(θ, q) landscape with critical curve |
+| 3 | NHSE Ring Collapse 3D | Eigenvalue ring → skin collapse in complex plane |
+| 4 | EP-Surface Ridge 3D | δλ(ε, k) sensitivity ridgeline |
+| 5 | Thermodynamic Landscape 3D | F(U,T,S) phase diagram for 4 entropy levels |
+| 6 | Tracy-Widom Waterfall 3D | F₂ convergence from finite-N to asymptotic |
+| 7 | Keating-Snaith Surface 3D | γ₁(N) and N_crit(N) correction surfaces |
+| 8 | Consistency Dashboard | 10 cross-module verification checks |
+
+### Julia — `julia/RMTLLMViz/`
+
+Interactive REPL menu with the same 8 visualizations:
+```bash
+cd julia/RMTLLMViz
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+julia --project=. -e 'using RMTLLMViz; rmt_llm_viz_menu()'
+```
+
+### Java — `java/rmt-llm-viz/`
+
+JavaFX GUI with tabbed interface, interactive sliders, and real-time parameter exploration:
+```bash
+cd java/rmt-llm-viz
+./gradlew run                    # Launch JavaFX GUI
+./gradlew verify                 # Headless verification (14 checks)
+```
+
+| Class | Description |
+|-------|-------------|
+| `RMTLLMVizApp.java` | Main JavaFX application with 8 tabs |
+| `RMTMath.java` | Pure mathematical engine (no UI dependency) |
+| `RMTConstants.java` | All framework constants centralized |
+| `Complex.java` | Complex number class for Stieltjes transform |
+| `RMTVerifier.java` | Headless cross-implementation consistency checks |
 
 ---
 
@@ -192,6 +264,23 @@ julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 
 # Jupyter notebook
 jupyter notebook notebooks/rmt_llm_verification.ipynb
+```
+
+### Run advanced visualizations
+
+```bash
+# Python interactive 3D suite
+cd python/rmt_llm_viz && python main.py
+
+# Julia interactive 3D suite
+cd julia/RMTLLMViz
+julia --project=. -e 'using RMTLLMViz; rmt_llm_viz_menu()'
+
+# Java JavaFX GUI
+cd java/rmt-llm-viz && ./gradlew run
+
+# Java headless verification
+cd java/rmt-llm-viz && ./gradlew verify
 ```
 
 ---
