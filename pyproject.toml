@@ -1,0 +1,104 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rmt-llm"
+version = "1.3.0"
+description = "Random Matrix Theory meets Large Language Models — spectral verification package"
+readme = "README.md"
+license = {text = "CC-BY-NC-SA-4.0"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Iskhak Hamzatovich Isaev", email = "aslan08_05@mail.ru"},
+]
+keywords = [
+    "random-matrix-theory",
+    "large-language-models",
+    "Marchenko-Pastur",
+    "BBP-transition",
+    "Tracy-Widom",
+    "NHSE",
+    "Caputo-fractional",
+    "Keating-Snaith",
+    "hallucinations",
+    "RLHF",
+    "spectral-analysis",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: Free For Educational Use",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1",
+    "mypy>=1.5",
+    "matplotlib>=3.7",
+    "jupyter>=1.0",
+]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+notebooks = [
+    "matplotlib>=3.7",
+    "jupyter>=1.0",
+    "ipykernel>=6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/wild8highlander/rmt-llm-research"
+Repository = "https://github.com/wild8highlander/rmt-llm-research"
+Documentation = "https://wild8highlander.github.io/rmt-llm-research"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["src/rmt_llm/tests"]
+addopts = "-v --tb=short --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "stochastic: marks tests with stochastic elements",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src/rmt_llm"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "numpy.*"
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["rmt_llm"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+fail_under = 70
+show_missing = true

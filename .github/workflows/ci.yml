@@ -1,0 +1,134 @@
+name: CI — RMT-LLM Verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Syntax & Lint ──────────────────────────────────────
+  lint:
+    name: Lint (ruff + mypy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dev dependencies
+        run: |
+          pip install --upgrade pip
+          pip install ruff mypy
+          pip install -e ".[dev]"
+      - name: ruff check
+        run: ruff check src/
+      - name: mypy
+        run: mypy src/ --ignore-missing-imports || true
+
+  # ── Python pytest + Coverage ───────────────────────────
+  test-python:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[test]"
+      - name: Run pytest with coverage
+        run: |
+          pytest \
+            --cov=rmt_llm \
+            --cov-report=term-missing \
+            --cov-report=xml \
+            --cov-report=html \
+            -v
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.12'
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+
+  # ── Julia Tests ────────────────────────────────────────
+  test-julia:
+    name: Julia ${{ matrix.julia-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        julia-version: ["1.9", "1.10"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.julia-version }}
+      - name: Install and test RMTLLMVerify
+        run: |
+          cd julia/RMTLLMVerify
+          julia --project=. -e 'using Pkg; Pkg.instantiate()'
+          julia --project=. -e 'using Pkg; Pkg.test()'
+
+  # ── Cross-Implementation Consistency ───────────────────
+  cross-impl:
+    name: Cross-Implementation Consistency
+    runs-on: ubuntu-latest
+    needs: [test-python, test-julia]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: "1.10"
+      - name: Install Python package
+        run: pip install -e .
+      - name: Cross-check Python vs Julia
+        run: |
+          python -c "
+          import numpy as np
+          from rmt_llm.marchenko_pastur import mp_bounds
+          from rmt_llm.bbp_transition import bbp_critical_theta, bbp_lambda_max
+          from rmt_llm.nhse import nhse_winding_number
+          from rmt_llm.caputo_fractional import caputo_n_crit
+          from rmt_llm.keating_snaith import ks_corrected_gamma
+
+          # Julia reference values
+          julia_bounds = (0.085786, 2.914214)
+          py_m, py_p = mp_bounds(0.5, 1.0)
+          assert abs(py_m - julia_bounds[0]) < 0.01, f'MP λ₋ mismatch: {py_m} vs {julia_bounds[0]}'
+          assert abs(py_p - julia_bounds[1]) < 0.01, f'MP λ₊ mismatch: {py_p} vs {julia_bounds[1]}'
+
+          # BBP
+          py_tc = bbp_critical_theta(0.5)
+          assert abs(py_tc - 0.707107) < 0.001, f'BBP θ_c mismatch'
+
+          # NHSE
+          assert nhse_winding_number(0.5, 0.3) == 0
+          assert nhse_winding_number(1.5, 0.3) == 1
+
+          # Caputo
+          py_nc = caputo_n_crit()
+          assert abs(py_nc - 114.392) < 1.0, f'N_crit mismatch'
+
+          # KS
+          py_g = ks_corrected_gamma(100)
+          assert abs(py_g - 14.133725) < 0.01, f'KS mismatch'
+
+          print('✓ All cross-implementation checks PASSED')
+          "

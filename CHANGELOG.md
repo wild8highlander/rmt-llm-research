@@ -2,11 +2,51 @@
 
 All notable changes to this repository are documented in this file.
 
+## [1.3.0] - 2026-08-08
+
+### Added
+
+- **Python verification package** (`src/rmt_llm/`) with 8 modules:
+  `marchenko_pastur`, `bbp_transition`, `tracy_widom`, `nhse`,
+  `caputo_fractional`, `keating_snaith`, `ep_surfaces`, `thermodynamics`,
+  plus `constants` and `__init__`
+- **70+ pytest tests** covering all 8 modules plus 7 cross-module
+  consistency checks (`src/rmt_llm/tests/test_rmt_llm.py`)
+- **Julia verification package** (`julia/RMTLLMVerify/`) with matching
+  implementations of all 8 mathematical objects and comprehensive test
+  suite (`julia/RMTLLMVerify/test/runtests.jl`)
+- **Jupyter verification notebook** (`notebooks/rmt_llm_verification.ipynb`)
+  with 7 sections: Marchenko-Pastur, BBP transition, Tracy-Widom, NHSE,
+  Caputo dynamics, Keating-Snaith & EP surfaces, cross-implementation
+  consistency
+- **pyproject.toml** with ruff/mypy/pytest/coverage configuration
+- **CI workflow** (`.github/workflows/ci.yml`): lint (ruff + mypy),
+  pytest+coverage+Codecov on Python 3.10/3.11/3.12, Julia 1.9/1.10
+  tests, cross-implementation consistency check job
+- **OpenSSF Scorecard workflow** (`.github/workflows/scorecard.yml`)
+- **CODE_OF_CONDUCT.md** (Contributor Covenant v2.1)
+- ORCID identifier `0009-0003-7299-0701` added to:
+  - `.zenodo.json` (creators[0].orcid)
+  - `CITATION.cff` (authors[0].orcid)
+  - `README.md` (ORCID badge + footer link)
+- Mermaid architecture diagram in README.md
+- Scorecard badge and Codecov badge in README.md
+- pytest count badge and Julia package badge in README.md
+
+### Changed
+
+- Version bumped from 1.2.0 to **1.3.0**
+- `.zenodo.json`: removed invalid `communities` field, added ORCID,
+  updated version and publication_date
+- `CITATION.cff`: added ORCID, updated version and date-released
+- Repository structure section in README.md expanded to include
+  verification package, Julia package, and notebooks
+
 ## [1.2.0] - 2026-08-06
 
 ### Added
 
-- GitHub Pages documentation site (`docs/site/`) with modern dark-theme HTML,
+- GitHub Pages documentation site (`docs/site/`) with modern"modern dark-theme HTML,
   hero section, navigation, key results tables, document catalogue, and BibTeX
   citation
 - Zenodo DOI auto-archive workflow (`.github/workflows/zenodo.yml`) — uploads
@@ -50,7 +90,7 @@ All notable changes to this repository are documented in this file.
 - Complex analytical model of inevitable hallucinations (EN + RU)
 - LLM analysis merged: RLHF utility trap and thermodynamics (EN + RU)
 - RMT LLM arxiv preprint (EN)
-- RMT LLM BlackGold preprint v1 and v2 (EN)
+- RMT LLM BlackGold pre1 and v2 (EN)
 - LLM Analysis Merged PDF
 - Professional README with key results table and citation
 - LICENSE (CC BY-NC-SA 4.0), .gitignore, CONTRIBUTING.md

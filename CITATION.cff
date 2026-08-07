@@ -20,10 +20,13 @@ abstract: >-
   — Caputo memory parameter beta ≈ 0.5 makes <T_crit> ∝ (μ_eff)^(-1/β),
   quadratically accelerating hallucination onset under even small RLHF
   pressure. The repository ships 12 DOCX monographs (EN/RU), 1 PDF paper,
-  a GitHub Pages documentation site, and an interactive in-browser demo.
+  a GitHub Pages documentation site, an interactive in-browser demo, a
+  Python verification package with 70+ tests, a Julia verification package,
+  and a Jupyter verification notebook.
 authors:
   - family-names: Isaev
     given-names: Iskhak Hamzatovich
+    orcid: "https://orcid.org/0009-0003-7299-0701"
     affiliation: "Independent researcher, Russia"
 keywords:
   - random-matrix-theory
@@ -45,8 +48,8 @@ keywords:
 license: "CC-BY-NC-SA-4.0"
 license-url: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
 type: software
-version: "1.2.0"
-date-released: "2026-08-06"
+version: "1.3.0"
+date-released: "2026-08-08"
 repository-code: "https://github.com/wild8highlander/rmt-llm-research"
 url: "https://github.com/wild8highlander/rmt-llm-research"
 preferred-citation:
@@ -54,6 +57,7 @@ preferred-citation:
   authors:
     - family-names: Isaev
       given-names: Iskhak Hamzatovich
+      orcid: "https://orcid.org/0009-0003-7299-0701"
   title: >-
     Spectral Statistics of LLM Activation Matrices: A Random Matrix
     Theory Approach to Cognitive Mode Detection

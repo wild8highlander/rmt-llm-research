@@ -1,10 +1,11 @@
 {
   "title": "rmt-llm-research — Random Matrix Theory meets Large Language Models: spectral analysis of activations and the mathematical inevitability of hallucinations",
-  "description": "<p>A research repository by <strong>Iskhak Hamzatovich Isaev</strong> presenting a comprehensive program applying Random Matrix Theory (RMT) to the analysis of large language models (LLMs).</p><p><strong>Thread 1 — Spectral statistics of LLM activations.</strong> Covariance matrices of GPT-2 hidden-state activations exhibit fundamentally different spectral properties in factual recall vs creative generation mode. The BBP phase transition, Marchenko-Pastur bounds, and Tracy-Widom fluctuations provide quantitative markers for cognitive mode detection.</p><p><strong>Thread 2 — Mathematical proof of inevitable hallucinations.</strong> Ten independent mathematical paths converge on a single critical token count N_crit: complex phase, operator dynamics, GUE spectral statistics, thermodynamic entropy, L&eacute;vy-Langevin fractional dynamics, EP-surfaces, Tracy-Widom, quantum channel degradation, NHSE (winding number), and Caputo fractional-time memory.</p><p><strong>Thread 3 — The utility trap: RLHF and entropic collapse.</strong> RLHF optimization creates an artificial drift in the Fokker-Planck equation, forcing the model to &laquo;lie beautifully once&raquo; rather than risk a self-correction cycle. With Caputo memory parameter &beta; &asymp; 0.5, the mean collapse time scales as &lang;T_crit&rang; &prop; (&mu;_eff)<sup>-2</sup> &mdash; even small RLHF pressure quadratically accelerates hallucination onset.</p><p>The repository ships 12 DOCX monographs (EN/RU), 1 PDF paper, a GitHub Pages documentation site, and an interactive in-browser demo visualising the Marchenko-Pastur law, BBP transition, Tracy-Widom distribution, and NHSE winding-number topology.</p>",
+  "description": "<p>A research repository by <strong>Iskhak Hamzatovich Isaev</strong> presenting a comprehensive program applying Random Matrix Theory (RMT) to the analysis of large language models (LLMs).</p><p><strong>Thread 1 — Spectral statistics of LLM activations.</strong> Covariance matrices of GPT-2 hidden-state activations exhibit fundamentally different spectral properties in factual recall vs creative generation mode. The BBP phase transition, Marchenko-Pastur bounds, and Tracy-Widom fluctuations provide quantitative markers for cognitive mode detection.</p><p><strong>Thread 2 — Mathematical proof of inevitable hallucinations.</strong> Ten independent mathematical paths converge on a single critical token count N_crit: complex phase, operator dynamics, GUE spectral statistics, thermodynamic entropy, L&eacute;vy-Langevin fractional dynamics, EP-surfaces, Tracy-Widom, quantum channel degradation, NHSE (winding number), and Caputo fractional-time memory.</p><p><strong>Thread 3 — The utility trap: RLHF and entropic collapse.</strong> RLHF optimization creates an artificial drift in the Fokker-Planck equation, forcing the model to &laquo;lie beautifully once&raquo; rather than risk a self-correction cycle. With Caputo memory parameter &beta; &asymp; 0.5, the mean collapse time scales as &lang;T_crit&rang; &prop; (&mu;_eff)<sup>-2</sup> &mdash; even small RLHF pressure quadratically accelerates hallucination onset.</p><p>The repository ships 12 DOCX monographs (EN/RU), 1 PDF paper, a GitHub Pages documentation site, an interactive in-browser demo, a Python verification package (rmt_llm) with 70+ pytest tests, a Julia verification package (RMTLLMVerify), and a Jupyter verification notebook.</p>",
   "creators": [
     {
       "name": "Isaev, Iskhak Hamzatovich",
-      "affiliation": "Independent researcher, Russia"
+      "affiliation": "Independent researcher, Russia",
+      "orcid": "0009-0003-7299-0701"
     }
   ],
   "keywords": [
@@ -30,11 +31,8 @@
   "upload_type": "publication",
   "publication_type": "article",
   "language": "eng",
-  "communities": [
-    {"identifier": "zenodo"}
-  ],
-  "version": "1.2.0",
-  "publication_date": "2026-08-06",
+  "version": "1.3.0",
+  "publication_date": "2026-08-08",
   "code_repository": "https://github.com/wild8highlander/rmt-llm-research",
   "related_identifiers": [
     {

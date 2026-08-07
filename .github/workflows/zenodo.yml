@@ -140,7 +140,8 @@ jobs:
               "creators": [
                 {
                   "name": "Isaev, Iskhak Hamzatovich",
-                  "affiliation": "Independent researcher, Russia"
+                  "affiliation": "Independent researcher, Russia",
+                  "orcid": "0009-0003-7299-0701"
                 }
               ],
               "keywords": ["random-matrix-theory", "large-language-models", "Marchenko-Pastur", "BBP-transition", "Tracy-Widom", "non-Hermitian-skin-effect", "NHSE", "Caputo-fractional-calculus", "Keating-Snaith", "hallucinations", "RLHF", "cognitive-mode-detection", "spectral-analysis", "autoregressive-models", "mathematical-physics"],

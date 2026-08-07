@@ -1,3 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing
+.coverage
+htmlcov/
+coverage.xml
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
 # LaTeX build artifacts
 *.aux
 *.log
@@ -20,3 +48,6 @@ Thumbs.db
 
 # Temporary
 ~$*
+
+# Julia
+julia/RMTLLMVerify/Manifest.toml

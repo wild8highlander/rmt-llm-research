@@ -5,6 +5,11 @@
 [![Papers](https://img.shields.io/badge/Papers-1-blue.svg)](./papers/)
 [![Languages](https://img.shields.io/badge/Languages-EN%20%2F%20RU-yellow.svg)]()
 [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.21825389-blue)](https://doi.org/10.5281/zenodo.21825389)
+[![ORCID](https://img.shields.io/badge/ORCID-0009--0003--7299--0701-a6ce39)](https://orcid.org/0009-0003-7299-0701)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/wild8highlander/rmt-llm-research/badge)](https://securityscorecards.dev/viewer/?uri=github.com/wild8highlander/rmt-llm-research)
+[![Codecov](https://codecov.io/gh/wild8highlander/rmt-llm-research/branch/main/graph/badge.svg)](https://codecov.io/gh/wild8highlander/rmt-llm-research)
+[![pytest](https://img.shields.io/badge/tests-70+-green.svg)](./src/rmt_llm/tests/)
+[![Julia](https://img.shields.io/badge/Julia-RMTLLMVerify-9558B2.svg)](./julia/RMTLLMVerify/)
 
 > **Spectral analysis of LLM activations through the lens of Random Matrix Theory** — detecting hallucinations, cognitive mode transitions, and the mathematical inevitability of autoregressive collapse.
 
@@ -15,6 +20,7 @@
 - [Overview](#-overview)
 - [Research Topics](#-research-topics)
 - [Repository Structure](#-repository-structure)
+- [Verification Package](#-verification-package)
 - [Documents](#-documents)
 - [Papers](#-papers)
 - [Key Results](#-key-results)
@@ -43,23 +49,76 @@ Covariance matrices of GPT-2 hidden-state activations exhibit fundamentally diff
 Ten independent mathematical paths converge on a single critical token count N_crit: complex phase, operator dynamics, GUE spectral statistics, thermodynamic entropy, Lévy-Langevin fractional dynamics, EP-surfaces, Tracy-Widom, quantum channel degradation, NHSE (winding number), and Caputo fractional-time memory.
 
 ### 3. The Utility Trap: RLHF and Entropic Collapse
-RLHF optimization creates an artificial drift in the Fokker-Planck equation, forcing the model to "lie beautifully once" rather than risk a self-correction cycle. The Caputo memory parameter β ≈ 0.5 makes 〈T_crit〉 ∝ (μ_eff)^⁻² — even small RLHF pressure quadratically accelerates hallucination onset.
+RLHF optimization creates an artificial drift in the Fokker-Planck equation, forcing the model to "lie beautifully once" rather than risk a self-correction cycle. The Caputo memory parameter β ≈ 0.5 makes 〈T_crit〉 ∝ (μ_eff)⁻² — even small RLHF pressure quadratically accelerates hallucination onset.
 
 ---
 
 ## 📁 Repository Structure
 
+```mermaid
+graph TD
+    A[rmt-llm-research] --> B[docs/]
+    A --> C[src/rmt_llm/]
+    A --> D[julia/RMTLLMVerify/]
+    A --> E[notebooks/]
+    A --> F[papers/]
+    A --> G[.github/workflows/]
+
+    B --> B1[en/ — 6 English DOCX]
+    B --> B2[ru/ — 6 Russian DOCX]
+    B --> B3[site/ — GitHub Pages + Demo]
+
+    C --> C1[marchenko_pastur.py]
+    C --> C2[bbp_transition.py]
+    C --> C3[tracy_widom.py]
+    C --> C4[nhse.py]
+    C --> C5[caputo_fractional.py]
+    C --> C6[keating_snaith.py]
+    C --> C7[ep_surfaces.py]
+    C --> C8[thermodynamics.py]
+    C --> C9[constants.py]
+    C --> C10[tests/ — 70+ pytest tests]
+
+    D --> D1[src/ — Julia module]
+    D --> D2[test/ — Julia test suite]
+
+    E --> E1[rmt_llm_verification.ipynb]
+
+    G --> G1[ci.yml — Python+Julia CI]
+    G --> G2[scorecard.yml — OpenSSF]
+    G --> G3[zenodo.yml — DOI archive]
+    G --> G4[deploy-docs.yml — Pages]
 ```
-rmt-llm-research/
-├── docs/
-│   ├── en/                     # English versions
-│   └── ru/                     # Russian originals (Русский)
-├── papers/                     # Published papers (PDF)
-├── .gitignore
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── LICENSE
-└── README.md
+
+---
+
+## 🔬 Verification Package
+
+The `src/rmt_llm/` Python package and `julia/RMTLLMVerify/` Julia package provide comprehensive numerical verification of all mathematical objects in the theory:
+
+| Module | Content | Tests |
+|--------|---------|-------|
+| `marchenko_pastur` | MP density, bounds, CDF, sampling, Stieltjes transform | 17 |
+| `bbp_transition` | BBP phase transition, signal separation, fluctuation scaling | 11 |
+| `tracy_widom` | F₂ CDF/PDF, moments (mean, variance, skewness) | 7 |
+| `nhse` | Winding number, skin strength, eigenvalue sampling, point gap | 13 |
+| `caputo_fractional` | Collapse time, RLHF drift, Fokker-Planck, N_crit | 9 |
+| `keating_snaith` | Corrected γ₁, N_crit correction, GUE mean spacing | 8 |
+| `ep_surfaces` | EP sensitivity, rounding effects, Jordan blocks | 8 |
+| `thermodynamics` | Free energy, Landauer cost, spectral entropy, RG flow | 12 |
+| Cross-module | Inter-module consistency checks | 7 |
+
+**Quick start:**
+```bash
+pip install -e ".[test]"
+pytest -v                           # 70+ tests
+pytest --cov=rmt_llm --cov-report=term-missing   # with coverage
+```
+
+**Julia tests:**
+```bash
+cd julia/RMTLLMVerify
+julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 ```
 
 ---
@@ -120,6 +179,21 @@ rmt-llm-research/
 3. `docs/en/Complex_Analytical_Model_Inevitable_Hallucinations.docx` — 10 paths to N_crit
 4. `docs/en/RMT_LLM_Spectral_Analysis.docx` — full monograph with all details
 
+### Run verification tests
+
+```bash
+# Python tests
+pip install -e ".[test]"
+pytest -v
+
+# Julia tests
+cd julia/RMTLLMVerify
+julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
+
+# Jupyter notebook
+jupyter notebook notebooks/rmt_llm_verification.ipynb
+```
+
 ---
 
 ## 📖 Citation
@@ -149,5 +223,5 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 ---
 
 <p align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/wild8highlander">Iskhak Hamzatovich Isaev</a></sub>
+  <sub>Built with ❤️ by <a href="https://github.com/wild8highlander">Iskhak Hamzatovich Isaev</a> · <a href="https://orcid.org/0009-0003-7299-0701">ORCID: 0009-0003-7299-0701</a></sub>
 </p>
