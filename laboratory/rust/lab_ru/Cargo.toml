@@ -1,0 +1,14 @@
+[package]
+name = "rmt-llm-lab-ru"
+version = "1.0.0"
+edition = "2021"
+authors = ["Iskhak Hamzatovich Isaev"]
+description = "Лаборатория RMT-LLM — русская версия (Rust)"
+license = "Proprietary"
+
+[[bin]]
+name = "rmt_llm_lab_ru"
+path = "main.rs"
+
+[dependencies]
+# Pure Rust std-only implementation; no external crates required

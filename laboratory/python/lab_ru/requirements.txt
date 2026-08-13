@@ -1,0 +1,16 @@
+# RMT-LLM Laboratory — зависимости Python (русская версия)
+numpy>=1.24
+matplotlib>=3.7
+pandas>=2.0
+pyarrow>=14.0          # для parquet
+openpyxl>=3.1          # для xlsx
+python-docx>=1.0       # для docx
+reportlab>=4.0         # для pdf
+plotly>=5.18           # для интерактивных HTML-графиков
+PyYAML>=6.0            # для yaml-отчётов
+psutil>=5.9            # для измерений памяти
+# Опционально, для скачивания реальных HF-моделей:
+# transformers>=4.36
+# torch>=2.1
+# huggingface_hub>=0.20
+# onnxruntime>=1.16

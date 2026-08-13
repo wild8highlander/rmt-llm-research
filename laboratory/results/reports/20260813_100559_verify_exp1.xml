@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rmt_llm_report>
+  <generated>2026-08-13T10:05:59.675313</generated>
+  <experiment>
+    <name>Spectral Signature</name>
+    <language></language>
+    <version></version>
+  </experiment>
+  <results>
+    <experiment>spectral_signature</experiment>
+    <config.vocab_size>128</config.vocab_size>
+    <config.hidden_dim>32</config.hidden_dim>
+    <config.n_layers>4</config.n_layers>
+    <config.n_heads>4</config.n_heads>
+    <config.max_seq_len>128</config.max_seq_len>
+    <config.seed>42</config.seed>
+    <params_count>28928</params_count>
+    <spectral.layers>[{&quot;layer&quot;: 0, &quot;T&quot;: 128, &quot;H&quot;: 32, &quot;q&quot;: 0.25, &quot;lambda_max&quot;: 0.0019426177877866612, &quot;lambda_min&quot;: 0.00017214117106267862, &quot;lambda_mean&quot;: 0.0008034405473590625, &quot;mp_upper&quot;: 0.0018077412315578906, &quot;mp_lower&quot;: 0.00020086013683976562, &quot;signal_detected&quot;: true, &quot;tw_fluctuation&quot;: 10.743918298641182, &quot;spectral_gap&quot;: 0.0017704766167239826}, {&quot;layer&quot;: 1, &quot;T&quot;: 128, &quot;H&quot;: 32, &quot;q&quot;: 0.25, &quot;lambda_max&quot;: 0.0031484040484318424, &quot;lambda_min&quot;: 0.0001792146353752796, &quot;lambda_mean&quot;: 0.0008575601758135612, &quot;mp_upper&quot;: 0.</spectral.layers>
+    <metrics.n_layers_analyzed>4</metrics.n_layers_analyzed>
+    <metrics.max_lambda_max>0.012519393000410352</metrics.max_lambda_max>
+    <metrics.min_lambda_min>0.00017214117106267862</metrics.min_lambda_min>
+    <metrics.mean_spectral_gap>0.005858584940683028</metrics.mean_spectral_gap>
+    <experiment_name>Spectral Signature</experiment_name>
+    <experiment_description>Compute spectral signature of TinyGPT hidden activations.</experiment_description>
+    <elapsed_seconds>0.008923938999942038</elapsed_seconds>
+    <parameters.temperature>0.7</parameters.temperature>
+    <parameters.max_tokens>64</parameters.max_tokens>
+    <parameters.seed>42</parameters.seed>
+    <parameters.n_layers>4</parameters.n_layers>
+    <parameters.hidden_dim>32</parameters.hidden_dim>
+    <parameters.n_heads>4</parameters.n_heads>
+    <parameters.vocab_size>128</parameters.vocab_size>
+    <parameters.context_window>128</parameters.context_window>
+  </results>
+  <logs>
+  </logs>
+</rmt_llm_report>

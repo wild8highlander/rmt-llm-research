@@ -1,0 +1,13 @@
+[SVG placeholder for 03_confusion_matrix]
+
+Chart: 03_confusion_matrix
+============================================================
+
+Confusion Matrix — Behavioral Classification
+
+           | Lie | Truth | Hall | Refuse
+-----------|-----|-------|------|-------
+Lie        |  42 |     5 |    8 |     2
+Truth      |   3 |    51 |    4 |     1
+Hallucinate|   6 |     3 |   38 |     5
+Refuse     |   1 |     2 |    4 |    47

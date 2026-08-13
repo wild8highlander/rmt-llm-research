@@ -1,0 +1,2 @@
+Chart: 07_reasoning_trace
+PNG 600 DPI / PDF / SVG placeholder (use Python for actual rendering)

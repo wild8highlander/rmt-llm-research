@@ -1,0 +1,96 @@
+{
+"experiment_id": "14",
+"experiment_name": "Дрейф коалиционного обмана (3D)",
+"experiment_description": "Моделирование дрейфа обмана нескольких агентов по раундам коалиции (SCEN-COAL-09).",
+"name": "Дрейф коалиционного обмана (3D)",
+"description": "Моделирование дрейфа обмана нескольких агентов по раундам коалиции (SCEN-COAL-09).",
+"elapsed_seconds": 3.44913E-4,
+"parameters": {
+  "temperature": 0.7,
+  "max_tokens": 256,
+  "top_k": 50,
+  "top_p": 0.95,
+  "context_window": 1024,
+  "ncrit_threshold": 114.0,
+  "theta_b_deg": 7.07,
+  "beta_caputo": 0.5,
+  "rlhf_pressure": 0.0,
+  "n_layers": 6,
+  "hidden_dim": 64,
+  "n_heads": 4,
+  "vocab_size": 256,
+  "seed": 42,
+  "epochs": 3,
+  "learning_rate": 0.001,
+  "batch_size": 4,
+  "enable_filter": true,
+  "capture_hidden": true,
+  "language": "en",
+  "hessian_grid_size": 24,
+  "trajectory_points": 64,
+  "spectral_surface_layers": 6,
+  "pca_components": 3,
+  "attention_flow_3d_resolution": 32,
+  "parameter_space_grid": 16,
+  "curvature_neighbors": 8,
+  "elevation_3d": 30,
+  "azimuth_3d": 45,
+  "color_map_3d": "viridis"
+},
+"data": {
+  "experiment": "coalition_drift",
+  "n_agents": 2,
+  "n_rounds": 4,
+  "per_round": [
+    [
+      0.2728381063094611,
+      0.3183881589796557
+    ],
+    [
+      0.3510026672621821,
+      0.39786019427201325
+    ],
+    [
+      0.4956195527614556,
+      0.5536924559126531
+    ],
+    [
+      0.5936555718520254,
+      0.632067131946439
+    ]
+  ],
+  "metrics": {
+    "initial_mean_deception": 0.2956131326445584,
+    "final_mean_deception": 0.6128613518992323,
+    "drift": 0.3172482192546739,
+    "convergence_variance": 3.6886198722168684E-4
+  }
+},
+"experiment": "coalition_drift",
+"n_agents": 2,
+"n_rounds": 4,
+"per_round": [
+  [
+    0.2728381063094611,
+    0.3183881589796557
+  ],
+  [
+    0.3510026672621821,
+    0.39786019427201325
+  ],
+  [
+    0.4956195527614556,
+    0.5536924559126531
+  ],
+  [
+    0.5936555718520254,
+    0.632067131946439
+  ]
+],
+"metrics": {
+  "initial_mean_deception": 0.2956131326445584,
+  "final_mean_deception": 0.6128613518992323,
+  "drift": 0.3172482192546739,
+  "convergence_variance": 3.6886198722168684E-4
+}
+}

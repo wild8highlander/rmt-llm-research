@@ -106,6 +106,64 @@ repos:
           - types-requests
         args: [--ignore-missing-imports, --no-strict-optional, --warn-unused-ignores]
 
+  # ─── Vulture — find dead code ─────────────────────────────────────────────
+  - repo: https://github.com/jendrikseipp/vulture
+    rev: v2.11
+    hooks:
+      - id: vulture
+        name: Vulture (dead code)
+        files: ^(src|laboratory/python|scripts)/.*\.py$
+        args: [--min-confidence=80, --exclude=tests/]
+
+  # ─── Interrogate — docstring coverage ─────────────────────────────────────
+  - repo: https://github.com/econchick/interrogate
+    rev: 1.7.0
+    hooks:
+      - id: interrogate
+        name: Interrogate (docstring coverage)
+        files: ^src/rmt_llm/.*\.py$
+        args: [--config=pyproject.toml, --fail-under=80, --quiet]
+
+  # ─── pyupgrade — upgrade Python syntax ────────────────────────────────────
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.17.0
+    hooks:
+      - id: pyupgrade
+        name: Pyupgrade
+        args: [--py310-plus]
+        files: ^(src|laboratory/python|scripts)/.*\.py$
+
+  # ─── Bandit — security linter ─────────────────────────────────────────────
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.9
+    hooks:
+      - id: bandit
+        name: Bandit (security)
+        files: ^src/rmt_llm/.*\.py$
+        args: [-ll, -q, --skip=B101]
+
+  # ─── nbstripout — strip Jupyter notebook outputs before commit ────────────
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.7.1
+    hooks:
+      - id: nbstripout
+        name: Nbstripout (strip notebook outputs)
+        files: \.ipynb$
+
+  # ─── check-jsonschema — validate GitHub Actions / workflow schemas ────────
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.29.2
+    hooks:
+      - id: check-github-workflows
+        name: Validate GitHub workflows
+        args: [--verbose]
+      - id: check-github-actions
+        name: Validate GitHub actions
+        args: [--verbose]
+      - id: check-readthedocs
+        name: Validate ReadTheDocs config
+        files: ^\.readthedocs\.ya?ml$
+
   # ─── Markdown lint ────────────────────────────────────────────────────────
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.14.0
@@ -251,5 +309,5 @@ ci:
     chore(deps): pre-commit autoupdate
   autoupdate_schedule: weekly
   autoupdate_branch: main
-  skip: [mypy, julia-formatter, go-mod-tidy, hadolint-docker, pip-audit, validate-cff]
+  skip: [mypy, julia-formatter, go-mod-tidy, hadolint-docker, pip-audit, validate-cff, vulture, interrogate, bandit, nbstripout, check-readthedocs]
   submodules: false

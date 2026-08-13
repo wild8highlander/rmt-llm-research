@@ -23,6 +23,14 @@
 [![GitHub stars](https://img.shields.io/github/stars/wild8highlander/rmt-llm-research?style=social)](https://github.com/wild8highlander/rmt-llm-research/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/wild8highlander/rmt-llm-research?style=social)](https://github.com/wild8highlander/rmt-llm-research/network/members)
 [![GitHub discussions](https://img.shields.io/github/discussions/wild8highlander/rmt-llm-research)](https://github.com/wild8highlander/rmt-llm-research/discussions)
+[![PyPI downloads](https://img.shields.io/pypi/dm/rmt-llm.svg?label=PyPI%20downloads&color=blue)](https://pypi.org/project/rmt-llm/)
+[![CodeFactor](https://www.codefactor.io/repository/github/wild8highlander/rmt-llm-research/badge)](https://www.codefactor.io/repository/github/wild8highlander/rmt-llm-research)
+[![Snyk security](https://snyk.io/test/github/wild8highlander/rmt-llm-research/badge.svg)](https://snyk.io/test/github/wild8highlander/rmt-llm-research)
+[![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-coming%20soon-yellow)](https://huggingface.co)
+[![Documentation](https://img.shields.io/badge/docs-MkDocs%20Material-526CFE.svg?logo=materialformkdocs&logoColor=white)](https://wild8highlander.github.io/rmt-llm-research/)
+[![Benchmark](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/benchmark.yml/badge.svg)](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/benchmark.yml)
+[![Property tests](https://img.shields.io/badge/property%20tests-hypothesis-1f6feb.svg)](https://github.com/HypothesisWorks/hypothesis)
+[![Benchmarks](https://img.shields.io/badge/benchmarks-pytest--benchmark-1f6feb.svg)](https://pytest-benchmark.readthedocs.io/)
 
 > **Spectral analysis of LLM activations through the lens of Random Matrix Theory** — detecting hallucinations, cognitive mode transitions, and the mathematical inevitability of autoregressive collapse.
 
@@ -57,9 +65,48 @@ See [`CHANGELOG.md`](./CHANGELOG.md) for the full history.
 
 ---
 
+## ⚡ Quick Start (60 seconds)
+
+```bash
+# 1. Clone + install
+git clone https://github.com/wild8highlander/rmt-llm-research.git
+cd rmt-llm-research
+pip install -e ".[dev]"
+
+# 2. Run tests
+pytest -v                              # 240+ tests, ~12 sec
+
+# 3. Train TinyGPT (optional, ~17 min on CPU)
+cd laboratory/python/lab_en
+python main.py                         # choose menu item 14
+
+# 4. Generate text from trained model
+python main.py                         # choose menu item 15
+#   weights: results/models/tiny_gpt_trained.npz
+#   bpe:     results/models/tiny_gpt_bpe.json
+#   prompt:  "def train("
+```
+
+For the **full walkthrough** (install options, Julia/Java/Rust, Docker,
+troubleshooting) see the [Quick Start guide](https://wild8highlander.github.io/rmt-llm-research/getting-started/quick-start/)
+in the docs.
+
+| Want to… | Run this |
+|----------|----------|
+| Run all Python tests | `make test` |
+| Run property-based tests | `make test-hypothesis` |
+| Run performance benchmarks | `make test-bench` |
+| Serve docs locally | `make docs-serve-mkdocs` |
+| Build Docker image | `make docker` |
+| Simulate full CI locally | `make ci` |
+| See all available targets | `make help` |
+
+---
+
 ## 📑 Table of Contents
 
 - [What's New in v1.6.0](#-whats-new-in-v160)
+- [Quick Start](#-quick-start-60-seconds)
 - [Overview](#-overview)
 - [Research Topics](#-research-topics)
 - [Repository Structure](#-repository-structure)
@@ -68,8 +115,11 @@ See [`CHANGELOG.md`](./CHANGELOG.md) for the full history.
 - [Documents](#-documents)
 - [Papers](#-papers)
 - [Key Results](#-key-results)
+- [TinyGPT vs. Alternatives](#-tinygpt-vs-alternatives)
 - [Getting Started](#-getting-started)
 - [Professional Engineering](#-professional-engineering)
+- [FAQ](#-faq)
+- [Roadmap](#-roadmap)
 - [Citation](#-citation)
 - [Contributors](#-contributors)
 - [License](#-license)
@@ -403,6 +453,241 @@ make test-all       # All 8 languages (slow — needs Julia, Rust, Go, Java, C++
 make ci             # Simulate the full CI pipeline locally
 make test-coverage  # Generate HTML coverage report at htmlcov/index.html
 ```
+
+---
+
+## 🆚 TinyGPT vs. Alternatives
+
+How does TinyGPT compare to other "small transformer" projects?
+
+| Feature | **TinyGPT (this repo)** | [minGPT](https://github.com/karpathy/minGPT) | [nanoGPT](https://github.com/karpathy/nanoGPT) | [PyTorch transformer](https://pytorch.org/docs/stable/generated/torch.nn.Transformer.html) |
+|---------|------------------------|----------------------------------------------|------------------------------------------------|-------------------------------------------------------------------------------------------|
+| Framework | **Pure NumPy** | PyTorch | PyTorch | PyTorch |
+| Dependencies | numpy only | torch | torch | torch |
+| Backprop | **Hand-written** (reverse-mode autodiff) | autograd | autograd | autograd |
+| BPE tokenizer | **Yes** (pure-Python, 150 LOC) | No (uses pre-tokenized data) | tiktoken (Rust-backed) | No |
+| Architecture | Pre-LN + MLP (GPT-2 style) | Pre-LN | Pre-LN | Encoder-Decoder (original Transformer) |
+| Default size | 2.5M params (12 layers, 128 hidden) | 1.4M params | 124M (GPT-2 small) | configurable |
+| Cross-language ports | **8 languages** (Python, Julia, Java, Rust, Go, C++, R, TS) | None | None | None |
+| Documentation | **MkDocs Material + 4 tutorials + API ref** | README only | README only | PyTorch docs |
+| Property-based tests | **Hypothesis** | None | None | None |
+| Performance benchmarks | **pytest-benchmark** | None | None | None |
+| GPU support | No (CPU only) | Yes | Yes | Yes |
+| Production-ready | No (pedagogical) | No (pedagogical) | Yes | Yes |
+| Lines of code (model + trainer) | ~1,500 | ~300 | ~600 | N/A |
+
+**When to use TinyGPT:**
+
+- You want to **understand** how transformers work (the autodiff is by hand)
+- You want to **port** the algorithm to a language without PyTorch support
+- You want to **verify** the math against an independent implementation
+- You want to **teach** transformer internals
+
+**When NOT to use TinyGPT:**
+
+- You need GPU acceleration (use nanoGPT)
+- You need to train a real LLM (use PyTorch + HuggingFace `transformers`)
+- You need a production-grade inference server (use vLLM)
+
+---
+
+## ❓ FAQ
+
+The full FAQ is at [`docs/getting-started/faq.md`](https://wild8highlander.github.io/rmt-llm-research/getting-started/faq/).
+Below are the most common questions.
+
+### General
+
+<details>
+<summary><b>What is this project?</b></summary>
+
+`rmt-llm-research` is a research program applying Random Matrix Theory (RMT)
+to the analysis of large language models (LLMs). It collects:
+
+1. **Pure-Python implementations** of every RMT formula (Marchenko-Pastur,
+   BBP, Tracy-Widom, NHSE, Caputo, Keating-Snaith, EP-surfaces, thermodynamics).
+2. **A pure-NumPy synthetic transformer (`TinyGPT`)** with hand-written
+   reverse-mode autodiff, BPE tokenizer, and Adam optimizer.
+3. **An 8-language laboratory** implementing the same interactive menu in
+   Python, Julia, Java, Rust, Go, C++, R, and a React web app.
+4. **Three 3D visualization suites** producing 8 identical visualizations each.
+</details>
+
+<details>
+<summary><b>Is this a real LLM?</b></summary>
+
+No. `TinyGPT` is a 2.5M-parameter synthetic transformer trained on the
+project's own source code. It is **not** a useful language model — its
+purpose is to be transparent enough to teach transformer internals, and to
+provide a test bed for the spectral diagnostics developed in the theoretical
+core.
+</details>
+
+<details>
+<summary><b>Who is this for?</b></summary>
+
+- **Researchers** studying LLM behavior through the lens of RMT
+- **Students** learning how transformers actually work (the autodiff is by hand)
+- **Engineers** porting numerical code across 8 languages
+- **Anyone curious** about the math behind hallucinations
+</details>
+
+### TinyGPT
+
+<details>
+<summary><b>Why NumPy and not PyTorch?</b></summary>
+
+Two reasons:
+
+1. **Pedagogical transparency.** The goal is for a reader to follow the
+   forward and backward passes by hand. PyTorch's autograd hides the math.
+2. **Cross-language portability.** The same NumPy code ports to Julia
+   `LinearAlgebra`, Rust `ndarray`, Go `gonum`, C++ Eigen, and R `matrix`
+   with minimal changes. PyTorch is Python-only.
+
+The trainer is intentionally non-idiomatic — please don't "improve" it by
+adding PyTorch; that defeats the point of the project. See
+[ADR-001](https://wild8highlander.github.io/rmt-llm-research/architecture/adr/#adr-001-numpy-only-no-pytorch).
+</details>
+
+<details>
+<summary><b>What is <code>match_rate</code>?</b></summary>
+
+`match_rate` is the **greedy next-token accuracy** on the held-out 10% of the
+corpus. After 30 epochs on the 512-token BPE vocab, the trained model reaches
+6.5% — which is 33× the random baseline ($1/512 \approx 0.2\%$).
+
+For comparison, v1 (byte-level, 256-token vocab, 6 layers) reached 32% —
+which is 82× its random baseline ($1/256 \approx 0.39\%$). Both lifts are
+significant; v2's task is harder because the vocab is larger.
+</details>
+
+<details>
+<summary><b>Why is <code>match_rate</code> only 6.5%?</b></summary>
+
+Three reasons:
+
+1. **Small model.** 2.5M params is tiny by modern standards.
+2. **Small corpus.** The training data is the project's own source code
+   (~2MB), much smaller than GPT-2's WebText (40GB).
+3. **Small context.** `max_seq_len=32` means the model sees only 32 tokens
+   of context — not enough for long-range structure.
+
+6.5% on a 512-token BPE vocab is 33× the random baseline.
+</details>
+
+<details>
+<summary><b>How long does training take?</b></summary>
+
+On a single CPU core (no GPU): **~17 minutes** for 30 epochs on a 2.5M-param
+model with `seq_len=32`, `stride=64`, batch size 1.
+
+The trainer supports checkpoint recovery — see `scripts/train_v2_chunk.py`
+for an example of running 5 epochs at a time and resuming from a checkpoint.
+</details>
+
+<details>
+<summary><b>The model output looks like gibberish. Is something wrong?</b></summary>
+
+Probably not. With only 30 epochs on a 2MB corpus, the model has learned
+*token-level* structure (real Python keywords like `def`, `return`, `import`,
+`Float`, `String`) but not *sentence-level* structure. Greedy decoding
+(temperature=0) often gets stuck in repetition loops — this is expected for
+an overfit small model. Try temperature=0.7 or 1.0 for more varied output.
+</details>
+
+### Theory
+
+<details>
+<summary><b>What is the Marchenko-Pastur law?</b></summary>
+
+The Marchenko-Pastur (MP) law describes the asymptotic eigenvalue density of
+a large random covariance matrix. For aspect ratio $q = N/T \leq 1$, the
+eigenvalue support is $\lambda_{\pm} = \sigma^2 (1 \pm \sqrt{q})^2$.
+
+The MP law is the **null hypothesis** for "what LLM activation spectra would
+look like if the model were just doing random projections". Deviations from
+MP — particularly the BBP transition (a spike outside the bulk) — are the
+spectral signature of structured (factual) generation.
+</details>
+
+<details>
+<summary><b>What is the "utility trap"?</b></summary>
+
+RLHF optimization creates an artificial drift in the Fokker-Planck equation,
+forcing the model to "lie beautifully once" rather than risk a self-correction
+cycle. The Caputo memory parameter $\beta \approx 0.5$ makes
+$\langle T_{\text{crit}} \rangle \propto (\mu_{\text{eff}})^{-2}$ — even
+small RLHF pressure quadratically accelerates hallucination onset.
+</details>
+
+### Engineering
+
+<details>
+<summary><b>How do I run the full CI pipeline locally?</b></summary>
+
+```bash
+make install-dev       # one-time
+make ci                # runs lint + tests + coverage + cross-checks
+```
+
+This mimics what `.github/workflows/ci.yml` does on every push.
+</details>
+
+<details>
+<summary><b>Can I use this in my commercial product?</b></summary>
+
+**No.** The project is under a Proprietary All-Rights-Reserved license.
+All rights belong exclusively to Iskhak Hamzatovich Isaev. See
+[`LICENSE`](./LICENSE) for full terms. For academic collaboration inquiries,
+please open a Discussion or contact the author directly.
+</details>
+
+<details>
+<summary><b>How do I report a bug?</b></summary>
+
+[Open an issue](https://github.com/wild8highlander/rmt-llm-research/issues/new?template=bug_report.yml)
+using the bug report template. Please include:
+
+- OS and Python version
+- Output of `pip freeze | grep -E 'numpy|rmt-llm'`
+- The exact command you ran
+- The full error traceback
+- (If possible) a minimal reproducer
+</details>
+
+> 💡 **More questions?** See the [full FAQ](https://wild8highlander.github.io/rmt-llm-research/getting-started/faq/)
+> or [open a Discussion](https://github.com/wild8highlander/rmt-llm-research/discussions).
+
+---
+
+## 🗺️ Roadmap
+
+The full roadmap is at [`docs/ROADMAP.md`](./docs/ROADMAP.md). Highlights:
+
+| Status | Item |
+|--------|------|
+| ✅ | Pre-LN + MLP transformer block (GPT-2 style) |
+| ✅ | BPE tokenizer (256 merges, pure-Python + NumPy) |
+| ✅ | 30-epoch training (loss 6.23 → 0.0085, match_rate 0% → 6.5%) |
+| ✅ | Production-grade engineering infrastructure (CI, pre-commit, Docker) |
+| ✅ | MkDocs Material documentation + 4 tutorial notebooks |
+| ✅ | Hypothesis property-based tests + pytest-benchmark |
+| 🚧 | Expand training corpus (~2MB → 10MB mixed Python + Russian) |
+| 🚧 | Russian lab training (sync `lab_ru` to v2 architecture) |
+| 🚧 | Top-k / top-p (nucleus) sampling |
+| 📋 | Mixed-precision training (float16 forward, float32 master weights) |
+| 📋 | Gradient checkpointing (trade compute for memory) |
+| 📋 | Real LLM activation analysis (extract from GPT-2) |
+| 📋 | Web playground for 3D visualizations |
+| 📋 | ArXiv submission |
+| 💡 | JIT compilation with Numba (proposal) |
+| 💡 | ONNX export (proposal) |
+| 💡 | RLHF sandbox (proposal) |
+
+See the [full roadmap](./docs/ROADMAP.md) for details, or
+[open a Discussion](https://github.com/wild8highlander/rmt-llm-research/discussions)
+to influence priorities.
 
 ---
 

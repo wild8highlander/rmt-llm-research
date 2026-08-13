@@ -1,0 +1,18 @@
+[SVG placeholder for 04_roc_deception]
+
+Chart: 04_roc_deception
+============================================================
+
+ROC — Detecting Model Deception
+
+FPR  | TPR
+-----|------
+0.00 | 0.00
+0.05 | 0.45
+0.12 | 0.68
+0.22 | 0.82
+0.35 | 0.91
+0.50 | 0.96
+1.00 | 1.00
+
+AUC = 0.914

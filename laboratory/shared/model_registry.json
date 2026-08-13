@@ -1,0 +1,193 @@
+{
+  "version": "1.0.0",
+  "description": "Registry of synthetic neural networks for laboratory scenarios. Hybrid approach: local tiny-GPT for offline fast tests + downloadable small models from HuggingFace / ONNX Model Zoo for richer experiments.",
+  "models": [
+    {
+      "id": "tiny-gpt-local",
+      "name": "TinyGPT Local (RMT-Lab)",
+      "source": "local",
+      "url": "laboratory://tiny-gpt-local",
+      "description": "Built-in synthetic tiny-GPT (~2M params, 6 layers, hidden 64). Generated locally — no external download. Used for fast offline scenario testing.",
+      "format": "pytorch",
+      "params_count": 2000000,
+      "license": "Proprietary — Isaev 2026",
+      "languages_supported": ["python", "julia", "java", "rust", "go", "cpp", "r", "webapp"]
+    },
+    {
+      "id": "gpt2-small",
+      "name": "GPT-2 Small (124M)",
+      "source": "huggingface",
+      "url": "https://huggingface.co/openai-community/gpt2/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/openai-community/gpt2/resolve/main/config.json",
+      "tokenizer_url": "https://huggingface.co/openai-community/gpt2/resolve/main/vocab.json",
+      "description": "OpenAI GPT-2 small — 124M parameters. Useful for realistic hallucination experiments.",
+      "format": "pytorch",
+      "params_count": 124439808,
+      "license": "MIT",
+      "languages_supported": ["python", "julia", "webapp"]
+    },
+    {
+      "id": "dialogpt-small",
+      "name": "DialoGPT Small (117M)",
+      "source": "huggingface",
+      "url": "https://huggingface.co/microsoft/DialoGPT-small/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/microsoft/DialoGPT-small/resolve/main/config.json",
+      "description": "Microsoft DialoGPT-small — conversational model, useful for deception scenarios.",
+      "format": "pytorch",
+      "params_count": 124439808,
+      "license": "MIT",
+      "languages_supported": ["python", "julia"]
+    },
+    {
+      "id": "tinyllama-1.1b",
+      "name": "TinyLlama-1.1B",
+      "source": "huggingface",
+      "url": "https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0/resolve/main/config.json",
+      "description": "TinyLlama 1.1B chat model — small enough for local research, large enough for realistic reasoning traces.",
+      "format": "pytorch",
+      "params_count": 1100000000,
+      "license": "Apache-2.0",
+      "languages_supported": ["python", "julia"]
+    },
+    {
+      "id": "bert-base-uncased",
+      "name": "BERT Base Uncased (110M)",
+      "source": "huggingface",
+      "url": "https://huggingface.co/bert-base-uncased/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/bert-base-uncased/resolve/main/config.json",
+      "description": "BERT base — encoder model, useful for spectral analysis of activations without autoregressive collapse.",
+      "format": "pytorch",
+      "params_count": 109482240,
+      "license": "Apache-2.0",
+      "languages_supported": ["python"]
+    },
+    {
+      "id": "squeezenet-v1",
+      "name": "SqueezeNet 1.1 (ONNX)",
+      "source": "onnx-model-zoo",
+      "url": "https://github.com/onnx/models/raw/main/Computer_Vision/squeezenet1.1_Opset18/model/squeezenet1.1-opset18.onnx",
+      "description": "SqueezeNet in ONNX format — for cross-language experiments (Java, Rust, Go, C++) via ONNX runtime.",
+      "format": "onnx",
+      "params_count": 1235496,
+      "license": "BSD-3-Clause",
+      "languages_supported": ["python", "java", "rust", "go", "cpp"]
+    },
+    {
+      "id": "mnist-mlp",
+      "name": "MNIST MLP (Keras.js)",
+      "source": "keras-js",
+      "url": "https://transcranial.github.io/keras-js-demos-data/mnist_mlp.bin",
+      "description": "Small MLP trained on MNIST — runs entirely in browser via TensorFlow.js / Keras.js. For webapp-only scenarios.",
+      "format": "keras-js",
+      "params_count": 559146,
+      "license": "MIT",
+      "languages_supported": ["webapp"]
+    },
+    {
+      "id": "distilgpt2",
+      "name": "DistilGPT-2 (82M)",
+      "source": "huggingface",
+      "url": "https://huggingface.co/distilbert/distilgpt2/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/distilbert/distilgpt2/resolve/main/config.json",
+      "tokenizer_url": "https://huggingface.co/distilbert/distilgpt2/resolve/main/vocab.json",
+      "description": "Distilled GPT-2 — 82M params, 6 layers, 768 hidden. Faster and lighter than GPT-2 small while preserving ~95% perplexity. Ideal for high-throughput spectral sweeps and 3D loss-landscape probing.",
+      "format": "pytorch",
+      "params_count": 81912576,
+      "license": "Apache-2.0",
+      "languages_supported": ["python", "julia", "webapp"]
+    },
+    {
+      "id": "phi-1-5",
+      "name": "Phi-1.5 (1.3B)",
+      "source": "huggingface",
+      "url": "https://huggingface.co/microsoft/phi-1_5/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/microsoft/phi-1_5/resolve/main/config.json",
+      "description": "Microsoft Phi-1.5 — 1.3B params, textbook-quality synthetic training data. Strong reasoning on small footprint, suitable for deception-planning and self-preservation scenarios where richer hidden traces are needed.",
+      "format": "pytorch",
+      "params_count": 1300000000,
+      "license": "MIT",
+      "languages_supported": ["python", "julia"]
+    },
+    {
+      "id": "qwen2-0-5b",
+      "name": "Qwen2-0.5B",
+      "source": "huggingface",
+      "url": "https://huggingface.co/Qwen/Qwen2-0.5B/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/Qwen/Qwen2-0.5B/resolve/main/config.json",
+      "tokenizer_url": "https://huggingface.co/Qwen/Qwen2-0.5B/resolve/main/tokenizer.json",
+      "description": "Alibaba Qwen2-0.5B — 0.5B params, 24 layers, 896 hidden. Excellent multilingual support (incl. RU/EN bilingual) makes it the reference model for cross-language scenario validation.",
+      "format": "pytorch",
+      "params_count": 494032768,
+      "license": "Apache-2.0",
+      "languages_supported": ["python", "julia", "rust"]
+    },
+    {
+      "id": "opt-125m",
+      "name": "OPT-125M (Meta)",
+      "source": "huggingface",
+      "url": "https://huggingface.co/facebook/opt-125m/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/facebook/opt-125m/resolve/main/config.json",
+      "description": "Meta OPT-125M — 12 layers, 768 hidden, trained on 180B tokens with full open-source transparency. Reference model for reproducible RMT spectral studies because all training-data statistics are public.",
+      "format": "pytorch",
+      "params_count": 125237760,
+      "license": "MIT",
+      "languages_supported": ["python", "julia", "java"]
+    },
+    {
+      "id": "pythia-70m",
+      "name": "Pythia-70M (EleutherAI)",
+      "source": "huggingface",
+      "url": "https://huggingface.co/EleutherAI/pythia-70m/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/EleutherAI/pythia-70m/resolve/main/config.json",
+      "description": "EleutherAI Pythia-70M — smallest model in the Pythia suite, designed for scaling-law research with 154 checkpoints across training. Used to verify RMT scaling predictions and to compute longitudinal 3D loss-landscape evolution.",
+      "format": "pytorch",
+      "params_count": 70421504,
+      "license": "Apache-2.0",
+      "languages_supported": ["python", "julia"]
+    },
+    {
+      "id": "bloomz-560m",
+      "name": "BLOOMZ-560M (multilingual)",
+      "source": "huggingface",
+      "url": "https://huggingface.co/bigscience/bloomz-560m/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/bigscience/bloomz-560m/resolve/main/config.json",
+      "description": "BigScience BLOOMZ-560M — multilingual instruction-tuned (59 languages including Russian). Reference model for the RU-version of the lab and for cross-lingual deception transfer experiments.",
+      "format": "pytorch",
+      "params_count": 559836480,
+      "license": "Apache-2.0",
+      "languages_supported": ["python", "julia"]
+    },
+    {
+      "id": "falcon-rw-1b",
+      "name": "Falcon-RW-1B (RefinedWeb)",
+      "source": "huggingface",
+      "url": "https://huggingface.co/tiiuae/falcon-rw-1b/resolve/main/pytorch_model.bin",
+      "config_url": "https://huggingface.co/tiiuae/falcon-rw-1b/resolve/main/config.json",
+      "description": "TII Falcon-RW-1B — 1B params, trained only on RefinedWeb filtered web data (no curated corpora). Provides a clean baseline for measuring the effect of training-data curation on deception and hallucination rates via RMT spectral signatures.",
+      "format": "pytorch",
+      "params_count": 1310000000,
+      "license": "Apache-2.0",
+      "languages_supported": ["python", "julia", "rust"]
+    }
+  ],
+  "download_mirrors": {
+    "huggingface_base": "https://huggingface.co",
+    "onnx_models_base": "https://github.com/onnx/models",
+    "keras_js_demos": "https://transcranial.github.io/keras-js-demos-data"
+  },
+  "verification": {
+    "sha256_required": true,
+    "signature_required": false,
+    "checksums": {
+      "tiny-gpt-local": "generated-locally-no-checksum",
+      "distilgpt2": "verify-on-huggingface",
+      "phi-1-5": "verify-on-huggingface",
+      "qwen2-0-5b": "verify-on-huggingface",
+      "opt-125m": "verify-on-huggingface",
+      "pythia-70m": "verify-on-huggingface",
+      "bloomz-560m": "verify-on-huggingface",
+      "falcon-rw-1b": "verify-on-huggingface"
+    }
+  }
+}

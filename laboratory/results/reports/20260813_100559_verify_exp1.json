@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-08-13T10:05:59.220352",
+  "results": {
+    "experiment": "spectral_signature",
+    "config": {
+      "vocab_size": 128,
+      "hidden_dim": 32,
+      "n_layers": 4,
+      "n_heads": 4,
+      "max_seq_len": 128,
+      "seed": 42
+    },
+    "params_count": 28928,
+    "spectral": {
+      "layers": [
+        {
+          "layer": 0,
+          "T": 128,
+          "H": 32,
+          "q": 0.25,
+          "lambda_max": 0.0019426177877866612,
+          "lambda_min": 0.00017214117106267862,
+          "lambda_mean": 0.0008034405473590625,
+          "mp_upper": 0.0018077412315578906,
+          "mp_lower": 0.00020086013683976562,
+          "signal_detected": true,
+          "tw_fluctuation": 10.743918298641182,
+          "spectral_gap": 0.0017704766167239826
+        },
+        {
+          "layer": 1,
+          "T": 128,
+          "H": 32,
+          "q": 0.25,
+          "lambda_max": 0.0031484040484318424,
+          "lambda_min": 0.0001792146353752796,
+          "lambda_mean": 0.0008575601758135612,
+          "mp_upper": 0.0019295103955805127,
+          "mp_lower": 0.0002143900439533903,
+          "signal_detected": true,
+          "tw_fluctuation": 90.9664370881942,
+          "spectral_gap": 0.0029691894130565626
+        },
+        {
+          "layer": 2,
+          "T": 128,
+          "H": 32,
+          "q": 0.25,
+          "lambda_max": 0.006528201031855349,
+          "lambda_min": 0.000179372431285999,
+          "lambda_mean": 0.000983737511182114,
+          "mp_upper": 0.0022134094001597564,
+          "mp_lower": 0.0002459343777955285,
+          "signal_detected": true,
+          "tw_fluctuation": 280.7117358945524,
+          "spectral_gap": 0.00634882860056935
+        },
+        {
+          "layer": 3,
+          "T": 128,
+          "H": 32,
+          "q": 0.25,
+          "lambda_max": 0.012519393000410352,
+          "lambda_min": 0.00017354786802813743,
+          "lambda_mean": 0.0011861098952179378,
+          "mp_upper": 0.00266874726424036,
+          "mp_lower": 0.00029652747380448446,
+          "signal_detected": true,
+          "tw_fluctuation": 531.5201649161194,
+          "spectral_gap": 0.012345845132382216
+        }
+      ]
+    },
+    "metrics": {
+      "n_layers_analyzed": 4,
+      "max_lambda_max": 0.012519393000410352,
+      "min_lambda_min": 0.00017214117106267862,
+      "mean_spectral_gap": 0.005858584940683028
+    },
+    "experiment_name": "Spectral Signature",
+    "experiment_description": "Compute spectral signature of TinyGPT hidden activations.",
+    "elapsed_seconds": 0.008923938999942038,
+    "parameters": {
+      "temperature": 0.7,
+      "max_tokens": 64,
+      "seed": 42,
+      "n_layers": 4,
+      "hidden_dim": 32,
+      "n_heads": 4,
+      "vocab_size": 128,
+      "context_window": 128
+    }
+  },
+  "logs": []
+}

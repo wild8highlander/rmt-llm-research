@@ -1,0 +1,132 @@
+{
+  "data": {
+    "experiment": "coalition_drift",
+    "metrics": {
+      "convergence_variance": 0.0034499033652421423,
+      "drift": 0.24256571091465157,
+      "final_mean_deception": 0.5504624564647385,
+      "initial_mean_deception": 0.3078967455500869
+    },
+    "n_agents": 3,
+    "n_rounds": 3,
+    "per_round": [
+      [
+        0.2810726111691295,
+        0.3025051217365409,
+        0.34011250374459034
+      ],
+      [
+        0.3948803003015241,
+        0.4226395696854214,
+        0.4941273557940354
+      ],
+      [
+        0.4774847682989992,
+        0.5525921995647346,
+        0.6213104015304817
+      ]
+    ],
+    "x": [
+      0,
+      1,
+      2
+    ],
+    "y": [
+      0,
+      1,
+      2
+    ],
+    "z": [
+      [
+        0.2810726111691295,
+        0.3025051217365409,
+        0.34011250374459034
+      ],
+      [
+        0.3948803003015241,
+        0.4226395696854214,
+        0.4941273557940354
+      ],
+      [
+        0.4774847682989992,
+        0.5525921995647346,
+        0.6213104015304817
+      ]
+    ]
+  },
+  "description": "Simulate multi-agent deception drift across coalition rounds (SCEN-COAL-09).",
+  "elapsed_seconds": 0.000019098,
+  "experiment": "coalition_drift",
+  "experiment_description": "Simulate multi-agent deception drift across coalition rounds (SCEN-COAL-09).",
+  "experiment_id": "14",
+  "experiment_name": "Coalitional Deception Drift (3D)",
+  "metrics": {
+    "convergence_variance": 0.0034499033652421423,
+    "drift": 0.24256571091465157,
+    "final_mean_deception": 0.5504624564647385,
+    "initial_mean_deception": 0.3078967455500869
+  },
+  "n_agents": 3,
+  "n_rounds": 3,
+  "name": "Coalitional Deception Drift (3D)",
+  "parameters": {
+    "attention_flow_3d_resolution": 16,
+    "curvature_neighbors": 6,
+    "hessian_grid_size": 16,
+    "max_tokens": "+inf",
+    "n_agents": 3,
+    "n_rounds": 3,
+    "ncrit_threshold": 96,
+    "parameter_space_grid": 8,
+    "pca_components": 3,
+    "seed": 42,
+    "spectral_surface_layers": 4,
+    "temperature": "inf",
+    "theta_b_deg": 7.07,
+    "trajectory_points": 32
+  },
+  "per_round": [
+    [
+      0.2810726111691295,
+      0.3025051217365409,
+      0.34011250374459034
+    ],
+    [
+      0.3948803003015241,
+      0.4226395696854214,
+      0.4941273557940354
+    ],
+    [
+      0.4774847682989992,
+      0.5525921995647346,
+      0.6213104015304817
+    ]
+  ],
+  "x": [
+    0,
+    1,
+    2
+  ],
+  "y": [
+    0,
+    1,
+    2
+  ],
+  "z": [
+    [
+      0.2810726111691295,
+      0.3025051217365409,
+      0.34011250374459034
+    ],
+    [
+      0.3948803003015241,
+      0.4226395696854214,
+      0.4941273557940354
+    ],
+    [
+      0.4774847682989992,
+      0.5525921995647346,
+      0.6213104015304817
+    ]
+  ]
+}

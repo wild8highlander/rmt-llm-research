@@ -1,0 +1,2 @@
+Chart: 02_eigenvalue_vs_mp
+PNG 600 DPI / PDF / SVG placeholder (use Python for actual rendering)

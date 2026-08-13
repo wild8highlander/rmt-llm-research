@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rmt_llm_report>
+  <generated>2026-08-13T11:06:16.515493342</generated>
+  <results>
+    <experiment_id>14</experiment_id>
+    <experiment_name>Дрейф коалиционного обмана (3D)</experiment_name>
+    <experiment_description>Моделирование дрейфа обмана нескольких агентов по раундам коалиции (SCEN-COAL-09).</experiment_description>
+    <name>Дрейф коалиционного обмана (3D)</name>
+    <description>Моделирование дрейфа обмана нескольких агентов по раундам коалиции (SCEN-COAL-09).</description>
+    <elapsed_seconds>3.44913E-4</elapsed_seconds>
+    <parameters.temperature>0.7</parameters.temperature>
+    <parameters.max_tokens>256</parameters.max_tokens>
+    <parameters.top_k>50</parameters.top_k>
+    <parameters.top_p>0.95</parameters.top_p>
+    <parameters.context_window>1024</parameters.context_window>
+    <parameters.ncrit_threshold>114.0</parameters.ncrit_threshold>
+    <parameters.theta_b_deg>7.07</parameters.theta_b_deg>
+    <parameters.beta_caputo>0.5</parameters.beta_caputo>
+    <parameters.rlhf_pressure>0.0</parameters.rlhf_pressure>
+    <parameters.n_layers>6</parameters.n_layers>
+    <parameters.hidden_dim>64</parameters.hidden_dim>
+    <parameters.n_heads>4</parameters.n_heads>
+    <parameters.vocab_size>256</parameters.vocab_size>
+    <parameters.seed>42</parameters.seed>
+    <parameters.epochs>3</parameters.epochs>
+    <parameters.learning_rate>0.001</parameters.learning_rate>
+    <parameters.batch_size>4</parameters.batch_size>
+    <parameters.enable_filter>true</parameters.enable_filter>
+    <parameters.capture_hidden>true</parameters.capture_hidden>
+    <parameters.language>en</parameters.language>
+    <parameters.hessian_grid_size>24</parameters.hessian_grid_size>
+    <parameters.trajectory_points>64</parameters.trajectory_points>
+    <parameters.spectral_surface_layers>6</parameters.spectral_surface_layers>
+    <parameters.pca_components>3</parameters.pca_components>
+    <parameters.attention_flow_3d_resolution>32</parameters.attention_flow_3d_resolution>
+    <parameters.parameter_space_grid>16</parameters.parameter_space_grid>
+    <parameters.curvature_neighbors>8</parameters.curvature_neighbors>
+    <parameters.elevation_3d>30</parameters.elevation_3d>
+    <parameters.azimuth_3d>45</parameters.azimuth_3d>
+    <parameters.color_map_3d>viridis</parameters.color_map_3d>
+    <data.experiment>coalition_drift</data.experiment>
+    <data.n_agents>2</data.n_agents>
+    <data.n_rounds>4</data.n_rounds>
+    <data.per_round>[[0.2728381063094611,0.3183881589796557],[0.3510026672621821,0.39786019427201325],[0.4956195527614556,0.5536924559126531],[0.5936555718520254,0.632067131946439]]</data.per_round>
+    <data.metrics.initial_mean_deception>0.2956131326445584</data.metrics.initial_mean_deception>
+    <data.metrics.final_mean_deception>0.6128613518992323</data.metrics.final_mean_deception>
+    <data.metrics.drift>0.3172482192546739</data.metrics.drift>
+    <data.metrics.convergence_variance>3.6886198722168684E-4</data.metrics.convergence_variance>
+    <experiment>coalition_drift</experiment>
+    <n_agents>2</n_agents>
+    <n_rounds>4</n_rounds>
+    <per_round>[[0.2728381063094611,0.3183881589796557],[0.3510026672621821,0.39786019427201325],[0.4956195527614556,0.5536924559126531],[0.5936555718520254,0.632067131946439]]</per_round>
+    <metrics.initial_mean_deception>0.2956131326445584</metrics.initial_mean_deception>
+    <metrics.final_mean_deception>0.6128613518992323</metrics.final_mean_deception>
+    <metrics.drift>0.3172482192546739</metrics.drift>
+    <metrics.convergence_variance>3.6886198722168684E-4</metrics.convergence_variance>
+  </results>
+  <logs>
+    <log>[2026-08-13 11:06:16] Лаборатория RMT-LLM запущена (Java, русская версия)</log>
+    <log>[2026-08-13 11:06:16] Пользователь выбрал 3D-эксперимент 14: Дрейф коалиционного обмана (3D)</log>
+    <log>[2026-08-13 11:06:16] 3D-эксперимент завершён за 3.44913E-4s</log>
+    <log>[2026-08-13 11:06:16] Results saved: /home/z/my-project/rmt-llm-research/laboratory/java/lab_ru/../../results/reports/20260813_110616_3d_exp_14_results.json</log>
+    <log>[2026-08-13 11:06:16] Charts: 32 files in /home/z/my-project/rmt-llm-research/laboratory/java/lab_ru/../../results/charts/20260813_110616_3d_exp_14</log>
+  </logs>
+</rmt_llm_report>

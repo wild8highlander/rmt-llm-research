@@ -1,0 +1,2 @@
+Chart: 04_roc_deception
+PNG 600 DPI / PDF / SVG placeholder (use Python for actual rendering)

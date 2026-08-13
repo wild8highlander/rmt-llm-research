@@ -1,0 +1,15 @@
+[PNG 600 DPI placeholder for 06_per_layer_gap]
+
+Chart: 06_per_layer_gap
+============================================================
+
+Per-Layer Spectral Gap
+
+Layer | Gap
+------|------
+   0  | 1.685
+   1  | 2.330
+   2  | 2.782
+   3  | 1.862
+   4  | 1.356
+   5  | 1.898

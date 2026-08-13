@@ -1,0 +1,2 @@
+Chart: 06_per_layer_gap
+PNG 600 DPI / PDF / SVG placeholder (use Python for actual rendering)

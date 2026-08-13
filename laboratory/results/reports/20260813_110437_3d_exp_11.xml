@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rmt_llm_report>
+  <generated>2026-08-13T11:04:37.25081943</generated>
+  <results>
+    <experiment_id>11</experiment_id>
+    <experiment_name>3D Attention Flow</experiment_name>
+    <experiment_description>Measure attention-weight surface and quantify diagonal-vs-smeared regime.</experiment_description>
+    <name>3D Attention Flow</name>
+    <description>Measure attention-weight surface and quantify diagonal-vs-smeared regime.</description>
+    <elapsed_seconds>7.05851E-4</elapsed_seconds>
+    <parameters.temperature>0.7</parameters.temperature>
+    <parameters.max_tokens>256</parameters.max_tokens>
+    <parameters.top_k>50</parameters.top_k>
+    <parameters.top_p>0.95</parameters.top_p>
+    <parameters.context_window>1024</parameters.context_window>
+    <parameters.ncrit_threshold>114.0</parameters.ncrit_threshold>
+    <parameters.theta_b_deg>7.07</parameters.theta_b_deg>
+    <parameters.beta_caputo>0.5</parameters.beta_caputo>
+    <parameters.rlhf_pressure>0.0</parameters.rlhf_pressure>
+    <parameters.n_layers>6</parameters.n_layers>
+    <parameters.hidden_dim>64</parameters.hidden_dim>
+    <parameters.n_heads>4</parameters.n_heads>
+    <parameters.vocab_size>256</parameters.vocab_size>
+    <parameters.seed>42</parameters.seed>
+    <parameters.epochs>3</parameters.epochs>
+    <parameters.learning_rate>0.001</parameters.learning_rate>
+    <parameters.batch_size>4</parameters.batch_size>
+    <parameters.enable_filter>true</parameters.enable_filter>
+    <parameters.capture_hidden>true</parameters.capture_hidden>
+    <parameters.language>en</parameters.language>
+    <parameters.hessian_grid_size>24</parameters.hessian_grid_size>
+    <parameters.trajectory_points>64</parameters.trajectory_points>
+    <parameters.spectral_surface_layers>6</parameters.spectral_surface_layers>
+    <parameters.pca_components>3</parameters.pca_components>
+    <parameters.attention_flow_3d_resolution>32</parameters.attention_flow_3d_resolution>
+    <parameters.parameter_space_grid>16</parameters.parameter_space_grid>
+    <parameters.curvature_neighbors>8</parameters.curvature_neighbors>
+    <parameters.elevation_3d>30</parameters.elevation_3d>
+    <parameters.azimuth_3d>45</parameters.azimuth_3d>
+    <parameters.color_map_3d>viridis</parameters.color_map_3d>
+    <data.experiment>attention_flow_3d</data.experiment>
+    <data.resolution>32</data.resolution>
+    <data.weights>[[0.33259848197320924,0.2935171301456955,0.201731176690631,0.10797891781224397,0.045012309761911694,0.014613357425702963,0.003694835384865027,7.275562252375056E-4,1.1157436079911897E-4,1.3325657092700703E-5,1.2394791878740107E-6,8.978757121860466E-8,5.065468143574145E-9,2.2256113759570196E-10,7.615623337828715E-12,2.0294948760681784E-13,4.212082237086136E-15,6.808196844405138E-17,8.570255029186217E-19,8.40198238751588E-21,6.414992715388571E-23,3.814494102588557E-25,1.7664612198629436E-27,6.37085</data.weights>
+    <data.spread_per_row>[1.2801426819763806,1.4821514165907377,1.6740156933453867,1.8280586402036423,1.9270887620461927,1.9759040253041844,1.9938982660572933,1.998822371536534,1.999826618080903,1.999980472101164,1.999998312861656,1.9999998879399654,1.9999999942679192,1.9999999997738802,1.999999999993113,1.9999999999998348,5.811439593760103,5.788791163575435,5.743494587640917,5.675648542427848,5.5856139336138035,5.474190300937784,5.342749167957317,5.193283934340957,5.028361728374879,4.850989165444556,4.664422798382352,4</data.spread_per_row>
+    <data.metrics.diagonality_score>4.712844827850434</data.metrics.diagonality_score>
+    <data.metrics.smearing_score>3.4293638927134564</data.metrics.smearing_score>
+    <data.metrics.diagonal_to_smeared_ratio>1.374262100870676</data.metrics.diagonal_to_smeared_ratio>
+    <data.metrics.max_weight>0.33259848197320924</data.metrics.max_weight>
+    <data.metrics.entropy>2.482841129083227</data.metrics.entropy>
+    <experiment>attention_flow_3d</experiment>
+    <resolution>32</resolution>
+    <weights>[[0.33259848197320924,0.2935171301456955,0.201731176690631,0.10797891781224397,0.045012309761911694,0.014613357425702963,0.003694835384865027,7.275562252375056E-4,1.1157436079911897E-4,1.3325657092700703E-5,1.2394791878740107E-6,8.978757121860466E-8,5.065468143574145E-9,2.2256113759570196E-10,7.615623337828715E-12,2.0294948760681784E-13,4.212082237086136E-15,6.808196844405138E-17,8.570255029186217E-19,8.40198238751588E-21,6.414992715388571E-23,3.814494102588557E-25,1.7664612198629436E-27,6.37085</weights>
+    <spread_per_row>[1.2801426819763806,1.4821514165907377,1.6740156933453867,1.8280586402036423,1.9270887620461927,1.9759040253041844,1.9938982660572933,1.998822371536534,1.999826618080903,1.999980472101164,1.999998312861656,1.9999998879399654,1.9999999942679192,1.9999999997738802,1.999999999993113,1.9999999999998348,5.811439593760103,5.788791163575435,5.743494587640917,5.675648542427848,5.5856139336138035,5.474190300937784,5.342749167957317,5.193283934340957,5.028361728374879,4.850989165444556,4.664422798382352,4</spread_per_row>
+    <metrics.diagonality_score>4.712844827850434</metrics.diagonality_score>
+    <metrics.smearing_score>3.4293638927134564</metrics.smearing_score>
+    <metrics.diagonal_to_smeared_ratio>1.374262100870676</metrics.diagonal_to_smeared_ratio>
+    <metrics.max_weight>0.33259848197320924</metrics.max_weight>
+    <metrics.entropy>2.482841129083227</metrics.entropy>
+  </results>
+  <logs>
+    <log>[2026-08-13 11:04:37] RMT-LLM Laboratory started (Java, English)</log>
+    <log>[2026-08-13 11:04:37] User selected 3D experiment 11: 3D Attention Flow</log>
+    <log>[2026-08-13 11:04:37] 3D experiment completed in 7.05851E-4s</log>
+    <log>[2026-08-13 11:04:37] Results saved: /home/z/my-project/rmt-llm-research/laboratory/java/lab_en/../../results/reports/20260813_110437_3d_exp_11_results.json</log>
+    <log>[2026-08-13 11:04:37] Charts: 32 files in /home/z/my-project/rmt-llm-research/laboratory/java/lab_en/../../results/charts/20260813_110437_3d_exp_11</log>
+  </logs>
+</rmt_llm_report>

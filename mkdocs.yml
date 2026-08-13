@@ -1,0 +1,225 @@
+# =============================================================================
+# MkDocs Material configuration — https://squidfunk.github.io/mkdocs-material/
+# =============================================================================
+# Build:   mkdocs build
+# Serve:   mkdocs serve
+# Deploy:  gh-deploy (CI does this on push to main)
+# =============================================================================
+
+site_name: RMT-LLM Research
+site_description: >-
+  Spectral analysis of LLM activations through the lens of Random Matrix Theory.
+  Detecting hallucinations, cognitive mode transitions, and the mathematical
+  inevitability of autoregressive collapse.
+site_url: https://wild8highlander.github.io/rmt-llm-research/
+site_author: Iskhak Hamzatovich Isaev
+repo_name: wild8highlander/rmt-llm-research
+repo_url: https://github.com/wild8highlander/rmt-llm-research
+edit_uri: edit/main/docs/
+
+docs_dir: docs
+site_dir: site-build
+
+# ─── Theme ───────────────────────────────────────────────────────────────────
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.action.edit
+    - content.action.view
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    logo: material/atom-variant
+    repo: fontawesome/brands/github
+  favicon: assets/favicon.png
+
+# ─── Plugins ─────────────────────────────────────────────────────────────────
+plugins:
+  - search:
+      separator: '[\s\-\.]+'
+      lang:
+        - en
+        - ru
+  - tags:
+      tags_file: tags.md
+  - tags:
+      tags_allowed:
+        - RMT
+        - LLM
+        - TinyGPT
+        - BPE
+        - autodiff
+        - tutorial
+        - advanced
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [., src, laboratory/python/lab_en]
+          options:
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_signature_annotations: true
+            separate_signature: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            docstring_style: google
+            docstring_section_style: table
+            heading_level: 2
+            inherited_members: true
+            filters:
+              - '!^_'
+              - '!^__'
+            merge_init_into_class: true
+            show_if_no_docstring: true
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+      timezone: Europe/Moscow
+  - minify:
+      minify_html: true
+  - exclude:
+      glob:
+        - "*.docx"
+        - "*.pdf"
+        - "en/*"
+        - "ru/*"
+        - "site/*"
+
+# ─── Markdown extensions ─────────────────────────────────────────────────────
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# ─── Extra JS for MathJax ────────────────────────────────────────────────────
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - javascripts/mathjax.js
+
+# ─── Extra CSS for fine-tuning ───────────────────────────────────────────────
+extra_css:
+  - stylesheets/extra.css
+
+# ─── Extra: version, social, analytics ───────────────────────────────────────
+extra:
+  version:
+    provider: mike
+    default: latest
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/wild8highlander/rmt-llm-research
+      name: GitHub
+    - icon: fontawesome/brands/orcid
+      link: https://orcid.org/0009-0003-7299-0701
+      name: ORCID
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/rmt-llm/
+      name: PyPI
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX  # Replace with real GA4 ID before deploy
+
+# ─── Navigation ──────────────────────────────────────────────────────────────
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
+      - First Run: getting-started/first-run.md
+      - FAQ: getting-started/faq.md
+  - Tutorials:
+      - tutorials/index.md
+      - 1. Quickstart Notebook: tutorials/01-quickstart.md
+      - 2. Training TinyGPT: tutorials/02-training-tinygpt.md
+      - 3. Generation & Sampling: tutorials/03-generation-and-sampling.md
+      - 4. Multilingual Labs: tutorials/04-multilingual-labs.md
+  - API Reference:
+      - api/index.md
+      - RMT package (src/rmt_llm): api/rmt-llm.md
+      - TinyGPT model: api/tinygpt.md
+      - BPE tokenizer: api/bpe.md
+      - Trainer & Adam: api/trainer.md
+  - Architecture:
+      - Overview: architecture/index.md
+      - Design Principles: architecture/principles.md
+      - Decision Records (ADR): architecture/adr.md
+      - Request Flow: architecture/request-flow.md
+  - Community:
+      - Contributing: community/contributing.md
+      - Roadmap: community/roadmap.md
+      - Security: community/security.md
+      - Code of Conduct: community/code-of-conduct.md
+  - Changelog: changelog.md

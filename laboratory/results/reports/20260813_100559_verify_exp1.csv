@@ -1,0 +1,25 @@
+section,key,value
+results,experiment,spectral_signature
+results,config.vocab_size,128
+results,config.hidden_dim,32
+results,config.n_layers,4
+results,config.n_heads,4
+results,config.max_seq_len,128
+results,config.seed,42
+results,params_count,28928
+results,spectral.layers,"[{""layer"": 0, ""T"": 128, ""H"": 32, ""q"": 0.25, ""lambda_max"": 0.0019426177877866612, ""lambda_min"": 0.00017214117106267862, ""lambda_mean"": 0.0008034405473590625, ""mp_upper"": 0.0018077412315578906, ""mp_lower"": 0.00020086013683976562, ""signal_detected"": true, ""tw_fluctuation"": 10.743918298641182, ""spectral_gap"": 0.0017704766167239826}, {""layer"": 1, ""T"": 128, ""H"": 32, ""q"": 0.25, ""lambda_max"": 0.0031484040484318424, ""lambda_min"": 0.0001792146353752796, ""lambda_mean"": 0.0008575601758135612, ""mp_upper"": 0."
+results,metrics.n_layers_analyzed,4
+results,metrics.max_lambda_max,0.012519393000410352
+results,metrics.min_lambda_min,0.00017214117106267862
+results,metrics.mean_spectral_gap,0.005858584940683028
+results,experiment_name,Spectral Signature
+results,experiment_description,Compute spectral signature of TinyGPT hidden activations.
+results,elapsed_seconds,0.008923938999942038
+results,parameters.temperature,0.7
+results,parameters.max_tokens,64
+results,parameters.seed,42
+results,parameters.n_layers,4
+results,parameters.hidden_dim,32
+results,parameters.n_heads,4
+results,parameters.vocab_size,128
+results,parameters.context_window,128

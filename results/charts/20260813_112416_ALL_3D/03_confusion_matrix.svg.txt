@@ -1,0 +1,2 @@
+Chart: 03_confusion_matrix
+PNG 600 DPI / PDF / SVG placeholder (use Python for actual rendering)

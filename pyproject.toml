@@ -100,6 +100,16 @@ docs = [
     "mkdocs-material>=9.4",
     "mkdocstrings[python]>=0.24",
     "pymdown-extensions>=10.0",
+    "mkdocs-git-revision-date-localized-plugin>=1.2",
+    "mkdocs-minify-plugin>=0.7",
+    "mkdocs-exclude>=1.0",
+]
+bench = [
+    "hypothesis>=6.100",
+    "pytest-benchmark>=4.0",
+]
+all = [
+    "rmt-llm[dev,lab,docs,bench,notebooks]",
 ]
 
 [project.urls]
@@ -137,6 +147,8 @@ markers = [
     "cross_impl: cross-implementation consistency tests (require Julia)",
     "tiny_gpt: tests for TinyGPT model and trainer",
     "bpe: tests for the BPE tokenizer",
+    "hypothesis: property-based tests (require hypothesis package)",
+    "benchmark: performance benchmarks (require pytest-benchmark package)",
 ]
 filterwarnings = [
     "error",

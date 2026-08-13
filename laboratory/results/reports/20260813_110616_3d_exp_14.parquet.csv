@@ -1,0 +1,58 @@
+section,key,value
+results,experiment_id,14
+results,experiment_name,Дрейф коалиционного обмана (3D)
+results,experiment_description,Моделирование дрейфа обмана нескольких агентов по раундам коалиции (SCEN-COAL-09).
+results,name,Дрейф коалиционного обмана (3D)
+results,description,Моделирование дрейфа обмана нескольких агентов по раундам коалиции (SCEN-COAL-09).
+results,elapsed_seconds,3.44913E-4
+results,parameters.temperature,0.7
+results,parameters.max_tokens,256
+results,parameters.top_k,50
+results,parameters.top_p,0.95
+results,parameters.context_window,1024
+results,parameters.ncrit_threshold,114.0
+results,parameters.theta_b_deg,7.07
+results,parameters.beta_caputo,0.5
+results,parameters.rlhf_pressure,0.0
+results,parameters.n_layers,6
+results,parameters.hidden_dim,64
+results,parameters.n_heads,4
+results,parameters.vocab_size,256
+results,parameters.seed,42
+results,parameters.epochs,3
+results,parameters.learning_rate,0.001
+results,parameters.batch_size,4
+results,parameters.enable_filter,true
+results,parameters.capture_hidden,true
+results,parameters.language,en
+results,parameters.hessian_grid_size,24
+results,parameters.trajectory_points,64
+results,parameters.spectral_surface_layers,6
+results,parameters.pca_components,3
+results,parameters.attention_flow_3d_resolution,32
+results,parameters.parameter_space_grid,16
+results,parameters.curvature_neighbors,8
+results,parameters.elevation_3d,30
+results,parameters.azimuth_3d,45
+results,parameters.color_map_3d,viridis
+results,data.experiment,coalition_drift
+results,data.n_agents,2
+results,data.n_rounds,4
+results,data.per_round,[[0.2728381063094611,0.3183881589796557],[0.3510026672621821,0.39786019427201325],[0.4956195527614556,0.5536924559126531],[0.5936555718520254,0.632067131946439]]
+results,data.metrics.initial_mean_deception,0.2956131326445584
+results,data.metrics.final_mean_deception,0.6128613518992323
+results,data.metrics.drift,0.3172482192546739
+results,data.metrics.convergence_variance,3.6886198722168684E-4
+results,experiment,coalition_drift
+results,n_agents,2
+results,n_rounds,4
+results,per_round,[[0.2728381063094611,0.3183881589796557],[0.3510026672621821,0.39786019427201325],[0.4956195527614556,0.5536924559126531],[0.5936555718520254,0.632067131946439]]
+results,metrics.initial_mean_deception,0.2956131326445584
+results,metrics.final_mean_deception,0.6128613518992323
+results,metrics.drift,0.3172482192546739
+results,metrics.convergence_variance,3.6886198722168684E-4
+log,line_00000,[2026-08-13 11:06:16] Лаборатория RMT-LLM запущена (Java, русская версия)
+log,line_00001,[2026-08-13 11:06:16] Пользователь выбрал 3D-эксперимент 14: Дрейф коалиционного обмана (3D)
+log,line_00002,[2026-08-13 11:06:16] 3D-эксперимент завершён за 3.44913E-4s
+log,line_00003,[2026-08-13 11:06:16] Results saved: /home/z/my-project/rmt-llm-research/laboratory/java/lab_ru/../../results/reports/20260813_110616_3d_exp_14_results.json
+log,line_00004,[2026-08-13 11:06:16] Charts: 32 files in /home/z/my-project/rmt-llm-research/laboratory/java/lab_ru/../../results/charts/20260813_110616_3d_exp_14

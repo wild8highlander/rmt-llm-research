@@ -1,0 +1,60 @@
+generated_at: 2026-08-13T11:06:16.514615772
+results:
+  experiment_id: 14
+  experiment_name: Дрейф коалиционного обмана (3D)
+  experiment_description: Моделирование дрейфа обмана нескольких агентов по раундам коалиции (SCEN-COAL-09).
+  name: Дрейф коалиционного обмана (3D)
+  description: Моделирование дрейфа обмана нескольких агентов по раундам коалиции (SCEN-COAL-09).
+  elapsed_seconds: 3.44913E-4
+  parameters.temperature: 0.7
+  parameters.max_tokens: 256
+  parameters.top_k: 50
+  parameters.top_p: 0.95
+  parameters.context_window: 1024
+  parameters.ncrit_threshold: 114.0
+  parameters.theta_b_deg: 7.07
+  parameters.beta_caputo: 0.5
+  parameters.rlhf_pressure: 0.0
+  parameters.n_layers: 6
+  parameters.hidden_dim: 64
+  parameters.n_heads: 4
+  parameters.vocab_size: 256
+  parameters.seed: 42
+  parameters.epochs: 3
+  parameters.learning_rate: 0.001
+  parameters.batch_size: 4
+  parameters.enable_filter: true
+  parameters.capture_hidden: true
+  parameters.language: en
+  parameters.hessian_grid_size: 24
+  parameters.trajectory_points: 64
+  parameters.spectral_surface_layers: 6
+  parameters.pca_components: 3
+  parameters.attention_flow_3d_resolution: 32
+  parameters.parameter_space_grid: 16
+  parameters.curvature_neighbors: 8
+  parameters.elevation_3d: 30
+  parameters.azimuth_3d: 45
+  parameters.color_map_3d: viridis
+  data.experiment: coalition_drift
+  data.n_agents: 2
+  data.n_rounds: 4
+  data.per_round: [[0.2728381063094611,0.3183881589796557],[0.3510026672621821,0.39786019427201325],[0.4956195527614556,0.5536924559126531],[0.5936555718520254,0.632067131946439]]
+  data.metrics.initial_mean_deception: 0.2956131326445584
+  data.metrics.final_mean_deception: 0.6128613518992323
+  data.metrics.drift: 0.3172482192546739
+  data.metrics.convergence_variance: 3.6886198722168684E-4
+  experiment: coalition_drift
+  n_agents: 2
+  n_rounds: 4
+  per_round: [[0.2728381063094611,0.3183881589796557],[0.3510026672621821,0.39786019427201325],[0.4956195527614556,0.5536924559126531],[0.5936555718520254,0.632067131946439]]
+  metrics.initial_mean_deception: 0.2956131326445584
+  metrics.final_mean_deception: 0.6128613518992323
+  metrics.drift: 0.3172482192546739
+  metrics.convergence_variance: 3.6886198722168684E-4
+logs:
+  - [2026-08-13 11:06:16] Лаборатория RMT-LLM запущена (Java, русская версия)
+  - [2026-08-13 11:06:16] Пользователь выбрал 3D-эксперимент 14: Дрейф коалиционного обмана (3D)
+  - [2026-08-13 11:06:16] 3D-эксперимент завершён за 3.44913E-4s
+  - [2026-08-13 11:06:16] Results saved: /home/z/my-project/rmt-llm-research/laboratory/java/lab_ru/../../results/reports/20260813_110616_3d_exp_14_results.json
+  - [2026-08-13 11:06:16] Charts: 32 files in /home/z/my-project/rmt-llm-research/laboratory/java/lab_ru/../../results/charts/20260813_110616_3d_exp_14

@@ -1,8 +1,269 @@
-Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+================================================================================
+               PROPRIETARY ALL-RIGHTS-RESERVED LICENSE
+================================================================================
 
 Copyright (c) 2026 Iskhak Hamzatovich Isaev
+All rights reserved.
 
-This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0
-International License (CC BY-NC-SA 4.0).
+ORCID: 0009-0003-7299-0701
+GitHub: https://github.com/wild8highlander
+Repository: rmt-llm-research
 
-Full license text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+================================================================================
+                          1. DEFINITIONS
+================================================================================
+
+1.1. "Work" means all source code, documentation, datasets, scripts, models,
+     configurations, charts, reports, and any other intellectual property
+     contained in this repository (https://github.com/wild8highlander/rmt-llm-research),
+     including without limitation the RMT-LLM Laboratory modules, the TinyGPT
+     synthetic neural network, the scenario suite, the report generators, the
+     chart generators, the interactive menus, the React web application, and
+     all implementations in Python, Julia, Java, Rust, Go, C++, R, and any
+     future programming languages.
+
+1.2. "Licensor" means Iskhak Hamzatovich Isaev, the sole and exclusive owner
+     of all rights, title, and interest in and to the Work.
+
+1.3. "Licensee" means any natural or legal person who obtains, accesses,
+     reads, clones, downloads, views, executes, or otherwise interacts with
+     the Work. By accessing the Work in any form, the Licensee is deemed to
+     have accepted the terms of this License in full.
+
+1.4. "Authorized Use" means the strictly personal, non-commercial,
+     non-distributive use of the Work by the Licensee exclusively for the
+     Licensee's own private study, subject to all restrictions set forth
+     in Section 3.
+
+================================================================================
+                          2. GRANT OF LICENSE
+================================================================================
+
+2.1. Subject to strict compliance with all terms of this License, the Licensor
+     grants the Licensee a limited, revocable, non-exclusive, non-transferable,
+     non-sublicensable, royalty-free, personal license to:
+
+     (a) Read and view the Work for private study purposes only;
+     (b) Execute the Work locally on the Licensee's own machine for the
+         Licensee's own personal verification of the research results; and
+     (c) Make a single local copy of the Work solely for backup purposes,
+         provided that this License and all copyright notices are preserved
+         on such copy.
+
+2.2. The license granted in Section 2.1 is conditioned on the Licensee's
+     continued compliance with every restriction in Section 3. Any breach
+     of any restriction in Section 3 automatically and immediately
+     terminates this License without notice.
+
+================================================================================
+                          3. RESTRICTIONS
+================================================================================
+
+The Licensee is STRICTLY PROHIBITED from doing any of the following, whether
+directly or indirectly, by itself or through any agent, contractor, affiliate,
+or third party, in whole or in part, in any form or medium whatsoever:
+
+3.1.  DISTRIBUTION PROHIBITED. The Licensee shall not distribute, publish,
+      broadcast, transmit, communicate to the public, make available, share,
+      upload, host, mirror, fork, syndicate, syndicate-by-API, or otherwise
+      disseminate the Work or any part thereof, in any form, including but
+      not limited to source code, object code, binaries, documentation,
+      datasets, or derivative works, to any third party whatsoever.
+
+3.2.  ACADEMIC DISTRIBUTION PROHIBITED. The Licensee shall not distribute,
+      share, post, or otherwise make the Work available in any academic
+      setting, including but not limited to: universities, research
+      laboratories, scholarly repositories (arXiv, SSRN, Zenodo, ResearchGate,
+      Academia.edu, institutional repositories), conference proceedings,
+      journal supplementary materials, course materials, lecture notes, or
+      any other academic publication or distribution channel. The Licensee
+      shall not cite, quote, or reproduce any portion of the Work in any
+      academic publication without the prior written and signed consent of
+      the Licensor.
+
+3.3.  COMMERCIAL USE PROHIBITED. The Licensee shall not use the Work, in
+      whole or in part, for any commercial purpose whatsoever, including
+      without limitation: selling, licensing, renting, leasing, hosting
+      as a service, embedding in a commercial product, using in a paid
+      consultancy, using to train a model that is then sold or licensed,
+      or using in any revenue-generating activity.
+
+3.4.  DERIVATIVE WORKS PROHIBITED. The Licensee shall not create, prepare,
+      develop, or contribute to any derivative work based on or derived
+      from the Work, including but not limited to: modifications, adaptations,
+      translations, transformations, extensions, forks, ports to other
+      languages, or any other work that incorporates or is based on any
+      part of the Work.
+
+3.5.  REVERSE ENGINEERING PROHIBITED. The Licensee shall not reverse engineer,
+      decompile, disassemble, or otherwise attempt to derive the source code
+      of any compiled or obfuscated portion of the Work.
+
+3.6.  REMOVAL OF NOTICES PROHIBITED. The Licensee shall not remove, alter,
+      obscure, or fail to reproduce any copyright notice, attribution,
+      license key, or other proprietary notice displayed on or contained
+      in the Work.
+
+3.7.  BENCHMARK OR PUBLICATION PROHIBITED. The Licensee shall not publish,
+      disclose, or otherwise make public any benchmark, performance
+      measurement, comparison, or evaluation of the Work without the prior
+      written consent of the Licensor.
+
+3.8.  AI TRAINING PROHIBITED. The Licensee shall not use the Work, in whole
+      or in part, to train, fine-tune, evaluate, benchmark, or otherwise
+      improve any artificial intelligence, machine learning, or large
+      language model system, whether for commercial, academic, or personal
+      purposes.
+
+3.9.  RE-LICENSING PROHIBITED. The Licensee shall not sub-license, assign,
+      transfer, pledge, or otherwise dispose of any rights granted under
+      this License to any third party.
+
+3.10. SUBLICENSING THROUGH API PROHIBITED. The Licensee shall not expose
+      the Work, or any functionality thereof, through any API, web service,
+      microservice, RPC endpoint, or any other remote interface that would
+      allow third parties to use the Work without having accepted this
+      License.
+
+3.11. INCLUSION IN OTHER PROJECTS PROHIBITED. The Licensee shall not include,
+      bundle, vendor, embed, or otherwise incorporate the Work, in whole or
+      in part, into any other software project, repository, dataset, or
+      collection, whether open-source or proprietary.
+
+3.12. RESELLING OR MONETIZATION PROHIBITED. The Licensee shall not resell,
+      monetize, or charge any fee for access to or use of the Work.
+
+================================================================================
+                          4. OWNERSHIP
+================================================================================
+
+4.1. The Work is the sole and exclusive property of Iskhak Hamzatovich Isaev.
+     All rights, title, and interest in and to the Work, including without
+     limitation all copyrights, trademarks, trade secrets, patents, moral
+     rights, database rights, and any other intellectual property rights
+     therein, are and shall remain the exclusive property of the Licensor.
+
+4.2. The Licensee acknowledges that no ownership or intellectual property
+     rights are transferred to the Licensee under this License. The Licensee
+     receives only a limited right of use as expressly set forth in Section 2.
+
+4.3. The Licensee shall take all reasonable steps to protect the Licensor's
+     ownership of the Work, including promptly notifying the Licensor of any
+     actual or suspected unauthorized use, distribution, or reproduction of
+     the Work of which the Licensee becomes aware.
+
+================================================================================
+                          5. NO WARRANTIES
+================================================================================
+
+5.1. THE WORK IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF
+     ANY KIND, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE WARRANTIES
+     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT,
+     TITLE, AND QUIET ENJOYMENT. THE LICENSOR DOES NOT WARRANT THAT THE WORK
+     WILL BE ERROR-FREE, ACCURATE, RELIABLE, OR SUITABLE FOR ANY PARTICULAR
+     PURPOSE.
+
+5.2. THE ENTIRE RISK ARISING OUT OF THE USE OR INABILITY TO USE THE WORK
+     IS BORNE SOLELY AND EXCLUSIVELY BY THE LICENSEE.
+
+5.3. THE LICENSOR DOES NOT PROVIDE ANY TECHNICAL SUPPORT, MAINTENANCE, OR
+     UPDATES FOR THE WORK. ANY SUCH SUPPORT IS PROVIDED SOLELY AT THE
+     LICENSOR'S DISCRETION AND ON SEPARATE TERMS.
+
+================================================================================
+                          6. LIMITATION OF LIABILITY
+================================================================================
+
+6.1. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL
+     THE LICENSOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+     CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, DATA,
+     USE, OR GOODWILL, ARISING OUT OF OR IN CONNECTION WITH THE WORK OR
+     THE USE OR INABILITY TO USE THE WORK, HOWEVER CAUSED AND UNDER ANY
+     THEORY OF LIABILITY (WHETHER IN CONTRACT, TORT, NEGLIGENCE, STRICT
+     LIABILITY, OR OTHERWISE), EVEN IF THE LICENSOR HAS BEEN ADVISED OF
+     THE POSSIBILITY OF SUCH DAMAGES.
+
+6.2. THE AGGREGATE LIABILITY OF THE LICENSOR UNDER THIS LICENSE SHALL NOT
+     EXCEED ZERO (US$0.00). THE LICENSEE ACKNOWLEDGES THAT THE WORK IS
+     PROVIDED FREE OF CHARGE AND THAT THIS ALLOCATION OF RISK IS A
+     FUNDAMENTAL BASIS OF THE BARGAIN BETWEEN THE PARTIES.
+
+================================================================================
+                          7. TERMINATION
+================================================================================
+
+7.1. This License is effective immediately upon the Licensee's access to
+     the Work and continues until terminated.
+
+7.2. The Licensor may terminate this License at any time, for any reason
+     or no reason, with or without notice.
+
+7.3. Upon any termination of this License, the Licensee shall immediately:
+     (a) cease all use of the Work;
+     (b) destroy or permanently delete all copies of the Work in the
+         Licensee's possession or control; and
+     (c) certify in writing to the Licensor that the Licensee has complied
+         with the foregoing.
+
+7.4. Sections 1, 3, 4, 5, 6, 7, and 8 shall survive any termination of
+     this License.
+
+================================================================================
+                          8. MISCELLANEOUS
+================================================================================
+
+8.1. Governing Law. This License shall be governed by and construed in
+     accordance with the laws of the Russian Federation, without regard
+     to its conflict of law provisions.
+
+8.2. Dispute Resolution. Any dispute arising out of or in connection with
+     this License shall be submitted to the exclusive jurisdiction of the
+     courts of the Russian Federation. The Licensee hereby irrevocably
+     submits to such jurisdiction and waives any objection based on
+     forum non conveniens.
+
+8.3. Entire Agreement. This License constitutes the entire agreement
+     between the parties with respect to the Work and supersedes all
+     prior or contemporaneous understandings, communications, agreements,
+     or representations, whether oral or written.
+
+8.4. Amendment. The Licensor reserves the right to amend this License at
+     any time. Any amendment shall be effective immediately upon posting
+     in the repository. The Licensee's continued use of the Work after
+     such amendment constitutes acceptance of the amended License.
+
+8.5. Severability. If any provision of this License is held to be
+     unenforceable or invalid, such provision shall be struck and the
+     remaining provisions shall remain in full force and effect.
+
+8.6. Waiver. No waiver of any provision of this License shall be
+     effective unless in writing and signed by the Licensor. No failure
+     or delay by the Licensor in exercising any right shall operate as
+     a waiver thereof.
+
+8.7. Language. This License is drafted in English. Any translation is
+     provided for convenience only and the English version shall be
+     the legally binding version.
+
+================================================================================
+                  9. CONTACT AND PERMISSIONS
+================================================================================
+
+For any request to use the Work in any manner not expressly permitted by
+this License, including but not limited to academic citation, derivative
+works, commercial licensing, or inclusion in another project, the Licensee
+MUST obtain the prior written and signed consent of the Licensor at:
+
+   Iskhak Hamzatovich Isaev
+   ORCID: 0009-0003-7299-0701
+   GitHub: https://github.com/wild8highlander
+   Repository: https://github.com/wild8highlander/rmt-llm-research
+
+NO RIGHT NOT EXPRESSLY GRANTED IN THIS LICENSE IS RESERVED BY THE LICENSOR.
+ALL RIGHTS NOT EXPRESSLY GRANTED ARE RESERVED BY THE LICENSOR.
+
+================================================================================
+   By accessing, cloning, downloading, viewing, executing, or otherwise
+   using any part of the Work, the Licensee acknowledges having read and
+   understood this License and agrees to be bound by all of its terms.
+================================================================================

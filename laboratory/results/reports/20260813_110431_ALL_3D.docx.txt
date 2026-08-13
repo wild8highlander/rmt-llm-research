@@ -1,0 +1,31 @@
+[DOCX placeholder — use Python implementation for full DOCX]
+
+==============================================================================
+RMT-LLM Laboratory — Experiment Report (Java, TXT)
+Generated: 2026-08-13T11:04:31.875406035
+==============================================================================
+
+PART I — DETAILED RESULTS WITH EXPLANATIONS
+------------------------------------------------------------------------------
+Experiment: ALL_3D_EXPERIMENTS
+Scenario:   default
+Language:   java
+
+Key metrics:
+
+Interpretation:
+  The Marchenko-Pastur (MP) law describes the bulk distribution of
+  eigenvalues of large random covariance matrices. When the largest
+  empirical eigenvalue exceeds the MP upper bound, this signals
+  structured (non-random) information — i.e. the model has 'detected'
+  a fact. Conversely, eigenvalues inside the MP bulk indicate
+  creative or hallucinated generation.
+
+
+PART II — FULL TASK LAUNCH LOGS
+------------------------------------------------------------------------------
+[2026-08-13 11:03:04] RMT-LLM Laboratory started (Java, English)
+[2026-08-13 11:03:04] === RUNNING ALL 3D EXPERIMENTS (v1.4.0) ===
+[2026-08-13 11:04:31] 3D experiments done: 9 succeeded, 0 failed
+[2026-08-13 11:04:31] Results saved: /home/z/my-project/rmt-llm-research/laboratory/java/lab_en/../../results/reports/20260813_110431_ALL_3D_results.json
+[2026-08-13 11:04:31] Charts: 32 files in /home/z/my-project/rmt-llm-research/laboratory/java/lab_en/../../results/charts/20260813_110431_ALL_3D

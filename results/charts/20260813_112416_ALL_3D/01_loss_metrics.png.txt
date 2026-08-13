@@ -1,0 +1,2 @@
+Chart: 01_loss_metrics
+PNG 600 DPI / PDF / SVG placeholder (use Python for actual rendering)

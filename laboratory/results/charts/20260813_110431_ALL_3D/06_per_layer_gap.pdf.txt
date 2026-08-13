@@ -1,0 +1,15 @@
+[PDF placeholder for 06_per_layer_gap]
+
+Chart: 06_per_layer_gap
+============================================================
+
+Per-Layer Spectral Gap
+
+Layer | Gap
+------|------
+   0  | 2.786
+   1  | 2.453
+   2  | 2.374
+   3  | 1.040
+   4  | 1.443
+   5  | 2.261

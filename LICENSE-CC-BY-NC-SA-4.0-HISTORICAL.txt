@@ -1,0 +1,12 @@
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+
+Copyright (c) 2026 Iskhak Hamzatovich Isaev
+
+This work was previously licensed under the Creative Commons Attribution-
+NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+
+As of 2026-08-13, this work is now licensed under the Proprietary
+All-Rights-Reserved License (see ./LICENSE). The CC BY-NC-SA 4.0 license
+text is preserved here for historical reference only.
+
+Full license text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode

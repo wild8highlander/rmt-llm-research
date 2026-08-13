@@ -1,0 +1,2 @@
+Chart: 08_ncrit_threshold
+PNG 600 DPI / PDF / SVG placeholder (use Python for actual rendering)

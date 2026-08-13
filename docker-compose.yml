@@ -86,14 +86,81 @@ services:
     entrypoint: ["/bin/bash"]
     command: []
 
-  # ─── Documentation server ─────────────────────────────────────────────────
+  # ─── Documentation server (MkDocs Material — hot reload) ──────────────────
   docs:
     extends: base
     container_name: rmt-docs
     ports:
       - "8000:8000"
-    working_dir: /workspace/docs/site
-    command: ["python", "-m", "http.server", "8000"]
+    working_dir: /workspace
+    command: >
+      sh -c "pip install -q mkdocs-material mkdocstrings[python]
+      mkdocs-git-revision-date-localized-plugin mkdocs-minify-plugin
+      && mkdocs serve -a 0.0.0.0:8000 --dev-addr 0.0.0.0:8000"
+
+  # ─── Static docs build (for production deploy) ────────────────────────────
+  docs-build:
+    extends: base
+    container_name: rmt-docs-build
+    working_dir: /workspace
+    command: >
+      sh -c "pip install -q mkdocs-material mkdocstrings[python]
+      mkdocs-git-revision-date-localized-plugin mkdocs-minify-plugin
+      && mkdocs build --clean --strict
+      && echo 'Docs built to site-build/'"
+
+  # ─── Performance benchmarks (pytest-benchmark) ────────────────────────────
+  bench:
+    extends: base
+    container_name: rmt-bench
+    working_dir: /workspace/laboratory/python/lab_en
+    command: >
+      pytest tests/test_benchmark.py
+      --benchmark-only
+      --benchmark-columns=mean,stddev,ops,rounds
+      -v
+
+  # ─── Property-based tests (Hypothesis) ────────────────────────────────────
+  hypothesis:
+    extends: base
+    container_name: rmt-hypothesis
+    working_dir: /workspace/laboratory/python/lab_en
+    command: >
+      pytest tests/test_hypothesis.py
+      --hypothesis-show-statistics
+      --hypothesis-seed=0
+      -v
+
+  # ─── Security scans (bandit, pip-audit, gitleaks) ─────────────────────────
+  security:
+    extends: base
+    container_name: rmt-security
+    working_dir: /workspace
+    command: >
+      sh -c "pip install -q bandit pip-audit
+      && bandit -r src/rmt_llm/ -ll -v
+      && pip-audit --strict
+      && echo 'Security scans passed'"
+
+  # ─── Profile TinyGPT training (cProfile) ──────────────────────────────────
+  profile:
+    extends: base
+    container_name: rmt-profile
+    working_dir: /workspace/laboratory/python/lab_en
+    command: >
+      python -c "
+      import cProfile, pstats, io;
+      from tiny_gpt_trainer import train;
+      from tiny_gpt import TinyGPTConfig;
+      from tiny_gpt_trainer import TrainConfig, BPETokenizer;
+      pr = cProfile.Profile(); pr.enable();
+      cfg = TinyGPTConfig(vocab_size=128, hidden_dim=32, n_layers=1, n_heads=2, max_seq_len=16);
+      tc = TrainConfig(epochs=1, learning_rate=1e-3);
+      tok = BPETokenizer(vocab_size=128); tok.fit('hello world ' * 100, n_merges=16);
+      train(config=cfg, train_config=tc, tokenizer=tok, corpus='hello world ' * 100, output_dir='/tmp/profile_out', verbose=False);
+      pr.disable(); s = io.StringIO(); ps = pstats.Stats(pr, stream=s).sort_stats('cumulative');
+      ps.print_stats(30); print(s.getvalue())
+      "
 
   # ─── Jupyter notebook server ─────────────────────────────────────────────
   jupyter:

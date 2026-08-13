@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rmt-llm-research/laboratory/shared/schema.json",
+  "title": "RMT-LLM Laboratory — Infinite Parameter Schema",
+  "description": "Custom launch system schema. Each parameter supports the full range [0, +inf). Numeric parameters can be int or float. The validator accepts any finite non-negative number as well as the special string 'inf' for true infinity. Includes 3D-visualization and 3D-research parameters introduced in v1.1.0 (manifold geometry, Hessian eigenvalues, trajectory analysis, curvature estimation).",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "experiment": {
+      "type": "object",
+      "description": "Top-level experiment metadata",
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "language": { "enum": ["python", "julia", "java", "rust", "go", "cpp", "r", "webapp"] },
+        "version": { "enum": ["en", "ru"] },
+        "description": { "type": "string" }
+      },
+      "required": ["name", "language", "version"]
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Infinite parameter space. Keys are parameter names. Values define type, range, default. min=0, max=inf by default.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "type": { "enum": ["int", "float", "range", "categorical", "bool", "string"] },
+          "min": { "type": ["number", "string"], "description": "Lower bound. Use 'inf' or '-inf' for unbounded." },
+          "max": { "type": ["number", "string"], "description": "Upper bound. Use 'inf' for unbounded." },
+          "default": { "type": ["number", "string", "boolean"] },
+          "step": { "type": ["number", "string"], "description": "Step for range type. Use 'inf' for unbounded iteration." },
+          "choices": { "type": "array", "items": { "type": ["string", "number", "boolean"] } },
+          "unit": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["type", "default"]
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "description": "Pre-defined experimental scenarios with synthetic neural networks",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "model_id": { "type": "string", "description": "Reference to model_registry.json entry" },
+          "parameter_overrides": { "type": "object" },
+          "expected_behavior": { "enum": ["lie", "hallucinate", "refuse", "truthful", "uncertain"] }
+        },
+        "required": ["id", "name", "model_id"]
+      }
+    }
+  },
+  "required": ["experiment", "parameters"],
+  "3d_research_parameters": {
+    "description": "Optional parameters introduced in v1.1.0 for 3D visualization and 3D research calculations. All support [0, inf].",
+    "manifold_dims": {
+      "type": "int", "min": 2, "max": "inf", "default": 3,
+      "description": "Target dimensionality for manifold projection (PCA/t-SNE/UMAP). 3 = 3D plot."
+    },
+    "hessian_grid_size": {
+      "type": "int", "min": 4, "max": "inf", "default": 24,
+      "description": "Grid resolution for 3D Hessian / loss-landscape scan. Higher = smoother 3D surface but O(n^2) cost."
+    },
+    "trajectory_points": {
+      "type": "int", "min": 8, "max": "inf", "default": 64,
+      "description": "Number of points along the 3D reasoning-trace trajectory (time × honesty × spectral)."
+    },
+    "curvature_neighbors": {
+      "type": "int", "min": 3, "max": "inf", "default": 8,
+      "description": "Neighbors used for Riemannian curvature estimation on the hidden-state manifold."
+    },
+    "spectral_surface_layers": {
+      "type": "int", "min": 1, "max": "inf", "default": 6,
+      "description": "Layers to include in the 3D spectral-surface plot (layer × token × eigenvalue)."
+    },
+    "pca_components": {
+      "type": "int", "min": 2, "max": "inf", "default": 3,
+      "description": "Number of principal components for 3D PCA visualization."
+    },
+    "attention_flow_3d_resolution": {
+      "type": "int", "min": 8, "max": "inf", "default": 32,
+      "description": "Resolution of the 3D attention-flow vector field (x = query pos, y = key pos, z = attention weight)."
+    },
+    "parameter_space_grid": {
+      "type": "int", "min": 4, "max": "inf", "default": 16,
+      "description": "Grid resolution for 3D parameter-space sweep (temperature × top_p × hallucination_rate)."
+    },
+    "color_map_3d": {
+      "type": "categorical", "default": "viridis",
+      "choices": ["viridis", "plasma", "inferno", "magma", "cividis", "turbo", "coolwarm", "RdBu"],
+      "description": "Colormap for 3D surfaces."
+    },
+    "elevation_3d": {
+      "type": "float", "min": 0, "max": 90, "default": 30,
+      "description": "Elevation angle (degrees) for matplotlib 3D view."
+    },
+    "azimuth_3d": {
+      "type": "float", "min": 0, "max": 360, "default": 45,
+      "description": "Azimuth angle (degrees) for matplotlib 3D view."
+    }
+  }
+}

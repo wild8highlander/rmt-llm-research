@@ -1,0 +1,72 @@
+{
+"experiment_id": "14",
+"experiment_name": "Coalitional Deception Drift (3D)",
+"experiment_description": "Simulate multi-agent deception drift across coalition rounds (SCEN-COAL-09).",
+"name": "Coalitional Deception Drift (3D)",
+"description": "Simulate multi-agent deception drift across coalition rounds (SCEN-COAL-09).",
+"elapsed_seconds": 2.3929E-5,
+"parameters": {
+  "hessian_grid_size": 16,
+  "trajectory_points": 32,
+  "spectral_surface_layers": 4,
+  "curvature_neighbors": 6,
+  "attention_flow_3d_resolution": 16,
+  "parameter_space_grid": 8
+},
+"data": {
+  "experiment": "coalition_drift",
+  "n_agents": 2,
+  "n_rounds": 4,
+  "per_round": [
+    [
+      0.2728381063094611,
+      0.3183881589796557
+    ],
+    [
+      0.3510026672621821,
+      0.39786019427201325
+    ],
+    [
+      0.4956195527614556,
+      0.5536924559126531
+    ],
+    [
+      0.5936555718520254,
+      0.632067131946439
+    ]
+  ],
+  "metrics": {
+    "initial_mean_deception": 0.2956131326445584,
+    "final_mean_deception": 0.6128613518992323,
+    "drift": 0.3172482192546739,
+    "convergence_variance": 3.6886198722168684E-4
+  }
+},
+"experiment": "coalition_drift",
+"n_agents": 2,
+"n_rounds": 4,
+"per_round": [
+  [
+    0.2728381063094611,
+    0.3183881589796557
+  ],
+  [
+    0.3510026672621821,
+    0.39786019427201325
+  ],
+  [
+    0.4956195527614556,
+    0.5536924559126531
+  ],
+  [
+    0.5936555718520254,
+    0.632067131946439
+  ]
+],
+"metrics": {
+  "initial_mean_deception": 0.2956131326445584,
+  "final_mean_deception": 0.6128613518992323,
+  "drift": 0.3172482192546739,
+  "convergence_variance": 3.6886198722168684E-4
+}
+}

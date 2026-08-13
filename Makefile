@@ -43,8 +43,8 @@ help:  ## Show this help message
 	@echo "$(BOLD)Available targets:$(RESET)"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
-	  | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(BLUE)%-22s$(RESET) %s\n", $$1, $$2}' \
-	  | sort
+          | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(BLUE)%-22s$(RESET) %s\n", $$1, $$2}' \
+	| sort
 	@echo ""
 	@echo "$(BOLD)Tips:$(RESET)"
 	@echo "  • Run $(GREEN)make install$(RESET) first to set up the environment."
@@ -101,7 +101,7 @@ typecheck:  ## Run mypy type checker
 	$(MYPY) src/ --ignore-missing-imports
 
 # ─── Testing ────────────────────────────────────────────────────────────────
-.PHONY: test test-fast test-slow test-tiny-gpt test-julia test-rust test-go test-cpp test-all test-coverage
+.PHONY: test test-fast test-slow test-tiny-gpt test-julia test-rust test-go test-cpp test-all test-coverage test-hypothesis test-bench
 test:  ## Run all Python tests (src/rmt_llm/ + laboratory/python/lab_en/)
 	$(PYTEST) src/ laboratory/python/lab_en/tests/ -v
 
@@ -113,6 +113,19 @@ test-slow:  ## Run only slow tests
 
 test-tiny-gpt:  ## Run only TinyGPT + BPE + trainer tests
 	$(PYTEST) $(LAB_TESTS_DIR)/ -v
+
+test-hypothesis:  ## Run property-based tests (Hypothesis)
+	$(PYTEST) $(LAB_TESTS_DIR)/test_hypothesis.py -v --hypothesis-show-statistics --hypothesis-seed=0
+
+test-bench:  ## Run performance benchmarks (pytest-benchmark)
+	$(PYTEST) $(LAB_TESTS_DIR)/test_benchmark.py -v --benchmark-only \
+	--benchmark-columns=mean,stddev,ops,rounds \
+	--benchmark-save=local
+
+test-bench-compare:  ## Compare benchmarks to last saved baseline
+	$(PYTEST) $(LAB_TESTS_DIR)/test_benchmark.py -v --benchmark-only \
+	--benchmark-compare \
+	--benchmark-columns=mean,stddev,ops,rounds
 
 test-julia:  ## Run Julia verification tests
 	cd julia/RMTLLMVerify && $(JULIA) --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
@@ -133,15 +146,34 @@ test-all: test test-julia test-rust test-go test-cpp  ## Run tests in ALL langua
 
 test-coverage:  ## Run Python tests with coverage report
 	$(PYTEST) src/ laboratory/python/lab_en/tests/ \
-	  --cov=rmt_llm \
-	  --cov-report=term-missing \
-	  --cov-report=html \
-	  --cov-report=xml \
-	  -v
+	--cov=rmt_llm \
+	--cov-report=term-missing \
+	--cov-report=html \
+	--cov-report=xml \
+	-v
 	@echo ""
 	@echo "$(GREEN)✓ Coverage report generated:$(RESET)"
 	@echo "  HTML:  htmlcov/index.html"
 	@echo "  XML:   coverage.xml"
+
+# ─── Performance profiling ──────────────────────────────────────────────────
+.PHONY: profile profile-tinygpt
+profile: profile-tinygpt  ## Profile TinyGPT training with cProfile (alias)
+
+profile-tinygpt:  ## Profile TinyGPT training with cProfile (1 epoch on tiny model)
+	@echo "$(YELLOW)Profiling TinyGPT training (1 epoch, tiny config)...$(RESET)"
+	cd $(LAB_EN_DIR) && $(PYTHON) -c "\
+import cProfile, pstats, io; \
+from tiny_gpt import TinyGPTConfig; \
+from tiny_gpt_trainer import TrainConfig, BPETokenizer, train; \
+cfg = TinyGPTConfig(vocab_size=128, hidden_dim=32, n_layers=1, n_heads=2, max_seq_len=16); \
+tc = TrainConfig(epochs=1, learning_rate=1e-3); \
+tok = BPETokenizer(vocab_size=128); tok.fit('hello world ' * 100, n_merges=16); \
+pr = cProfile.Profile(); pr.enable(); \
+train(config=cfg, train_config=tc, tokenizer=tok, corpus='hello world ' * 100, output_dir='/tmp/profile_out', verbose=False); \
+pr.disable(); s = io.StringIO(); ps = pstats.Stats(pr, stream=s).sort_stats('cumulative'); \
+ps.print_stats(30); print(s.getvalue())"
+	@echo "$(GREEN)✓ Profile complete$(RESET)"
 
 # ─── Cross-implementation checks ────────────────────────────────────────────
 .PHONY: cross-check
@@ -235,16 +267,76 @@ docker-clean:  ## Remove Docker image and dangling containers
 	$(DOCKER) image prune -f
 
 # ─── Documentation ──────────────────────────────────────────────────────────
-.PHONY: docs docs-serve docs-build
-docs: docs-serve  ## Serve documentation locally (alias for docs-serve)
+.PHONY: docs docs-serve docs-build docs-mkdocs docs-serve-mkdocs docs-build-mkdocs
+docs: docs-serve-mkdocs  ## Serve documentation locally (MkDocs Material — hot reload)
 
-docs-serve:  ## Serve the GitHub Pages site locally
+docs-serve:  ## Serve the legacy static HTML site on :8000
 	@echo "$(YELLOW)Starting local server on http://localhost:8000$(RESET)"
 	cd docs/site && $(PYTHON) -m http.server 8000
 
-docs-build:  ## Build documentation (placeholder — currently static HTML)
+docs-build:  ## Build the legacy static HTML docs (no-op — already static)
 	@echo "Documentation is currently static HTML in docs/site/."
-	@echo "No build step needed — just open docs/site/index.html in a browser."
+
+docs-serve-mkdocs:  ## Serve MkDocs Material site with hot reload on :8000
+	@command -v mkdocs >/dev/null 2>&1 || { \
+	echo "$(YELLOW)Installing MkDocs Material...$(RESET)"; \
+	$(PIP) install -e ".[docs]"; \
+	}
+	@echo "$(YELLOW)Starting MkDocs on http://localhost:8000$(RESET)"
+	mkdocs serve -a 0.0.0.0:8000
+
+docs-build-mkdocs:  ## Build MkDocs Material site (output: site-build/)
+	@command -v mkdocs >/dev/null 2>&1 || { \
+	echo "$(YELLOW)Installing MkDocs Material...$(RESET)"; \
+	$(PIP) install -e ".[docs]"; \
+	}
+	mkdocs build --clean --strict
+	@echo "$(GREEN)✓ MkDocs site built to site-build/$(RESET)"
+
+docs-deploy:  ## Deploy MkDocs site to GitHub Pages (CI does this automatically)
+	@command -v mkdocs >/dev/null 2>&1 || $(PIP) install -e ".[docs]"
+	mkdocs gh-deploy --force
+	@echo "$(GREEN)✓ Deployed to GitHub Pages$(RESET)"
+
+# ─── Notebooks ──────────────────────────────────────────────────────────────
+.PHONY: notebooks notebooks-run notebooks-strip
+notebooks: notebooks-run  ## Run all tutorial notebooks end-to-end (alias)
+
+notebooks-run:  ## Execute all .ipynb notebooks in place (writes outputs back)
+	@command -v jupyter >/dev/null 2>&1 || $(PIP) install jupyter ipykernel
+	@for nb in notebooks/*.ipynb; do \
+	echo "$(YELLOW)Running $$nb...$(RESET)"; \
+	jupyter nbconvert --to notebook --execute --inplace "$$nb" \
+	--ExecutePreprocessor.timeout=300 || { \
+	echo "$(RED)✗ Failed: $$nb$(RESET)"; exit 1; }; \
+	done
+	@echo "$(GREEN)✓ All notebooks ran successfully$(RESET)"
+
+notebooks-strip:  ## Strip notebook outputs (run before commit — also done by pre-commit)
+	@command -v nbstripout >/dev/null 2>&1 || $(PIP) install nbstripout
+	nbstripout notebooks/*.ipynb
+	@echo "$(GREEN)✓ Notebook outputs stripped$(RESET)"
+
+# ─── Security scans ─────────────────────────────────────────────────────────
+.PHONY: security security-bandit security-pip-audit security-gitleaks
+security: security-bandit security-pip-audit  ## Run all security scanners
+
+security-bandit:  ## Run Bandit security linter on src/
+	@command -v bandit >/dev/null 2>&1 || $(PIP) install bandit
+	bandit -r src/rmt_llm/ -ll -v
+	@echo "$(GREEN)✓ Bandit scan passed$(RESET)"
+
+security-pip-audit:  ## Run pip-audit on installed dependencies
+	@command -v pip-audit >/dev/null 2>&1 || $(PIP) install pip-audit
+	pip-audit --strict
+	@echo "$(GREEN)✓ pip-audit passed$(RESET)"
+
+security-gitleaks:  ## Run gitleaks secret scanner
+	@command -v gitleaks >/dev/null 2>&1 || { \
+	echo "$(YELLOW)gitleaks not installed — install from https://github.com/gitleaks/gitleaks$(RESET)"; \
+	exit 1; }
+	gitleaks detect --redact
+	@echo "$(GREEN)✓ gitleaks scan passed$(RESET)"
 
 # ─── Release helpers (maintainers only) ─────────────────────────────────────
 .PHONY: release-tag release-verify
@@ -261,31 +353,31 @@ release-verify:  ## Verify that pyproject.toml version matches the latest git ta
 	echo "pyproject.toml version: $$PY_VER" ; \
 	echo "latest git tag:         $$GIT_VER" ; \
 	if [ "$$PY_VER" = "$$GIT_VER" ]; then \
-	  echo "$(GREEN)✓ Versions match$(RESET)" ; \
+	echo "$(GREEN)✓ Versions match$(RESET)" ; \
 	else \
-	  echo "$(RED)✗ Version mismatch — update pyproject.toml or create tag$(RESET)" ; \
-	  exit 1 ; \
+	echo "$(RED)✗ Version mismatch — update pyproject.toml or create tag$(RESET)" ; \
+	exit 1 ; \
 	fi
 
 # ─── Misc ───────────────────────────────────────────────────────────────────
 .PHONY: tree stats
 tree:  ## Show the project tree (top 3 levels, no ignored files)
 	@find . -maxdepth 3 -type d \
-	  -not -path './.git*' \
-	  -not -path './node_modules*' \
-	  -not -path '*/__pycache__*' \
-	  -not -path '*/.pytest_cache*' \
-	  -not -path '*/results/*' \
-	  | sort | sed 's|[^/]*/|  |g'
+	-not -path './.git*' \
+	-not -path './node_modules*' \
+	-not -path '*/__pycache__*' \
+	-not -path '*/.pytest_cache*' \
+	-not -path '*/results/*' \
+	| sort | sed 's|[^/]*/|  |g'
 
 stats:  ## Show project statistics (LOC, file counts, language breakdown)
 	@echo "$(BOLD)Project statistics$(RESET)"
 	@echo ""
 	@echo "$(BOLD)Files by language:$(RESET)"
 	@find . -type f -not -path './.git/*' -not -path '*/node_modules/*' -not -path '*/__pycache__/*' -not -path '*/results/*' \
-	  | awk -F. '{print $$NF}' | sort | uniq -c | sort -rn | head -20
+	| awk -F. '{print $$NF}' | sort | uniq -c | sort -rn | head -20
 	@echo ""
 	@echo "$(BOLD)Lines of code (top 10 file types):$(RESET)"
 	@find . -type f \( -name '*.py' -o -name '*.jl' -o -name '*.java' -o -name '*.rs' -o -name '*.go' -o -name '*.cpp' -o -name '*.hpp' -o -name '*.R' -o -name '*.js' -o -name '*.jsx' -o -name '*.ts' -o -name '*.tsx' -o -name '*.md' \) \
-	  -not -path './.git/*' -not -path '*/node_modules/*' -not -path '*/results/*' \
-	  -exec wc -l {} + | tail -1
+	-not -path './.git/*' -not -path '*/node_modules/*' -not -path '*/results/*' \
+	-exec wc -l {} + | tail -1
