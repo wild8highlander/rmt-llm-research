@@ -1,0 +1,56 @@
+# =============================================================================
+# CODEOWNERS — automatic review requests.
+# Docs: https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# =============================================================================
+# Each line: <pattern> <owner1> <owner2> ...
+# Owner can be @username or @org/team-name.
+# Use trailing * for directory trees.
+
+# ─── Default — everything not matched below ────────────────────────────────
+*                                @wild8highlander
+
+# ─── Python verification package ──────────────────────────────────────────
+/src/rmt_llm/                    @wild8highlander
+/src/rmt_llm/tests/              @wild8highlander
+
+# ─── Laboratory — Python (EN + RU) ────────────────────────────────────────
+/laboratory/python/              @wild8highlander
+/laboratory/python/lab_en/tiny_gpt*.py  @wild8highlander
+/laboratory/python/lab_ru/tiny_gpt*.py  @wild8highlander
+
+# ─── Laboratory — other languages ─────────────────────────────────────────
+/laboratory/julia/               @wild8highlander
+/laboratory/java/                @wild8highlander
+/laboratory/rust/                @wild8highlander
+/laboratory/go/                  @wild8highlander
+/laboratory/cpp/                 @wild8highlander
+/laboratory/r/                   @wild8highlander
+/laboratory/webapp/              @wild8highlander
+
+# ─── Visualization suites ─────────────────────────────────────────────────
+/python/rmt_llm_viz/             @wild8highlander
+/julia/RMTLLMViz/                @wild8highlander
+/java/rmt-llm-viz/               @wild8highlander
+
+# ─── Documentation ─────────────────────────────────────────────────────────
+/README.md                       @wild8highlander
+/CHANGELOG.md                    @wild8highlander
+/CONTRIBUTING.md                 @wild8highlander
+/ARCHITECTURE.md                 @wild8highlander
+/SECURITY.md                     @wild8highlander
+/docs/                           @wild8highlander
+/papers/                         @wild8highlander
+
+# ─── CI/CD & build ─────────────────────────────────────────────────────────
+/.github/                        @wild8highlander
+/pyproject.toml                  @wild8highlander
+/Makefile                        @wild8highlander
+/Dockerfile                      @wild8highlander
+/docker-compose.yml              @wild8highlander
+/.pre-commit-config.yaml         @wild8highlander
+
+# ─── Academic / metadata ──────────────────────────────────────────────────
+/CITATION.cff                    @wild8highlander
+/AUTHORS.md                      @wild8highlander
+/.zenodo.json                    @wild8highlander
+/LICENSE                         @wild8highlander

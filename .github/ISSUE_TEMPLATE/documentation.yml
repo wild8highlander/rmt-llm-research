@@ -1,0 +1,85 @@
+name: 📚 Documentation Issue
+description: Report errors, gaps, or improvements in README, docs/, papers, or code comments
+title: "[docs]: "
+labels: ["documentation", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the documentation! 📚
+
+        Documentation issues include: typos, broken links, missing equations,
+        unclear examples, outdated instructions, missing docstrings, etc.
+
+  - type: dropdown
+    id: location
+    attributes:
+      label: Documentation Location
+      options:
+        - README.md (root)
+        - CHANGELOG.md
+        - CONTRIBUTING.md
+        - ARCHITECTURE.md
+        - docs/ROADMAP.md
+        - docs/en/*.docx (English monographs)
+        - docs/ru/*.docx (Russian monographs)
+        - docs/site/ (GitHub Pages)
+        - laboratory/README.md
+        - laboratory/webapp/README.md
+        - Code docstrings / inline comments
+        - CITATION.cff / AUTHORS.md
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: section
+    attributes:
+      label: Section / Heading
+      description: Which section or heading is affected? Be specific (e.g. "## 🔬 Verification Package → table row for nhse").
+      placeholder: "## 🚀 Getting Started → Run verification tests"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      options:
+        - Typo / spelling / grammar
+        - Broken link (404 or wrong URL)
+        - Outdated / incorrect information
+        - Missing documentation (feature exists but not documented)
+        - Unclear / confusing explanation
+        - Missing example / code snippet
+        - Translation issue (EN ↔ RU)
+        - Mathematical error in equation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Content
+      description: Paste the current text or quote the relevant section.
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed Fix
+      description: What should it say instead? Be specific.
+      render: markdown
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

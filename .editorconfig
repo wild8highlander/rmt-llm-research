@@ -1,0 +1,120 @@
+# root-level config — applies to all files unless overridden below
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+max_line_length = 100
+
+# ─── Python ─────────────────────────────────────────────────────────────────
+[*.py]
+indent_size = 4
+max_line_length = 100
+# PEP 8 default; ruff/black-compatible
+# Note: ruff format enforces 4-space indent + double quotes by default.
+
+# ─── Jupyter notebooks ──────────────────────────────────────────────────────
+[*.ipynb]
+indent_size = 4
+trim_trailing_whitespace = false  # notebook cells are sensitive to trailing WS
+insert_final_newline = false
+
+# ─── YAML / JSON / TOML ─────────────────────────────────────────────────────
+[*.{yml,yaml,json,toml}]
+indent_size = 2
+max_line_length = off
+
+# ─── Markdown ───────────────────────────────────────────────────────────────
+[*.md]
+trim_trailing_whitespace = false  # markdown mandates trailing 2 spaces for hard breaks
+max_line_length = off
+
+# ─── ReStructuredText ───────────────────────────────────────────────────────
+[*.rst]
+indent_size = 4
+max_line_length = 88
+
+# ─── Shell scripts ──────────────────────────────────────────────────────────
+[*.sh]
+indent_size = 4
+# POSIX shell: 4-space indent matches most Linux distros
+
+# ─── Makefile (REQUIRES tabs) ───────────────────────────────────────────────
+[Makefile]
+indent_style = tab
+indent_size = 8
+
+# ─── Julia ──────────────────────────────────────────────────────────────────
+[*.jl]
+indent_size = 4
+max_line_length = 92  # Julia community convention
+
+# ─── Java ───────────────────────────────────────────────────────────────────
+[*.java]
+indent_size = 4
+max_line_length = 120  # Google Java Style
+
+# ─── Rust ───────────────────────────────────────────────────────────────────
+[*.rs]
+indent_size = 4
+max_line_length = 100  # rustfmt default
+
+# ─── Go (gofmt enforces tabs) ───────────────────────────────────────────────
+[*.go]
+indent_style = tab
+indent_size = 8
+max_line_length = off
+
+# ─── C / C++ ────────────────────────────────────────────────────────────────
+[*.{c,cpp,hpp,h,cc}]
+indent_size = 4
+max_line_length = 100
+
+# ─── R ──────────────────────────────────────────────────────────────────────
+[*.r]
+indent_size = 2
+max_line_length = 80  # tidyverse style guide
+
+[*.{R,Rmd}]
+indent_size = 2
+max_line_length = 80
+
+# ─── JavaScript / TypeScript / JSX / TSX ────────────────────────────────────
+[*.{js,jsx,ts,tsx,mjs,cjs}]
+indent_size = 2
+max_line_length = 100  # matches Prettier default
+
+# ─── CSS / SCSS / HTML ──────────────────────────────────────────────────────
+[*.{css,scss,sass,html,htm}]
+indent_size = 2
+max_line_length = off
+
+# ─── LaTeX ──────────────────────────────────────────────────────────────────
+[*.{tex,sty,cls}]
+indent_size = 2
+max_line_length = off
+trim_trailing_whitespace = true
+
+# ─── Dockerfile ─────────────────────────────────────────────────────────────
+[Dockerfile*]
+indent_size = 4
+
+# ─── Git commit messages & GitHub config ────────────────────────────────────
+[COMMIT_EDITMSG]
+max_line_length = 72  # subject line; body wrapped at 72 per Git convention
+
+[*.gitignore]
+indent_size = 4
+
+# ─── ENV files ──────────────────────────────────────────────────────────────
+[*.env]
+indent_size = 2
+insert_final_newline = false
+
+# ─── Plain text / license files ─────────────────────────────────────────────
+[*.txt]
+max_line_length = off

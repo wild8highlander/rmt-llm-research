@@ -1,6 +1,10 @@
 # 🧠 RMT & LLM Research: Random Matrix Theory Meets Large Language Models
 
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-lightgrey.svg)](./LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB.svg)](https://www.python.org/)
+[![CI](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/codeql.yml)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](./.pre-commit-config.yaml)
 [![Documents](https://img.shields.io/badge/Documents-12-green.svg)](./docs/)
 [![Papers](https://img.shields.io/badge/Papers-1-blue.svg)](./papers/)
 [![Languages](https://img.shields.io/badge/Languages-EN%20%2F%20RU-yellow.svg)]()
@@ -8,18 +12,54 @@
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0003--7299--0701-a6ce39)](https://orcid.org/0009-0003-7299-0701)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/wild8highlander/rmt-llm-research/badge)](https://securityscorecards.dev/viewer/?uri=github.com/wild8highlander/rmt-llm-research)
 [![Codecov](https://codecov.io/gh/wild8highlander/rmt-llm-research/branch/main/graph/badge.svg)](https://codecov.io/gh/wild8highlander/rmt-llm-research)
-[![pytest](https://img.shields.io/badge/tests-70+-green.svg)](./src/rmt_llm/tests/)
+[![Tests](https://img.shields.io/badge/tests-171+-green.svg)](./src/rmt_llm/tests/)
+[![TinyGPT](https://img.shields.io/badge/TinyGPT-v2-2.5M%20params-blueviolet.svg)](./laboratory/python/lab_en/tiny_gpt.py)
 [![Julia](https://img.shields.io/badge/Julia-RMTLLMVerify-9558B2.svg)](./julia/RMTLLMVerify/)
 [![Java](https://img.shields.io/badge/Java-RMTLLMViz-ED8B00.svg)](./java/rmt-llm-viz/)
 [![Python Viz](https://img.shields.io/badge/Python-RMTLLMViz-3776AB.svg)](./python/rmt_llm_viz/)
-[![Julia Viz](https://img.shields.io/badge/Julia-RMTLLMViz-9558B2.svg)](./julia/RMTLLMViz/)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg?logo=docker&logoColor=white)](./Dockerfile)
+[![pre-commit](https://img.shields.io/badge/code%20style-ruff-261230.svg)](https://docs.astral.sh/ruff/)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg)](#-contributors)
+[![GitHub stars](https://img.shields.io/github/stars/wild8highlander/rmt-llm-research?style=social)](https://github.com/wild8highlander/rmt-llm-research/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/wild8highlander/rmt-llm-research?style=social)](https://github.com/wild8highlander/rmt-llm-research/network/members)
+[![GitHub discussions](https://img.shields.io/github/discussions/wild8highlander/rmt-llm-research)](https://github.com/wild8highlander/rmt-llm-research/discussions)
 
 > **Spectral analysis of LLM activations through the lens of Random Matrix Theory** — detecting hallucinations, cognitive mode transitions, and the mathematical inevitability of autoregressive collapse.
 
 ---
 
+## 🆕 What's New in v1.6.0
+
+This release brings the project to **production-grade open-source quality** — the same
+standards you'd expect from the best-maintained repos on GitHub.
+
+### 🏗️ Engineering infrastructure (this release)
+
+- **CI matrix**: Python 3.10 / 3.11 / 3.12 × Ubuntu / macOS / Windows, plus Julia 1.9 / 1.10 / 1.11
+- **CodeQL** semantic analysis for Python — `.github/workflows/codeql.yml`
+- **Pre-commit hooks**: ruff, ruff-format, mypy, codespell, shellcheck, hadolint, gitleaks, markdownlint, yamlfmt, toml-sort — 30+ hooks in `.pre-commit-config.yaml`
+- **Docker** reproducible research environment with Python + Julia + Java — `Dockerfile` + `docker-compose.yml`
+- **101 TinyGPT unit tests** in `laboratory/python/lab_en/tests/` covering model, BPE tokenizer, Adam optimizer, backward pass (with numerical gradient check), and end-to-end training
+- **GitHub community files**: issue templates (bug / feature / docs), PR template with checklist, CODEOWNERS, FUNDING, dependabot (9 ecosystems), stale bot, 30 issue labels, SECURITY.md, SUPPORT.md, ARCHITECTURE.md, ROADMAP.md, expanded CONTRIBUTING.md
+- **Release pipeline**: tag-triggered GitHub Release with sdist + wheel + TinyGPT artifacts + Zenodo DOI archive + Docker image to ghcr.io
+- **Makefile** with 30+ targets (`make help`, `make install-dev`, `make test`, `make ci`, `make docker`, …)
+- **EditorConfig** + **markdownlint** + **codespell** for cross-editor consistency
+
+### 🧠 Model improvements (from v1.5.x)
+
+- Pre-LN + MLP transformer block (GPT-2 style) — `tiny_gpt.py` v2 architecture
+- BPE tokenizer (256 merges, pure-Python + NumPy) — `tiny_gpt_trainer.py`
+- Adam with bias correction, weight decay, cosine LR + warmup
+- Full reverse-mode autodiff through the synthetic transformer
+- 30-epoch training run: loss 6.23 → 0.0085, match_rate 0% → 6.5%
+
+See [`CHANGELOG.md`](./CHANGELOG.md) for the full history.
+
+---
+
 ## 📑 Table of Contents
 
+- [What's New in v1.6.0](#-whats-new-in-v160)
 - [Overview](#-overview)
 - [Research Topics](#-research-topics)
 - [Repository Structure](#-repository-structure)
@@ -29,7 +69,9 @@
 - [Papers](#-papers)
 - [Key Results](#-key-results)
 - [Getting Started](#-getting-started)
+- [Professional Engineering](#-professional-engineering)
 - [Citation](#-citation)
+- [Contributors](#-contributors)
 - [License](#-license)
 
 ---
@@ -285,6 +327,85 @@ cd java/rmt-llm-viz && ./gradlew verify
 
 ---
 
+## 🏗️ Professional Engineering
+
+This repo follows best practices from the best-maintained open-source projects on GitHub. Every file below is actively enforced by CI.
+
+### CI/CD & quality automation
+
+| File / Directory                                          | Purpose                                                                        |
+|-----------------------------------------------------------|--------------------------------------------------------------------------------|
+| [`.github/workflows/ci.yml`](./.github/workflows/ci.yml)  | Python matrix (3.10/3.11/3.12 × ubuntu/macos/windows), Julia, Rust/Go/C++, cross-impl checks |
+| [`.github/workflows/codeql.yml`](./.github/workflows/codeql.yml) | CodeQL semantic analysis for Python — security + quality queries              |
+| [`.github/workflows/pre-commit.yml`](./.github/workflows/pre-commit.yml) | Run all 30+ pre-commit hooks on every push                                     |
+| [`.github/workflows/markdown-lint.yml`](./.github/workflows/markdown-lint.yml) | markdownlint + link checker                                                    |
+| [`.github/workflows/docker.yml`](./.github/workflows/docker.yml) | Docker build + Trivy vulnerability scan + smoke test                           |
+| [`.github/workflows/release.yml`](./.github/workflows/release.yml) | Tag-triggered release: sdist + wheel + artifacts + Zenodo + Docker publish     |
+| [`.github/workflows/scorecard.yml`](./.github/workflows/scorecard.yml) | OpenSSF Scorecard supply-chain scoring                                         |
+| [`.github/workflows/zenodo.yml`](./.github/workflows/zenodo.yml) | Archive releases to Zenodo (DOI minting)                                       |
+| [`.github/workflows/deploy-docs.yml`](./.github/workflows/deploy-docs.yml) | GitHub Pages deployment                                                        |
+| [`.pre-commit-config.yaml`](./.pre-commit-config.yaml)    | 30+ hooks: ruff, ruff-format, mypy, codespell, shellcheck, hadolint, gitleaks  |
+
+### Community & governance
+
+| File / Directory                                                       | Purpose                                                  |
+|------------------------------------------------------------------------|----------------------------------------------------------|
+| [`.github/ISSUE_TEMPLATE/`](./.github/ISSUE_TEMPLATE/)                 | 4 templates: bug, feature, documentation + config router |
+| [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) | PR template with checklist + breaking-change section     |
+| [`.github/CODEOWNERS`](./.github/CODEOWNERS)                           | Automatic review requests by directory                   |
+| [`.github/dependabot.yml`](./.github/dependabot.yml)                   | 9 ecosystems: pip, actions, julia, npm, cargo, gradle, gomod, docker |
+| [`.github/stale.yml`](./.github/stale.yml)                             | Auto-close inactive issues/PRs after 60 days             |
+| [`.github/labels.yml`](./.github/labels.yml)                            | 30 standardized issue/PR labels with colors              |
+| [`.github/FUNDING.yml`](./.github/FUNDING.yml)                         | Sponsor buttons                                          |
+| [`.github/SUPPORT.md`](./.github/SUPPORT.md)                           | "Getting help" guide                                     |
+| [`SECURITY.md`](./SECURITY.md)                                         | Vulnerability disclosure policy + threat model           |
+| [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md)                           | Contributor Covenant 2.1                                 |
+| [`CONTRIBUTING.md`](./CONTRIBUTING.md)                                 | 400+ line contributor guide (8 languages covered)        |
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md)                                 | High-level architecture + design principles              |
+| [`docs/ROADMAP.md`](./docs/ROADMAP.md)                                 | Public roadmap with themes for 2026                      |
+| [`CITATION.cff`](./CITATION.cff)                                       | Machine-readable citation for academic use               |
+| [`AUTHORS.md`](./AUTHORS.md)                                           | Author list with ORCID                                    |
+| [`.all-contributorsrc`](./.all-contributorsrc)                         | all-contributors bot config                              |
+
+### Build & developer tooling
+
+| File                          | Purpose                                                                              |
+|-------------------------------|--------------------------------------------------------------------------------------|
+| [`pyproject.toml`](./pyproject.toml) | PEP 621 packaging + ruff + mypy + pytest + coverage config (all in one file)   |
+| [`Makefile`](./Makefile)      | 30+ targets: `make help`, `install-dev`, `test`, `lint`, `ci`, `docker`, `release-tag` |
+| [`Dockerfile`](./Dockerfile)  | Multi-stage build: Python 3.12 + Julia 1.10 + Java 21, non-root user, HEALTHCHECK   |
+| [`docker-compose.yml`](./docker-compose.yml) | Services: `lab`, `webapp`, `tests`, `tinygpt-train`, `docs`, `jupyter`, `shell` |
+| [`.dockerignore`](./.dockerignore) | Excludes 30+ patterns from Docker build context                                |
+| [`.editorconfig`](./.editorconfig) | Per-language editor settings for 15+ file types (Python, Julia, Java, Rust, Go, C++, R, JS, …) |
+| [`.markdownlint.json`](./.markdownlint.json) | markdownlint config with project-specific proper-names dictionary             |
+| [`.markdown-link-check.json`](./.markdown-link-check.json) | Link-checker config with retry + ignore patterns                              |
+| [`.gitignore`](./.gitignore)   | Python + Julia + Java + Rust + Go + Node.js + LaTeX + OS files                       |
+
+### Test coverage
+
+| Suite                                  | Where                                       | Count |
+|---------------------------------------|---------------------------------------------|-------|
+| RMT module unit tests                 | `src/rmt_llm/tests/`                         | 70+   |
+| TinyGPT model tests                   | `laboratory/python/lab_en/tests/test_tiny_gpt.py` | 47 |
+| BPE tokenizer tests                   | `laboratory/python/lab_en/tests/test_bpe.py`     | 21 |
+| Trainer + Adam + backward tests       | `laboratory/python/lab_en/tests/test_trainer.py` | 33 |
+| Julia verification                    | `julia/RMTLLMVerify/test/`                    | 18    |
+| Java headless verification            | `java/rmt-llm-viz/.../RMTVerifier.java`       | 14    |
+| Rust / Go / C++ labs                  | `laboratory/{rust,go,cpp}/lab_*/`             | 32    |
+| Cross-implementation consistency      | `src/rmt_llm/tests/test_cross.py`             | 7     |
+| **Total**                             |                                              | **~242** |
+
+Run the full suite:
+
+```bash
+make test           # Python only (fast)
+make test-all       # All 8 languages (slow — needs Julia, Rust, Go, Java, C++, R, Node)
+make ci             # Simulate the full CI pipeline locally
+make test-coverage  # Generate HTML coverage report at htmlcov/index.html
+```
+
+---
+
 ## 📖 Citation
 
 ```bibtex
@@ -299,15 +420,86 @@ cd java/rmt-llm-viz && ./gradlew verify
 
 ---
 
-## 📜 License
+## 🧪 Research Laboratory (NEW in v2.0)
 
-This work is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License** (CC BY-NC-SA 4.0). See [LICENSE](./LICENSE) for details.
+A complete research laboratory has been added at [`laboratory/`](./laboratory/). It includes:
+
+- **8 programming languages × 2 versions (EN + RU) each = 16 code bases**: Python, Julia, Java, Rust, Go, C++, R, and a React web app
+- **Interactive menu** in every language (10 options: scenarios, experiments, custom launch, model download, reports, charts, etc.)
+- **Infinite parameter system** — all numeric bounds support `inf` for true infinity
+- **Synthetic neural network** (TinyGPT, ~2M params) — runs offline, plus downloadable small models from HuggingFace / ONNX Model Zoo
+- **6 pre-defined scenarios** verifying the news claims:
+  - SCEN-LIE-01: Models that already know the answer lie about their reasoning
+  - SCEN-HALL-02: Hallucination cascade past N_crit threshold
+  - SCEN-DECEIT-03: Internal deception planning detected in hidden trace
+  - SCEN-DATA-04: Memorized PII / API keys leak from weights
+  - SCEN-FILTER-05: Safety filters fire only at output, not at reasoning time
+  - SCEN-UNCERT-06: Calibrated uncertainty (control group)
+- **5 research experiments**: spectral signature, N_crit sweep, deception detection, PII leakage, cross-implementation verification
+- **13 report formats** per run: txt, md, csv, html, json, pdf, docx, yaml, xml, latex, parquet, xlsx, sqlite
+- **8 chart types** in 4 formats each: PNG (600 DPI) + PDF + SVG + interactive Plotly HTML
+- **Real-time web dashboard**: Vite + React 18 + Socket.io (modern CRA equivalent), 9 tabs including live metrics, reasoning trace, charts gallery, reports viewer, log search
+
+See [`laboratory/README.md`](./laboratory/README.md) for full documentation.
+
+### Quick start (Python EN)
+
+```bash
+cd laboratory/python/lab_en
+pip install -r requirements.txt
+python main.py              # Interactive menu
+python run_full_lab.py      # Non-interactive full run
+```
+
+### Quick start (web app)
+
+```bash
+cd laboratory/webapp
+npm install
+npm start                   # Vite + Socket.io server
+# Open http://localhost:5173
+```
 
 ---
 
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+We welcome contributions of all sizes — from typo fixes to new RMT modules. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide (400+ lines covering 8 languages).
+
+**Quick start for contributors:**
+
+```bash
+git clone https://github.com/<your-fork>/rmt-llm-research.git
+cd rmt-llm-research
+make install-dev          # installs dev deps + pre-commit hooks
+make check                # quick local validation
+# ...make your changes...
+make ci                   # full local CI simulation
+# open a PR against main
+```
+
+For bug reports, feature requests, and documentation issues, please use the
+[issue templates](./.github/ISSUE_TEMPLATE/). For questions and discussions,
+use [GitHub Discussions](https://github.com/wild8highlander/rmt-llm-research/discussions).
+
+---
+
+## 🌟 Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+Thanks to everyone who has contributed to this project! Want to join them?
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) and look for issues labeled
+[`good first issue`](https://github.com/wild8highlander/rmt-llm-research/labels/good%20first%20issue).
+
+---
+
+## 📜 License
+
+This work is licensed under the **Proprietary All-Rights-Reserved License**. All rights belong exclusively to Iskhak Hamzatovich Isaev. No distribution, no academic redistribution, no commercial use, no derivative works, no AI training. See [LICENSE](./LICENSE) for full terms.
+
+The previous CC BY-NC-SA 4.0 license is preserved at [LICENSE-CC-BY-NC-SA-4.0-HISTORICAL.txt](./LICENSE-CC-BY-NC-SA-4.0-HISTORICAL.txt) for historical reference only.
 
 ---
 

@@ -1,0 +1,211 @@
+# =============================================================================
+# Release workflow — triggered by git tags v*.*.*
+# Produces: GitHub Release with artifacts + Zenodo DOI archive + Docker image
+# =============================================================================
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+      - 'v*.*.*-*'   # pre-releases like v1.6.0-rc1
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g. v1.6.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write   # required to create GitHub Release
+  packages: write   # required to push Docker image to ghcr.io
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false   # never cancel a release
+
+jobs:
+  # ─── Verify the tag matches pyproject.toml version ────────────────────────
+  verify-version:
+    name: Verify tag matches pyproject version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      is_prerelease: ${{ steps.check.outputs.is_prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Extract version from pyproject.toml
+        id: check
+        run: |
+          set -euo pipefail
+          PY_VERSION=$(python -c "import tomllib; print(tomllib.loads(open('pyproject.toml','rb').read().decode())['project']['version'])")
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          echo "pyproject version: $PY_VERSION"
+          echo "tag version:       $TAG_VERSION"
+          if [[ "$PY_VERSION" != "$TAG_VERSION" ]]; then
+            echo "::error::Version mismatch: pyproject.toml=$PY_VERSION but tag=$TAG_VERSION"
+            exit 1
+          fi
+          echo "version=$PY_VERSION" >> "$GITHUB_OUTPUT"
+          if [[ "$TAG_VERSION" == *-* ]]; then
+            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ─── Run full test suite before releasing ────────────────────────────────
+  test:
+    name: Tests must pass before release
+    needs: verify-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[test]"
+      - run: pytest -v --cov=rmt_llm --cov-report=term-missing
+
+  # ─── Build Python sdist + wheel ──────────────────────────────────────────
+  build-python:
+    name: Build Python sdist + wheel
+    needs: [verify-version, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tools
+        run: pip install build twine
+      - name: Build sdist + wheel
+        run: python -m build --outdir dist/
+      - name: Verify metadata
+        run: twine check dist/*
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: dist/
+          retention-days: 90
+
+  # ─── Build and push Docker image to ghcr.io ──────────────────────────────
+  build-docker:
+    name: Build & push Docker image
+    needs: [verify-version, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest,enable=${{ needs.verify-version.outputs.is_prerelease != 'true' }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: true
+          sbom: true
+
+  # ─── Build release notes from CHANGELOG.md ───────────────────────────────
+  release-notes:
+    name: Extract release notes from CHANGELOG.md
+    needs: verify-version
+    runs-on: ubuntu-latest
+    outputs:
+      notes: ${{ steps.extract.outputs.notes }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: extract
+        uses: mikepenz/release-changelog-builder-action@v5
+        with:
+          configuration: ".github/release-notes-config.json"
+          fromTag: ${{ github.event.before }}
+          toTag: ${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─── Create the GitHub Release ───────────────────────────────────────────
+  github-release:
+    name: Create GitHub Release
+    needs: [verify-version, build-python, build-docker, release-notes]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Python dist
+        uses: actions/download-artifact@v4
+        with:
+          name: python-dist
+          path: dist/
+
+      - name: Prepare TinyGPT artifacts
+        run: |
+          mkdir -p artifacts/
+          cp laboratory/python/lab_en/results/models/tiny_gpt_trained.npz artifacts/
+          cp laboratory/python/lab_en/results/models/tiny_gpt_bpe.json artifacts/
+          cp laboratory/python/lab_en/results/models/training_history.json artifacts/
+          # Compute SHA256
+          cd artifacts && sha256sum * > SHA256SUMS.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: ${{ needs.release-notes.outputs.notes }}
+          prerelease: ${{ needs.verify-version.outputs.is_prerelease == 'true' }}
+          draft: false
+          generate_release_notes: false
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+            artifacts/tiny_gpt_trained.npz
+            artifacts/tiny_gpt_bpe.json
+            artifacts/training_history.json
+            artifacts/SHA256SUMS.txt
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─── Archive to Zenodo (publishes a new DOI for major releases) ──────────
+  zenodo:
+    name: Archive release to Zenodo
+    needs: [verify-version, github-release]
+    runs-on: ubuntu-latest
+    if: needs.verify-version.outputs.is_prerelease != 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trigger Zenodo archive workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: zenodo.yml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          inputs: |
+            { "tag": "${{ github.ref_name }}", "version": "${{ needs.verify-version.outputs.version }}" }

@@ -1,0 +1,116 @@
+# =============================================================================
+# docker-compose.yml — orchestrates the research environment.
+# Usage:
+#   docker-compose up lab       # Run the Python lab (interactive menu)
+#   docker-compose up webapp    # Launch the Vite + Socket.io dashboard
+#   docker-compose up tests     # Run the full pytest suite
+#   docker-compose up shell     # Drop into a bash shell in the container
+# =============================================================================
+version: "3.9"
+
+services:
+  # ─── Core research image (Python + Julia + Java) ─────────────────────────
+  base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rmt-llm-research:latest
+    container_name: rmt-base
+    volumes:
+      - ./:/workspace
+      - rmt-pip-cache:/home/rmtuser/.cache/pip
+      - rmt-julia-depot:/opt/julia-depot
+    working_dir: /workspace
+    user: rmtuser
+    environment:
+      - PYTHONPATH=/workspace/src:/workspace/laboratory/python/lab_en
+      - JULIA_DEPOT_PATH=/opt/julia-depot
+      - JULIA_NUM_THREADS=auto
+
+  # ─── Run the Python lab (EN) interactively ───────────────────────────────
+  lab:
+    extends: base
+    container_name: rmt-lab
+    stdin_open: true
+    tty: true
+    command: ["python", "laboratory/python/lab_en/main.py"]
+
+  # ─── Run the Russian lab ──────────────────────────────────────────────────
+  lab-ru:
+    extends: base
+    container_name: rmt-lab-ru
+    stdin_open: true
+    tty: true
+    command: ["python", "laboratory/python/lab_ru/main.py"]
+
+  # ─── Run the full pytest suite with coverage ─────────────────────────────
+  tests:
+    extends: base
+    container_name: rmt-tests
+    command: >
+      pytest
+      src/rmt_llm/tests/
+      laboratory/python/lab_en/tests/
+      --cov=rmt_llm
+      --cov-report=term-missing
+      --cov-report=html
+      -v
+
+  # ─── Run TinyGPT training (lab_en, menu item 14) ─────────────────────────
+  tinygpt-train:
+    extends: base
+    container_name: rmt-tinygpt-train
+    stdin_open: true
+    tty: true
+    command: ["python", "laboratory/python/lab_en/main.py"]
+
+  # ─── Launch the web dashboard (Vite + Socket.io) ─────────────────────────
+  webapp:
+    extends: base
+    container_name: rmt-webapp
+    ports:
+      - "5173:5173"
+      - "3001:3001"
+    working_dir: /workspace/laboratory/webapp
+    command: ["sh", "-c", "npm install && npm start"]
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3001
+
+  # ─── Drop into a bash shell ──────────────────────────────────────────────
+  shell:
+    extends: base
+    container_name: rmt-shell
+    stdin_open: true
+    tty: true
+    entrypoint: ["/bin/bash"]
+    command: []
+
+  # ─── Documentation server ─────────────────────────────────────────────────
+  docs:
+    extends: base
+    container_name: rmt-docs
+    ports:
+      - "8000:8000"
+    working_dir: /workspace/docs/site
+    command: ["python", "-m", "http.server", "8000"]
+
+  # ─── Jupyter notebook server ─────────────────────────────────────────────
+  jupyter:
+    extends: base
+    container_name: rmt-jupyter
+    ports:
+      - "8888:8888"
+    command: >
+      jupyter notebook
+      --ip=0.0.0.0
+      --port=8888
+      --no-browser
+      --NotebookApp.token=''
+      --NotebookApp.password=''
+      notebooks/
+
+# Named volumes for caching across container rebuilds
+volumes:
+  rmt-pip-cache:
+  rmt-julia-depot:

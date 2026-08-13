@@ -1,0 +1,54 @@
+{
+  "$schema": "https://raw.githubusercontent.com/mikepenz/release-changelog-builder-action/main/schema.json",
+  "categories": [
+    {
+      "title": "## 🚀 Added",
+      "labels": ["enhancement", "feature"]
+    },
+    {
+      "title": "## 🐛 Fixed",
+      "labels": ["bug", "fix"]
+    },
+    {
+      "title": "## 🔒 Security",
+      "labels": ["security"]
+    },
+    {
+      "title": "## 📚 Documentation",
+      "labels": ["documentation"]
+    },
+    {
+      "title": "## 🌍 Translation",
+      "labels": ["translation"]
+    },
+    {
+      "title": "## 🏗️ CI/CD",
+      "labels": ["ci"]
+    },
+    {
+      "title": "## 📦 Dependencies",
+      "labels": ["dependencies"]
+    },
+    {
+      "title": "## ⚡ Performance",
+      "labels": ["performance"]
+    },
+    {
+      "title": "## 🧪 Tests",
+      "labels": ["tests"]
+    },
+    {
+      "title": "## 💥 Breaking Changes",
+      "labels": ["breaking"]
+    },
+    {
+      "title": "## 🧰 Other",
+      "labels": ["chore", "refactor", "style"]
+    }
+  ],
+  "exclude_labels": ["stale", "wontfix", "duplicate", "invalid"],
+  "template": "#{{CHANGELOG}}\n\n<details>\n<summary>📦 Commits since last release</summary>\n\n#{{COMMITS}}\n\n</details>",
+  "pr_template": "- ##{{TITLE}} ##{{NUMBER}} (by @##{{AUTHOR}})",
+  "empty_template": "No notable changes in this release — see the commit log for details.",
+  "max_back_pull_request_age_days": 365
+}

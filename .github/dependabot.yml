@@ -1,0 +1,128 @@
+# =============================================================================
+# Dependabot — automated dependency updates.
+# Docs: https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# =============================================================================
+# We keep updates weekly (not daily) to avoid PR noise. Security advisories
+# still trigger immediate PRs regardless of this schedule.
+
+version: 2
+
+updates:
+  # ─── Python (pyproject.toml) ─────────────────────────────────────────────
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Moscow"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "python"]
+    commit-message:
+      prefix: "deps(python)"
+      include: "scope"
+    groups:
+      python-dev:
+        patterns: ["pytest*", "ruff*", "mypy", "pytest-cov"]
+      python-runtime:
+        patterns: ["numpy*"]
+    reviewers: ["wild8highlander"]
+    assignees: ["wild8highlander"]
+
+  # ─── GitHub Actions ──────────────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Moscow"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "ci"]
+    commit-message:
+      prefix: "deps(ci)"
+      include: "scope"
+    reviewers: ["wild8highlander"]
+
+  # ─── Julia (Project.toml) ────────────────────────────────────────────────
+  - package-ecosystem: "julia"
+    directory: "/julia/RMTLLMVerify"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    labels: ["dependencies", "julia"]
+    reviewers: ["wild8highlander"]
+
+  - package-ecosystem: "julia"
+    directory: "/julia/RMTLLMViz"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    labels: ["dependencies", "julia"]
+    reviewers: ["wild8highlander"]
+
+  # ─── Node.js (laboratory/webapp) ─────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/laboratory/webapp"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "javascript"]
+    commit-message:
+      prefix: "deps(webapp)"
+      include: "scope"
+    reviewers: ["wild8highlander"]
+
+  # ─── Rust (laboratory/rust) ──────────────────────────────────────────────
+  - package-ecosystem: "cargo"
+    directory: "/laboratory/rust/lab_en"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    labels: ["dependencies", "rust"]
+    reviewers: ["wild8highlander"]
+
+  - package-ecosystem: "cargo"
+    directory: "/laboratory/rust/lab_ru"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    labels: ["dependencies", "rust"]
+    reviewers: ["wild8highlander"]
+
+  # ─── Java (gradle) ───────────────────────────────────────────────────────
+  - package-ecosystem: "gradle"
+    directory: "/java/rmt-llm-viz"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    labels: ["dependencies", "java"]
+    reviewers: ["wild8highlander"]
+
+  # ─── Go (laboratory/go) ──────────────────────────────────────────────────
+  - package-ecosystem: "gomod"
+    directory: "/laboratory/go/lab_en"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    labels: ["dependencies", "go"]
+    reviewers: ["wild8highlander"]
+
+  - package-ecosystem: "gomod"
+    directory: "/laboratory/go/lab_ru"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    labels: ["dependencies", "go"]
+    reviewers: ["wild8highlander"]
+
+  # ─── Docker (Dockerfile) ─────────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    labels: ["dependencies", "docker"]
+    reviewers: ["wild8highlander"]

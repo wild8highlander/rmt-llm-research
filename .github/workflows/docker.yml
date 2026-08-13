@@ -1,0 +1,111 @@
+# =============================================================================
+# Docker CI — build and test the Docker image on every push that touches
+# Dockerfile or its dependencies. Full publish happens only on tags (release.yml).
+# =============================================================================
+name: Docker
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'docker-compose.yml'
+      - '.github/workflows/docker.yml'
+      - 'pyproject.toml'
+      - 'src/**'
+      - 'laboratory/python/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'docker-compose.yml'
+  schedule:
+    # Weekly rebuild to catch base-image CVEs
+    - cron: "0 4 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+  security-events: write   # for Trivy SARIF upload
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: rmt-llm-research:ci
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke-test the image
+        run: |
+          echo "=== Image size ==="
+          docker images rmt-llm-research:ci --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+          echo ""
+          echo "=== Verify Python imports ==="
+          docker run --rm rmt-llm-research:ci python -c "
+          from rmt_llm.marchenko_pastur import mp_bounds
+          from rmt_llm.bbp_transition import bbp_critical_theta
+          from rmt_llm.nhse import nhse_winding_number
+          print('mp_bounds(0.5, 1.0) =', mp_bounds(0.5, 1.0))
+          print('bbp_critical_theta(0.5) =', bbp_critical_theta(0.5))
+          print('nhse_winding_number(0.5, 0.3) =', nhse_winding_number(0.5, 0.3))
+          print('OK — all RMT modules importable')
+          "
+          echo ""
+          echo "=== Verify pytest runs ==="
+          docker run --rm rmt-llm-research:ci pytest src/rmt_llm/tests/ -q --no-header -x
+          echo ""
+          echo "=== Verify lab_en imports ==="
+          docker run --rm rmt-llm-research:ci python -c "
+          import sys; sys.path.insert(0, '/workspace/laboratory/python/lab_en')
+          from tiny_gpt import TinyGPT, TinyGPTConfig
+          from tiny_gpt_trainer import BPETokenizer, AdamState
+          print('TinyGPT config:', TinyGPTConfig().__dict__ if hasattr(TinyGPTConfig(), '__dict__') else TinyGPTConfig())
+          print('OK — lab modules importable')
+          "
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: rmt-llm-research:ci
+          format: sarif
+          output: trivy-results.sarif
+          exit-code: '0'   # advisory on CI; release.yml gates on HIGH/CRITICAL
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif
+
+      - name: Upload Trivy scan results as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-scan
+          path: trivy-results.sarif
+          retention-days: 14

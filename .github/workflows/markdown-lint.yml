@@ -1,0 +1,57 @@
+# =============================================================================
+# Markdown lint CI — runs markdownlint-cli2 on all Markdown files.
+# =============================================================================
+name: Markdown Lint
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.md'
+      - '.markdownlint.json'
+      - '.github/workflows/markdown-lint.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**.md'
+      - '.markdownlint.json'
+      - '.github/workflows/markdown-lint.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: markdown-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  markdown-lint:
+    name: Run markdownlint-cli2
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install markdownlint-cli2
+        run: npm install -g markdownlint-cli2
+
+      - name: Run markdownlint-cli2
+        run: markdownlint-cli2 '**/*.md' '#CHANGELOG.md' '#laboratory/webapp/**' '#docs/site/**' '#node_modules/**' '#.git/**'
+        continue-on-error: false
+
+      - name: Markdown link check
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+          config-file: '.markdown-link-check.json'
+          folder-path: '.'
+          max-depth: 3
+        continue-on-error: true  # external links may rot — don't fail CI on them

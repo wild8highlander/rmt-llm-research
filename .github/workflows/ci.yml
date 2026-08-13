@@ -2,48 +2,78 @@ name: CI — RMT-LLM Verification
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
   workflow_dispatch:
+  schedule:
+    # Weekly Monday-night build to catch upstream regressions (numpy, julia, etc.)
+    - cron: "0 22 * * 1"
 
 permissions:
   contents: read
+  checks: write   # required to annotate PRs with test failures
+  pull-requests: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  # ── Syntax & Lint ──────────────────────────────────────
+  # ── Syntax & Lint ─────────────────────────────────────────────────────
   lint:
-    name: Lint (ruff + mypy)
+    name: Lint (ruff + mypy + codespell)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
       - name: Install dev dependencies
         run: |
           pip install --upgrade pip
-          pip install ruff mypy
+          pip install ruff mypy codespell tomli
           pip install -e ".[dev]"
       - name: ruff check
-        run: ruff check src/
+        run: ruff check src/ laboratory/python/ python/ scripts/
+      - name: ruff format --check
+        run: ruff format --check src/ laboratory/python/ python/ scripts/
       - name: mypy
         run: mypy src/ --ignore-missing-imports || true
+      - name: codespell
+        run: codespell --ignore-words=.codespellignore src/ laboratory/python/ python/ docs/ README.md CONTRIBUTING.md ARCHITECTURE.md SECURITY.md || true
 
-  # ── Python pytest + Coverage ───────────────────────────
+  # ── Python pytest + Coverage (matrix) ─────────────────────────────────
   test-python:
-    name: Python ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.10", "3.11", "3.12"]
+        exclude:
+          # Skip macOS + Windows for older Pythons to keep matrix manageable
+          - { os: macos-latest,   python-version: "3.10" }
+          - { os: windows-latest, python-version: "3.10" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install package (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[test]"
+      - name: Install package (Windows)
+        if: runner.os == 'Windows'
         run: |
           pip install --upgrade pip
           pip install -e ".[test]"
@@ -52,52 +82,143 @@ jobs:
           pytest \
             --cov=rmt_llm \
             --cov-report=term-missing \
-            --cov-report=xml \
+            --cov-report=xml:coverage.xml \
             --cov-report=html \
-            -v
+            -v \
+            --junitxml=pytest.xml
       - name: Upload coverage to Codecov
-        if: matrix.python-version == '3.12'
+        if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
           fail_ci_if_error: false
           verbose: true
+          flags: python
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results-${{ matrix.os }}-${{ matrix.python-version }}
+          path: |
+            pytest.xml
+            coverage.xml
+            htmlcov/
+          retention-days: 7
 
-  # ── Julia Tests ────────────────────────────────────────
+  # ── TinyGPT + BPE + Trainer unit tests ────────────────────────────────
+  test-tiny-gpt:
+    name: TinyGPT + BPE + Trainer tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [test-python]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install numpy pytest pytest-cov
+      - name: Run TinyGPT tests
+        run: |
+          cd laboratory/python/lab_en
+          pytest tests/ -v --tb=short --junitxml=tinygpt-pytest.xml
+      - name: Upload TinyGPT test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tinygpt-test-results
+          path: laboratory/python/lab_en/tinygpt-pytest.xml
+          retention-days: 7
+
+  # ── Julia Tests ────────────────────────────────────────────────────────
   test-julia:
     name: Julia ${{ matrix.julia-version }}
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
-        julia-version: ["1.9", "1.10"]
+        julia-version: ["1.9", "1.10", "1.11"]
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.julia-version }}
+      - uses: julia-actions/cache@v2
       - name: Install and test RMTLLMVerify
         run: |
           cd julia/RMTLLMVerify
           julia --project=. -e 'using Pkg; Pkg.instantiate()'
           julia --project=. -e 'using Pkg; Pkg.test()'
+      - name: Install and test RMTLLMViz (advisory)
+        continue-on-error: true
+        run: |
+          cd julia/RMTLLMViz
+          julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 
-  # ── Cross-Implementation Consistency ───────────────────
+  # ── Rust / Go / C++ tests (advisory — they don't gate the merge) ──────
+  test-other-langs:
+    name: Other languages (Rust / Go / C++)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Set up C++
+        run: sudo apt-get update && sudo apt-get install -y build-essential libeigen3-dev
+      - name: Rust tests
+        run: |
+          for d in laboratory/rust/lab_en laboratory/rust/lab_ru; do
+            echo "=== $d ==="
+            cd "$GITHUB_WORKSPACE/$d"
+            cargo test --offline || cargo test
+          done
+      - name: Go tests
+        run: |
+          for d in laboratory/go/lab_en laboratory/go/lab_ru; do
+            echo "=== $d ==="
+            cd "$GITHUB_WORKSPACE/$d"
+            go test ./...
+          done
+      - name: C++ tests
+        run: |
+          for d in laboratory/cpp/lab_en laboratory/cpp/lab_ru; do
+            echo "=== $d ==="
+            cd "$GITHUB_WORKSPACE/$d"
+            make || true
+          done
+
+  # ── Cross-Implementation Consistency ──────────────────────────────────
   cross-impl:
     name: Cross-Implementation Consistency
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [test-python, test-julia]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
       - uses: julia-actions/setup-julia@v2
         with:
           version: "1.10"
       - name: Install Python package
-        run: pip install -e .
+        run: |
+          pip install --upgrade pip
+          pip install -e .
       - name: Cross-check Python vs Julia
         run: |
           python -c "
@@ -114,21 +235,52 @@ jobs:
           assert abs(py_m - julia_bounds[0]) < 0.01, f'MP λ₋ mismatch: {py_m} vs {julia_bounds[0]}'
           assert abs(py_p - julia_bounds[1]) < 0.01, f'MP λ₊ mismatch: {py_p} vs {julia_bounds[1]}'
 
-          # BBP
           py_tc = bbp_critical_theta(0.5)
           assert abs(py_tc - 0.707107) < 0.001, f'BBP θ_c mismatch'
 
-          # NHSE
           assert nhse_winding_number(0.5, 0.3) == 0
           assert nhse_winding_number(1.5, 0.3) == 1
 
-          # Caputo
           py_nc = caputo_n_crit()
           assert abs(py_nc - 114.392) < 1.0, f'N_crit mismatch'
 
-          # KS
           py_g = ks_corrected_gamma(100)
           assert abs(py_g - 14.133725) < 0.01, f'KS mismatch'
 
           print('✓ All cross-implementation checks PASSED')
           "
+      - name: Cross-check JSON schema across 16 labs
+        run: |
+          python -c "
+          import json, glob, sys
+          schema = json.load(open('laboratory/shared/schema.json'))
+          # In production, validate against jsonschema — here just sanity-check fields
+          required = set(schema.get('required', ['experiment', 'results', 'timestamp']))
+          files = glob.glob('laboratory/results/reports/*_results.json')
+          if not files:
+              print('No cross-lab JSON files found — skipping (this is expected on first CI run)')
+              sys.exit(0)
+          for f in files:
+              data = json.load(open(f))
+              missing = required - set(data.keys())
+              if missing:
+                  print(f'✗ {f} missing fields: {missing}')
+                  sys.exit(1)
+          print(f'✓ {len(files)} cross-lab JSON files validated against schema')
+          "
+
+  # ── Coverage summary (single job for badge) ───────────────────────────
+  coverage-summary:
+    name: Coverage summary
+    runs-on: ubuntu-latest
+    needs: [test-python, test-tiny-gpt]
+    if: always()
+    steps:
+      - name: Generate coverage summary
+        run: |
+          echo "## Coverage Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Suite | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Python (3.10/3.11/3.12 × ubuntu/macos/windows) | ${{ needs.test-python.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| TinyGPT + BPE + Trainer | ${{ needs.test-tiny-gpt.result }} |" >> "$GITHUB_STEP_SUMMARY"

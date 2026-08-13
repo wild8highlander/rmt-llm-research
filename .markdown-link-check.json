@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tcort/markdown-link-check/main/schema.json",
+  "ignorePatterns": [
+    { "pattern": "^https://localhost" },
+    { "pattern": "^http://localhost" },
+    { "pattern": "^https://127\\.0\\.0\\.1" },
+    { "pattern": "^https://preview-" },
+    { "pattern": "^https://doi\\.org/10\\.5281/zenodo" },
+    { "pattern": "^mailto:" },
+    { "pattern": "^https://orcid\\.org/" },
+    { "pattern": "^https://api\\.securityscorecards\\.dev" },
+    { "pattern": "^https://codecov\\.io" },
+    { "pattern": "^https://img\\.shields\\.io" },
+    { "pattern": "^https://www\\.opensource\\.org" }
+  ],
+  "replacementPatterns": [
+    {
+      "pattern": "^/",
+      "replacement": "{{BASEURL}}/"
+    }
+  ],
+  "httpHeaders": [
+    {
+      "urls": ["https://github.com", "https://raw.githubusercontent.com", "https://api.github.com"],
+      "headers": {
+        "User-Agent": "rmt-llm-research-link-check/1.0"
+      }
+    }
+  ],
+  "timeout": "20s",
+  "retryOn429": true,
+  "retryCount": 3,
+  "fallbackRetryDelay": "5s",
+  "aliveStatusCodes": [200, 206, 301, 302, 308, 403, 405],
+  "outputFormat": "verbose"
+}

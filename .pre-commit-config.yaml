@@ -1,0 +1,255 @@
+# =============================================================================
+# Pre-commit hooks — run automatically on every `git commit`.
+# Docs: https://pre-commit.com/
+# Install:  pip install pre-commit && pre-commit install
+# Manual:   pre-commit run --all-files
+# Update:   pre-commit autoupdate
+# =============================================================================
+default_language_version:
+  python: python3.10
+
+default_install_hook_types: [pre-commit, pre-push, commit-msg]
+
+repos:
+  # ─── Pre-commit meta hooks ────────────────────────────────────────────────
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
+
+  # ─── Pre-commit-built-in hooks (file hygiene) ─────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+        exclude: '\.md$'  # Markdown mandates trailing 2 spaces for hard breaks
+      - id: end-of-file-fixer
+        name: Ensure newline at end of file
+        exclude: '\.npz$|\.parquet$|\.sqlite$|\.pdf$|\.docx$'
+      - id: mixed-line-ending
+        name: Normalize line endings to LF
+        args: [--fix=lf]
+      - id: check-merge-conflict
+        name: Check for unresolved merge conflicts
+      - id: check-added-large-files
+        name: Block files > 500 KB
+        args: [--maxkb=500]
+        exclude: |
+          (?x)^(
+            laboratory/python/lab_en/results/models/tiny_gpt_trained\.npz|
+            laboratory/python/lab_ru/results/models/tiny_gpt_trained\.npz|
+            laboratory/results/models/tiny_gpt_local\.npz|
+            papers/.*\.pdf|
+            docs/.*\.docx|
+            docs/site/demo/.*
+          )$
+      - id: check-case-conflict
+        name: Check for case-sensitive filename conflicts
+      - id: check-symlinks
+        name: Check for broken symlinks
+      - id: check-toml
+        name: Validate TOML syntax
+      - id: check-yaml
+        name: Validate YAML syntax
+        args: [--allow-multiple-documents]
+        exclude: '^docs/site/.*$'
+      - id: check-json
+        name: Validate JSON syntax
+        exclude: '\.ipynb$|/charts_3d/.*\.html$'
+      - id: check-xml
+        name: Validate XML syntax
+        files: '\.xml$'
+      - id: check-ast
+        name: Verify Python syntax
+        files: '\.py$'
+      - id: debug-statements
+        name: Block pdb/breakpoint() in commits
+      - id: detect-private-key
+        name: Block private keys (RSA, SSH, PGP)
+      - id: fix-byte-order-marker
+        name: Strip UTF-8 BOM
+      - id: fix-encoding-pragma
+        name: Remove coding pragma (Python 3 default)
+      - id: name-tests-test
+        name: Test files must match test_*.py
+        args: [--pytest-test-first]
+        files: 'tests/.*\.py$'
+      - id: requirements-txt-fixer
+        name: Sort requirements.txt
+        files: 'requirements.*\.txt$'
+      - id: sort-simple-yaml
+        name: Sort simple YAML files
+        files: '^\.github/labels\.yml$'
+
+  # ─── Ruff — Python lint + format (replaces black, isort, flake8) ──────────
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        name: Ruff lint
+        args: [--fix, --exit-non-zero-on-fix]
+        files: ^(src|laboratory/python|python|rmt_llm_viz|scripts)/.*\.py$
+      - id: ruff-format
+        name: Ruff format
+        files: ^(src|laboratory/python|python|rmt_llm_viz|scripts)/.*\.py$
+
+  # ─── Mypy — Python type checking (advisory) ───────────────────────────────
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        name: Mypy type check
+        files: ^src/rmt_llm/.*\.py$
+        additional_dependencies:
+          - numpy>=1.24
+          - types-requests
+        args: [--ignore-missing-imports, --no-strict-optional, --warn-unused-ignores]
+
+  # ─── Markdown lint ────────────────────────────────────────────────────────
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.14.0
+    hooks:
+      - id: markdownlint-cli2
+        name: Markdown lint
+        files: '\.md$'
+        exclude: |
+          (?x)^(
+            CHANGELOG\.md|
+            laboratory/webapp/.*|
+            docs/site/.*
+          )$
+
+  # ─── Shell lint ───────────────────────────────────────────────────────────
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.9.0
+    hooks:
+      - id: shfmt
+        name: Shell format (shfmt)
+        args: [--indent=4, --space-redirects, --write]
+        files: '\.sh$'
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.1
+    hooks:
+      - id: shellcheck
+        name: Shellcheck
+        files: '\.sh$'
+        args: [--severity=warning]
+
+  # ─── YAML pretty-printer ──────────────────────────────────────────────────
+  - repo: https://github.com/scop/pre-commit-yamlfmt
+    rev: v0.3.2
+    hooks:
+      - id: yamlfmt
+        name: YAML format
+        args: [--mapping=2, --sequence=4, --offset=2, --width=100, --preserve-quotes]
+        files: '\.(yml|yaml)$'
+        exclude: '^docs/site/.*$'
+
+  # ─── Toml format ──────────────────────────────────────────────────────────
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.23.1
+    hooks:
+      - id: toml-sort
+        name: TOML format
+        args: [--in-place, --all]
+        files: '\.toml$'
+
+  # ─── Julia format (Formatter.jl) ──────────────────────────────────────────
+  - repo: https://github.com/domluna/JuliaFormatter.jl
+    rev: v2.0.0
+    hooks:
+      - id: julia-formatter
+        name: Julia format
+        files: '\.(jl)$'
+        exclude: '^docs/site/.*$'
+
+  # ─── Rust format + lint ───────────────────────────────────────────────────
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+        name: Rust fmt
+        files: '\.rs$'
+      - id: clippy
+        name: Rust clippy
+        files: '\.rs$'
+        args: [--, -D, warnings]
+
+  # ─── Go format + lint ─────────────────────────────────────────────────────
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.5.1
+    hooks:
+      - id: go-fmt
+        name: Go fmt
+        files: '\.go$'
+      - id: go-mod-tidy
+        name: Go mod tidy
+
+  # ─── Dockerfile lint ──────────────────────────────────────────────────────
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+        name: Dockerfile lint (hadolint)
+        files: '(^|/)Dockerfile([.].*)?$'
+
+  # ─── Security: pip-audit ──────────────────────────────────────────────────
+  - repo: https://github.com/pypa/pip-audit
+    rev: v2.7.3
+    hooks:
+      - id: pip-audit
+        name: Pip-audit (security)
+        files: ^(pyproject\.toml|requirements.*\.txt)$
+        args: [--requirement, requirements.txt, --strict]
+
+  # ─── Security: gitleaks (secret scanner) ──────────────────────────────────
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.19.0
+    hooks:
+      - id: gitleaks
+        name: Gitleaks (secret scan)
+
+  # ─── spelling ─────────────────────────────────────────────────────────────
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        name: Codespell
+        additional_dependencies: [tomli]
+        args: [--ignore-words=.codespellignore, --check-filenames, --check-hidden]
+        exclude: |
+          (?x)^(
+            \.git/.*|
+            .*\.lock|
+            .*\.csv|
+            .*\.npz|
+            .*\.parquet|
+            .*\.sqlite|
+            .*\.pdf|
+            .*\.docx|
+            laboratory/results/.*|
+            results/.*|
+            CHANGELOG\.md
+          )$
+
+  # ─── Citation File Format validation ──────────────────────────────────────
+  - repo: https://github.com/citation-file-format/cffconvert
+    rev: 5657c0c84b1b07b6eb9b30d769b8f72b7eb8e7a0
+    hooks:
+      - id: validate-cff
+        name: Validate CITATION.cff
+        files: 'CITATION\.cff$'
+
+# ─── CI configuration ───────────────────────────────────────────────────────
+ci:
+  autofix_commit_msg: |
+    chore(pre-commit): auto-fix from pre-commit hooks
+  autofix_prs: true
+  autoupdate_commit_msg: |
+    chore(deps): pre-commit autoupdate
+  autoupdate_schedule: weekly
+  autoupdate_branch: main
+  skip: [mypy, julia-formatter, go-mod-tidy, hadolint-docker, pip-audit, validate-cff]
+  submodules: false

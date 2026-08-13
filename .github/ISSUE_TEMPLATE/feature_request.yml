@@ -1,0 +1,96 @@
+name: ✨ Feature Request
+description: Propose a new RMT module, language port, visualization, or research extension
+title: "[feat]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a feature! ✨
+
+        Before submitting, please:
+        1. Check the [public roadmap](https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ROADMAP.md) — it may already be planned.
+        2. Search existing issues and [Discussions](https://github.com/wild8highlander/rmt-llm-research/discussions) for similar ideas.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What kind of feature is this?
+      options:
+        - New RMT module (e.g. Dyson Brownian motion, free probability, subordination)
+        - New language port (e.g. Swift, Kotlin, Scala, Elixir, Zig)
+        - New 2D / 3D / interactive visualization
+        - TinyGPT model improvement (architecture, tokenizer, optimizer, training)
+        - Documentation improvement (README, docs/, papers)
+        - Tooling / CI / DevOps (workflows, pre-commit, Docker)
+        - Performance optimization (vectorization, JIT, GPU)
+        - Test coverage improvement
+        - Accessibility / i18n (EN ↔ RU, additional languages)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: What problem does this feature solve? What is currently impossible, hard, or slow?
+      placeholder: "Currently, when analysing GPT-2 layer 7 activations, I cannot…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature you'd like. Be as specific as possible — name files, modules, function signatures, or API surface if you can.
+      placeholder: |
+        Add a new module `src/rmt_llm/dyson_brownian.py` with:
+        - `dyson_brownian_motion(T, beta=2, N=100)` — simulate DBM
+        - `dbm_spectral_gap(T, beta)` — empirical spectral gap
+        - 3 unit tests + 1 property test
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches did you consider? Why did you reject them?
+
+  - type: textarea
+    id: math
+    attributes:
+      label: Mathematical Foundation (if applicable)
+      description: For RMT/physics extensions, paste the equations, references, or arXiv IDs that motivate the feature.
+      placeholder: |
+        References:
+        - Dyson (1962), "A Brownian-motion model for the eigenvalues of a random matrix"
+        - Forrester (2010), eq. (11.7)
+
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Mock-ups / Examples
+      description: ASCII art, screenshots, links to similar features in other tools (e.g. Plotly, Mathematica, MANOPT).
+
+  - type: checkboxes
+    id: willingness
+    attributes:
+      label: Contribution
+      description: Are you willing to help implement this?
+      options:
+        - label: I am willing to submit a PR for this feature
+        - label: I can help review PRs related to this feature
+        - label: I can help write tests / docs for this feature
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+        - label: I have searched existing issues and the roadmap
+          required: true

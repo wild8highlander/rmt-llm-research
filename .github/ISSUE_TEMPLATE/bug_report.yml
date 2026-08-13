@@ -1,0 +1,132 @@
+name: 🐛 Bug Report
+description: Report a reproducible defect in code, math, docs, or CI
+title: "[bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report! 🐛
+
+        Before submitting, please:
+        1. **Search** existing issues to avoid duplicates.
+        2. **Update** to the latest `main` — your bug may already be fixed.
+        3. **Run with verbose logging** (`pytest -v`, `python main.py --verbose`) to capture details.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the project is affected?
+      options:
+        - src/rmt_llm — Python verification package
+        - laboratory/python/lab_en — Python lab (English)
+        - laboratory/python/lab_ru — Python lab (Russian)
+        - laboratory/julia — Julia lab
+        - laboratory/java — Java lab
+        - laboratory/rust — Rust lab
+        - laboratory/go — Go lab
+        - laboratory/cpp — C++ lab
+        - laboratory/r — R lab
+        - laboratory/webapp — React + Socket.io dashboard
+        - julia/RMTLLMVerify — Julia verification package
+        - julia/RMTLLMViz — Julia visualization
+        - java/rmt-llm-viz — Java JavaFX visualization
+        - python/rmt_llm_viz — Python interactive 3D
+        - docs / README / CHANGELOG
+        - CI/CD (GitHub Actions, pre-commit)
+        - Build / packaging (pyproject, Dockerfile)
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime / Language Version
+      description: e.g. Python 3.12.4, Julia 1.10.2, OpenJDK 21, Rust 1.79.0, Node 20.10
+      placeholder: "Python 3.12.4"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      description: e.g. Ubuntu 24.04 LTS, macOS 14.5 Sonoma, Windows 11 23H2
+      placeholder: "Ubuntu 24.04 LTS"
+    validations:
+      required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit / Release
+      description: Run `git rev-parse --short HEAD` or paste the release tag (e.g. v1.6.0).
+      placeholder: "abc1234 (main, 2026-08-13)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what went wrong. Include any numerical anomalies (e.g. "expected λ₊ ≈ 2.91, got 3.42").
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: Minimal, copy-pasteable steps to reproduce.
+      placeholder: |
+        1. `cd laboratory/python/lab_en`
+        2. `python main.py`
+        3. Choose menu item 14 (train TinyGPT)
+        4. After 2 epochs, observe the traceback below…
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen? Cite the relevant equation, paper section, or doc page if possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened? Mention any numerical drift, NaN/Inf, type errors, or unexpected file outputs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Tracebacks
+      description: Paste full tracebacks, warnings, or unexpected stdout here. Long output is fine — wrap in ``` fences.
+      render: shell
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Screenshots, hypotheses about root cause, related issues, links to papers or upstream changes.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting, you agree to follow our [Code of Conduct](https://github.com/wild8highlander/rmt-llm-research/blob/main/CODE_OF_CONDUCT.md).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+        - label: I have searched existing issues and confirmed this is not a duplicate
+          required: true
+        - label: I have tested against the latest `main` branch
+          required: true

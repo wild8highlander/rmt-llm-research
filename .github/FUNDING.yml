@@ -1,0 +1,18 @@
+# =============================================================================
+# FUNDING.yml — Sponsor / support buttons on the repo sidebar.
+# Docs: https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+# =============================================================================
+# This is a non-commercial, attribution-only research project. The buttons
+# below point to the maintainer's contact channels rather than payment
+# processors. Uncomment and edit if you want to enable direct sponsorship.
+
+github: wild8highlander
+# patreon:        # Replace with Patreon username if launching a campaign
+# open_collective: # Replace with Open Collective slug
+# ko_fi:          # Replace with Ko-fi username
+# liberapay:      # Replace with Liberapay username
+# issuehunt:      # Replace with IssueHunt username
+# lfx_crowdfunding: # Replace with LFX mentoring project ID
+# polar:          # Replace with Polar repo slug
+# buy_me_a_coffee: # Replace with BMC username
+# custom:         # Replace with a list of URLs (e.g. ["https://orcid.org/0009-0003-7299-0701"])

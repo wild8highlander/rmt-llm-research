@@ -1,0 +1,20 @@
+# =============================================================================
+# Issue template router — sends users to the right channel.
+# =============================================================================
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 Documentation site
+    url: https://wild8highlander.github.io/rmt-llm-research
+    about: Read the docs site before opening an issue — most "how do I…" questions are answered there.
+  - name: 💬 Discussions
+    url: https://github.com/wild8highlander/rmt-llm-research/discussions
+    about: Ask questions, share ideas, or discuss research directions with the community.
+  - name: 🔒 Security vulnerability
+    url: https://github.com/wild8highlander/rmt-llm-research/security/policy
+    about: Found a security issue? Please do NOT open a public issue — report it privately.
+  - name: 📖 Citation & academic use
+    url: https://github.com/wild8highlander/rmt-llm-research/blob/main/CITATION.cff
+    about: How to cite this work in papers, theses, or preprints.
+  - name: 🗺️ Public roadmap
+    url: https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ROADMAP.md
+    about: See what's planned before requesting a feature that may already be in scope.

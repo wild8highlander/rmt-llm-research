@@ -1,0 +1,79 @@
+# =============================================================================
+# CodeQL — semantic code analysis for Python.
+# Docs: https://docs.github.com/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/setting-up-code-scanning-for-a-repository
+# =============================================================================
+name: CodeQL
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '**.py'
+      - '.github/workflows/codeql.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '**.py'
+      - '.github/workflows/codeql.yml'
+  schedule:
+    # Run weekly on Sunday 02:00 UTC — catches new queries released by GitHub
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write   # required to upload CodeQL results
+  actions: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze Python (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Full history for better analysis
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Use the 'security-and-quality' suite for the most thorough scan
+          queries: security-and-quality
+          # Override default config to scan laboratory/ in addition to src/
+          config: |
+            paths:
+              - src
+              - laboratory/python
+              - python/rmt_llm_viz
+              - scripts
+            paths-ignore:
+              - laboratory/webapp
+              - '**/tests/**'
+              - '**/test_*.py'
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+          # Upload SARIF for the security tab
+          output: sarif-results
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: sarif-results
+          wait-for-processing: true
