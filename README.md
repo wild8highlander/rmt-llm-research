@@ -36,12 +36,7 @@
 
 ---
 
-## 🆕 What's New in v1.6.0
-
-This release brings the project to **production-grade open-source quality** — the same
-standards you'd expect from the best-maintained repos on GitHub.
-
-### 🏗️ Engineering infrastructure (this release)
+### 🏗️ Engineering infrastructure
 
 - **CI matrix**: Python 3.10 / 3.11 / 3.12 × Ubuntu / macOS / Windows, plus Julia 1.9 / 1.10 / 1.11
 - **CodeQL** semantic analysis for Python — `.github/workflows/codeql.yml`
@@ -53,15 +48,13 @@ standards you'd expect from the best-maintained repos on GitHub.
 - **Makefile** with 30+ targets (`make help`, `make install-dev`, `make test`, `make ci`, `make docker`, …)
 - **EditorConfig** + **markdownlint** + **codespell** for cross-editor consistency
 
-### 🧠 Model improvements (from v1.5.x)
+### 🧠 Model improvements
 
 - Pre-LN + MLP transformer block (GPT-2 style) — `tiny_gpt.py` v2 architecture
 - BPE tokenizer (256 merges, pure-Python + NumPy) — `tiny_gpt_trainer.py`
 - Adam with bias correction, weight decay, cosine LR + warmup
 - Full reverse-mode autodiff through the synthetic transformer
 - 30-epoch training run: loss 6.23 → 0.0085, match_rate 0% → 6.5%
-
-See [`CHANGELOG.md`](./CHANGELOG.md) for the full history.
 
 ---
 
