@@ -20,7 +20,7 @@
     "socket.io": "^4.7.5",
     "express": "^4.19.2",
     "cors": "^2.8.5",
-    "recharts": "^2.12.7",
+    "recharts": "^3.10.1",
     "plotly.js-dist-min": "^2.34.0",
     "react-plotly.js": "^2.6.0",
     "lucide-react": "^0.395.0",
