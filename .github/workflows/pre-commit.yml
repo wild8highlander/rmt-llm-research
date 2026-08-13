@@ -50,7 +50,7 @@ jobs:
           cache: false
 
       - name: Install Julia (for julia formatter)
-        uses: julia-actions/setup-julia@v2
+        uses: julia-actions/setup-julia@v3
         with:
           version: "1.10"
 
