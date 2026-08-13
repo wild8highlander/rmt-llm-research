@@ -51,3 +51,49 @@ Thumbs.db
 
 # Julia
 julia/RMTLLMVerify/Manifest.toml
+
+# ============================================================================
+# Heavy model artifacts — do NOT commit (use Git LFS or external storage)
+# ============================================================================
+# Trained model weights (can be 10s of MB to GB)
+*.npz
+*.npy
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+# Keep BPE tokenizer JSON — it's tiny (~30 KB) and needed for inference
+
+# Large experiment reports — keep code, exclude generated outputs
+laboratory/results/reports/*.json
+laboratory/results/charts_3d/
+laboratory/python/lab_en/results/charts_3d/
+laboratory/python/lab_ru/results/charts_3d/
+
+# Generated charts/images in bulk — keep selectively via git add -f
+laboratory/results/charts/
+laboratory/python/lab_en/results/charts/
+laboratory/python/lab_ru/results/charts/
+
+# Heavy docx exports — these are auto-built from source markdown
+docs/**/*.docx
+docs/**/*.pdf
+
+# ============================================================================
+# Logs and runtime artifacts
+# ============================================================================
+*.log
+logs/
+nohup.out
+*.pid
+
+# ============================================================================
+# Credentials and secrets — NEVER commit
+# ============================================================================
+.env
+.env.local
+*.pem
+*.key
+*_token*
+secrets/
+
