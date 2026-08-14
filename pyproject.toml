@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rmt-llm"
-version = "1.6.0"
+# version removed per author request
 description = "Random Matrix Theory meets Large Language Models — spectral verification package + TinyGPT trainer + 8-language laboratory"
 readme = "README.md"
 license = {text = "Proprietary"}

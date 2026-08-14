@@ -31,7 +31,7 @@ research findings and community feedback.
 
 ---
 
-## ✅ Recently Shipped (v1.6.0)
+## ✅ Recently Shipped (recent release)
 
 - ✅ Pre-LN + MLP transformer block (GPT-2 style) for TinyGPT — `tiny_gpt.py`
 - ✅ BPE tokenizer (256 merges, pure-Python + NumPy) — `tiny_gpt_trainer.py`
@@ -48,28 +48,48 @@ research findings and community feedback.
 
 ---
 
-## 🚧 In Progress (v1.7.0 — Q3 2026)
+## ✅ Shipped in recent release 
 
-- 🚧 **Dyson Brownian Motion module** (`src/rmt_llm/dyson_brownian.py`)
-  - Simulate DBM for β ∈ {1, 2, 4}
-  - Empirical spectral gap evolution
-  - Connection to LLM training dynamics
-- 🚧 **Free probability** (`src/rmt_llm/free_probability.py`)
-  - Free convolution, R-transform, S-transform
-  - Subordination for non-Hermitian ensembles
-- 🚧 **Real GPT-2 activation probe** (`laboratory/python/lab_en/probe_real_gpt2.py`)
-  - Load GPT-2 small (124M) via `transformers` (optional dep)
-  - Extract hidden states from Wikitext prompts
-  - Compute covariance spectra, compare against MP bounds
-  - Track BBP transition across layers
+- ✅ **TinyGPT (modernized)** — modernized transformer (`tiny_gpt_v3.py`)
+  - Rotary Position Embeddings (RoPE) — ADR-009
+  - Grouped-Query Attention (GQA, `n_kv_heads=2`) — ADR-010
+  - Mixed-precision training (float16 forward, float32 master) — ADR-011
+  - Gradient checkpointing (~10× memory reduction) — ADR-012
+  - 4M-parameter config (`config_4m`): 10 layers, hidden=192, 6 query heads, 2 KV heads
+  - Full reverse-mode autodiff verified by float64 finite-difference gradient check
+- ✅ **Dyson Brownian Motion module** (`src/rmt_llm/dyson_brownian.py`)
+  - DBM simulator for β ∈ {1, 2, 4} with Euler-Maruyama integration
+  - Gaussian ensemble sampling (GOE, GUE, GSE)
+  - Wigner surmise and level-spacing statistics
+- ✅ **Free probability** (`src/rmt_llm/free_probability.py`)
+  - Stieltjes transform, Blue transform, R-transform (free cumulants)
+  - S-transform for multiplicative free convolution
+  - Additive free convolution via subordination fixed-point iteration
+- ✅ **Circular ensembles** (`src/rmt_llm/circular_ensembles.py`)
+  - COE (β=1), CUE (β=2), CSE (β=4) via Haar-distributed unitaries
+  - Spectral form factor, number variance, Wigner surmise
+  - Attention phase spectrum extraction
+- ✅ **Real GPT-2 activation probe** (`laboratory/python/lab_en/probe_real_gpt2.py`)
+  - Loads GPT-2 small (124M) via `transformers` (optional dep)
+  - Extracts hidden states, computes covariance spectra against MP bounds
+  - Tracks BBP transition across layers; synthetic fallback for CI
+- ✅ **Test suite**: 142 new tests (v3 + RMT modules + probe), all passing
+- ✅ **Benchmarks**: v2 vs v3 forward/backward/generation (pytest-benchmark)
+
+---
+
+## 🚧 In Progress (next release — upcoming)
+
 - 🚧 **Web dashboard live mode** (`laboratory/webapp`)
   - WebSocket streaming of training loss + grad-norm
   - Real-time spectral gap chart
   - Token-level match-rate heatmap
+- 🚧 **TinyGPT (modernized) training run** — train the 4M config on the expanded corpus,
+  target match_rate ≥ 25% (up from v2's 6.5%)
 
 ---
 
-## 📋 Planned (v1.8 – v2.0 — Q4 2026 / Q1 2027)
+## 📋 Planned (upcoming)
 
 ### Mathematical extensions
 
@@ -117,12 +137,11 @@ research findings and community feedback.
   but the memory kernel may be different.
 - 💡 **BBP transition as a lying detector** — empirical test: does λ_max cross the
   MP upper bound exactly when the model switches from recall to fabrication?
-- 💡 **TinyGPT with rotary embeddings (RoPE)** — replace absolute position embeddings
-  with RoPE for better length generalization.
-- 💡 **TinyGPT with Grouped-Query Attention (GQA)** — modernize attention to match
-  Llama-2 architecture. Will enable a more direct comparison.
 - 💡 **Stochastic Trace Estimation (Hutchinson)** — for very large activation matrices
   where full eigendecomposition is infeasible.
+
+> **Note:** The RoPE and GQA proposals have been accepted and shipped in recent release
+> (see ADR-009 and ADR-010). They are no longer proposals.
 
 ---
 
@@ -152,9 +171,9 @@ research findings and community feedback.
 
 ## 📅 Cadence
 
-- **Minor releases** (e.g. v1.7.0): every 4–6 weeks
-- **Patch releases** (e.g. v1.6.1): as needed for bug fixes
-- **Major releases** (e.g. v2.0.0): when breaking API changes are required
+- **Minor releases** (e.g. recent release): every 4–6 weeks
+- **Patch releases** (e.g. patch releases): as needed for bug fixes
+- **Major releases** (e.g. a future release): when breaking API changes are required
 
 The roadmap is reviewed at the start of each minor release cycle.
 

@@ -15,6 +15,5 @@ ORCID:  0009-0003-7299-0701
 License: CC-BY-NC-SA-4.0
 """
 
-__version__ = "1.3.0"
 __author__ = "Iskhak Hamzatovich Isaev"
 __orcid__ = "0009-0003-7299-0701"

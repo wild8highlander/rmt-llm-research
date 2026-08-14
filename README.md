@@ -13,7 +13,7 @@
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/wild8highlander/rmt-llm-research/badge)](https://securityscorecards.dev/viewer/?uri=github.com/wild8highlander/rmt-llm-research)
 [![Codecov](https://codecov.io/gh/wild8highlander/rmt-llm-research/branch/main/graph/badge.svg)](https://codecov.io/gh/wild8highlander/rmt-llm-research)
 [![Tests](https://img.shields.io/badge/tests-171+-green.svg)](./src/rmt_llm/tests/)
-[![TinyGPT](https://img.shields.io/badge/TinyGPT-v2-2.5M%20params-blueviolet.svg)](./laboratory/python/lab_en/tiny_gpt.py)
+[![TinyGPT](https://img.shields.io/badge/TinyGPT-modern-blueviolet.svg)](./laboratory/python/lab_en/tiny_gpt.py)
 [![Julia](https://img.shields.io/badge/Julia-RMTLLMVerify-9558B2.svg)](./julia/RMTLLMVerify/)
 [![Java](https://img.shields.io/badge/Java-RMTLLMViz-ED8B00.svg)](./java/rmt-llm-viz/)
 [![Python Viz](https://img.shields.io/badge/Python-RMTLLMViz-3776AB.svg)](./python/rmt_llm_viz/)
@@ -98,7 +98,7 @@ in the docs.
 
 ## 📑 Table of Contents
 
-- [What's New in v1.6.0](#-whats-new-in-v160)
+- [Recent Updates](#-recent-updates)
 - [Quick Start](#-quick-start-60-seconds)
 - [Overview](#-overview)
 - [Research Topics](#-research-topics)
@@ -698,7 +698,7 @@ to influence priorities.
 
 ---
 
-## 🧪 Research Laboratory (NEW in v2.0)
+## 🧪 Research Laboratory (recently added)
 
 A complete research laboratory has been added at [`laboratory/`](./laboratory/). It includes:
 

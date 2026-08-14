@@ -324,3 +324,225 @@ Use **MkDocs Material** with **mkdocstrings** for API reference.
 
 See [CONTRIBUTING.md](https://github.com/wild8highlander/rmt-llm-research/blob/main/CONTRIBUTING.md)
 for more.
+
+---
+
+## ADR-009: Rotary Position Embeddings (RoPE) for TinyGPT v3
+
+**Status:** Accepted (2026-08-14)
+**Deciders:** Iskhak Hamzatovich Isaev
+
+### Context
+
+TinyGPT v2 uses **absolute position embeddings** — a learned `(max_seq_len, H)`
+matrix added to the token embeddings. This has three limitations:
+
+1. **No length generalization** — the model cannot attend to positions beyond
+   `max_seq_len` because the position embedding matrix has no entries there.
+2. **Wasted parameters** — `max_seq_len × H = 256 × 128 = 32K` parameters
+   that do not transfer across sequence lengths.
+3. **No relative position information** — the attention score between tokens
+   `i` and `j` depends on their absolute positions, not their relative
+   distance.
+
+### Decision
+
+Replace absolute position embeddings with **RoPE** (Rotary Position Embeddings,
+Su et al., 2021) in TinyGPT v3. RoPE applies a rotation matrix to the Q and K
+vectors in each attention head, where the rotation angle depends on the token
+position. This encodes **relative** position directly into the dot product
+`Q_i · K_j`.
+
+### Rationale
+
+- **Length generalization** — RoPE works for any sequence length because the
+  rotation angles are computed on-the-fly, not stored in a matrix.
+- **Parameter savings** — eliminates `max_seq_len × H` parameters. For the 4M
+  config, this saves `256 × 192 = 49K` parameters.
+- **Industry standard** — RoPE is used by Llama, Mistral, GPT-NeoX, PaLM, and
+  most modern LLMs.
+- **Pure-NumPy compatible** — the rotation is a simple elementwise operation
+  on `(even, odd)` pairs, with no new dependencies.
+
+### Consequences
+
+- **Positive:** Better length generalization. Fewer parameters. Matches the
+  Llama architecture, enabling more direct spectral comparisons.
+- **Negative:** Slightly more complex attention code. The rotation must be
+  applied separately to Q and K (not V). Backward pass requires the inverse
+  rotation (which is just the transpose, since rotations are orthogonal).
+- **Numerical note:** The rotation is exactly unitary, so it preserves the L2
+  norm of each `(even, odd)` pair. This is verified by
+  `test_rope_preserves_norm` in `test_tiny_gpt_v3.py`.
+
+### Alternatives considered
+
+- **ALiBi (Attention with Linear Biases)** — adds a linear bias to the
+  attention scores based on relative distance. Rejected: the bias is
+  additive, not multiplicative, so it interacts differently with the softmax.
+- **No position encoding** — the model cannot distinguish token order.
+  Rejected.
+- **Relative position embeddings (Shaw et al., 2018)** — learned relative
+  position embeddings added to the attention scores. Rejected: adds
+  parameters and is less elegant than RoPE's closed-form rotation.
+
+---
+
+## ADR-010: Grouped-Query Attention (GQA) for TinyGPT v3
+
+**Status:** Accepted (2026-08-14)
+**Deciders:** Iskhak Hamzatovich Isaev
+
+### Context
+
+TinyGPT v2 uses **Multi-Head Attention (MHA)**: `n_heads` query heads, each
+with its own K and V projection. For the 4M config (`n_heads=6, hidden=192`),
+the K and V projections account for `2 × 192 × 192 = 73K` parameters per
+layer. At inference time, the KV cache scales linearly with `n_heads`.
+
+### Decision
+
+Use **Grouped-Query Attention (GQA)** (Ainslie et al., 2023) in TinyGPT v3:
+`n_kv_heads = 2` (instead of `n_heads = 6`). Each KV head is shared by
+`n_heads / n_kv_heads = 3` query heads. The K and V projections produce only
+`n_kv_heads × head_dim = 2 × 32 = 64` features instead of `192`.
+
+### Rationale
+
+- **Parameter savings** — the K and V projections shrink from
+  `2 × H × H` to `2 × H × (n_kv_heads × head_dim)`. For the 4M config,
+  this saves `2 × 192 × (192 - 64) = 49K` parameters per layer, ~490K
+  total across 10 layers.
+- **KV cache reduction** — at inference, the KV cache stores `n_kv_heads`
+  copies instead of `n_heads`, a 3× reduction for this config.
+- **Quality preserved** — Ainslie et al. (2023) showed that GQA with
+  `n_kv_heads = n_heads / 4` matches MHA quality on downstream tasks.
+- **Llama-2 compatibility** — Llama-2 uses GQA, so this enables a more
+  direct spectral comparison between TinyGPT v3 and real Llama models.
+
+### Consequences
+
+- **Positive:** Fewer parameters, smaller KV cache, Llama-compatible
+  architecture.
+- **Negative:** The forward pass must `np.repeat` K and V across the group,
+  adding a small overhead (~8% in benchmarks). The backward pass must
+  `np.sum` the gradients across the group.
+- **Config constraint** — `n_heads` must be divisible by `n_kv_heads`.
+  Enforced in `gqa_forward`.
+
+### Alternatives considered
+
+- **Multi-Query Attention (MQA)** — `n_kv_heads = 1`. Rejected: too
+  aggressive quality degradation for a 4M model.
+- **MHA** (v2 default) — rejected for this v3 config, but still available
+  via `n_kv_heads = n_heads`.
+- **Sliding window attention** — orthogonal to GQA; could be combined in a
+  future iteration.
+
+---
+
+## ADR-011: Mixed-Precision Training (float16 forward, float32 master)
+
+**Status:** Accepted (2026-08-14)
+**Deciders:** Iskhak Hamzatovich Isaev
+
+### Context
+
+Pure-NumPy training on CPU is ~10× slower than PyTorch on GPU (ADR-001).
+Mixed-precision (float16 forward pass, float32 master weights) can halve
+memory bandwidth and accelerate SIMD operations on modern CPUs.
+
+### Decision
+
+Add an optional `mixed_precision` flag to `TinyGPTV3Config`. When enabled,
+the `_w()` helper casts master weights to `float16` before each matmul. The
+master weights remain `float32` and are updated by the optimizer in `float32`.
+Gradients are accumulated in `float32`.
+
+### Rationale
+
+- **Memory bandwidth** — float16 halves the bytes per weight, so matmuls
+  are memory-bound on fewer bytes.
+- **Industry standard** — mixed-precision is universal in modern LLM training
+  (NVIDIA AMP, PyTorch `torch.cuda.amp`).
+- **Optional** — off by default, so the pedagogical float32 path remains
+  the default. Users opt in via `TinyGPTV3Config(mixed_precision=True)`.
+
+### Consequences
+
+- **Positive:** ~2× speedup on GPU (not yet benchmarked on this CPU-only
+  project). Halves activation memory.
+- **Negative:** float16 has limited range (max ~65504) and precision
+  (~3 decimal digits). The attention mask value must be `-1e4` (not
+  `-1e9`) to avoid overflow. On CPU, float16 is actually **slower** than
+  float32 because there is no SIMD benefit (benchmarks show 7× slowdown).
+  Mixed-precision is therefore primarily useful for future GPU backends.
+- **Numerical stability** — the LayerNorm and softmax computations are
+  kept in float16, which may lose precision. The gradient check (float64)
+  confirms the math is correct; float16 inference is approximate.
+
+### Alternatives considered
+
+- **bfloat16** — has the same range as float32 but less precision. NumPy
+  does not natively support bfloat16 (requires `ml_dtypes` dependency).
+  Rejected to maintain the NumPy-only constraint.
+- **Full float16 (including master weights)** — rejected: the optimizer
+  accumulates in float32 to avoid catastrophic cancellation.
+
+---
+
+## ADR-012: Gradient Checkpointing for Memory Efficiency
+
+**Status:** Accepted (2026-08-14)
+**Deciders:** Iskhak Hamzatovich Isaev
+
+### Context
+
+The standard forward-with-cache stores all per-layer intermediates (LN
+statistics, attention weights, MLP activations) for the backward pass. For
+a 10-layer model with `hidden=192` and `seq_len=256`, this is ~10 × 256 ×
+192 × 4 bytes × ~10 intermediates ≈ 20 MB per training step. Scaling to
+larger models (4M+ params) or longer sequences is memory-bound.
+
+### Decision
+
+Add an optional `gradient_checkpointing` flag to `TinyGPTV3Config`. When
+enabled, `forward_with_cache` stores only the **layer inputs** (one `(T, H)`
+array per layer) instead of all intermediates. During `backward`, each
+layer's intermediates are **recomputed** by calling
+`_forward_layer_with_cache` on the stored input.
+
+### Rationale
+
+- **Memory savings** — stores `n_layers × T × H` instead of
+  `n_layers × ~10 × T × H`, a ~10× reduction for the default config.
+- **Trade compute for memory** — the forward pass is run twice (once for
+  the forward output, once during backward). Benchmarks show a 49%
+  backward slowdown, which is the expected cost.
+- **Exact gradients** — the recomputed intermediates are mathematically
+  identical to the original ones (verified by
+  `test_gradient_checkpointing_matches_no_checkpointing` which checks
+  gradients match to 1e-10).
+- **Standard technique** — used by PyTorch (`torch.utils.checkpoint`),
+  JAX (`jax.checkpoint`), and TensorFlow (`tf.recompute_grad`).
+
+### Consequences
+
+- **Positive:** ~10× memory reduction. Enables training larger models or
+  longer sequences on the same hardware.
+- **Negative:** ~49% backward slowdown (measured). The forward pass is
+  unaffected (checkpointing only changes what is cached, not the forward
+  computation).
+- **Implementation note** — the recomputation is deterministic, so
+  gradient checkpointing does NOT introduce any randomness or
+  approximation. The gradients are bit-for-bit identical to the
+  no-checkpointing path.
+
+### Alternatives considered
+
+- **Activation compression** — quantize activations to int8. Rejected:
+  introduces approximation and adds complexity.
+- **Layer-parallel backward** — compute gradients for different layers in
+  parallel. Rejected: NumPy does not benefit from thread parallelism for
+  small arrays.
+- **No checkpointing** — the default; users opt in when memory is tight.
