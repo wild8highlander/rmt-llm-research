@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -61,7 +61,7 @@ jobs:
           - { os: macos-latest,   python-version: "3.10" }
           - { os: windows-latest, python-version: "3.10" }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -113,7 +113,7 @@ jobs:
     timeout-minutes: 15
     needs: [test-python]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -145,7 +145,7 @@ jobs:
       matrix:
         julia-version: ["1.9", "1.10", "1.11"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.julia-version }}
@@ -168,7 +168,7 @@ jobs:
     timeout-minutes: 20
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Set up Go
@@ -206,7 +206,7 @@ jobs:
     timeout-minutes: 15
     needs: [test-python, test-julia]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
