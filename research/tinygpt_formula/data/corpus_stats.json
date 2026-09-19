@@ -1,0 +1,7 @@
+{
+  "total_bytes": 67263,
+  "train_bytes": 61011,
+  "val_bytes": 6252,
+  "blocks": 160,
+  "eval_pairs": 277
+}

@@ -1,0 +1,129 @@
+=== DOC ===
+
+mp_bounds(q=1.0, sigma2=0.5) => lambda_minus = 7.739787, lambda_plus = 1.312868
+caputo_mean_collapse_time(mu_eff=0.05, beta=0.6, c=1.0) => <T_crit> = 301.441353
+caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.4, t=1.0) => drift = 0.073972
+caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.6, t=1.0) => drift = 0.029090
+bbp_lambda_max(theta=0.6, q=0.9, sigma2=0.5) => lambda_max = 5.332163
+caputo_quadratic_acceleration(mu_eff=0.1) => T-ratio = 15.710852  [analytic limit mu^-1]
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.4, q=0.25, sigma2=0.5) => lambda_max = 1.890888
+bbp_lambda_max(theta=1.2, q=0.25, sigma2=1.0) => lambda_max = 1.912714
+bbp_lambda_max(theta=1.2, q=0.5, sigma2=2.0) => lambda_max = 5.255169
+mp_stieltjes(z=2.000000+0.5i, q=0.5) => m(z) = -0.280869 + 1.454416i
+bbp_lambda_max(theta=1.2, q=0.5, sigma2=1.0) => lambda_max = 4.437168
+caputo_mean_collapse_time(mu_eff=0.05, beta=0.5, c=1.0) => <T_crit> = 742.562013
+
+=== DOC ===
+
+bbp_signal_separation(theta=1.0, q=0.5) => delta_lambda = 0.057009
+autoregressive_irreversibility(n_tokens=2048) => E = 2.273160 J
+rg_flow_lambda(initial_lambda=0.5, layer=5) => lambda_L = 0.272329
+mp_density(lambda=2.0, q=0.25) => rho = 0.050052
+bbp_lambda_max(theta=0.4, q=0.9, sigma2=0.5) => lambda_max = 3.571513
+free_energy(U=2.0, T=200.0, S=2.0) => F = -440.360186
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.8, q=0.5, sigma2=0.5) => lambda_max = 1.776295
+ks_n_crit_correction(n=512) => N_crit_corrected = 59.836681
+bbp_lambda_max(theta=0.4, q=0.5, sigma2=2.0) => lambda_max = 16.151424
+caputo_mean_collapse_time(mu_eff=0.1, beta=0.7, c=1.0) => <T_crit> = 60.255039
+landauer_cost(n_bits=1000000, T=300) => E_min = 7.784057 J
+mp_bounds(q=0.9, sigma2=2.0) => lambda_minus = 0.001784, lambda_plus = 5.375873
+
+=== DOC ===
+
+caputo_fokker_planck_drift(mu_rlhf=0.3, beta=0.4, t=1.0) => drift = 0.075608
+bbp_lambda_max(theta=0.2, q=0.5, sigma2=2.0) => lambda_max = 1.770272
+nhse_imag_collapse(n_ratio=0.5, gamma=0.7) => Im-collapse = 6.830806; point_gap = 0.526025
+bbp_lambda_max(theta=1.2, q=0.5, sigma2=0.5) => lambda_max = 5.329807
+free_energy(U=1.0, T=200.0, S=2.0) => F = -192.842719
+caputo_mean_collapse_time(mu_eff=0.2, beta=0.3, c=1.0) => <T_crit> = 116.580102
+
+=== DOC ===
+
+caputo_mean_collapse_time(mu_eff=0.1, beta=0.4, c=1.0) => <T_crit> = 225.564360
+ep_rounding_sensitivity(n=16, float64) => delta_lambda = 0.035117
+bbp_lambda_max(theta=0.8, q=0.5, sigma2=1.0) => lambda_max = 0.648283
+nhse_winding_number(n_ratio=1.0, gamma=2.0) => W = 4.757574; nhse_skin_strength = 2.269867
+mp_bounds(q=1.0, sigma2=2.0) => lambda_minus = 6.698470, lambda_plus = 5.226976
+bbp_lambda_max(theta=1.2, q=0.9, sigma2=1.0) => lambda_max = 4.958027
+
+=== DOC ===
+
+mp_density(lambda=2.0, q=0.5) => rho = 0.280507
+nhse_winding_number(n_ratio=0.5, gamma=2.0) => W = 3.124354; nhse_skin_strength = 8.322766
+bbp_is_supercritical(theta=1.0, q=0.5) => SPIKE DETECTED
+caputo_n_crit(theta_b=7.07, gamma_1=14.134725) => N_crit = 202.533517
+mp_bounds(q=0.5, sigma2=2.0) => lambda_minus = 0.097992, lambda_plus = 2.544963
+free_convolution_additive(MP-sample(64x256), itself, z_grid 0.5..3.0) => density shape = (6,); G(z=3.809152+0.029201i) = -1.999882
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.6, q=0.5, sigma2=2.0) => lambda_max = 1.189159
+nhse_imag_collapse(n_ratio=2.0, gamma=1.5) => Im-collapse = 1.524911; point_gap = 0.932217
+bbp_lambda_max(theta=1.0, q=0.9, sigma2=2.0) => lambda_max = 5.700460
+dyson_brownian(beta=4): wigner_surmise(s=0.7) = 0.918469
+bbp_lambda_max(theta=1.2, q=0.25, sigma2=2.0) => lambda_max = 22.398311
+mp_density(lambda=1.5, q=0.25) => rho = 0.284794
+
+=== DOC ===
+
+bbp_lambda_max(theta=1.2, q=0.9, sigma2=2.0) => lambda_max = 4.852046
+mp_density(lambda=1.0, q=0.25) => rho = 0.180015
+mp_density(lambda=3.0, q=0.25) => rho = 1.146186
+bbp_lambda_max(theta=1.0, q=0.9, sigma2=0.5) => lambda_max = 1.290073
+ks_n_crit_correction(n=128) => N_crit_corrected = 82.042882
+rg_fixed_point(initial_lambda=1.0) => lambda* = 0.000042
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.4, q=0.25, sigma2=2.0) => lambda_max = 7.144157
+mp_stieltjes(z=0.500000+0.5i, q=0.5) => m(z) = 0.306908 + 0.996473i
+CONST theta_b = 7.07 degrees = 0.123395 radians
+bbp_lambda_max(theta=1.0, q=0.9, sigma2=1.0) => lambda_max = 1.919640
+bbp_is_supercritical(theta=0.3, q=0.5) => no spike (bulk regime)
+caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.5, t=1.0) => drift = 0.051399
+
+=== DOC ===
+
+mp_stieltjes(z=1.000000+0.5i, q=0.5) => m(z) = -0.037030 + 0.659270i
+RULE keating_snaith: finite-N corrections to N_crit; mean GUE spacing near zeta zero: delta = 2*pi/log(gamma_1/(2*pi))
+ks_n_crit_correction(n=64) => N_crit_corrected = 40.957024
+mp_bounds(q=0.2, sigma2=0.5) => lambda_minus = 0.092381, lambda_plus = 2.112250
+nhse_winding_number(n_ratio=2.0, gamma=0.2) => W = 0.376846; nhse_skin_strength = 0.046227
+free_energy(U=2.0, T=300.0, S=2.0) => F = -256.250260
+
+=== DOC ===
+
+bbp_critical_theta(q=0.5) => theta_c = 0.313190
+ep_sensitivity(epsilon=1e-10, order=4) => delta_lambda = 0.003797
+bbp_lambda_max(theta=1.5, q=0.5, sigma2=0.5) => lambda_max = 2.485898
+mp_bounds(q=0.7, sigma2=1.0) => lambda_minus = 0.044581, lambda_plus = 4.077377
+circular_ensembles(beta=1): wigner_surmise(s=0.5) = 0.645381, form_factor(tau=0.5) = 0.326713
+bbp_fluctuation_scaling(N=100, q=0.5) => TW-scale = 0.129512
+
+=== DOC ===
+
+bbp_is_supercritical(theta=0.5, q=0.5) => no spike (bulk regime)
+bbp_lambda_max(theta=0.2, q=0.5, sigma2=0.5) => lambda_max = 2.641701
+mp_bounds(q=0.9, sigma2=0.5) => lambda_minus = 0.000414, lambda_plus = 0.403826
+mp_bounds(q=0.9, sigma2=1.0) => lambda_minus = 0.000672, lambda_plus = 5.371222
+ep_sensitivity(epsilon=1e-10, order=16) => delta_lambda = 0.165668
+bbp_lambda_max(theta=0.2, q=0.25, sigma2=0.5) => lambda_max = 0.348219
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.2, q=0.9, sigma2=2.0) => lambda_max = 5.899523
+bbp_lambda_max(theta=0.8, q=0.25, sigma2=0.5) => lambda_max = 0.537753
+bbp_is_supercritical(theta=0.7, q=0.5) => no spike (bulk regime)
+tracy_widom_variance() => Var[F2] = 1.071923
+nhse_winding_number(n_ratio=1.0, gamma=1.0) => W = 4.462117; nhse_skin_strength = 3.810831
+mp_bounds(q=0.7, sigma2=0.5) => lambda_minus = 0.006037, lambda_plus = 1.859205
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.4, q=0.5, sigma2=1.0) => lambda_max = 1.552659

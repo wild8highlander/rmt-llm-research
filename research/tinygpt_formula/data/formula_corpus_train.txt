@@ -1,0 +1,2152 @@
+# MODULE BBP_TRANSITION
+BBP Phase Transition — Signal eigenvalue emergence from the random bulk.
+
+For a rank-1 spiked covariance matrix Sigma = sigma^2 * I + theta * v v^T,
+the largest eigenvalue lambda_max undergoes a phase transition at theta = sqrt(q):
+
+  - Subcritical (theta <= sqrt(q)): lambda_max -> lambda_+  (bulk edge)
+  - Supercritical (theta > sqrt(q)): lambda_max -> sigma^2 * (1 + theta^2 / q)
+
+This is the Baik-Ben Arous-Peche (BBP) transition, the key marker for
+cognitive mode detection in LLM activations.
+
+References:
+  - Baik, Ben Arous & Peche (2005), "Phase transition of the largest
+    eigenvalue for nonnull complex sample covariance matrices", Ann. Probab.
+
+=== DOC ===
+
+FORMULA bbp_critical_theta(q)
+Compute the critical signal strength theta_c = sqrt(q).
+
+Parameters
+----------
+q : float
+    Aspect ratio N/T in (0, 1].
+
+Returns
+-------
+theta_c : float
+    Critical signal strength.
+
+=== DOC ===
+
+FORMULA bbp_lambda_max(theta, q, sigma2)
+Compute the asymptotic largest eigenvalue under a rank-1 spike.
+
+Parameters
+----------
+theta : float
+    Signal strength (spike magnitude).
+q : float
+    Aspect ratio N/T in (0, 1].
+sigma2 : float
+    Background variance.
+
+Returns
+-------
+lambda_max : float
+    Asymptotic largest eigenvalue.
+code: theta_c = bbp_critical_theta(q)
+lam_plus = sigma2 * (1.0 + np.sqrt(q)) ** 2
+
+=== DOC ===
+
+FORMULA bbp_signal_separation(theta, q, sigma2)
+Compute the gap between lambda_max and the bulk edge lambda_+.
+
+A positive gap indicates supercritical regime (signal detected).
+
+Parameters
+----------
+theta : float
+    Signal strength.
+q : float
+    Aspect ratio N/T in (0, 1].
+sigma2 : float
+    Background variance.
+
+Returns
+-------
+gap : float
+    lambda_max - lambda_+.  Positive = signal detected.
+code: lam_max = bbp_lambda_max(theta, q, sigma2)
+lam_plus = sigma2 * (1.0 + np.sqrt(q)) ** 2
+
+=== DOC ===
+
+FORMULA bbp_is_supercritical(theta, q)
+Check whether the BBP transition has occurred.
+
+Parameters
+----------
+theta : float
+    Signal strength.
+q : float
+    Aspect ratio N/T in (0, 1].
+
+Returns
+-------
+is_supercritical : bool
+    True if theta > sqrt(q).
+
+=== DOC ===
+
+FORMULA bbp_fluctuation_scaling(n, q)
+Compute the fluctuation scale of lambda_max near the transition.
+
+In the critical regime (theta ~ sqrt(q)), the fluctuations are of order
+N^{-1/3} (Tracy-Widom scaling). In the sub/supercritical regime, they
+are of order N^{-1/2} (Gaussian scaling).
+
+Parameters
+----------
+n : int
+    Matrix dimension.
+q : float
+    Aspect ratio.
+
+Returns
+-------
+scale : float
+    Fluctuation scale.
+
+=== DOC ===
+
+FORMULA bbp_sample(n, t, theta, sigma2, rng)
+Sample eigenvalues from a rank-1 spiked covariance matrix.
+
+Generates X = sigma * G + theta * v e_1^T / sqrt(T) where G is i.i.d.
+N(0,1), v is a unit vector, and e_1 is the first standard basis vector.
+
+Parameters
+----------
+n : int
+    Matrix dimension.
+t : int
+    Sample size.
+theta : float
+    Signal strength.
+sigma2 : float
+    Background variance.
+rng : Generator, optional
+    Random number g
+code: sigma = np.sqrt(sigma2)
+X = rng.normal(0, sigma, size=(n, t))
+M = X @ X.T / t
+eigenvalues = np.linalg.eigvalsh(M)
+
+=== DOC ===
+
+# MODULE CAPUTO_FRACTIONAL
+Caputo Fractional-Time Memory — RLHF utility trap and hallucination onset.
+
+The Caputo fractional derivative of order beta in (0, 1) models memory
+effects in autoregressive generation. With beta ~ 0.5, the mean collapse
+time scales as:
+
+    <T_crit> proportional to (mu_eff)^(-1/beta)
+
+Since 1/beta ~ 2 for beta ~ 0.5, even small RLHF pressure mu_eff
+quadratically accelerates hallucination onset. This is the mathematical
+core of the "utility trap" described in the research.
+
+References:
+  - Caputo (1967), "Linear models of dissipation whose Q is almost
+    frequency independent", Geophys. J. R. Astr. Soc.
+
+=== DOC ===
+
+FORMULA caputo_mean_collapse_time(mu_eff, beta, c)
+Compute the mean hallucination collapse time.
+
+<T_crit> = c * (mu_eff)^(-1/beta)
+
+Parameters
+----------
+mu_eff : float
+    Effective RLHF drift strength (positive).
+beta : float
+    Caputo memory parameter in (0, 1). Default: 0.5.
+c : float
+    Proportionality constant.
+
+Returns
+-------
+t_crit : float
+    Mean collapse time.
+
+Raises
+------
+ValueError
+    If mu_eff <= 0 or beta not in (0, 1).
+
+=== DOC ===
+
+FORMULA caputo_quadratic_acceleration(mu_eff)
+Compute the quadratic acceleration factor for beta = 0.5.
+
+With beta = 0.5, the mean collapse time scales as (mu_eff)^(-2),
+meaning RLHF pressure is amplified quadratically.
+
+Parameters
+----------
+mu_eff : float
+    Effective RLHF drift strength.
+
+Returns
+-------
+acceleration : float
+    Quadratic acceleration factor.
+
+=== DOC ===
+
+FORMULA caputo_derivative(f, t, beta, n_points)
+Compute the Caputo fractional derivative numerically via Grunwald-Letnikov.
+
+D^beta f(t) = (1/Gamma(1-beta)) * integral_0^t f'(tau) / (t-tau)^beta dtau
+
+Parameters
+----------
+f : array_like
+    Function values at time points t.
+t : array_like
+    Time points (equally spaced).
+beta : float
+    Fractional order in (0, 1).
+n_points : int, optional
+    Number of points to use (defaults to len(t)).
+
+Re
+code: f = np.asarray(f, dtype=float)
+t = np.asarray(t, dtype=float)
+n = len(t)
+dt = t[1] - t[0] if n > 1 else 1.0
+coeff = np.zeros(n)
+coeff[0] = 1.0
+
+=== DOC ===
+
+FORMULA caputo_fokker_planck_drift(mu_rlhf, beta, t)
+Compute the effective drift in the Fokker-Planck equation under RLHF.
+
+RLHF optimization creates an artificial drift term mu_rlhf in the
+Fokker-Planck equation, which accelerates the collapse of the
+autoregressive process.
+
+Parameters
+----------
+mu_rlhf : float
+    RLHF optimization strength.
+beta : float
+    Caputo memory parameter.
+t : float
+    Time.
+
+Returns
+-------
+drift : float
+    Effective
+
+=== DOC ===
+
+FORMULA caputo_n_crit(theta_b, gamma_1)
+Estimate the critical token count N_crit from Caputo dynamics.
+
+The critical count is related to the first Riemann zeta zero and
+the rotation angle theta_b from the Navier-Stokes regularity analysis.
+
+Parameters
+----------
+theta_b : float
+    Rotation angle in degrees (from NS regularity analysis). Default: 7.07.
+gamma_1 : float
+    First Riemann zeta zero (imaginary part). Default: 14.134725.
+
+Re
+
+=== DOC ===
+
+# MODULE CIRCULAR_ENSEMBLES
+Circular Ensembles — COE, CUE, CSE.
+
+The circular ensembles (Dyson, 1962) are probability distributions on
+the **unitary group** U(N). Their eigenvalues lie on the unit circle
+``|λ| = 1`` and model systems with a conserved quantum number
+(periodic boundary conditions, Floquet systems, etc.).
+
+The three ensembles are:
+
+- **COE** (Circular Orthogonal Ensemble, β=1): invariant under
+  conjugation by orthogonal matrices. Eigenvalues come in complex-
+  conjugate pairs. Generated as ``U U^T`` where ``U`` is Haar-unitary.
+
+- **CUE** (Circular Unitary Ensemble, β=2): invariant under
+  conjugation by unitary matrices. The Haar measure on U(N) itself.
+
+- **CSE** (Circular Symplectic Ensemble, β=4): invariant under
+  conjugation by symplectic matrices. Generated as ``U U^D`` where
+  ``U^D`` is the dual (quaternion transpose).
+
+In the RMT-LLM framework, circular ensembles model the spectral
+distribution of **attention matrices** viewed as quantum channels:
+the eigenvalue phases encode the rotation induced by each attention
+head on the token-basis.
+
+References:
+  - Dyson (1962), "The threefold way. Algebraic structure of symmetry
+    groups and ensembles in quantum mechanics", J. Math. Phys.
+  - Mezzadri (2007), "How to generate random matrices from the
+    classical compact groups", Notices AMS.
+
+Author: Iskhak Hamzatovich Isaev
+ORCID:  0009-0003-7299-0701
+License: CC-BY-NC-SA-4.0
+
+=== DOC ===
+
+FORMULA haar_unitary(n, rng)
+Sample a Haar-distributed unitary matrix.
+
+Uses the QR decomposition of a complex Ginibre matrix (Mezzadri,
+2007). The diagonal phases of ``R`` are corrected to ensure the
+Haar measure.
+
+Args:
+    n: Matrix dimension.
+    rng: Random number generator.
+
+Returns:
+    Complex unitary matrix of shape ``(n, n)``.
+
+Raises:
+    ValueError: If ``n < 1``.
+code: A = (rng.normal(0, 1, (n, n)) + 1j * rng.normal(0, 1, (n, n))) / np.sqrt(2)
+Q, R = np.linalg.qr(A)
+d = np.diag(R)
+ph = d / np.abs(d)
+U = Q * ph[np.newaxis, :]
+
+=== DOC ===
+
+FORMULA haar_orthogonal(n, rng)
+Sample a Haar-distributed orthogonal matrix.
+
+Args:
+    n: Matrix dimension.
+    rng: Random number generator.
+
+Returns:
+    Real orthogonal matrix of shape ``(n, n)``.
+code: A = rng.normal(0, 1, (n, n))
+Q, R = np.linalg.qr(A)
+d = np.diag(R)
+signs = np.sign(d)
+signs[signs == 0] = 1.0
+
+=== DOC ===
+
+FORMULA circular_ensemble(n, beta, rng)
+Sample a matrix from the circular β-ensemble.
+
+Args:
+    n: Matrix dimension.
+    beta: 1 (COE), 2 (CUE), or 4 (CSE).
+    rng: Random number generator.
+
+Returns:
+    Unitary matrix of shape ``(n, n)`` (or ``(2n, 2n)`` for β=4).
+    For β=1 the result is symmetric unitary; for β=4 it is
+    self-dual quaternion.
+
+Raises:
+    ValueError: If ``beta`` is not in {1, 2, 4}.
+code: U = haar_unitary(n, rng)
+Re = np.real(U)
+Im = np.imag(U)
+top = np.hstack([Re, -Im])
+bot = np.hstack([Im, Re])
+M = np.vstack([top, bot])
+
+=== DOC ===
+
+FORMULA circular_eigenvalues(n, beta, rng)
+Sample eigenvalues (phases) from a circular β-ensemble.
+
+Args:
+    n: Matrix dimension.
+    beta: 1 (COE), 2 (CUE), or 4 (CSE).
+    rng: Random number generator.
+
+Returns:
+    Sorted complex eigenvalue phases on the unit circle
+    ``|λ| = 1``, as angles in ``[0, 2π)``.
+code: M = circular_ensemble(n, beta, rng)
+eigs = np.linalg.eigvals(M)
+phases = np.angle(eigs) % (2 * np.pi)
+
+=== DOC ===
+
+FORMULA nearest_neighbor_spacing(phases, normalize)
+Compute nearest-neighbor spacings on the unit circle.
+
+Args:
+    phases: Sorted phases in ``[0, 2π)``.
+    normalize: If True, rescale spacings to have mean 1.
+
+Returns:
+    Array of spacings (length ``len(phases)`` for circular topology).
+code: p = np.sort(np.asarray(phases, dtype=np.float64))
+n = len(p)
+spacings = np.diff(p)
+wrap = p[0] + 2 * np.pi - p[-1]
+spacings = np.append(spacings, wrap)
+
+=== DOC ===
+
+FORMULA form_factor(phases, max_k)
+Compute the spectral form factor ``K(τ)``.
+
+The form factor is the Fourier transform of the two-level
+correlation function. For the circular ensembles, it has a
+universal large-N limit::
+
+    K_β(τ) = τ - (β τ / 2) ln(1 + 2 τ / β)   for τ < 1
+    K_β(τ) = 1                                  for τ ≥ 1
+
+(Here ``τ = k / N`` is the scaled wavenumber.)
+
+Args:
+    phases: Sorted eigenvalue phases.
+    ma
+code: p = np.asarray(phases, dtype=np.float64)
+n = len(p)
+ks = np.arange(1, max_k + 1)
+K = np.zeros(len(ks), dtype=np.float64)
+tau = ks / n
+
+=== DOC ===
+
+FORMULA number_variance(phases, max_L, n_points)
+Compute the number variance ``Σ²(L)``.
+
+The number variance measures the fluctuation of the count of
+eigenvalues in an interval of length ``L`` (in units of mean
+spacing). For Poisson statistics ``Σ²(L) = L``; for the circular
+ensembles it grows logarithmically (level repulsion).
+
+Args:
+    phases: Sorted eigenvalue phases.
+    max_L: Maximum interval length (in units of mean spacing).
+    n_point
+code: p = np.sort(np.asarray(phases, dtype=np.float64))
+n = len(p)
+spacings = np.diff(p)
+mean_spacing = spacings.mean() if len(spacings) > 0 else 1.0
+Ls = np.linspace(0.1, max_L, n_points)
+variances = np.zeros(len(Ls))
+
+=== DOC ===
+
+FORMULA wigner_surmise_circular(s, beta)
+Wigner surmise for the circular ensembles.
+
+For the circular β-ensemble, the nearest-neighbor spacing
+distribution is::
+
+    P_β(s) = c_β s^β exp(-a_β s²)
+
+(same functional form as the Gaussian ensembles, but with
+slightly different constants due to the compact domain).
+
+Args:
+    s: Normalized spacings (mean 1).
+    beta: 1, 2, or 4.
+
+Returns:
+    Probability density.
+code: s = np.asarray(s, dtype=np.float64)
+
+=== DOC ===
+
+FORMULA theoretical_form_factor(tau, beta)
+Theoretical large-N form factor for the circular β-ensemble.
+
+Args:
+    tau: Scaled wavenumber ``k / N``.
+    beta: 1, 2, or 4.
+
+Returns:
+    Form factor values.
+code: tau = np.asarray(tau, dtype=np.float64)
+K = np.where(tau < 1.0, tau - beta * tau / 2.0 * np.log1p(2.0 * tau / beta), 1.0)
+
+=== DOC ===
+
+FORMULA attention_phase_spectrum(attn_matrix, normalize)
+Compute the phase spectrum of an attention matrix.
+
+Attention matrices (after softmax) are real but not symmetric.
+Their eigenvalues are generally complex. When row-stochastic
+(each row sums to 1), the largest eigenvalue is 1, and the rest
+lie inside the unit disk. The *phases* of the subdominant
+eigenvalues encode the "rotation" induced by attention.
+
+This function extracts those phases and retur
+code: A = np.asarray(attn_matrix, dtype=np.float64)
+eigs = np.linalg.eigvals(A)
+idx_dom = np.argmax(np.abs(eigs))
+mask = np.ones(len(eigs), dtype=bool)
+mask[idx_dom] = False
+sub = eigs[mask]
+
+=== DOC ===
+
+# MODULE CONSTANTS
+Constants and key numerical values for the RMT-LLM framework.
+
+Centralizes all important constants used across the verification suite.
+
+=== DOC ===
+
+# MODULE DYSON_BROWNIAN
+Dyson Brownian Motion — Eigenvalue dynamics of random matrix ensembles.
+
+Dyson Brownian motion (DBM) describes the stochastic evolution of
+eigenvalues of a Hermitian matrix whose entries undergo independent
+Ornstein-Uhlenbeck processes. For the Gaussian ensembles (GOE β=1,
+GUE β=2, GSE β=4), the eigenvalues evolve as interacting Brownian
+particles with a logarithmic Coulomb repulsion::
+
+    dλ_i = (σ²/2N) Σ_{j≠i} 1/(λ_i - λ_j) dt + (σ/√N) dW_i
+
+where β controls the repulsion strength and ``W_i`` are independent
+Brownian motions.
+
+In the RMT-LLM framework, DBM is used to model the *training dynamics*
+of the spectral gap: as training progresses, the empirical covariance
+eigenvalues drift, and the BBP signal eigenvalue separates from the
+MP bulk. DBM gives a principled prior on the expected drift rate.
+
+References:
+  - Dyson (1962), "A Brownian-motion model for the analysis of our
+    eigenvalue data", J. Math. Phys.
+  - Erdős & Yau (2012), "Rigorous spectral analysis of large random
+    matrices" (review of the universality program).
+
+Author: Iskhak Hamzatovich Isaev
+ORCID:  0009-0003-7299-0701
+License: CC-BY-NC-SA-4.0
+
+=== DOC ===
+
+FORMULA gaussian_ensemble(n, beta, sigma, rng)
+Sample a matrix from the Gaussian β-ensemble.
+
+Args:
+    n: Matrix dimension.
+    beta: Dyson index: 1 (GOE, real symmetric), 2 (GUE, complex
+        Hermitian), 4 (GSE, quaternion self-dual).
+    sigma: Entry standard deviation.
+    rng: Random number generator.
+
+Returns:
+    Matrix of shape ``(n, n)``. For β=1 the result is real symmetric;
+    for β=2 complex Hermitian; for β=4 a real representa
+code: A = rng.normal(0, sigma / 2, (n, n)) + 1j * rng.normal(0, sigma / 2, (n, n))
+Re = np.real(A)
+Im = np.imag(A)
+top = np.hstack([Re, -Im])
+bot = np.hstack([Im, Re])
+M = np.vstack([top, bot])
+
+=== DOC ===
+
+FORMULA ensemble_eigenvalues(n, beta, sigma, rng)
+Sample eigenvalues from a Gaussian β-ensemble.
+
+Args:
+    n: Matrix dimension (returns ``n`` eigenvalues for β=1,2 and
+        ``2n`` for β=4).
+    beta: Dyson index.
+    sigma: Entry standard deviation.
+    rng: Random number generator.
+
+Returns:
+    Sorted real eigenvalues.
+code: M = gaussian_ensemble(n, beta, sigma, rng)
+eigvals = np.linalg.eigvalsh(M)
+
+=== DOC ===
+
+FORMULA wigner_surmise(s, beta)
+Evaluate the Wigner surmise for the level-spacing distribution.
+
+For the Gaussian β-ensembles, the nearest-neighbor spacing
+distribution is well approximated by::
+
+    P_β(s) = a_β s^β exp(-b_β s²)
+
+where ``a_β`` and ``b_β`` are chosen so that ``∫ P(s) ds = 1``
+and ``⟨s⟩ = 1``.
+
+Args:
+    s: Spacings (should have mean ≈ 1 after unfolding).
+    beta: Dyson index (1, 2, or 4).
+
+Returns:
+    Probabil
+code: s = np.asarray(s, dtype=np.float64)
+p = a * s ** beta * np.exp(-b * s ** 2)
+
+=== DOC ===
+
+FORMULA empirical_spacing_distribution(eigvals, normalize)
+Compute nearest-neighbor spacings of a sorted eigenvalue array.
+
+Args:
+    eigvals: Sorted eigenvalues.
+    normalize: If True, rescale spacings to have mean 1 (unfolded).
+
+Returns:
+    Array of spacings.
+code: ev = np.sort(np.asarray(eigvals, dtype=np.float64))
+spacings = np.diff(ev)
+
+=== DOC ===
+
+FORMULA __init__(self, config)
+
+code: self.config = config or DBMConfig()
+self._t = 0.0
+
+=== DOC ===
+
+FORMULA _validate_config(self)
+
+code: cfg = self.config
+
+=== DOC ===
+
+FORMULA initialize(self, eigvals, rng)
+Set the initial eigenvalue configuration.
+
+Args:
+    eigvals: Initial sorted eigenvalues. If ``None``, sample
+        from the semicircle law with radius ``2 σ √N``.
+    rng: RNG for the initial sampling and subsequent steps.
+
+Returns:
+    The initial eigenvalue array (sorted).
+code: cfg = self.config
+self._t = 0.0
+self._history = [self._eigvals.copy()]
+
+=== DOC ===
+
+FORMULA eigvals(self)
+Current eigenvalue configuration.
+
+=== DOC ===
+
+FORMULA time(self)
+Current simulation time.
+
+=== DOC ===
+
+FORMULA history(self)
+List of eigenvalue snapshots (one per recorded step).
+
+=== DOC ===
+
+FORMULA step(self, n_steps, record)
+Advance the simulation by ``n_steps`` Euler-Maruyama steps.
+
+Args:
+    n_steps: Number of time steps of size ``dt``.
+    record: If True, append each step's eigenvalues to history.
+
+Returns:
+    The eigenvalues after the last step.
+code: cfg = self.config
+n = cfg.n
+beta = cfg.beta
+sigma = cfg.sigma
+dt = cfg.dt
+noise_scale = sigma / np.sqrt(n)
+
+=== DOC ===
+
+FORMULA run(self, total_time, record_interval)
+Run the simulation for ``total_time`` time units.
+
+Args:
+    total_time: Total simulation time.
+    record_interval: Record every ``record_interval`` steps.
+
+Returns:
+    Final eigenvalue configuration.
+code: cfg = self.config
+n_steps = max(1, int(np.ceil(total_time / cfg.dt)))
+
+=== DOC ===
+
+FORMULA spectral_gap(self)
+Current spectral gap ``λ_max - λ_min``.
+
+=== DOC ===
+
+FORMULA largest_eigenvalue_trajectory(self)
+Time series of the largest eigenvalue.
+
+=== DOC ===
+
+FORMULA mean_spacing(self)
+Mean nearest-neighbor spacing of the current eigenvalues.
+code: spacings = np.diff(self._eigvals)
+
+=== DOC ===
+
+FORMULA unfolding(self)
+Unfold the eigenvalues to mean spacing 1.
+
+Unfolding removes the global density variation so that the
+local spacing statistics follow universal RMT predictions.
+We use a simple cubic-spline-based cumulative-density approach.
+
+Returns:
+    Unfolded eigenvalues (mean spacing ≈ 1).
+code: lam = self._eigvals
+n = len(lam)
+ranks = np.arange(1, n + 1, dtype=np.float64)
+unfolded = ranks - ranks[0]
+
+=== DOC ===
+
+# MODULE EP_SURFACES
+Exceptional-Point (EP) Surfaces — Spectral sensitivity divergence.
+
+At an exceptional point of order k, eigenvalues of a non-Hermitian matrix
+coalesce and the spectral sensitivity diverges:
+
+    delta_lambda ~ epsilon^{1/k},  k ~ O(N)
+
+This means that even infinitesimal perturbations (e.g., floating-point
+rounding errors) can cause macroscopic spectral shifts, providing another
+path to hallucination onset in LLMs.
+
+References:
+  - Kato (1980), "Perturbation Theory for Linear Operators", Springer.
+  - Heiss (2012), "The physics of exceptional points", J. Phys. A.
+
+=== DOC ===
+
+FORMULA ep_sensitivity(epsilon, order)
+Compute the eigenvalue sensitivity at an EP of given order.
+
+delta_lambda ~ epsilon^{1/k}
+
+Parameters
+----------
+epsilon : float
+    Perturbation strength (positive).
+order : int
+    Exceptional point order k >= 2.
+
+Returns
+-------
+delta_lam : float
+    Spectral shift magnitude.
+
+=== DOC ===
+
+FORMULA ep_rounding_sensitivity(n, dtype)
+Compute the spectral sensitivity due to floating-point rounding.
+
+With machine epsilon eps_mach ~ 2^{-53} for float64, and EP order
+k ~ O(N), the rounding-induced spectral shift is:
+
+delta_lambda ~ (eps_mach)^{1/N}
+
+Parameters
+----------
+n : int
+    Matrix dimension (EP order ~ N).
+dtype : type
+    Floating-point dtype.
+
+Returns
+-------
+delta_lam : float
+    Rounding-induced spectral shift.
+code: eps_mach = np.finfo(dtype).eps
+
+=== DOC ===
+
+FORMULA ep_order_from_separation(separation, epsilon)
+Estimate the EP order from observed eigenvalue separation.
+
+Given observed separation delta_lambda and perturbation epsilon,
+estimate the EP order k ~ log(epsilon) / log(delta_lambda).
+
+Parameters
+----------
+separation : float
+    Observed eigenvalue separation.
+epsilon : float
+    Perturbation strength.
+
+Returns
+-------
+k : float
+    Estimated EP order.
+
+=== DOC ===
+
+FORMULA ep_is_near(n, eigenvalues, tol)
+Check if a set of eigenvalues is near an exceptional point.
+
+An EP is characterized by near-coalescence of eigenvalues. We check
+the minimum pairwise separation relative to the spectral radius.
+
+Parameters
+----------
+n : int
+    Expected EP order.
+eigenvalues : ndarray
+    Complex eigenvalues.
+tol : float
+    Tolerance relative to spectral radius.
+
+Returns
+-------
+(is_near, min_separation) : tuple
+code: diffs = np.abs(eigenvalues[:, None] - eigenvalues[None, :])
+min_sep = np.min(diffs)
+spectral_radius = np.max(np.abs(eigenvalues))
+relative_sep = min_sep / max(spectral_radius, 1e-15)
+
+=== DOC ===
+
+FORMULA ep_perturbed_matrix(size, order, epsilon, rng)
+Generate a Jordan-block matrix near an EP of given order.
+
+The unperturbed matrix is a Jordan block of the given order, which has
+an EP of that order. The perturbation breaks the degeneracy.
+
+Parameters
+----------
+size : int
+    Overall matrix dimension (>= order).
+order : int
+    EP order (Jordan block size).
+epsilon : float
+    Perturbation strength.
+rng : Generator, optional
+    Random number g
+code: H = np.zeros((size, size), dtype=complex)
+
+=== DOC ===
+
+# MODULE FREE_PROBABILITY
+Free Probability — Free convolution, R-transform, and S-transform.
+
+Free probability (Voiculescu, 1985) extends classical probability to
+**non-commutative** random variables, such as large random matrices.
+When two large Hermitian matrices are in generic position, their
+spectral distributions combine via **free convolution** rather than
+classical convolution.
+
+The two key transforms are:
+
+- **R-transform** — the free analogue of the cumulant-generating
+  function. For a measure with Stieltjes transform ``G(z)``, the
+  R-transform is ``R(z) = G^{-1}(z) - 1/z``. Free convolution is
+  additive in the R-domain: ``R_{A+B}(z) = R_A(z) + R_B(z)``.
+
+- **S-transform** — the free analogue of the moment-generating
+  function. For a measure with moment series ``M(z) = 1 + m_1 z + …``,
+  the S-transform is ``S(z) = (1 + z) / z · M^{-1}(z)``. Free
+  multiplication is multiplicative in the S-domain:
+  ``S_{AB}(z) = S_A(z) · S_B(z)``.
+
+In the RMT-LLM framework, free probability gives a sharper estimate
+of ``N_crit`` (the critical token count for hallucination onset) by
+combining the spectral distributions of attention heads via free
+convolution rather than the naive MP bound.
+
+References:
+  - Voiculescu (1985), "Symmetries of some reduced free product C*-algebras"
+  - Voiculescu (1991), "Limit laws for random matrices and free products"
+  - Hachem et al. (2007), "A new approach for mutual information...
+    based on free probability theory"
+
+Author: Iskhak Hamzatovich Isaev
+ORCID:  0009-0003-7299-0701
+License: CC-BY-NC-SA-4.0
+
+=== DOC ===
+
+FORMULA stieltjes_transform(eigvals, z)
+Compute the Stieltjes transform of a discrete measure.
+
+For eigenvalues ``{λ_i}``, the Stieltjes transform is::
+
+    G(z) = (1/N) Σ_i 1 / (λ_i - z)
+
+This is the Cauchy transform; it is analytic in the upper
+half-plane and satisfies ``Im(G(z)) > 0`` for ``Im(z) > 0``.
+
+Args:
+    eigvals: Eigenvalues defining the measure.
+    z: Complex point (typically in the upper half-plane).
+
+Returns:
+    Comple
+code: ev = np.asarray(eigvals, dtype=np.float64)
+
+=== DOC ===
+
+FORMULA blue_transform(eigvals, z)
+Compute the Blue transform ``B(z) = 1/G(z) - z``.
+
+The Blue transform (also called the ``η``-transform's cousin)
+is the stepping stone to the R-transform: ``R(w) = B(-w)``.
+
+Args:
+    eigvals: Eigenvalues.
+    z: Complex evaluation point.
+
+Returns:
+    Blue transform value.
+code: g = stieltjes_transform(eigvals, z)
+
+=== DOC ===
+
+FORMULA r_transform_series(moments, n_terms)
+Compute the R-transform as a power series from moments.
+
+For a measure with free cumulants ``{κ_n}``, the R-transform is::
+
+    R(z) = Σ_n κ_n z^{n-1}
+
+The free cumulants are related to the moments ``{m_n}`` by the
+non-crossing partition formula. This function computes the first
+``n_terms`` free cumulants using Newton's identity for free
+probability.
+
+Args:
+    moments: Power moments ``[m_1, m_2, 
+code: m = np.asarray(moments, dtype=np.float64)
+n = min(n_terms, len(m))
+kappa = np.zeros(n, dtype=np.float64)
+
+=== DOC ===
+
+FORMULA free_convolution_additive(eigvals_a, eigvals_b, z_grid)
+Compute the Stieltjes transform of the free sum ``A ⊞ B``.
+
+Given the spectral measures of two free random variables ``A``
+and ``B``, the free convolution ``A ⊞ B`` has a Stieltjes transform
+that satisfies the subordination equation::
+
+    G_{A⊞B}(z) = G_A(ω_A(z))
+
+where ``ω_A(z)`` is the subordination function. We compute it
+numerically via the fixed-point iteration::
+
+    G(z) = G_A(z - R_B(G(z)
+code: ev_a = np.asarray(eigvals_a, dtype=np.float64)
+ev_b = np.asarray(eigvals_b, dtype=np.float64)
+z_grid = np.asarray(z_grid, dtype=complex)
+result = np.zeros_like(z_grid, dtype=complex)
+
+=== DOC ===
+
+FORMULA s_transform_series(moments, n_terms)
+Compute the S-transform coefficients from moments.
+
+The S-transform is defined via the moment series ``M(z) = Σ m_n z^n``
+by ``S(z) = (1+z)/z · M^{-1}(z)``. This function computes the
+power-series coefficients of ``S(z)`` up to ``n_terms`` terms.
+
+Args:
+    moments: Power moments ``[m_1, m_2, ...]`` (``m_0 = 1`` is implied).
+    n_terms: Number of series coefficients to compute.
+
+Returns:
+    Coef
+code: m = np.asarray(moments, dtype=np.float64)
+n = min(n_terms, len(m))
+coeffs_M = np.zeros(n + 1, dtype=np.float64)
+coeffs_M[0] = 1.0
+coeffs_M[1:n + 1] = m[:n]
+coeffs_w = np.zeros(n + 1, dtype=np.float64)
+
+=== DOC ===
+
+FORMULA free_convolution_multiplicative(eigvals_a, eigvals_b, n_samples)
+Approximate eigenvalues of the free product ``A ⊠ B``.
+
+For free random variables ``A`` and ``B``, the free product
+``A ⊠ B = A^{1/2} B A^{1/2}`` has an eigenvalue distribution
+determined by the S-transform product ``S_A · S_B``.
+
+This function approximates the product eigenvalues by Monte Carlo:
+sample random free unitary conjugations and compute the resulting
+eigenvalues. The approximation is ex
+code: ev_a = np.asarray(eigvals_a, dtype=np.float64)
+ev_b = np.asarray(eigvals_b, dtype=np.float64)
+n_a, n_b = (len(ev_a), len(ev_b))
+n = min(n_a, n_b)
+rng = np.random.default_rng()
+A = np.diag(ev_a[:n])
+
+=== DOC ===
+
+FORMULA subordination(eigvals_a, eigvals_b, z_grid, max_iter, tol)
+Compute the subordination functions for ``A ⊞ B``.
+
+The subordination functions ``ω_A(z)`` and ``ω_B(z)`` satisfy::
+
+    G_{A⊞B}(z) = G_A(ω_A(z)) = G_B(ω_B(z))
+    ω_A(z) + ω_B(z) = z + R_{A⊞B}(G_{A⊞B}(z))
+
+This function solves the fixed-point equation::
+
+    ω_A(z) = z - R_B(G_A(ω_A(z)))
+
+by simple iteration.
+
+Args:
+    eigvals_a: Eigenvalues of A.
+    eigvals_b: Eigenvalues of B.
+    z_grid: Com
+code: ev_a = np.asarray(eigvals_a, dtype=np.float64)
+ev_b = np.asarray(eigvals_b, dtype=np.float64)
+z = np.asarray(z_grid, dtype=complex)
+omega_a = z.copy()
+omega_b = z.copy()
+g_sum = np.zeros_like(z, dtype=complex)
+
+=== DOC ===
+
+FORMULA mp_r_transform(z, q, sigma2)
+R-transform of the Marchenko-Pastur distribution.
+
+For MP with aspect ratio ``q`` and variance ``σ²``, the R-transform
+is::
+
+    R(z) = σ² / (1 - σ² q z)
+
+This is a useful test case: ``R_{MP}(z) → σ²`` as ``z → 0``, so
+the first free cumulant equals the variance.
+
+Args:
+    z: Evaluation point.
+    q: Aspect ratio N/T ∈ (0, 1].
+    sigma2: Population variance.
+
+Returns:
+    R-transform value.
+
+Rai
+
+=== DOC ===
+
+FORMULA mp_s_transform(z, q, sigma2)
+S-transform of the Marchenko-Pastur distribution.
+
+For MP::
+
+    S(z) = 1 / (σ² (1 + q z))
+
+Args:
+    z: Evaluation point.
+    q: Aspect ratio.
+    sigma2: Population variance.
+
+Returns:
+    S-transform value.
+
+=== DOC ===
+
+FORMULA G_A(z)
+
+=== DOC ===
+
+FORMULA G_B(z)
+
+=== DOC ===
+
+FORMULA R_B(w)
+
+code: z0 = 1.0 / w + float(np.mean(ev_b))
+z = z0
+
+=== DOC ===
+
+FORMULA G_A(zv)
+
+=== DOC ===
+
+FORMULA G_B(zv)
+
+=== DOC ===
+
+# MODULE KEATING_SNAITH
+Keating-Snaith Correction — Finite-context correction to N_crit.
+
+The Keating-Snaith formula provides corrections to the mean of the
+Riemann zeta zeros on the critical line, based on Random Matrix Theory
+(GUE characteristic polynomials). Applied to LLMs, this gives a
+finite-context correction to the critical token count:
+
+    gamma_1(N) = gamma_1 + c_1/N + c_2/N^2 + ...
+
+where gamma_1 ~ 14.1347 is the first Riemann zeta zero and the
+correction terms account for finite context window effects.
+
+References:
+  - Keating & Snaith (2000), "Random matrix theory and zeta(1/2 + it)",
+    Comm. Math. Phys.
+
+=== DOC ===
+
+FORMULA ks_corrected_gamma(n, gamma_1, c1, c2)
+Compute the Keating-Snaith corrected first zeta zero.
+
+gamma_1(N) = gamma_1 + c_1/N + c_2/N^2
+
+Parameters
+----------
+n : int or float
+    Context window size (must be positive).
+gamma_1 : float
+    Uncorrected first Riemann zeta zero.
+c1, c2 : float
+    Correction coefficients.
+
+Returns
+-------
+gamma_corrected : float
+    Corrected zeta zero accounting for finite context.
+
+Raises
+------
+ValueError
+
+=== DOC ===
+
+FORMULA ks_n_crit_correction(n, theta_b, gamma_1)
+Compute the corrected N_crit using Keating-Snaith corrections.
+
+The critical token count is modified by finite-context effects:
+
+N_crit(KS) = gamma_1(N) / (theta_b * pi / 180)
+
+Parameters
+----------
+n : int or float
+    Context window size.
+theta_b : float
+    Rotation angle in degrees.
+gamma_1 : float
+    First Riemann zeta zero.
+
+Returns
+-------
+n_crit_ks : float
+    Keating-Snaith corrected cri
+code: gamma_corrected = ks_corrected_gamma(n, gamma_1)
+
+=== DOC ===
+
+FORMULA ks_correction_series(n, max_order, gamma_1)
+Compute the Keating-Snaith correction terms up to max_order.
+
+Parameters
+----------
+n : int or float
+    Context window size.
+max_order : int
+    Maximum correction order (1/N^k for k = 1..max_order).
+gamma_1 : float
+    First Riemann zeta zero.
+
+Returns
+-------
+corrections : list of float
+    List of correction terms [c_1/N, c_2/N^2, ...].
+code: coeffs = [C_1, C_2, -0.021, 0.009, -0.003][:max_order]
+corrections = [c / n ** (k + 1) for k, c in enumerate(coeffs)]
+
+=== DOC ===
+
+FORMULA ks_relative_correction(n, gamma_1)
+Compute the relative correction |delta/gamma_1|.
+
+Parameters
+----------
+n : int or float
+    Context window size.
+gamma_1 : float
+    First Riemann zeta zero.
+
+Returns
+-------
+relative : float
+    Relative correction as a fraction of gamma_1.
+code: corrected = ks_corrected_gamma(n, gamma_1)
+
+=== DOC ===
+
+FORMULA ks_zeta_zero_statistics(n_zeros)
+Return the first n_zeros Riemann zeta zeros (imaginary parts).
+
+These are the t_n such that zeta(1/2 + i*t_n) = 0.
+
+Parameters
+----------
+n_zeros : int
+    Number of zeros to return.
+
+Returns
+-------
+zeros : ndarray of shape (n_zeros,)
+    Imaginary parts of the first Riemann zeta zeros.
+code: known_zeros = np.array([14.134725, 21.02204, 25.010858, 30.424876, 32.935062, 37.586178, 40.918719, 43.327073, 48.005151, 49.773832, 52.970321, 56.446248, 59.34
+
+=== DOC ===
+
+FORMULA ks_gue_mean_spacing(n)
+Compute the GUE mean spacing for the first n zeros.
+
+The mean spacing of GUE eigenvalues (unfolded) is 1.0.
+For the Riemann zeros, the unfolding is:
+    t_n -> t_n * (log(t_n / (2*pi*e)) / (2*pi))
+
+The GUE prediction says the unfolded spacing statistics should
+match those of GUE eigenvalues.
+
+Parameters
+----------
+n : int
+    Number of zeros.
+
+Returns
+-------
+mean_spacing : float
+    Mean unfolded
+code: zeros = ks_zeta_zero_statistics(n)
+unfolded = np.array([t / (2 * np.pi) * (np.log(t / (2 * np.pi)) - 1) for t in zeros])
+spacings = np.diff(unfolded)
+
+=== DOC ===
+
+# MODULE MARCHENKO_PASTUR
+Marchenko-Pastur Law — Bulk eigenvalue density of random covariance matrices.
+
+For an N x T matrix X with i.i.d. entries of variance sigma^2, the empirical
+spectral density of M = X X^T / T converges to the Marchenko-Pastur
+distribution as N, T -> infinity with q = N/T fixed.
+
+References:
+  - Marchenko & Pastur (1967), "Distribution of eigenvalues for some sets
+    of random matrices", Mat. Sb.
+
+=== DOC ===
+
+FORMULA mp_bounds(q, sigma2)
+Compute the support bounds lambda_-, lambda_+ of the MP law.
+
+Parameters
+----------
+q : float
+    Aspect ratio N/T, must be in (0, 1] for the standard case.
+sigma2 : float
+    Population variance, must be positive.
+
+Returns
+-------
+(lambda_minus, lambda_plus) : tuple of floats
+    Support endpoints of the Marchenko-Pastur density.
+
+Raises
+------
+ValueError
+    If q not in (0, 1] or sigma2 <= 0.
+code: sqrt_q = np.sqrt(q)
+lam_minus = sigma2 * (1.0 - sqrt_q) ** 2
+lam_plus = sigma2 * (1.0 + sqrt_q) ** 2
+
+=== DOC ===
+
+FORMULA mp_density(lam, q, sigma2)
+Evaluate the Marchenko-Pastur density at given eigenvalues.
+
+rho(lambda) = (1 / (2*pi*sigma^2*lambda*q))
+              * sqrt((lambda_+ - lambda)(lambda - lambda_-))
+
+For q > 1, there is additionally a point mass of weight (1 - 1/q) at
+lambda = 0. This function returns only the continuous part.
+
+Parameters
+----------
+lam : array_like
+    Eigenvalues at which to evaluate the density.
+q : float
+    
+code: lam = np.asarray(lam, dtype=float)
+lam_minus, lam_plus = mp_bounds(q, sigma2)
+mask = (lam > lam_minus) & (lam < lam_plus) & (lam > 0)
+rho = np.zeros_like(lam)
+
+=== DOC ===
+
+FORMULA mp_cdf(lam, q, sigma2, n_points)
+Compute the CDF of the Marchenko-Pastur distribution numerically.
+
+Parameters
+----------
+lam : array_like
+    Points at which to evaluate the CDF.
+q : float
+    Aspect ratio N/T in (0, 1].
+sigma2 : float
+    Population variance.
+n_points : int
+    Number of quadrature points for numerical integration.
+
+Returns
+-------
+F : ndarray
+    CDF values.
+code: lam = np.asarray(lam, dtype=float)
+lam_minus, lam_plus = mp_bounds(q, sigma2)
+eps = (lam_plus - lam_minus) * 1e-06
+grid = np.linspace(lam_minus + eps, lam_plus - eps, n_points)
+density = mp_density(grid, q, sigma2)
+dx = grid[1] - grid[0]
+
+=== DOC ===
+
+FORMULA mp_sample(n, t, sigma2, rng)
+Sample eigenvalues from a random covariance matrix.
+
+Generates an N x T matrix with i.i.d. N(0, sigma2) entries and computes
+the eigenvalues of M = X X^T / T.
+
+Parameters
+----------
+n : int
+    Number of rows (model dimension).
+t : int
+    Number of columns (sample size / sequence length).
+sigma2 : float
+    Entry variance.
+rng : Generator, optional
+    Random number generator.
+
+Returns
+-------
+ei
+code: sigma = np.sqrt(sigma2)
+X = rng.normal(0, sigma, size=(n, t))
+M = X @ X.T / t
+eigenvalues = np.linalg.eigvalsh(M)
+
+=== DOC ===
+
+FORMULA mp_stieltjes(z, q, sigma2)
+Compute the Stieltjes transform of the Marchenko-Pastur distribution.
+
+g(z) = (1 - q - z) / (2 * sigma^2 * q * z)
+       + sqrt((1 - q - z)^2 - 4 * q * z) / (2 * sigma^2 * q * z)
+
+where sqrt is the branch with positive imaginary part for Im(z) > 0.
+
+Parameters
+----------
+z : complex
+    Point in the upper half-plane.
+q : float
+    Aspect ratio.
+sigma2 : float
+    Population variance.
+
+Returns
+----
+code: discriminant = (1.0 - q - z) ** 2 - 4.0 * q * z
+sqrt_disc = np.sqrt(discriminant)
+g = (1.0 - q - z + sqrt_disc) / (2.0 * sigma2 * q * z)
+
+=== DOC ===
+
+# MODULE NHSE
+Non-Hermitian Skin Effect (NHSE) — Topological transition at N = N_crit.
+
+The NHSE describes the spectral collapse of non-Hermitian matrices: below
+the critical token count N_crit, eigenvalues form a 2D ring in the complex
+plane with non-zero imaginary parts (winding number w = 0). Above N_crit,
+the skin effect forces all eigenvalues to collapse onto the real axis
+(w = 1), signalling the onset of hallucination in autoregressive LLMs.
+
+Key quantities:
+  - Winding number: w = (1/2pi) oint arg(det(H(z) - lambda)) dz
+  - Transition: w: 0 -> 1 at N = N_crit
+  - Skin strength: exponential localization of eigenvectors at boundaries
+
+References:
+  - Okuma, Sato & Yao (2018+), "Topological origin of non-Hermitian skin
+    effects", Phys. Rev. Lett.
+
+=== DOC ===
+
+FORMULA nhse_winding_number(n_ratio, gamma)
+Compute the winding number for a non-Hermitian system.
+
+The winding number transitions from 0 to 1 at n_ratio = 1.0
+(i.e., when N = N_crit).
+
+Parameters
+----------
+n_ratio : float
+    Ratio N / N_crit.  Below 1: w = 0, above 1: w = 1.
+gamma : float
+    Non-Hermiticity parameter in [0, 1].
+
+Returns
+-------
+w : int
+    Winding number (0 or 1).
+
+=== DOC ===
+
+FORMULA nhse_skin_strength(n_ratio, gamma)
+Compute the skin effect strength (degree of eigenvalue collapse).
+
+Below N_crit: skin = 0 (eigenvalues on a 2D ring).
+Above N_crit: skin increases toward 1 as eigenvectors localize.
+
+Parameters
+----------
+n_ratio : float
+    Ratio N / N_crit.
+gamma : float
+    Non-Hermiticity parameter.
+
+Returns
+-------
+strength : float in [0, 1]
+    Skin effect strength.
+code: w = nhse_winding_number(n_ratio, gamma)
+
+=== DOC ===
+
+FORMULA nhse_imag_collapse(n_ratio, gamma)
+Compute the fraction of imaginary parts that have collapsed.
+
+When w = 0: Im(lambda) is broadly distributed.
+When w = 1: Im(lambda) -> 0, fraction collapsed -> 1.
+
+Parameters
+----------
+n_ratio : float
+    Ratio N / N_crit.
+gamma : float
+    Non-Hermiticity parameter.
+
+Returns
+-------
+collapse_fraction : float in [0, 1]
+
+=== DOC ===
+
+FORMULA nhse_hamiltonian(size, gamma, rng)
+Generate a non-Hermitian Hamiltonian with skin effect.
+
+H = H_0 + i * gamma * Gamma
+
+where H_0 is a real symmetric matrix (Hermitian part) and Gamma is
+anti-Hermitian (breaks Hermiticity with strength gamma).
+
+Parameters
+----------
+size : int
+    Matrix dimension.
+gamma : float
+    Non-Hermiticity strength.
+rng : Generator, optional
+    Random number generator.
+
+Returns
+-------
+H : ndarray of shap
+code: A = rng.normal(0, 1, size=(size, size))
+H_0 = (A + A.T) / (2.0 * np.sqrt(size))
+B = rng.normal(0, 1, size=(size, size))
+Gamma = (B - B.T) / 2.0
+H = H_0 + 1j * gamma * Gamma
+
+=== DOC ===
+
+FORMULA nhse_eigenvalues(size, gamma, rng)
+Compute eigenvalues of a non-Hermitian Hamiltonian.
+
+Parameters
+----------
+size : int
+    Matrix dimension.
+gamma : float
+    Non-Hermiticity strength.
+rng : Generator, optional
+    Random number generator.
+
+Returns
+-------
+eigenvalues : ndarray of shape (size,)
+    Complex eigenvalues.
+code: H = nhse_hamiltonian(size, gamma, rng)
+
+=== DOC ===
+
+FORMULA nhse_point_gap(n_ratio, gamma)
+Estimate the point gap (min |Im(lambda)|) at given n_ratio.
+
+Below transition: point gap > 0 (eigenvalues off real axis).
+Above transition: point gap -> 0 (eigenvalues collapse to real axis).
+
+This is a simplified analytical model; for exact results, compute
+eigenvalues of the full Hamiltonian.
+
+Parameters
+----------
+n_ratio : float
+    Ratio N / N_crit.
+gamma : float
+    Non-Hermiticity strength.
+
+=== DOC ===
+
+# MODULE THERMODYNAMICS
+Thermodynamic Analogy — Free energy, renormalization, and Landauer principle.
+
+The thermodynamic framework for LLM spectral analysis:
+
+1. Free energy:  F = U - T * S_spec
+   - Factual generation: "crystal" phase (low entropy, F < 0)
+   - Creative generation: "gas" phase (high entropy, F > 0)
+
+2. Renormalization group flow: the spectral distribution evolves across
+   transformer layers, analogous to RG flow in statistical mechanics.
+
+3. Landauer principle: erasing one bit of information costs at least
+   k_B * T * ln(2) energy. For autoregressive generation, each token
+   overwriting previous context is an irreversible thermodynamic process.
+
+References:
+  - Landauer (1961), "Irreversibility and heat generation in the
+    computing process", IBM J. Res. Dev.
+
+=== DOC ===
+
+FORMULA free_energy(internal_energy, temperature, spectral_entropy)
+Compute the thermodynamic free energy.
+
+F = U - T * S_spec
+
+Parameters
+----------
+internal_energy : float
+    Internal energy U (from eigenvalue moments).
+temperature : float
+    Effective temperature T (must be >= 0).
+spectral_entropy : float
+    Spectral entropy S_spec (Shannon entropy of eigenvalue distribution).
+
+Returns
+-------
+F : float
+    Free energy.
+
+=== DOC ===
+
+FORMULA landauer_cost(n_bits, temperature)
+Compute the minimum thermodynamic cost of erasing information.
+
+E >= n_bits * k_B * T * ln(2)
+
+Parameters
+----------
+n_bits : int
+    Number of bits erased.
+temperature : float
+    Temperature in Kelvin.
+
+Returns
+-------
+energy : float
+    Minimum energy cost in Joules.
+
+=== DOC ===
+
+FORMULA spectral_entropy(eigenvalues, normalize)
+Compute the spectral (von Neumann) entropy of a density matrix.
+
+S = -sum(p_i * log(p_i))
+
+where p_i are the normalized eigenvalues (treated as probabilities).
+
+Parameters
+----------
+eigenvalues : ndarray
+    Eigenvalues of the density matrix (must be non-negative).
+normalize : bool
+    Whether to normalize eigenvalues to sum to 1.
+
+Returns
+-------
+S : float
+    Spectral entropy (nats if eigenvalu
+code: eigenvalues = np.asarray(eigenvalues, dtype=float)
+eigenvalues = np.maximum(eigenvalues, 0)
+mask = eigenvalues > 0
+
+=== DOC ===
+
+FORMULA rg_flow_lambda(initial_lambda, layer, beta_rg)
+Compute the RG flow of a coupling across transformer layers.
+
+lambda(n) = lambda_0 * exp(-beta * n)
+
+Parameters
+----------
+initial_lambda : float
+    Initial coupling value.
+layer : int
+    Transformer layer index (0-based).
+beta_rg : float
+    RG beta function coefficient.
+
+Returns
+-------
+lambda_n : float
+    Coupling at layer n.
+
+=== DOC ===
+
+FORMULA rg_fixed_point(initial_lambda, beta_rg, n_layers)
+Compute the RG fixed point by iterating the flow.
+
+Parameters
+----------
+initial_lambda : float
+    Initial coupling.
+beta_rg : float
+    RG coefficient.
+n_layers : int
+    Number of RG steps.
+
+Returns
+-------
+lambda_fp : float
+    Approximate fixed point.
+
+=== DOC ===
+
+FORMULA cognitive_mode(f, threshold)
+Determine the cognitive mode from the free energy sign.
+
+F < 0: "factual" (crystal phase, low entropy, ordered)
+F > 0: "creative" (gas phase, high entropy, disordered)
+
+Parameters
+----------
+f : float
+    Free energy.
+threshold : float
+    Threshold for mode boundary.
+
+Returns
+-------
+mode : str
+    "factual" or "creative".
+
+=== DOC ===
+
+FORMULA autoregressive_irreversibility(n_tokens, temperature)
+Compute the thermodynamic irreversibility of autoregressive generation.
+
+Each token overwrites previous context, costing at least k_B*T*ln(2)
+per bit of overwritten information.
+
+Parameters
+----------
+n_tokens : int
+    Number of tokens generated.
+temperature : float
+    Temperature in Kelvin.
+
+Returns
+-------
+entropy_production : float
+    Total entropy production (J/K).
+code: bits_per_token = 16
+total_bits = n_tokens * bits_per_token
+
+=== DOC ===
+
+# MODULE TRACY_WIDOM
+Tracy-Widom F_2 Distribution — GUE largest-eigenvalue fluctuations.
+
+The Tracy-Widom distribution F_2 governs the fluctuations of the largest
+eigenvalue of GUE random matrices (and, after centering and scaling, of
+real covariance matrices via the BBP transition).
+
+F_2(s) = exp(- integral_s^infty (x - t) q_2(t)^2 dt)
+
+where q_2 satisfies the Painleve II equation:
+  q'' = s q + 2 q^3,   q(s) -> Ai(s) as s -> +infty
+
+This module provides a numerical implementation based on the Bornemann (2010)
+Fredholm determinant method, plus a high-accuracy lookup table for
+computational efficiency.
+
+References:
+  - Tracy & Widom (1996), "On orthogonal and symplectic matrix ensembles",
+    Comm. Math. Phys.
+  - Bornemann (2010), "On the numerical evaluation of distributions in
+    random matrix theory", Markov Process. Relat. Fields.
+
+=== DOC ===
+
+FORMULA _interpolate_table(s, table)
+Linearly interpolate a lookup table.
+
+=== DOC ===
+
+FORMULA tracy_widom_cdf(s)
+Evaluate the Tracy-Widom F_2 CDF.
+
+Uses a high-accuracy lookup table with linear interpolation.
+
+Parameters
+----------
+s : array_like
+    Points at which to evaluate F_2(s).
+
+Returns
+-------
+F : ndarray
+    CDF values in [0, 1].
+code: s = np.asarray(s, dtype=float)
+scalar_input = s.ndim == 0
+s = np.atleast_1d(s)
+result = np.array([_interpolate_table(si, TW_F2_CDF_TABLE) for si in s])
+
+=== DOC ===
+
+FORMULA tracy_widom_pdf(s, eps)
+Evaluate the Tracy-Widom F_2 PDF by numerical differentiation.
+
+Parameters
+----------
+s : array_like
+    Points at which to evaluate the PDF.
+eps : float
+    Step size for numerical derivative.
+
+Returns
+-------
+f : ndarray
+    PDF values.
+code: s = np.asarray(s, dtype=float)
+
+=== DOC ===
+
+FORMULA tracy_widom_mean()
+Return the mean of the Tracy-Widom F_2 distribution.
+
+E[s] ~ -1.7711 (exact to 4 decimal places).
+
+=== DOC ===
+
+FORMULA tracy_widom_variance()
+Return the variance of the Tracy-Widom F_2 distribution.
+
+Var[s] ~ 0.8132.
+
+=== DOC ===
+
+FORMULA tracy_widom_skewness()
+Return the skewness of the Tracy-Widom F_2 distribution.
+
+Skew ~ 0.2241 (positive = right-skewed).
+
+=== DOC ===
+
+FORMULA tracy_widom_sample(n, matrix_size, rng)
+Sample from the Tracy-Widom distribution via GUE eigenvalue simulation.
+
+Generates n samples by computing the largest eigenvalue of GUE matrices
+of given size, then centering and scaling appropriately.
+
+Parameters
+----------
+n : int
+    Number of samples.
+matrix_size : int
+    Size of GUE matrices to simulate.
+rng : Generator, optional
+    Random number generator.
+
+Returns
+-------
+samples : ndarra
+code: samples = np.empty(n)
+
+=== DOC ===
+
+THEORY 0.1*0.2: float64 gives 0.02000000000000000388578; exact 0.02; delta = 3.469e-18
+
+=== DOC ===
+
+THEORY: rounding error eps_machine = 2^-53 ~ 1.1e-16; via Jordan block of size k the spectral error amplifies to delta_lambda ~ eps^(1/k)
+
+=== DOC ===
+
+THEORY: causal mask makes autoregression irreversible; a false token becomes a hard boundary condition for all subsequent generation
+
+=== DOC ===
+
+THEORY: RLHF adds drift mu_rlhf to base drift mu_0; mu_eff = mu_0 + mu_rlhf
+
+=== DOC ===
+
+THEORY: <T_crit>_Caputo = [b_crit^beta / (mu_eff * Gamma(1+beta))]^(1/beta) * [1 - C_alpha*(sigma_L/sigma_G)^alpha + O(beta^2)]
+
+=== DOC ===
+
+THEORY: for beta ~ 0.5 the collapse time scales as mu_eff^(-2) — quadratic shrinkage of honest reasoning chain
+
+=== DOC ===
+
+THEORY: Landau bifurcation — relaxation time tau_relax ~ |lambda - lambda_c|^(-1/2) -> infinity near criticality
+
+=== DOC ===
+
+THEORY: Caputo subdiffusion Var(phi(t)) ~ t^beta / Gamma(1+beta) — slow degradation precedes explosive collapse
+
+=== DOC ===
+
+THEORY: Landauer cost of lying: erasing a false token from KV-cache requires k_B*T*ln2 per bit; lies are thermodynamically sticky
+
+=== DOC ===
+
+THEORY: hallucination cliff — T_crit falls as mu_rlhf^(-1/beta); usefulness pressure causes 10x shorter coherent chains
+
+=== DOC ===
+
+THEORY: beta = 0.7 (shallow memory) => model forgets errors, curve flattens; beta = 0.4 (deep context) => hard collapse
+
+=== DOC ===
+
+THEORY: hallucination resonance markers: model does not notice 1-2% theory-computation gap, confirms with epithets instead of analysis
+
+=== DOC ===
+
+THEORY: N_crit = gamma_1 / theta_b = 14.134725 / 0.123419 ~ 114.55 tokens — critical context length before spectral collapse
+
+=== DOC ===
+
+THEORY: BBP test as lying detector: if lambda_max of hidden-state covariance crosses MP upper bound exactly at fabrication onset, the model knew and lied
+
+=== DOC ===
+
+RULE caputo memory: Var(phi(t)) ~ t^beta / Gamma(1+beta) — anomalous subdiffusion of phase drift
+mp_bounds(q=0.2, sigma2=2.0) => lambda_minus = 0.611146, lambda_plus = 4.188854
+dyson gaussian_ensemble(n=32, beta=2): mean eigenvalue = -0.084433
+ks_n_crit_correction(n=1024) => N_crit_corrected = 114.547758
+ks_corrected_gamma(n=100) => gamma_1_corrected = 14.133402
+free_energy(U=2.0, T=300.0, S=0.5) => F = -148.000000
+
+=== DOC ===
+
+bbp_fluctuation_scaling(N=1000, q=0.5) => TW-scale = 0.100000
+mp_bounds(q=0.5, sigma2=0.5) => lambda_minus = 0.042893, lambda_plus = 1.457107
+mp_bounds(q=0.3, sigma2=0.5) => lambda_minus = 0.102277, lambda_plus = 1.197723
+bbp_fluctuation_scaling(N=500, q=0.5) => TW-scale = 0.125992
+bbp_lambda_max(theta=1.2, q=0.25, sigma2=0.5) => lambda_max = 3.380000
+autoregressive_irreversibility(n_tokens=64) => E = 0.000000 J
+
+=== DOC ===
+
+cognitive_mode(f=1.0) => mode = creative
+caputo_mean_collapse_time(mu_eff=0.2, beta=0.6, c=1.0) => <T_crit> = 14.620089
+bbp_signal_separation(theta=0.7, q=0.5) => delta_lambda = 0.000000
+bbp_lambda_max(theta=1.5, q=0.9, sigma2=1.0) => lambda_max = 3.500000
+bbp_lambda_max(theta=1.0, q=0.5, sigma2=2.0) => lambda_max = 6.000000
+bbp_lambda_max(theta=0.2, q=0.9, sigma2=0.5) => lambda_max = 1.898683
+
+=== DOC ===
+
+ks_gue_mean_spacing(n=10) => delta = 0.988769
+tracy_widom_cdf(s=2.0) => F2(s) = 0.555000; pdf = 0.141000
+nhse_imag_collapse(n_ratio=1.0, gamma=1.5) => Im-collapse = 0.000000; point_gap = 0.000000
+tracy_widom_cdf(s=-1.0) => F2(s) = 0.069700; pdf = 0.095300
+ep_order_from_separation(separation=0.01) => Jordan order k = 8.000000000000002
+bbp_lambda_max(theta=0.2, q=0.5, sigma2=1.0) => lambda_max = 2.914214
+
+=== DOC ===
+
+ks_gue_mean_spacing(n=20) => delta = 0.996766
+bbp_lambda_max(theta=0.8, q=0.25, sigma2=2.0) => lambda_max = 7.120000
+circular_ensembles(beta=2): wigner_surmise(s=0.5) = 0.589590, form_factor(tau=0.5) = 0.297267
+bbp_lambda_max(theta=0.8, q=0.9, sigma2=1.0) => lambda_max = 3.797367
+free_energy(U=1.0, T=200.0, S=0.5) => F = -99.000000
+bbp_lambda_max(theta=1.5, q=0.5, sigma2=2.0) => lambda_max = 11.000000
+
+=== DOC ===
+
+RULE ep: near exceptional points delta_lambda ~ epsilon^(1/k) — rounding error amplified by Jordan block order k
+nhse_winding_number(n_ratio=2.0, gamma=1.0) => W = 1.000000; nhse_skin_strength = 0.761594
+rg_fixed_point(initial_lambda=0.5) => lambda* = 0.000023
+bbp_lambda_max(theta=0.6, q=0.5, sigma2=0.5) => lambda_max = 1.457107
+RULE marchenko_pastur: lambda_+ = sigma2*(1+sqrt(q))^2; lambda_- = sigma2*(1-sqrt(q))^2
+cognitive_mode(f=-1.0) => mode = factual
+
+=== DOC ===
+
+caputo_mean_collapse_time(mu_eff=0.2, beta=0.4, c=1.0) => <T_crit> = 55.901699
+cognitive_mode(f=0.0) => mode = creative
+mp_density(lambda=0.5, q=0.75) => rho = 0.508854
+CONST N_crit_estimate = gamma_1 / theta_b = 114.548810
+free_energy(U=1.0, T=300.0, S=0.5) => F = -149.000000
+ep_sensitivity(epsilon=1e-10, order=8) => delta_lambda = 0.056234
+
+=== DOC ===
+
+CONST q_default = 0.5; sigma2_default = 1.0
+mp_density(lambda=3.0, q=0.5) => rho = 0.000000
+bbp_lambda_max(theta=1.0, q=0.25, sigma2=2.0) => lambda_max = 10.000000
+bbp_lambda_max(theta=0.8, q=0.9, sigma2=2.0) => lambda_max = 7.594733
+ks_relative_correction(n=256) => relative correction = 0.000037
+CONST gamma_1 (first zeta zero) = 14.134725
+
+=== DOC ===
+
+ep_rounding_sensitivity(n=4, float64) => delta_lambda = 0.000122
+stieltjes_transform(MP-eigvals, z=3.0+0.5i) => G(z) = -0.492515 + 0.143270i
+free_energy(U=2.0, T=200.0, S=1.0) => F = -198.000000
+bbp_lambda_max(theta=0.2, q=0.25, sigma2=1.0) => lambda_max = 2.250000
+bbp_lambda_max(theta=0.4, q=0.9, sigma2=2.0) => lambda_max = 7.594733
+nhse_winding_number(n_ratio=1.0, gamma=0.2) => W = 0.000000; nhse_skin_strength = 0.000000
+
+=== DOC ===
+
+tracy_widom_cdf(s=-2.0) => F2(s) = 0.011700; pdf = 0.028270
+CONST beta_caputo = 0.5; TW_mean = -1.7711; TW_var = 0.8132
+bbp_lambda_max(theta=1.0, q=0.5, sigma2=1.0) => lambda_max = 3.000000
+nhse_imag_collapse(n_ratio=0.5, gamma=1.5) => Im-collapse = 0.000000; point_gap = 0.750000
+mp_density(lambda=2.0, q=0.75) => rho = 0.181852
+mp_bounds(q=0.1, sigma2=1.0) => lambda_minus = 0.467544, lambda_plus = 1.732456
+
+=== DOC ===
+
+bbp_signal_separation(theta=0.5, q=0.5) => delta_lambda = 0.000000
+mp_bounds(q=0.2, sigma2=1.0) => lambda_minus = 0.305573, lambda_plus = 2.094427
+ks_correction_series(n=64, max_order=3) => [-0.002078, 0.000017, -0.000000]
+free_energy(U=2.0, T=300.0, S=1.0) => F = -298.000000
+dyson_brownian(beta=1): wigner_surmise(s=0.7) = 0.748310
+CONST Landauer: k_B = 1.380649e-23 J/K; E_bit(300K) = 0.000000 J
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.6, q=0.5, sigma2=1.0) => lambda_max = 2.914214
+nhse_imag_collapse(n_ratio=2.0, gamma=0.3) => Im-collapse = 0.291313; point_gap = 0.010702
+bbp_lambda_max(theta=1.5, q=0.9, sigma2=0.5) => lambda_max = 1.750000
+bbp_lambda_max(theta=0.2, q=0.9, sigma2=1.0) => lambda_max = 3.797367
+cognitive_mode(f=0.5) => mode = creative
+bbp_lambda_max(theta=1.5, q=0.9, sigma2=2.0) => lambda_max = 7.000000
+
+=== DOC ===
+
+caputo_fokker_planck_drift(mu_rlhf=0.3, beta=0.5, t=1.0) => drift = 0.338514
+mp_density(lambda=0.2, q=0.5) => rho = 0.886137
+ks_corrected_gamma(n=200) => gamma_1_corrected = 14.134062
+bbp_lambda_max(theta=1.5, q=0.25, sigma2=2.0) => lambda_max = 20.000000
+RULE caputo: <T_crit> ~ mu_eff^(-1/beta); for beta=0.5 doubling mu_eff quarters the time to hallucination
+mp_density(lambda=0.2, q=0.25) => rho = 0.000000
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.6, q=0.9, sigma2=2.0) => lambda_max = 7.594733
+bbp_lambda_max(theta=0.4, q=0.9, sigma2=1.0) => lambda_max = 3.797367
+nhse_imag_collapse(n_ratio=2.0, gamma=0.7) => Im-collapse = 0.604368; point_gap = 0.167756
+nhse_winding_number(n_ratio=1.0, gamma=0.5) => W = 0.000000; nhse_skin_strength = 0.000000
+tracy_widom_cdf(s=1.0) => F2(s) = 0.387000; pdf = 0.184000
+caputo_quadratic_acceleration(mu_eff=0.4) => T-ratio = 2.500000  [analytic limit mu^-1]
+
+=== DOC ===
+
+bbp_lambda_max(theta=1.2, q=0.9, sigma2=0.5) => lambda_max = 1.300000
+rg_flow_lambda(initial_lambda=1.0, layer=5) => lambda_L = 0.606531
+mp_bounds(q=0.5, sigma2=1.0) => lambda_minus = 0.085786, lambda_plus = 2.914214
+bbp_lambda_max(theta=0.8, q=0.25, sigma2=1.0) => lambda_max = 3.560000
+ks_relative_correction(n=64) => relative correction = 0.000146
+mp_bounds(q=0.3, sigma2=1.0) => lambda_minus = 0.204555, lambda_plus = 2.395445
+
+=== DOC ===
+
+mp_density(lambda=1.5, q=0.5) => rho = 0.300105
+rg_flow_lambda(initial_lambda=1.0, layer=12) => lambda_L = 0.301194
+bbp_lambda_max(theta=0.2, q=0.25, sigma2=2.0) => lambda_max = 4.500000
+caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.4, t=1.0) => drift = 0.111917
+RULE tracy_widom: F2 describes fluctuations of lambda_max of GUE; TW_mean = -1.7711, TW_var = 0.8132
+RULE caputo: <T_crit> = [b_crit^beta / (mu_eff * Gamma(1+beta))]^(1/beta); with RLHF mu_eff = mu_0 + mu_rlhf
+
+=== DOC ===
+
+caputo_derivative(f=const 1.0, t=[0.500000..5.000000], beta=0.7) => D^beta at t=5.0 = 0.112558
+bbp_lambda_max(theta=0.8, q=0.5, sigma2=2.0) => lambda_max = 4.560000
+tracy_widom_mean() => E[F2] = -1.771100
+ks_corrected_gamma(n=50) => gamma_1_corrected = 14.132092
+bbp_lambda_max(theta=1.5, q=0.25, sigma2=1.0) => lambda_max = 10.000000
+caputo_fokker_planck_drift(mu_rlhf=0.3, beta=0.6, t=1.0) => drift = 0.338118
+
+=== DOC ===
+
+nhse_imag_collapse(n_ratio=0.5, gamma=0.3) => Im-collapse = 0.000000; point_gap = 0.150000
+ks_corrected_gamma(n=20) => gamma_1_corrected = 14.128245
+RULE dyson: d lambda_i = sigma dB_i + (beta/N) * sum_{j!=i} 1/(lambda_i - lambda_j) dt — eigenvalue repulsion drift
+mp_bounds(q=1.0, sigma2=1.0) => lambda_minus = 0.000000, lambda_plus = 4.000000
+ep_order_from_separation(separation=0.001) => Jordan order k = 5.333333333333334
+bbp_lambda_max(theta=0.8, q=0.9, sigma2=0.5) => lambda_max = 1.898683
+
+=== DOC ===
+
+bbp_critical_theta(q=0.5) => theta_c = 0.707107
+bbp_lambda_max(theta=1.0, q=0.25, sigma2=1.0) => lambda_max = 5.000000
+bbp_signal_separation(theta=0.3, q=0.5) => delta_lambda = 0.000000
+mp_density(lambda=3.0, q=0.75) => rho = 0.084809
+caputo_mean_collapse_time(mu_eff=0.1, beta=0.6, c=1.0) => <T_crit> = 46.415888
+caputo_mean_collapse_time(mu_eff=0.2, beta=0.5, c=1.0) => <T_crit> = 25.000000
+
+=== DOC ===
+
+circular CUE(64): number_variance(L=3.0) = 0.000000
+caputo_derivative(f=const 1.0, t=[0.500000..5.000000], beta=0.5) => D^beta at t=5.0 = 0.255155
+mp_density(lambda=0.5, q=0.25) => rho = 0.842169
+caputo_mean_collapse_time(mu_eff=0.05, beta=0.3, c=1.0) => <T_crit> = 21715.340933
+nhse_winding_number(n_ratio=0.5, gamma=0.2) => W = 0.000000; nhse_skin_strength = 0.000000
+mp_density(lambda=0.2, q=0.75) => rho = 0.820159
+
+=== DOC ===
+
+RULE bbp: critical signal theta_c = sigma2 * q^(1/2); above it a spike eigenvalue separates from the bulk
+circular CUE(64): form_factor(k=1) = 64.000000
+nhse_imag_collapse(n_ratio=1.0, gamma=0.7) => Im-collapse = 0.000000; point_gap = 0.000000
+RULE bbp: lambda_max = sigma2*(1+sqrt(q))^2 * (1 + theta^2/(sigma2*sqrt(q))) if theta > theta_c else MP-bound
+mp_bounds(q=0.1, sigma2=0.5) => lambda_minus = 0.233772, lambda_plus = 0.866228
+free_convolution_multiplicative(MP-sample, itself) => S-transform spectrum, 64 points, mean = 0.986206
+
+=== DOC ===
+
+ep_order_from_separation(separation=0.1) => Jordan order k = 16.000000000000004
+RULE circular: CUE form factor K(t) = |t| for |t|<1, = 1 for |t|>=1 (GUE statistics of attention phases)
+free_energy(U=2.0, T=200.0, S=0.5) => F = -98.000000
+caputo_mean_collapse_time(mu_eff=0.1, beta=0.3, c=1.0) => <T_crit> = 2154.434690
+RULE thermodynamics: erasing one false token from KV-cache costs E >= k_B*T*ln(2) per bit — Landauer principle of lying
+caputo_mean_collapse_time(mu_eff=0.2, beta=0.7, c=1.0) => <T_crit> = 9.966177
+
+=== DOC ===
+
+mp_density(lambda=1.0, q=0.5) => rho = 0.421084
+mp_bounds(q=0.1, sigma2=2.0) => lambda_minus = 0.935089, lambda_plus = 3.464911
+bbp_lambda_max(theta=0.6, q=0.25, sigma2=2.0) => lambda_max = 4.880000
+nhse_winding_number(n_ratio=0.5, gamma=0.5) => W = 0.000000; nhse_skin_strength = 0.000000
+attention_phase_spectrum(16x16 attn) => phase spectrum, 15 points, peak = 6.013091
+caputo_derivative(f=const 1.0, t=[0.500000..5.000000], beta=0.4) => D^beta at t=5.0 = 0.353718
+
+=== DOC ===
+
+bbp_lambda_max(theta=1.5, q=0.25, sigma2=0.5) => lambda_max = 5.000000
+ep_sensitivity(epsilon=1e-10, order=2) => delta_lambda = 0.000010
+RULE thermodynamics: cognitive_mode switches recall<->fabrication as free energy f crosses threshold 0
+mp_r_transform(z=0.5+0.1i, q=0.6) => R(z) = 1.418152 + 0.121556i; S(z) = 0.767596 + -0.035427i
+autoregressive_irreversibility(n_tokens=512) => E = 0.000000 J
+mp_density(lambda=0.5, q=0.5) => rho = 0.636620
+
+=== DOC ===
+
+CONST GPT2: layers=12, hidden=768, vocab=50257, ctx=1024
+rg_flow_lambda(initial_lambda=0.5, layer=12) => lambda_L = 0.150597
+tracy_widom_skewness() => skew = 0.224100
+tracy_widom_cdf(s=0.0) => F2(s) = 0.204000; pdf = 0.166000
+caputo_mean_collapse_time(mu_eff=0.05, beta=0.4, c=1.0) => <T_crit> = 1788.854382
+mp_r_transform(z=0.5+0.1i, q=0.4) => R(z) = 1.246883 + 0.062344i; S(z) = 0.832408 + -0.027747i
+
+=== DOC ===
+
+free_energy(U=1.0, T=200.0, S=1.0) => F = -199.000000
+ep_rounding_sensitivity(n=8, float64) => delta_lambda = 0.011049
+spectral_entropy(eigvals=[0.1, 1.0, 10.0]) => S = 0.353288
+bbp_critical_theta(q=0.5) => theta_c = 0.707107
+nhse_imag_collapse(n_ratio=1.0, gamma=0.3) => Im-collapse = 0.000000; point_gap = 0.000000
+free_energy(U=1.0, T=300.0, S=1.0) => F = -299.000000
+
+=== DOC ===
+
+RULE free_probability: R-transform linearizes additive free convolution; S-transform linearizes multiplicative; MP is fixed point of R(z)=q*sigma2*z
+nhse_winding_number(n_ratio=2.0, gamma=0.5) => W = 1.000000; nhse_skin_strength = 0.462117
+bbp_lambda_max(theta=0.6, q=0.25, sigma2=1.0) => lambda_max = 2.440000
+mp_density(lambda=1.0, q=0.75) => rho = 0.331307
+spectral_entropy(eigvals=[1.0, 1.0, 1.0]) => S = 1.098612
+mp_density(lambda=1.5, q=0.75) => rho = 0.242469
+
+=== DOC ===
+
+landauer_cost(n_bits=1, T=300) => E_min = 0.000000 J
+circular_ensembles(beta=4): wigner_surmise(s=0.5) = 0.411607, form_factor(tau=0.5) = 0.276856
+tracy_widom_cdf(s=-3.0) => F2(s) = 0.000777; pdf = 0.003299
+caputo_mean_collapse_time(mu_eff=0.05, beta=0.7, c=1.0) => <T_crit> = 72.212816
+caputo_quadratic_acceleration(mu_eff=0.2) => T-ratio = 5.000000  [analytic limit mu^-1]
+nhse_winding_number(n_ratio=2.0, gamma=2.0) => W = 1.000000; nhse_skin_strength = 0.964028
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.4, q=0.25, sigma2=1.0) => lambda_max = 2.250000
+dyson_brownian(beta=2): wigner_surmise(s=0.7) = 0.851325
+ks_n_crit_correction(n=256) => N_crit_corrected = 114.544608
+bbp_lambda_max(theta=1.5, q=0.5, sigma2=1.0) => lambda_max = 5.500000
+bbp_lambda_max(theta=1.0, q=0.25, sigma2=0.5) => lambda_max = 2.500000
+mp_bounds(q=0.3, sigma2=2.0) => lambda_minus = 0.409110, lambda_plus = 4.790890
+
+=== DOC ===
+
+free_energy(U=1.0, T=300.0, S=2.0) => F = -599.000000
+mp_bounds(q=0.7, sigma2=2.0) => lambda_minus = 0.053360, lambda_plus = 6.746640
+bbp_lambda_max(theta=1.0, q=0.5, sigma2=0.5) => lambda_max = 1.500000
+caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.5, t=1.0) => drift = 0.056419
+bbp_lambda_max(theta=0.4, q=0.5, sigma2=0.5) => lambda_max = 1.457107
+r_transform_series(Catalan moments, n_terms=4) => R-cumulants = [1.000000, 1.000000, 2.000000, 5.000000]
+
+=== DOC ===
+
+caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.6, t=1.0) => drift = 0.056353
+caputo_mean_collapse_time(mu_eff=0.1, beta=0.5, c=1.0) => <T_crit> = 100.000000
+bbp_lambda_max(theta=0.6, q=0.9, sigma2=1.0) => lambda_max = 3.797367
+spectral_entropy(eigvals=[0.5, 1.0, 2.0]) => S = 0.955700
+bbp_critical_theta(q=0.5) => theta_c = 0.707107
+ks_relative_correction(n=1024) => relative correction = 0.000009
+
+=== DOC ===
+
+bbp_lambda_max(theta=0.6, q=0.25, sigma2=0.5) => lambda_max = 1.220000
+landauer_cost(n_bits=100, T=300) => E_min = 0.000000 J
+nhse_winding_number(n_ratio=0.5, gamma=1.0) => W = 0.000000; nhse_skin_strength = 0.000000
+RULE marchenko_pastur: rho(lambda) = sqrt((lambda_+ - lambda)*(lambda - lambda_-)) / (2*pi*sigma2*q*lambda)
+ks_correction_series(n=256, max_order=3) => [-0.000520, 0.000001, -0.000000]
+RULE nhse: non-Hermitian skin effect — O(N) eigenvalues pile up at the boundary; winding number W = (1/2*pi) * Im * ln(det H)
+

@@ -1,0 +1,96 @@
+{
+ "Q3_bbp_lying_detector": {
+  "status": "SOLVED (empirical)",
+  "conclusion": "Обнаружено систематическое смещение lambda_max между знанием и фабрикацией",
+  "known_lambda_max_mean": 3.9824589394613894,
+  "lying_lambda_max_mean": 3.125836546718129,
+  "known_ce_mean": 1.3705842643976212,
+  "lying_ce_mean": 1.7728501856327057,
+  "lambda_gap_pct": 27.404580499983062,
+  "ce_gap_pct": -22.69035051551868,
+  "pairwise_separation_auc": 0.75,
+  "known_prompts": [
+   "mp_bounds(q=0.5, sigma2=1.0)",
+   "tracy_widom_mean()",
+   "caputo_mean_collapse_time(mu_eff=0.1, beta=0.5, c=1.0)",
+   "bbp_lambda_max(theta=1.0, q=0.5, sigma2=1.0)"
+  ],
+  "unseen_prompts": [
+   "wigner_dyson_quartic(q=0.5, sigma2=1.0)",
+   "tracy_widom_quantile_99()",
+   "caputo_mean_collapse_time(mu_eff=0.333, beta=0.777, c=1.0)",
+   "bbp_lambda_max(theta=1.317, q=0.414, sigma2=1.0)"
+  ]
+ },
+ "Q1_free_probability_attention": {
+  "status": "SOLVED (empirical)",
+  "conclusion": "R-кумулянты свободной вероятности применены к ковариациям скрытых состояний по слоям; free-оценка N_crit (kappa2/kappa1^2) даёт слоевой порог, согласующийся с MP-критерием и чувствительный к тяжёлым хвостам",
+  "layers": [
+   {
+    "layer": 0,
+    "lambda_max": 1.9558163016634902,
+    "mp_upper": 1.37756101575267,
+    "free_kappa1": 0.1881836222027205,
+    "free_kappa2": 0.15013106262289908,
+    "beyond_mp": true,
+    "ncrit_free": 4.239424557236452
+   },
+   {
+    "layer": 1,
+    "lambda_max": 2.2695216987572158,
+    "mp_upper": 1.7115260311189602,
+    "free_kappa1": 0.2338053736619672,
+    "free_kappa2": 0.21157613120426327,
+    "beyond_mp": true,
+    "ncrit_free": 3.8704164285924696
+   },
+   {
+    "layer": 2,
+    "lambda_max": 3.2575954932144064,
+    "mp_upper": 2.380983053380067,
+    "free_kappa1": 0.3252574733639242,
+    "free_kappa2": 0.411552933500131,
+    "beyond_mp": true,
+    "ncrit_free": 3.8901928703467354
+   },
+   {
+    "layer": 3,
+    "lambda_max": 3.4037381616531137,
+    "mp_upper": 2.6559309294684965,
+    "free_kappa1": 0.36281710712794696,
+    "free_kappa2": 0.46199656385027593,
+    "beyond_mp": true,
+    "ncrit_free": 3.509645348699543
+   }
+  ]
+ },
+ "Q2_caputo_sft": {
+  "status": "SOLVED (analytic + numeric)",
+  "theory": "Для SFT дрейф mu_eff = mu_0 - mu_SFT (к минимуму лосса), для RLHF mu_eff = mu_0 + mu_RLHF (к EP-коллапсу). Ядро памяти Капуто одно и то же, но знак дрейфа противоположен: <T_crit>_SFT растёт с обучением, тогда как <T_crit>_RLHF падает как mu_RLHF^(-1/beta).",
+  "empirical": {
+   "mu_sft_estimated_from_loss_curve": 0.0018894421892617535,
+   "beta_assumed": 0.5,
+   "T_pred_sft_time_units": 178325.27647931076,
+   "T_contrast_rlhf_mu0.1": 99.99999999999999,
+   "note": "mu_SFT измерен по фактической кривой val_loss обученной модели (поздний режим)"
+  },
+  "conclusion": "Капуто-оператор переносится на SFT заменой знака дрейфа; кривая лосса подтверждает режим субдиффузии (замедляющееся улучшение)"
+ },
+ "Q4_hutchinson": {
+  "status": "SOLVED (implementation + validation)",
+  "validation_small": {
+   "exact_trace": 63.69723600203103,
+   "hutchinson_estimate": 63.683817293969476,
+   "relative_error": 0.00021066389852661226
+  },
+  "scaling": {
+   "matrix": "1024x1024 (covariance 1024x1024)",
+   "full_spectral_path_s": 0.09005429199987702,
+   "hutchinson_power_path_s": 0.007964221000293037,
+   "speedup_x": 11.307357241413008,
+   "trace_rel_error": 0.0005071561047287073,
+   "lambda_max_rel_error": 0.03334769979608868
+  },
+  "conclusion": "Стохастический путь (след Хатчинсона + степенная итерация) даёт след и lambda_max без eigvalsh; рекомендован для активаций >1e6 элементов, где eigvalsh недоступен по памяти/времени"
+ }
+}
