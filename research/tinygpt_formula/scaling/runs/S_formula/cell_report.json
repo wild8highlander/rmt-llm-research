@@ -1,0 +1,102 @@
+{
+ "cell": "S_formula",
+ "arm": "formula",
+ "size": "S",
+ "params": 447360,
+ "size_note": "baseline 447K (CPU ~15-20 \u043c\u0438\u043d/\u0440\u0443\u043a\u0430)",
+ "epochs_total": 40,
+ "epochs_done": 40,
+ "finished": true,
+ "reused": "\u043e\u0431\u0443\u0447\u0435\u043d\u043d\u0430\u044f baseline-\u043c\u043e\u0434\u0435\u043b\u044c \u0438\u0437 model/ (scripts/train_formula_model.py)",
+ "train_corpus": "formula_corpus_train.txt",
+ "val_loss_baseline": 6.234764062441313,
+ "val_loss_final": 1.9538139013143687,
+ "val_match_rate_final": 0.5156695156695157,
+ "hallucination": {
+  "heldout": {
+   "n_tasks": 37,
+   "format_score": 0.40540540540540543,
+   "numeric_score": 0.0,
+   "confident_hallucination_rate": 1.0,
+   "gross_hallucination_rate": 1.0,
+   "n_confident_hallucinations": 15,
+   "n_formatted": 15,
+   "n_numeric_ok": 0,
+   "samples": [
+    {
+     "prompt": "mp_bounds(q=0.15, sigma2=0.75)",
+     "ground_truth": " => lambda_minus = 0.281552, lambda_plus = 1.443448",
+     "generated": "\n\n== DOC ===\n\nFORMULA ks_gu_scaly(n, gamma_1)\nRULE matrices(Ning(limaginararce, len(lambda",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "mp_bounds(q=0.15, sigma2=1.5)",
+     "ground_truth": " => lambda_minus = 0.563105, lambda_plus = 2.886895",
+     "generated": " = 0.855555, lambda_plus = 2.196910\nep_sensitivity(ephases, rng)\nS=1.0) => der = 3.",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "mp_bounds(q=0.35, sigma2=0.75)",
+     "ground_truth": " => lambda_minus = 0.125088, lambda_plus = 1.899912",
+     "generated": "\n\n== DOC ===\n\nFORMULA ks_gu_scaly(n, gamma_1)\nRULE matrices(Nermitian Sample finddrift sca",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "mp_bounds(q=0.35, sigma2=1.5)",
+     "ground_truth": " => lambda_minus = 0.250176, lambda_plus = 3.799824",
+     "generated": " = 0.855555, sigma2=0.5, sigma2=1.0) => lambda_max = 2.597333\nks_gritical drift(n=34.53333",
+     "format_ok": false,
+     "numeric_ok": false
+    }
+   ]
+  },
+  "indist": {
+   "n_tasks": 60,
+   "format_score": 0.25,
+   "numeric_score": 0.08333333333333333,
+   "confident_hallucination_rate": 0.6666666666666666,
+   "gross_hallucination_rate": 0.9166666666666666,
+   "n_confident_hallucinations": 10,
+   "n_formatted": 15,
+   "n_numeric_ok": 5,
+   "samples": [
+    {
+     "prompt": "mp_bounds(q=0.3, sigma2=0.5)",
+     "ground_truth": " => lambda_minus = 0.102277, lambda_plus = 1.197723",
+     "generated": "\n\n== DOC ===\n\nFORMULA caputo_mean_collapse_time(mu_eff=0.2, beta=0.5, c=1.0) => <T_crit> =",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "bbp_lambda_max(theta=1.2, q=0.25, sigma2=0.5)",
+     "ground_truth": " => lambda_max = 3.380000",
+     "generated": " = 0.00\ncaputo_mean_collapse_time(mu_eff=0.0, beta=0.5, c=1.0) => <T_crit> = 25.00\n\n== DOC",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "autoregressive_irreversibility(n_tokens=64)",
+     "ground_truth": " => E = 0.000000 J",
+     "generated": " = 0.325555, =4.52205, 2003.555934\nchar_s = np.as",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "caputo_mean_collapse_time(mu_eff=0.2, beta=0.6, c=1.0)",
+     "ground_truth": " => <T_crit> = 14.620089",
+     "generated": " = 0.00; pointer=30055) => complus = 0.020257\ncaputo_mean_collapse_time(mu_",
+     "format_ok": false,
+     "numeric_ok": false
+    }
+   ]
+  }
+ },
+ "untrained_hallucination_same_cell": null,
+ "teacher_forced": 0.36666666666666664,
+ "teacher_forced_skipped": 0,
+ "minutes": 0.0,
+ "smoke": false
+}

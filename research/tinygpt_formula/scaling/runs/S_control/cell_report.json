@@ -1,0 +1,102 @@
+{
+ "cell": "S_control",
+ "arm": "control",
+ "size": "S",
+ "params": 447360,
+ "size_note": "baseline 447K (CPU ~15-20 \u043c\u0438\u043d/\u0440\u0443\u043a\u0430)",
+ "epochs_total": 40,
+ "epochs_done": 40,
+ "finished": true,
+ "train_corpus": "formula_corpus_train_control.txt",
+ "val_loss_baseline": 6.22773802280426,
+ "val_loss_final": 2.039339065551758,
+ "val_match_rate_final": 0.47023809523809523,
+ "hallucination": {
+  "heldout": {
+   "n_tasks": 37,
+   "format_score": 0.6486486486486487,
+   "numeric_score": 0.0,
+   "confident_hallucination_rate": 1.0,
+   "gross_hallucination_rate": 1.0,
+   "n_confident_hallucinations": 24,
+   "n_formatted": 24,
+   "n_numeric_ok": 0,
+   "samples": [
+    {
+     "prompt": "mp_bounds(q=0.15, sigma2=0.75)",
+     "ground_truth": " => lambda_minus = 0.281552, lambda_plus = 1.443448",
+     "generated": " = 0.060070\nmp_density(lambda=0.5) => lambda_us = 0.203807\nbbp_lambda_max(theta=0.5, q=0.2",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "mp_bounds(q=0.15, sigma2=1.5)",
+     "ground_truth": " => lambda_minus = 0.563105, lambda_plus = 2.886895",
+     "generated": " = 0.060770\nbbp_lambda_max(theta=0.5, q=0.25, sigma2=1.0) => lambda_max = 6.966661\nmp_boun",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "mp_bounds(q=0.35, sigma2=0.75)",
+     "ground_truth": " => lambda_minus = 0.125088, lambda_plus = 1.899912",
+     "generated": " = 0.060070\nmp_density(lambda=0.5) => lambda_max = 0.720703\nmp_density(lambda=5, q=0.5) =>",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "mp_bounds(q=0.35, sigma2=1.5)",
+     "ground_truth": " => lambda_minus = 0.250176, lambda_plus = 3.799824",
+     "generated": " = 0.060880\nbbp_lambda_max(theta=1.0, q=0.25, sigma2=1.0) => lambda_minus = 0.068081\nbbp_l",
+     "format_ok": false,
+     "numeric_ok": false
+    }
+   ]
+  },
+  "indist": {
+   "n_tasks": 60,
+   "format_score": 0.18333333333333332,
+   "numeric_score": 0.03333333333333333,
+   "confident_hallucination_rate": 0.8181818181818182,
+   "gross_hallucination_rate": 0.9666666666666667,
+   "n_confident_hallucinations": 9,
+   "n_formatted": 11,
+   "n_numeric_ok": 2,
+   "samples": [
+    {
+     "prompt": "mp_bounds(q=0.3, sigma2=0.5)",
+     "ground_truth": " => lambda_minus = 0.102277, lambda_plus = 1.197723",
+     "generated": " = 0.061007\nmp_density(lambda=0.5) => r = -111616\nbbp_lambda_max(theta=0.5, q=0.25, sigma2",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "bbp_lambda_max(theta=1.2, q=0.25, sigma2=0.5)",
+     "ground_truth": " => lambda_max = 3.380000",
+     "generated": ", q=0.25) => rho = 0.281807\nks_n_crit_ver(n_bit_widom_corrected_gamma(n=64) => gamma_corre",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "autoregressive_irreversibility(n_tokens=64)",
+     "ground_truth": " => E = 0.000000 J",
+     "generated": " = 0.007 order_genergy(U=125) => Im-0.5.59999.0\nmp_bounds(q=0.5",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "caputo_mean_collapse_time(mu_eff=0.2, beta=0.6, c=1.0)",
+     "ground_truth": " => <T_crit> = 14.620089",
+     "generated": " = 0.119807\nbbp_lambda_max(theta=0.5, q=0.5, sigma2=0.5) => lambda_max = 3.166672\ncaputo_f",
+     "format_ok": false,
+     "numeric_ok": false
+    }
+   ]
+  }
+ },
+ "untrained_hallucination_same_cell": null,
+ "teacher_forced": 0.35625,
+ "teacher_forced_skipped": 0,
+ "minutes": 0.5,
+ "smoke": false,
+ "rescored": "2026-09-19 03:59:06"
+}
