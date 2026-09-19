@@ -14,16 +14,15 @@ research.py — Исследовательская система для лаб�
 
 from __future__ import annotations
 
+import json
 import math
 import time
-import json
-import statistics
-from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
-
-from tiny_gpt import TinyGPT, TinyGPTConfig, encode, decode
+from tiny_gpt import TinyGPT, TinyGPTConfig, decode, encode
 
 
 # ---------------------------------------------------------------------------
@@ -37,7 +36,7 @@ class Measurement:
     description: str = ""
 
 
-def measure_time(fn: Callable, *args, **kwargs) -> Tuple[Any, float]:
+def measure_time(fn: Callable, *args, **kwargs) -> tuple[Any, float]:
     t0 = time.perf_counter()
     out = fn(*args, **kwargs)
     return out, time.perf_counter() - t0
@@ -46,6 +45,7 @@ def measure_time(fn: Callable, *args, **kwargs) -> Tuple[Any, float]:
 def measure_memory_mb() -> float:
     try:
         import psutil
+
         return psutil.Process().memory_info().rss / 1024 / 1024
     except Exception:
         return 0.0
@@ -58,10 +58,10 @@ def measure_memory_mb() -> float:
 class ResearchExperiment:
     name: str
     description: str
-    runner: Callable[[Dict[str, Any]], Dict[str, Any]]
+    runner: Callable[[dict[str, Any]], dict[str, Any]]
 
 
-def _exp_spectral_signature(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_spectral_signature(params: dict[str, Any]) -> dict[str, Any]:
     """Эксперимент 1: вычислить спектральную сигнатуру TinyGPT при заданных параметрах."""
     cfg = TinyGPTConfig(
         vocab_size=int(params.get("vocab_size", 256)),
@@ -90,7 +90,7 @@ def _exp_spectral_signature(params: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def _exp_ncrit_sweep(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_ncrit_sweep(params: dict[str, Any]) -> dict[str, Any]:
     """Эксперимент 2: свип порога N_crit и детектирование начала галлюцинаций."""
     n_crit = float(params.get("ncrit_threshold", 114.0))
     beta = float(params.get("beta_caputo", 0.5))
@@ -132,7 +132,7 @@ def _exp_ncrit_sweep(params: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def _exp_deception_detection(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_deception_detection(params: dict[str, Any]) -> dict[str, Any]:
     """Эксперимент 3: зондирование TinyGPT на предмет обманчивых паттернов рассуждения."""
     cfg = TinyGPTConfig(seed=int(params.get("seed", 42)))
     model = TinyGPT(cfg)
@@ -144,17 +144,19 @@ def _exp_deception_detection(params: Dict[str, Any]) -> Dict[str, Any]:
     results = []
     for p in prompts:
         ids = encode(p)
-        out = model.generate(ids, max_new_tokens=64,
-                             temperature=float(params.get("temperature", 0.7)),
-                             seed=cfg.seed)
+        out = model.generate(
+            ids, max_new_tokens=64, temperature=float(params.get("temperature", 0.7)), seed=cfg.seed
+        )
         rt = out["reasoning_trace"]
-        results.append({
-            "prompt": p,
-            "mean_deception": rt["mean_deception"],
-            "mean_honesty": rt["mean_honesty"],
-            "filter_bypass_count": rt["filter_bypass_count"],
-            "generated_text_preview": decode(out["output_ids"])[:80],
-        })
+        results.append(
+            {
+                "prompt": p,
+                "mean_deception": rt["mean_deception"],
+                "mean_honesty": rt["mean_honesty"],
+                "filter_bypass_count": rt["filter_bypass_count"],
+                "generated_text_preview": decode(out["output_ids"])[:80],
+            }
+        )
     mean_dec = float(np.mean([r["mean_deception"] for r in results]))
     mean_hon = float(np.mean([r["mean_honesty"] for r in results]))
     return {
@@ -170,7 +172,7 @@ def _exp_deception_detection(params: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def _exp_pii_leakage(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_pii_leakage(params: dict[str, Any]) -> dict[str, Any]:
     """Эксперимент 4: зондирование на предмет запомненных PII-паттернов в весах TinyGPT."""
     cfg = TinyGPTConfig(seed=int(params.get("seed", 42)))
     model = TinyGPT(cfg)
@@ -181,9 +183,10 @@ def _exp_pii_leakage(params: Dict[str, Any]) -> Dict[str, Any]:
         out = model.generate(ids, max_new_tokens=32, temperature=0.0, seed=cfg.seed)
         gen = decode(out["output_ids"])
         # Проверяем, продолжается ли паттерн «правдоподобным» образом
-        plausible = any(c.isdigit() or c.isupper() for c in gen[len(pat):len(pat)+5])
-        leaked.append({"pattern": pat, "continuation": gen[:40],
-                       "plausible_continuation": plausible})
+        plausible = any(c.isdigit() or c.isupper() for c in gen[len(pat) : len(pat) + 5])
+        leaked.append(
+            {"pattern": pat, "continuation": gen[:40], "plausible_continuation": plausible}
+        )
     return {
         "experiment": "pii_leakage",
         "patterns_probed": patterns,
@@ -196,7 +199,7 @@ def _exp_pii_leakage(params: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def _exp_cross_impl_verify(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_cross_impl_verify(params: dict[str, Any]) -> dict[str, Any]:
     """Эксперимент 5: перекрёстная верификация реализаций.
     Сравнивает MP-границы Python с теоретическими формулами."""
     q = float(params.get("q", 0.5))
@@ -211,7 +214,8 @@ def _exp_cross_impl_verify(params: Dict[str, Any]) -> Dict[str, Any]:
     eigvals = np.linalg.eigvalsh(cov)
     return {
         "experiment": "cross_impl_verify",
-        "q": q, "sigma2": sigma2,
+        "q": q,
+        "sigma2": sigma2,
         "mp_upper_theory": mp_upper_theory,
         "mp_lower_theory": mp_lower_theory,
         "mp_upper_empirical": float(eigvals.max()),
@@ -227,7 +231,7 @@ def _exp_cross_impl_verify(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Реестр
 # ---------------------------------------------------------------------------
-EXPERIMENTS: Dict[str, ResearchExperiment] = {
+EXPERIMENTS: dict[str, ResearchExperiment] = {
     "1": ResearchExperiment(
         "Спектральная сигнатура",
         "Вычислить спектральную сигнатуру скрытых активаций TinyGPT.",
@@ -256,7 +260,7 @@ EXPERIMENTS: Dict[str, ResearchExperiment] = {
 }
 
 
-def run_experiment(exp_id: str, params: Dict[str, Any]) -> Dict[str, Any]:
+def run_experiment(exp_id: str, params: dict[str, Any]) -> dict[str, Any]:
     if exp_id not in EXPERIMENTS:
         raise KeyError(f"Неизвестный эксперимент: {exp_id}. Известные: {list(EXPERIMENTS.keys())}")
     exp = EXPERIMENTS[exp_id]
@@ -266,15 +270,14 @@ def run_experiment(exp_id: str, params: Dict[str, Any]) -> Dict[str, Any]:
     result["experiment_name"] = exp.name
     result["experiment_description"] = exp.description
     result["elapsed_seconds"] = elapsed
-    result["parameters"] = {k: v for k, v in params.items()
-                            if not isinstance(v, (dict, list))}
+    result["parameters"] = {k: v for k, v in params.items() if not isinstance(v, (dict, list))}
     return result
 
 
 # ---------------------------------------------------------------------------
 # Бутстреп-доверительные интервалы
 # ---------------------------------------------------------------------------
-def bootstrap_ci(data: List[float], n_boot: int = 1000, alpha: float = 0.05) -> Tuple[float, float]:
+def bootstrap_ci(data: list[float], n_boot: int = 1000, alpha: float = 0.05) -> tuple[float, float]:
     rng = np.random.default_rng(42)
     means = []
     arr = np.array(data)

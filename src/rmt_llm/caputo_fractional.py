@@ -23,12 +23,11 @@ from numpy.typing import ArrayLike
 
 
 # Key constants
-BETA_CAPUTO = 0.5       # Caputo memory parameter (from experimental fits)
+BETA_CAPUTO = 0.5  # Caputo memory parameter (from experimental fits)
 GAMMA_1_RIEMANN = 14.134725  # First Riemann zeta zero (imaginary part)
 
 
-def caputo_mean_collapse_time(mu_eff: float, beta: float = BETA_CAPUTO,
-                              c: float = 1.0) -> float:
+def caputo_mean_collapse_time(mu_eff: float, beta: float = BETA_CAPUTO, c: float = 1.0) -> float:
     """Compute the mean hallucination collapse time.
 
     <T_crit> = c * (mu_eff)^(-1/beta)
@@ -97,8 +96,12 @@ def caputo_quadratic_acceleration(mu_eff: float) -> float:
     return caputo_mean_collapse_time(mu_eff, beta=0.5) / t_beta_one
 
 
-def caputo_derivative(f: ArrayLike, t: ArrayLike, beta: float,
-                      n_points: int | None = None) -> np.ndarray:
+def caputo_derivative(
+    f: ArrayLike,
+    t: ArrayLike,
+    beta: float,
+    n_points: int | None = None,  # noqa: ARG001
+) -> np.ndarray:
     """Compute the Caputo fractional derivative numerically via Grunwald-Letnikov.
 
     D^beta f(t) = (1/Gamma(1-beta)) * integral_0^t f'(tau) / (t-tau)^beta dtau
@@ -129,7 +132,6 @@ def caputo_derivative(f: ArrayLike, t: ArrayLike, beta: float,
     dt = t[1] - t[0] if n > 1 else 1.0
 
     # Grunwald-Letnikov coefficients
-    from math import gamma as gamma_func
     coeff = np.zeros(n)
     coeff[0] = 1.0
     for k in range(1, n):
@@ -141,13 +143,12 @@ def caputo_derivative(f: ArrayLike, t: ArrayLike, beta: float,
         s = 0.0
         for k in range(j + 1):
             s += coeff[k] * f[j - k]
-        result[j] = s / (dt ** beta)
+        result[j] = s / (dt**beta)
 
     return result
 
 
-def caputo_fokker_planck_drift(mu_rlhf: float, beta: float = BETA_CAPUTO,
-                               t: float = 1.0) -> float:
+def caputo_fokker_planck_drift(mu_rlhf: float, beta: float = BETA_CAPUTO, t: float = 1.0) -> float:
     """Compute the effective drift in the Fokker-Planck equation under RLHF.
 
     RLHF optimization creates an artificial drift term mu_rlhf in the
@@ -170,11 +171,11 @@ def caputo_fokker_planck_drift(mu_rlhf: float, beta: float = BETA_CAPUTO,
     """
     # The drift is amplified by the Caputo memory factor t^(1-beta) / Gamma(2-beta)
     from math import gamma as gamma_func
+
     return mu_rlhf * t ** (1.0 - beta) / gamma_func(2.0 - beta)
 
 
-def caputo_n_crit(theta_b: float = 7.07,
-                  gamma_1: float = GAMMA_1_RIEMANN) -> float:
+def caputo_n_crit(theta_b: float = 7.07, gamma_1: float = GAMMA_1_RIEMANN) -> float:
     """Estimate the critical token count N_crit from Caputo dynamics.
 
     The critical count is related to the first Riemann zeta zero and

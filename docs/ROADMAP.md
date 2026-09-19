@@ -48,7 +48,7 @@ research findings and community feedback.
 
 ---
 
-## ✅ Shipped in recent release 
+## ✅ Shipped in recent release
 
 - ✅ **TinyGPT (modernized)** — modernized transformer (`tiny_gpt_v3.py`)
   - Rotary Position Embeddings (RoPE) — ADR-009
@@ -163,8 +163,8 @@ research findings and community feedback.
 
 1. **Vote with 👍 on existing proposals** — sort by reactions to see what's popular.
 2. **Open a new proposal** as a [Discussion](https://github.com/wild8highlander/rmt-llm-research/discussions) with the `proposal` category.
-3. **Submit a PR** against a 📋 or 🚧 item — see [`CONTRIBUTING.md`](../CONTRIBUTING.md).
-4. **Cite the project** in your paper — see [`CITATION.cff`](../CITATION.cff). Academic
+3. **Submit a PR** against a 📋 or 🚧 item — see [`CONTRIBUTING.md`](https://github.com/wild8highlander/rmt-llm-research/blob/main/CONTRIBUTING.md).
+4. **Cite the project** in your paper — see [`CITATION.cff`](https://github.com/wild8highlander/rmt-llm-research/blob/main/CITATION.cff). Academic
    adoption is the strongest signal for prioritization.
 
 ---

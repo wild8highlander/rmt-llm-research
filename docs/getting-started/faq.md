@@ -261,7 +261,7 @@ pytest tests/test_benchmark.py --benchmark-only --benchmark-compare
 
 Trained weights + BPE merges live at:
 
-```
+```text
 laboratory/python/lab_en/results/models/
 ├── tiny_gpt_trained.npz       # 10.2 MB, 2,543,104 params
 ├── tiny_gpt_bpe.json          # 3 KB, 256 merges

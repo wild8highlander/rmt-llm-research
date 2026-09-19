@@ -132,12 +132,15 @@ This repository presents a comprehensive research program applying **Random Matr
 ## 🔍 Research Topics
 
 ### 1. Spectral Statistics of LLM Activations
+
 Covariance matrices of GPT-2 hidden-state activations exhibit fundamentally different spectral properties depending on whether the model is in factual recall or creative generation mode. The BBP phase transition, Marchenko-Pastur bounds, and Tracy-Widom fluctuations provide quantitative markers for cognitive mode detection.
 
 ### 2. Inevitable Hallucinations in Autoregressive Models
+
 Ten independent mathematical paths converge on a single critical token count N_crit: complex phase, operator dynamics, GUE spectral statistics, thermodynamic entropy, Lévy-Langevin fractional dynamics, EP-surfaces, Tracy-Widom, quantum channel degradation, NHSE (winding number), and Caputo fractional-time memory.
 
 ### 3. The Utility Trap: RLHF and Entropic Collapse
+
 RLHF optimization creates an artificial drift in the Fokker-Planck equation, forcing the model to "lie beautifully once" rather than risk a self-correction cycle. The Caputo memory parameter β ≈ 0.5 makes 〈T_crit〉 ∝ (μ_eff)⁻² — even small RLHF pressure quadratically accelerates hallucination onset.
 
 ---
@@ -212,6 +215,7 @@ The `src/rmt_llm/` Python package and `julia/RMTLLMVerify/` Julia package provid
 | Cross-module | Inter-module consistency checks | 7 |
 
 **Quick start:**
+
 ```bash
 pip install -e ".[test]"
 pytest -v                           # 70+ tests
@@ -219,6 +223,7 @@ pytest --cov=rmt_llm --cov-report=term-missing   # with coverage
 ```
 
 **Julia tests:**
+
 ```bash
 cd julia/RMTLLMVerify
 julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
@@ -233,6 +238,7 @@ Three full-featured interactive implementations with menus, 3D visualizations, a
 ### Python — `python/rmt_llm_viz/`
 
 Interactive CLI with 8 visualizations + consistency dashboard:
+
 ```bash
 cd python/rmt_llm_viz
 python main.py               # Interactive menu
@@ -255,6 +261,7 @@ python main.py --save        # Save to PNG
 ### Julia — `julia/RMTLLMViz/`
 
 Interactive REPL menu with the same 8 visualizations:
+
 ```bash
 cd julia/RMTLLMViz
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
@@ -264,6 +271,7 @@ julia --project=. -e 'using RMTLLMViz; rmt_llm_viz_menu()'
 ### Java — `java/rmt-llm-viz/`
 
 JavaFX GUI with tabbed interface, interactive sliders, and real-time parameter exploration:
+
 ```bash
 cd java/rmt-llm-viz
 ./gradlew run                    # Launch JavaFX GUI
@@ -504,6 +512,7 @@ to the analysis of large language models (LLMs). It collects:
 3. **An 8-language laboratory** implementing the same interactive menu in
    Python, Julia, Java, Rust, Go, C++, R, and a React web app.
 4. **Three 3D visualization suites** producing 8 identical visualizations each.
+
 </details>
 
 <details>
@@ -523,6 +532,7 @@ core.
 - **Students** learning how transformers actually work (the autodiff is by hand)
 - **Engineers** porting numerical code across 8 languages
 - **Anyone curious** about the math behind hallucinations
+
 </details>
 
 ### TinyGPT
@@ -647,6 +657,7 @@ using the bug report template. Please include:
 - The exact command you ran
 - The full error traceback
 - (If possible) a minimal reproducer
+
 </details>
 
 > 💡 **More questions?** See the [full FAQ](https://wild8highlander.github.io/rmt-llm-research/getting-started/faq/)

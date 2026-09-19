@@ -37,6 +37,7 @@ python scripts/sync_ru_trainer.py
 ## Outputs
 
 The chunked trainer writes to:
+
 - `laboratory/python/{lab}/results/models/tiny_gpt_trained.npz` — model weights (resume point)
 - `laboratory/python/{lab}/results/models/tiny_gpt_bpe.json` — BPE tokenizer
 - `laboratory/python/{lab}/results/models/training_history.json` — per-epoch metrics

@@ -34,7 +34,7 @@ Every new field added to the schema must be:
 
 TinyGPT uses GPT-2-style pre-LN transformer blocks:
 
-```
+```text
 x = x + attn(LN1(x))   # attention sub-layer
 x = x + mlp(LN2(x))    # MLP sub-layer
 ```

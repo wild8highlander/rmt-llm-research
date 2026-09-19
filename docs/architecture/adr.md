@@ -57,14 +57,14 @@ Use **NumPy only**. No PyTorch, no TensorFlow, no JAX.
 
 The original Transformer paper (Vaswani et al., 2017) used **post-LN**:
 
-```
+```text
 x = LN(x + attn(x))   # post-LN
 x = LN(x + mlp(x))
 ```
 
 GPT-2 onwards uses **pre-LN**:
 
-```
+```text
 x = x + attn(LN(x))   # pre-LN
 x = x + mlp(LN(x))
 ```

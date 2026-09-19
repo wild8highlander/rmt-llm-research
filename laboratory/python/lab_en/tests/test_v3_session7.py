@@ -1,12 +1,13 @@
 """Tests for Session 7: BPE Tokenizer v3."""
+
 from __future__ import annotations
 
 import sys
-import tempfile
 from pathlib import Path
 
 import numpy as np
 import pytest
+
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -25,7 +26,6 @@ CORPUS = (
 
 
 class TestBPETokenizerV3:
-
     def test_default_vocab_size(self):
         tok = BPETokenizerV3()
         assert tok.vocab_size == 1024
@@ -127,6 +127,7 @@ class TestBPETokenizerV3:
     def test_cache_speeds_up_repeated_encode(self):
         """Encoding the same text twice should use the cache (faster)."""
         import time
+
         tok = BPETokenizerV3(vocab_size=400)
         tok.fit(CORPUS)
         text = CORPUS[:1000]

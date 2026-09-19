@@ -7,11 +7,9 @@ mini-training.
 from __future__ import annotations
 
 import math
-import os
 
 import numpy as np
 import pytest
-
 from tiny_gpt import TinyGPT, TinyGPTConfig
 from tiny_gpt_trainer import (
     AdamState,
@@ -114,12 +112,8 @@ class TestBackward:
         _, cache = forward_with_cache(small_model, tokens)
         grads = backward(small_model, cache, target)
 
-        np.testing.assert_array_equal(
-            grads["token_emb"].shape, small_model.token_emb.shape
-        )
-        np.testing.assert_array_equal(
-            grads["lm_head"].shape, small_model.lm_head.shape
-        )
+        np.testing.assert_array_equal(grads["token_emb"].shape, small_model.token_emb.shape)
+        np.testing.assert_array_equal(grads["lm_head"].shape, small_model.lm_head.shape)
 
         for li, layer in enumerate(small_model.layers):
             layer_grads = grads["layers"][li]
@@ -156,8 +150,13 @@ class TestBackward:
         """
         # Use an even smaller model to make this fast
         cfg = TinyGPTConfig(
-            vocab_size=16, hidden_dim=8, n_layers=1, n_heads=2,
-            max_seq_len=8, mlp_ratio=2, seed=42,
+            vocab_size=16,
+            hidden_dim=8,
+            n_layers=1,
+            n_heads=2,
+            max_seq_len=8,
+            mlp_ratio=2,
+            seed=42,
         )
         model = TinyGPT(cfg)
 
@@ -198,9 +197,11 @@ class TestBackward:
         )
         # Compare magnitudes — within 50% OR within absolute tolerance 5e-3
         np.testing.assert_allclose(
-            np.abs(ana), np.abs(num),
-            rtol=0.5, atol=5e-3,
-            err_msg="Gradient magnitude mismatch (>50% relative or >5e-3 absolute)"
+            np.abs(ana),
+            np.abs(num),
+            rtol=0.5,
+            atol=5e-3,
+            err_msg="Gradient magnitude mismatch (>50% relative or >5e-3 absolute)",
         )
 
 
@@ -263,8 +264,9 @@ class TestAdamState:
 
     def test_cosine_lr_warmup(self, small_model):
         """During warmup, LR should ramp up from ~0 to max_lr."""
-        opt = AdamState(small_model, lr=1.0, lr_schedule="cosine",
-                        warmup_epochs=10, total_epochs=100)
+        opt = AdamState(
+            small_model, lr=1.0, lr_schedule="cosine", warmup_epochs=10, total_epochs=100
+        )
         opt.update_epoch_progress(0.0)
         assert opt.lr < 0.1  # near zero at start
         opt.update_epoch_progress(10.0)
@@ -272,8 +274,14 @@ class TestAdamState:
 
     def test_cosine_lr_decay(self, small_model):
         """After warmup, LR should decay following a cosine curve."""
-        opt = AdamState(small_model, lr=1.0, lr_schedule="cosine",
-                        warmup_epochs=0, total_epochs=10, min_lr_ratio=0.0)
+        opt = AdamState(
+            small_model,
+            lr=1.0,
+            lr_schedule="cosine",
+            warmup_epochs=0,
+            total_epochs=10,
+            min_lr_ratio=0.0,
+        )
         opt.update_epoch_progress(0.0)
         lr_start = opt.lr
         opt.update_epoch_progress(5.0)  # midpoint
@@ -292,8 +300,7 @@ class TestEvaluateMatchRate:
     def test_returns_dict_with_expected_keys(self, small_model):
         # Build a tiny dataset: (seq_len+1,) per row, last col is target
         rng = np.random.default_rng(0)
-        dataset = rng.integers(0, small_model.config.vocab_size,
-                                size=(20, 6)).astype(np.int64)
+        dataset = rng.integers(0, small_model.config.vocab_size, size=(20, 6)).astype(np.int64)
         result = evaluate_match_rate(small_model, dataset, n_samples=10)
         assert "match_rate" in result
         assert "n_samples" in result
@@ -301,8 +308,7 @@ class TestEvaluateMatchRate:
 
     def test_match_rate_in_valid_range(self, small_model):
         rng = np.random.default_rng(0)
-        dataset = rng.integers(0, small_model.config.vocab_size,
-                                size=(20, 6)).astype(np.int64)
+        dataset = rng.integers(0, small_model.config.vocab_size, size=(20, 6)).astype(np.int64)
         result = evaluate_match_rate(small_model, dataset, n_samples=10)
         assert 0.0 <= result["match_rate"] <= 1.0
 
@@ -314,8 +320,7 @@ class TestEvaluateMatchRate:
 
     def test_n_samples_capped_at_dataset_size(self, small_model):
         rng = np.random.default_rng(0)
-        dataset = rng.integers(0, small_model.config.vocab_size,
-                                size=(5, 6)).astype(np.int64)
+        dataset = rng.integers(0, small_model.config.vocab_size, size=(5, 6)).astype(np.int64)
         result = evaluate_match_rate(small_model, dataset, n_samples=100)
         assert result["n_samples"] == 5
 
@@ -370,13 +375,51 @@ class TestEndToEndTraining:
         # Create a minimal repo structure with enough text for ≥2 windows.
         # BPE aggressively compresses repetitive text — need ~5KB of varied prose.
         rng = np.random.default_rng(0)
-        words = (
-            "alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu "
-            "random matrix theory spectral analysis hallucinations cognitive mode "
-            "marchenko pastur bbp transition tracy widom distribution caputo "
-            "fractional derivative keating snaith corrections non-hermitian skin "
-            "effect eigenvalue neural network transformer attention layer norm "
-        ).split()
+        words = [
+            "alpha",
+            "beta",
+            "gamma",
+            "delta",
+            "epsilon",
+            "zeta",
+            "eta",
+            "theta",
+            "iota",
+            "kappa",
+            "lambda",
+            "mu",
+            "random",
+            "matrix",
+            "theory",
+            "spectral",
+            "analysis",
+            "hallucinations",
+            "cognitive",
+            "mode",
+            "marchenko",
+            "pastur",
+            "bbp",
+            "transition",
+            "tracy",
+            "widom",
+            "distribution",
+            "caputo",
+            "fractional",
+            "derivative",
+            "keating",
+            "snaith",
+            "corrections",
+            "non-hermitian",
+            "skin",
+            "effect",
+            "eigenvalue",
+            "neural",
+            "network",
+            "transformer",
+            "attention",
+            "layer",
+            "norm",
+        ]
         lines = []
         for _ in range(300):
             n = int(rng.integers(5, 20))
@@ -401,11 +444,16 @@ class TestEndToEndTraining:
 
         assert isinstance(result, dict)
         # Should NOT report corpus too small
-        assert "error" not in result or result.get("n_windows", 0) >= 2, \
+        assert "error" not in result or result.get("n_windows", 0) >= 2, (
             f"Training failed: {result}"
+        )
         # Look for evidence of training — any of these keys
-        assert "history" in result or "final_loss" in result or \
-               "match_rate" in result or "n_windows" in result
+        assert (
+            "history" in result
+            or "final_loss" in result
+            or "match_rate" in result
+            or "n_windows" in result
+        )
 
     def test_loss_decreases_over_one_epoch(self, tmp_path):
         """Loss after 1 epoch should be ≤ loss at start (with high probability)."""
@@ -413,15 +461,23 @@ class TestEndToEndTraining:
         (tmp_path / "main.py").write_text("def foo(): return 42\n" * 80)
 
         config = TrainConfig(
-            seq_len=8, stride=8, batch_size=2, vocab_size=280,
-            bpe_merges=10, epochs=1, max_train_tokens=2000,
-            eval_every=1, lr=1e-3,
+            seq_len=8,
+            stride=8,
+            batch_size=2,
+            vocab_size=280,
+            bpe_merges=10,
+            epochs=1,
+            max_train_tokens=2000,
+            eval_every=1,
+            lr=1e-3,
         )
         result = train_tiny_gpt(str(tmp_path), config=config)
         # Look for evidence of training — any of these keys
         history = result.get("history", [])
         if isinstance(history, list) and len(history) >= 2:
-            assert history[-1].get("loss", float("inf")) <= history[0].get("loss", float("inf")) + 1.0
+            assert (
+                history[-1].get("loss", float("inf")) <= history[0].get("loss", float("inf")) + 1.0
+            )
 
 
 # ─── Integration with main.py ───────────────────────────────────────────────
@@ -434,8 +490,13 @@ class TestIntegration:
         from tiny_gpt_trainer import BPETokenizer
 
         cfg = TinyGPTConfig(
-            vocab_size=300, hidden_dim=32, n_layers=2, n_heads=4,
-            max_seq_len=64, mlp_ratio=4, seed=42,
+            vocab_size=300,
+            hidden_dim=32,
+            n_layers=2,
+            n_heads=4,
+            max_seq_len=64,
+            mlp_ratio=4,
+            seed=42,
         )
         model = TinyGPT(cfg)
 

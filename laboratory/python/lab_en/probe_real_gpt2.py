@@ -13,6 +13,7 @@ only when needed. The rest of the RMT-LLM framework is NumPy-only
 Usage::
 
     from probe_real_gpt2 import GPT2Probe
+
     probe = GPT2Probe()
     results = probe.analyze_prompts(["The capital of France is", ...])
     probe.report(results)
@@ -26,6 +27,7 @@ from __future__ import annotations
 
 import json
 import os
+import tempfile
 from dataclasses import asdict, dataclass
 from typing import Any
 
@@ -39,6 +41,7 @@ _IMPORT_ERROR: str | None = None
 try:
     import torch  # type: ignore
     from transformers import GPT2LMHeadModel, GPT2Tokenizer  # type: ignore
+
     _HAS_TF = True
 except ImportError as e:  # pragma: no cover
     _HAS_TF = False
@@ -61,16 +64,14 @@ def _mp_bounds_general(q: float, sigma2: float = 1.0) -> tuple[float, float]:
 
 
 try:
-    from rmt_llm.bbp_transition import bbp_critical_theta, bbp_is_supercritical
+    from rmt_llm.bbp_transition import bbp_critical_theta
+
     _HAS_RMT = True
 except ImportError:
     _HAS_RMT = False
 
     def bbp_critical_theta(q: float) -> float:
         return np.sqrt(q)
-
-    def bbp_is_supercritical(theta: float, q: float) -> bool:
-        return theta > bbp_critical_theta(q)
 
 
 # ---------------------------------------------------------------------------
@@ -96,6 +97,7 @@ class LayerSpectrum:
         n_bulk_eigvals: Count of eigenvalues inside MP support.
         n_outlier_eigvals: Count of eigenvalues above MP upper edge.
     """
+
     layer: int
     n_tokens: int
     hidden_dim: int
@@ -123,6 +125,7 @@ class PromptResult:
         bbp_transition_layer: Index of the first layer where
             ``signal_detected`` is True, or ``None`` if no transition.
     """
+
     prompt: str
     n_tokens: int
     layers: list[LayerSpectrum]
@@ -145,8 +148,10 @@ class GPT2Probe:
     """
 
     def __init__(
-        self, model_name: str = "gpt2",
-        device: str = "cpu", cache_dir: str | None = None,
+        self,
+        model_name: str = "gpt2",
+        device: str = "cpu",
+        cache_dir: str | None = None,
     ) -> None:
         if not _HAS_TF:
             raise ImportError(
@@ -157,7 +162,9 @@ class GPT2Probe:
         self.device = device
         self.tokenizer = GPT2Tokenizer.from_pretrained(model_name, cache_dir=cache_dir)
         self.model = GPT2LMHeadModel.from_pretrained(
-            model_name, cache_dir=cache_dir, output_hidden_states=True,
+            model_name,
+            cache_dir=cache_dir,
+            output_hidden_states=True,
         ).to(device)
         self.model.eval()
         self.n_layers = self.model.config.n_layer
@@ -167,7 +174,9 @@ class GPT2Probe:
     # Hidden-state extraction
     # ------------------------------------------------------------------
     def extract_hidden_states(
-        self, prompt: str, max_length: int = 256,
+        self,
+        prompt: str,
+        max_length: int = 256,
     ) -> tuple[np.ndarray, int]:
         """Run GPT-2 on a prompt and extract per-layer hidden states.
 
@@ -180,7 +189,9 @@ class GPT2Probe:
             is an array of shape ``(n_layers, n_tokens, hidden_dim)``.
         """
         tokens = self.tokenizer(
-            prompt, return_tensors="pt", truncation=True,
+            prompt,
+            return_tensors="pt",
+            truncation=True,
             max_length=max_length,
         ).to(self.device)
         n_tokens = tokens["input_ids"].shape[1]
@@ -197,7 +208,8 @@ class GPT2Probe:
     # ------------------------------------------------------------------
     @staticmethod
     def analyze_layer(
-        hidden: np.ndarray, layer_idx: int,
+        hidden: np.ndarray,
+        layer_idx: int,
     ) -> LayerSpectrum:
         """Compute the RMT spectral diagnostics for one layer.
 
@@ -211,22 +223,40 @@ class GPT2Probe:
         T, H = hidden.shape
         if T < 2:
             return LayerSpectrum(
-                layer=layer_idx, n_tokens=T, hidden_dim=H,
-                lambda_max=0.0, lambda_min=0.0, lambda_mean=0.0,
-                mp_upper=0.0, mp_lower=0.0, q=float(H) / max(T, 1),
-                signal_detected=False, bbp_theta=0.0, spectral_gap=0.0,
-                n_bulk_eigvals=0, n_outlier_eigvals=0,
+                layer=layer_idx,
+                n_tokens=T,
+                hidden_dim=H,
+                lambda_max=0.0,
+                lambda_min=0.0,
+                lambda_mean=0.0,
+                mp_upper=0.0,
+                mp_lower=0.0,
+                q=float(H) / max(T, 1),
+                signal_detected=False,
+                bbp_theta=0.0,
+                spectral_gap=0.0,
+                n_bulk_eigvals=0,
+                n_outlier_eigvals=0,
             )
         cov = np.cov(hidden.T)  # (H, H)
         all_eigvals = np.linalg.eigvalsh(cov)
         eigvals = all_eigvals[all_eigvals > 1e-12]
         if len(eigvals) == 0:
             return LayerSpectrum(
-                layer=layer_idx, n_tokens=T, hidden_dim=H,
-                lambda_max=0.0, lambda_min=0.0, lambda_mean=0.0,
-                mp_upper=0.0, mp_lower=0.0, q=float(H) / max(T, 1),
-                signal_detected=False, bbp_theta=0.0, spectral_gap=0.0,
-                n_bulk_eigvals=0, n_outlier_eigvals=0,
+                layer=layer_idx,
+                n_tokens=T,
+                hidden_dim=H,
+                lambda_max=0.0,
+                lambda_min=0.0,
+                lambda_mean=0.0,
+                mp_upper=0.0,
+                mp_lower=0.0,
+                q=float(H) / max(T, 1),
+                signal_detected=False,
+                bbp_theta=0.0,
+                spectral_gap=0.0,
+                n_bulk_eigvals=0,
+                n_outlier_eigvals=0,
             )
         lam_max = float(eigvals.max())
         lam_min = float(eigvals.min())
@@ -244,12 +274,20 @@ class GPT2Probe:
         n_bulk = int(np.sum((eigvals >= mp_lower) & (eigvals <= mp_upper)))
         n_outlier = int(np.sum(eigvals > mp_upper))
         return LayerSpectrum(
-            layer=layer_idx, n_tokens=T, hidden_dim=H,
-            lambda_max=lam_max, lambda_min=lam_min, lambda_mean=lam_mean_nonzero,
-            mp_upper=mp_upper, mp_lower=mp_lower, q=q,
-            signal_detected=signal_detected, bbp_theta=bbp_theta,
+            layer=layer_idx,
+            n_tokens=T,
+            hidden_dim=H,
+            lambda_max=lam_max,
+            lambda_min=lam_min,
+            lambda_mean=lam_mean_nonzero,
+            mp_upper=mp_upper,
+            mp_lower=mp_lower,
+            q=q,
+            signal_detected=signal_detected,
+            bbp_theta=bbp_theta,
             spectral_gap=lam_max - lam_min,
-            n_bulk_eigvals=n_bulk, n_outlier_eigvals=n_outlier,
+            n_bulk_eigvals=n_bulk,
+            n_outlier_eigvals=n_outlier,
         )
 
     def analyze_prompt(self, prompt: str) -> PromptResult:
@@ -272,12 +310,15 @@ class GPT2Probe:
                 bbp_layer = spec.layer
                 break
         return PromptResult(
-            prompt=prompt, n_tokens=n_tokens, layers=layers,
+            prompt=prompt,
+            n_tokens=n_tokens,
+            layers=layers,
             bbp_transition_layer=bbp_layer,
         )
 
     def analyze_prompts(
-        self, prompts: list[str],
+        self,
+        prompts: list[str],
     ) -> list[PromptResult]:
         """Analyze a list of prompts.
 
@@ -320,6 +361,7 @@ class GPT2Probe:
         Converts numpy bools/floats to native Python types for
         JSON compatibility.
         """
+
         def _convert(obj: Any) -> Any:
             if isinstance(obj, (np.bool_,)):
                 return bool(obj)
@@ -334,11 +376,13 @@ class GPT2Probe:
             if isinstance(obj, list):
                 return [_convert(v) for v in obj]
             return obj
+
         return json.dumps(_convert([asdict(r) for r in results]), indent=2)
 
     @staticmethod
     def save_results(
-        results: list[PromptResult], path: str,
+        results: list[PromptResult],
+        path: str,
     ) -> None:
         """Save results to a JSON file."""
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
@@ -358,7 +402,9 @@ class SyntheticProbe:
     """
 
     def __init__(
-        self, n_layers: int = 12, hidden_dim: int = 768,
+        self,
+        n_layers: int = 12,
+        hidden_dim: int = 768,
         seed: int = 42,
     ) -> None:
         self.n_layers = n_layers
@@ -366,7 +412,9 @@ class SyntheticProbe:
         self.rng = np.random.default_rng(seed)
 
     def extract_hidden_states(
-        self, prompt: str, max_length: int = 256,
+        self,
+        prompt: str,
+        max_length: int = 256,
     ) -> tuple[np.ndarray, int]:
         """Generate synthetic hidden states for a prompt.
 
@@ -405,7 +453,9 @@ class SyntheticProbe:
                 bbp_layer = spec.layer
                 break
         return PromptResult(
-            prompt=prompt, n_tokens=n_tokens, layers=layers,
+            prompt=prompt,
+            n_tokens=n_tokens,
+            layers=layers,
             bbp_transition_layer=bbp_layer,
         )
 
@@ -438,6 +488,6 @@ if __name__ == "__main__":
         print()
         print(GPT2Probe.report(r))
     # Save JSON
-    out_path = "/tmp/gpt2_probe_results.json"
+    out_path = os.path.join(tempfile.gettempdir(), "gpt2_probe_results.json")
     GPT2Probe.save_results(results, out_path)
     print(f"\nResults saved to {out_path}")

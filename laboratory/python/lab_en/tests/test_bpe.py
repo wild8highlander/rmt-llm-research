@@ -9,7 +9,6 @@ import os
 
 import numpy as np
 import pytest
-
 from tiny_gpt_trainer import BPETokenizer
 
 
@@ -52,7 +51,9 @@ class TestBPETraining:
 
     def test_train_idempotent(self, small_corpus):
         """Training twice on the same corpus should give the same merges."""
-        tok1 = BPETokenizer(vocab_size=300, )
+        tok1 = BPETokenizer(
+            vocab_size=300,
+        )
         tok1.train(small_corpus)
         tok2 = BPETokenizer(vocab_size=300)
         tok2.train(small_corpus)
@@ -82,7 +83,7 @@ class TestBPEEncoding:
         tok = BPETokenizer(vocab_size=300)
         tok.train(small_corpus)
         ids = tok.encode("hello world")
-        assert isinstance(ids, np.ndarray) or isinstance(ids, list)
+        assert isinstance(ids, (np.ndarray, list))
         assert len(ids) > 0
 
     def test_encode_decode_roundtrip(self, small_corpus):
@@ -129,8 +130,9 @@ class TestBPEEncoding:
         for byte_val in range(256):
             b = bytes([byte_val])
             ids = tok.encode_bytes(b)
-            assert tok.decode(ids).encode("utf-8", errors="replace") == b or \
-                   len(ids) >= 1, f"byte {byte_val} failed to round-trip"
+            assert tok.decode(ids).encode("utf-8", errors="replace") == b or len(ids) >= 1, (
+                f"byte {byte_val} failed to round-trip"
+            )
 
 
 # ─── Save / load ────────────────────────────────────────────────────────────
@@ -191,8 +193,7 @@ class TestBPENumerical:
         ids = tok.encode("hello")
         ids_arr = np.asarray(ids)
         # Should be integer type
-        assert np.issubdtype(ids_arr.dtype, np.integer) or \
-               np.allclose(ids_arr, np.round(ids_arr))
+        assert np.issubdtype(ids_arr.dtype, np.integer) or np.allclose(ids_arr, np.round(ids_arr))
 
     def test_encoding_is_deterministic(self, small_corpus):
         tok = BPETokenizer(vocab_size=300)

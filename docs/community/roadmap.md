@@ -30,7 +30,7 @@ for the docs site. The canonical version is at the repo root.
 
 ---
 
-## Shipped in recent release 
+## Shipped in recent release
 
 - ✅ **TinyGPT v3** — modernized transformer (`tiny_gpt_v3.py`)
   - Rotary Position Embeddings (RoPE) — [ADR-009](../architecture/adr.md#adr-009-rotary-position-embeddings-rope-for-tinygpt-v3)
@@ -91,7 +91,7 @@ for the docs site. The canonical version is at the repo root.
   checkpoints
 - 📋 **TinyGPT 4M model** — shipped in recent release as `config_4m()`
 
-### upcoming
+### upcoming (later)
 
 - 📋 **Jupyter notebook series** (`notebooks/`)
   - `01_marchenko_pastur.ipynb` — MP law from scratch

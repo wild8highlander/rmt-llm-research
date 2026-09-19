@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 build_corpus.py — сборка корпуса формул rmt-llm-research для обучения TinyGPT v3.
 

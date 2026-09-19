@@ -1,14 +1,15 @@
-[package]
-name = "rmt-llm-lab-en"
-version = "1.0.0"
-edition = "2021"
-authors = ["Iskhak Hamzatovich Isaev"]
-description = "RMT-LLM Laboratory — English version (Rust)"
-license = "Proprietary"
-
 [[bin]]
 name = "rmt_llm_lab_en"
 path = "main.rs"
 
 [dependencies]
+
+[package]
+authors = ["Iskhak Hamzatovich Isaev"]
+description = "RMT-LLM Laboratory — English version (Rust)"
+edition = "2021"
+license = "Proprietary"
+name = "rmt-llm-lab-en"
+version = "1.0.0"
+
 # Pure Rust std-only implementation; no external crates required

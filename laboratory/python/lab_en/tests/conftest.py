@@ -4,12 +4,12 @@ Shared pytest fixtures for the lab_en test suite.
 
 from __future__ import annotations
 
-import os
 import sys
 from pathlib import Path
 
 import numpy as np
 import pytest
+
 
 # Ensure the lab_en directory is importable
 _LAB_DIR = Path(__file__).resolve().parent.parent
@@ -108,5 +108,3 @@ def tmp_bpe_path(tmp_path):
 def _set_seed():
     """Reset NumPy RNG before every test — keep tests deterministic."""
     np.random.seed(42)
-    yield
-    # Cleanup not needed — pytest manages tmp_path

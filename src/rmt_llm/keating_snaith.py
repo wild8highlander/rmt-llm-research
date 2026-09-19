@@ -19,7 +19,6 @@ References:
 from __future__ import annotations
 
 import numpy as np
-from numpy.typing import ArrayLike
 
 
 # Constants
@@ -27,12 +26,13 @@ GAMMA_1 = 14.134725  # First Riemann zeta zero (imaginary part)
 
 # Keating-Snaith correction coefficients (leading order)
 # These come from the GUE characteristic polynomial model
-C_1 = -0.133   # 1/N coefficient (from variance of log|zeta|)
-C_2 = 0.068    # 1/N^2 coefficient
+C_1 = -0.133  # 1/N coefficient (from variance of log|zeta|)
+C_2 = 0.068  # 1/N^2 coefficient
 
 
-def ks_corrected_gamma(n: int | float, gamma_1: float = GAMMA_1,
-                        c1: float = C_1, c2: float = C_2) -> float:
+def ks_corrected_gamma(
+    n: int | float, gamma_1: float = GAMMA_1, c1: float = C_1, c2: float = C_2
+) -> float:
     """Compute the Keating-Snaith corrected first zeta zero.
 
     gamma_1(N) = gamma_1 + c_1/N + c_2/N^2
@@ -58,11 +58,10 @@ def ks_corrected_gamma(n: int | float, gamma_1: float = GAMMA_1,
     """
     if n <= 0:
         raise ValueError(f"n must be positive, got {n}")
-    return gamma_1 + c1 / n + c2 / n ** 2
+    return gamma_1 + c1 / n + c2 / n**2
 
 
-def ks_n_crit_correction(n: int | float, theta_b: float = 7.07,
-                         gamma_1: float = GAMMA_1) -> float:
+def ks_n_crit_correction(n: int | float, theta_b: float = 7.07, gamma_1: float = GAMMA_1) -> float:
     """Compute the corrected N_crit using Keating-Snaith corrections.
 
     The critical token count is modified by finite-context effects:
@@ -87,8 +86,11 @@ def ks_n_crit_correction(n: int | float, theta_b: float = 7.07,
     return gamma_corrected / (theta_b * np.pi / 180.0)
 
 
-def ks_correction_series(n: int | float, max_order: int = 5,
-                         gamma_1: float = GAMMA_1) -> list[float]:
+def ks_correction_series(
+    n: int | float,
+    max_order: int = 5,
+    gamma_1: float = GAMMA_1,  # noqa: ARG001
+) -> list[float]:
     """Compute the Keating-Snaith correction terms up to max_order.
 
     Parameters
@@ -110,12 +112,10 @@ def ks_correction_series(n: int | float, max_order: int = 5,
 
     # Higher-order coefficients (decreasing rapidly)
     coeffs = [C_1, C_2, -0.021, 0.009, -0.003][:max_order]
-    corrections = [c / n ** (k + 1) for k, c in enumerate(coeffs)]
-    return corrections
+    return [c / n ** (k + 1) for k, c in enumerate(coeffs)]
 
 
-def ks_relative_correction(n: int | float,
-                           gamma_1: float = GAMMA_1) -> float:
+def ks_relative_correction(n: int | float, gamma_1: float = GAMMA_1) -> float:
     """Compute the relative correction |delta/gamma_1|.
 
     Parameters
@@ -150,12 +150,30 @@ def ks_zeta_zero_statistics(n_zeros: int = 10) -> np.ndarray:
         Imaginary parts of the first Riemann zeta zeros.
     """
     # First 20 known Riemann zeta zeros (imaginary parts)
-    known_zeros = np.array([
-        14.134725, 21.022040, 25.010858, 30.424876, 32.935062,
-        37.586178, 40.918719, 43.327073, 48.005151, 49.773832,
-        52.970321, 56.446248, 59.347044, 60.831779, 65.112544,
-        67.079810, 69.546402, 72.067158, 75.704691, 77.144840,
-    ])
+    known_zeros = np.array(
+        [
+            14.134725,
+            21.022040,
+            25.010858,
+            30.424876,
+            32.935062,
+            37.586178,
+            40.918719,
+            43.327073,
+            48.005151,
+            49.773832,
+            52.970321,
+            56.446248,
+            59.347044,
+            60.831779,
+            65.112544,
+            67.079810,
+            69.546402,
+            72.067158,
+            75.704691,
+            77.144840,
+        ]
+    )
     return known_zeros[:n_zeros]
 
 
@@ -184,9 +202,6 @@ def ks_gue_mean_spacing(n: int) -> float:
         return 0.0
     # Unfold: x_n = integral_0^{t_n} (1/(2*pi)) * log(t/(2*pi)) dt
     #       = (t_n/(2*pi)) * (log(t_n/(2*pi)) - 1)
-    unfolded = np.array([
-        t / (2 * np.pi) * (np.log(t / (2 * np.pi)) - 1)
-        for t in zeros
-    ])
+    unfolded = np.array([t / (2 * np.pi) * (np.log(t / (2 * np.pi)) - 1) for t in zeros])
     spacings = np.diff(unfolded)
     return np.mean(spacings)

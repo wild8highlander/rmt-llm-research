@@ -13,6 +13,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+
 # Make src/ importable.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent / "src"))
 
@@ -25,8 +26,11 @@ from rmt_llm.dyson_brownian import (
     wigner_surmise,
 )
 
+
 try:
-    from hypothesis import given, settings, strategies as st
+    from hypothesis import given, settings
+    from hypothesis import strategies as st
+
     _HAS_HYP = True
 except ImportError:
     _HAS_HYP = False
@@ -165,9 +169,7 @@ class TestDysonBrownianMotion:
 
     def test_boundary_reflection(self):
         """Reflecting boundary should keep eigenvalues within [-b, b]."""
-        dbm = DysonBrownianMotion(
-            DBMConfig(n=8, beta=2, dt=0.01, boundary=5.0)
-        )
+        dbm = DysonBrownianMotion(DBMConfig(n=8, beta=2, dt=0.01, boundary=5.0))
         dbm.initialize(rng=np.random.default_rng(0))
         dbm.run(1.0)
         assert np.all(np.abs(dbm.eigvals) <= 5.0 + 1e-10)
@@ -180,7 +182,9 @@ class TestLevelSpacing:
     @pytest.mark.parametrize("beta", [1, 2, 4])
     def test_wigner_surmise_normalizes_to_one(self, beta):
         """The Wigner surmise must integrate to 1."""
+        pytest.importorskip("scipy")
         from scipy.integrate import quad
+
         # Integrate P(s) from 0 to infinity.
         val, _ = quad(wigner_surmise, 0, 20, args=(beta,))
         assert abs(val - 1.0) < 0.01
@@ -224,7 +228,6 @@ class TestLevelSpacing:
 if _HAS_HYP:
 
     class TestDBMProperties:
-
         @given(n=st.integers(min_value=4, max_value=16))
         @settings(max_examples=8, deadline=5000)
         def test_dbm_eigvals_stay_sorted(self, n):

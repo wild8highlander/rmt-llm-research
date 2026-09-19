@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 infer.py — инференс обученной TinyGPT v3 для веб-приложения (JSON в / JSON out).
 

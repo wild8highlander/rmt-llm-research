@@ -95,7 +95,7 @@ print(f"LR schedule: cosine with {train_config.warmup_epochs}-epoch warmup")
 
 ---
 
-## 4. Train!
+## 4. Train
 
 ```python
 # This takes ~17 minutes on a CPU. For a quick demo, set epochs=3.
@@ -111,7 +111,7 @@ history = train(
 
 You'll see per-epoch progress:
 
-```
+```text
 [Epoch 01/30] loss=6.23  grad=2.41  lr=1.6e-04  mr=0.00%
 [Epoch 02/30] loss=5.42  grad=2.18  lr=2.3e-04  mr=0.00%
 [Epoch 05/30] loss=3.67  grad=1.62  lr=3.7e-04  mr=3.23%

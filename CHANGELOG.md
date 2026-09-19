@@ -2,6 +2,58 @@
 
 All notable changes to this repository are documented in this file.
 
+## [Unreleased] — Repository health pass: CI green, MkDocs Pages, English READMEs
+
+### Fixed — packaging & CI
+
+- **`pyproject.toml` was not installable**: the `version` field had been
+  removed, making `pip install -e .` fail on every platform (all CI jobs,
+  Docker build, benchmarks). Restored `version = "1.3.0"` (synced with
+  `CITATION.cff` and `.zenodo.json`).
+- **CI (all Python/OS matrix jobs)** now passes: 502 tests green; ruff was
+  configured for scientific code (math-symbol names, Greek letters in
+  docstrings) and 850+ lint issues were fixed; `numpy` import was missing in
+  `laboratory/python/{lab_en,lab_ru}/main.py`; backslash-in-f-string syntax
+  error in `corpus_builder_v3.py` broke Python 3.10/3.11 imports; missing
+  `scipy` in the TinyGPT CI job (tests now `importorskip`); `softmax` was
+  not exported from `tiny_gpt_trainer`.
+- **Benchmarks workflow**: `tests/test_benchmark.py` and
+  `tests/test_hypothesis.py` targeted a stale API (`init_weights`, `fit`,
+  tuple-less `forward`, flat-Adam). Rewritten against the current API —
+  forward_with_cache/backward/AdamState(model), plus fixed `BPETokenizer`
+  `vocab_size` so BPE merges are actually learnable.
+- **GitHub Pages deploy**: the workflow built only the static `docs/site`
+  with Jekyll while the repository ships a full MkDocs Material site.
+  Replaced with `mkdocs build --strict` + actions/deploy-pages. Fixed
+  mkdocs config: duplicate `tags` plugin, deprecated `tags_file`,
+  compromised `polyfill.io` CDN, placeholder GA4 property, missing
+  favicon, broken anchors and links.
+- **Markdown Lint workflow**: markdownlint config migrated to
+  `.markdownlint-cli2.jsonc` (overrides actually apply), 770+ issues fixed
+  across the tree, machine-generated `results/` artifacts excluded.
+- **CodeQL workflow**: inline `config:` was removed in CodeQL actions v3 —
+  migrated to `.github/codeql-config.yml` (`config-file:`).
+- **OpenSSF Scorecard workflow**: job lacked `security-events: write` and
+  `id-token: write` permissions — SARIF upload and result publishing failed.
+- **pre-commit**: fixed invalid revisions (`pre-commit-shfmt` v3.9.0-1,
+  `shellcheck-py` v0.10.0.1), removed hooks pointing to dead repos or
+  nothing to lint (`pre-commit-yamlfmt` 404s, cffconvert has no hook
+  manifest, shell hooks with no shell files, `check-readthedocs`,
+  julia formatter), removed legacy `fix-encoding-pragma`, wired vulture to
+  `[tool.vulture]`, interrogate to `[tool.interrogate]`, moved mypy to an
+  advisory CI check, aligned ruff pre-commit to v0.16.8, made Rust
+  fmt/clippy work with modern cargo per-crate. All 32 hooks pass.
+
+### Changed — documentation
+
+- All folder READMEs are in English: translated
+  `research/tinygpt_formula/README.md`, `neural_lab/README.md`,
+  `research/tinygpt_formula/scaling/SCALING_RESULTS.md`,
+  `research/tinygpt_formula/scaling/TERMUX_PROOT_UBUNTU.md`.
+- Added READMEs to folders that lacked one: `src/rmt_llm`, `python`,
+  `java`, `julia`, `notebooks`, `papers`, `results`, `research`,
+  `laboratory/{python,julia,rust,go,cpp,java,shared}`.
+
 ## [Unreleased] — Bug-fix pass + LLM research (research/tinygpt_formula) + Neural Lab web app + scaling study
 
 ### Fixed — core library (`src/rmt_llm/`)

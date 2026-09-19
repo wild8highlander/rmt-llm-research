@@ -7,24 +7,25 @@ Independent researcher, Russia
 GitHub: https://github.com/wild8highlander
 
 Author of:
-* The **RMT spectral analysis** programme — full monograph applying
+
+- The **RMT spectral analysis** programme — full monograph applying
   Marchenko-Pastur law, BBP phase transition, and Tracy-Widom
   fluctuations to covariance matrices of GPT-2 hidden-state activations
   for cognitive-mode detection (EN/RU, `docs/en/RMT_LLM_Spectral_Analysis.docx`).
-* The **complex analytical model of inevitable hallucinations** — ten
+- The **complex analytical model of inevitable hallucinations** — ten
   independent mathematical paths converging on the critical token count
   N_crit (NHSE winding number, Caputo fractional-time memory, EP-surfaces,
   Keating-Snaith, Tracy-Widom GUE, quantum channel fidelity, etc.)
   (EN/RU, `docs/en/Complex_Analytical_Model_Inevitable_Hallucinations.docx`).
-* The **RLHF utility trap** analysis — Caputo memory parameter
+- The **RLHF utility trap** analysis — Caputo memory parameter
   β ≈ 0.5 making ⟨T_crit⟩ ∝ (μ_eff)<sup>-2</sup>, with Landauer
   principle and thermodynamic irreversibility of lies
   (EN/RU, `docs/en/LLM_Analysis_Merged.docx`, `papers/LLM_Analysis_Merged.pdf`).
-* The **arXiv and BlackGold preprints** (v1 and v2, EN/RU).
-* The interactive in-browser demo (`docs/site/demo/demo.js`) visualising
+- The **arXiv and BlackGold preprints** (v1 and v2, EN/RU).
+- The interactive in-browser demo (`docs/site/demo/demo.js`) visualising
   the Marchenko-Pastur law, BBP transition, Tracy-Widom F₂ distribution,
   and NHSE winding-number topology.
-* The GitHub Pages documentation site (`docs/site/`), Zenodo DOI
+- The GitHub Pages documentation site (`docs/site/`), Zenodo DOI
   configuration, CITATION.cff, and all accompanying metadata files.
 
 ## Citation

@@ -34,12 +34,12 @@ For tutorials and walkthroughs, see [Tutorials](../tutorials/index.md).
 | If you want to… | Use this |
 |------------------|----------|
 | Compute MP eigenvalue bounds | [`rmt_llm.marchenko_pastur.mp_bounds`](rmt-llm.md#rmt_llm.marchenko_pastur.mp_bounds) |
-| Sample a random matrix | [`rmt_llm.marchenko_pastur.sample_wishart`](rmt-llm.md#rmt_llm.marchenko_pastur.sample_wishart) |
-| Detect a BBP spike | [`rmt_llm.bbp_transition.bbp_is_spiked`](rmt-llm.md#rmt_llm.bbp_transition.bbp_is_spiked) |
+| Sample a random matrix | [`rmt_llm.marchenko_pastur.sample_wishart`](rmt-llm.md#rmt_llm.marchenko_pastur) |
+| Detect a BBP spike | [`rmt_llm.bbp_transition.bbp_is_spiked`](rmt-llm.md#rmt_llm.bbp_transition) |
 | Compute Tracy-Widom CDF | [`rmt_llm.tracy_widom.tracy_widom_cdf`](rmt-llm.md#rmt_llm.tracy_widom.tracy_widom_cdf) |
-| Compute N_crit | [`rmt_llm.constants.N_CRIT`](rmt-llm.md#rmt_llm.constants.N_CRIT) |
+| Compute N_crit | [`rmt_llm.constants.N_CRIT`](rmt-llm.md#rmt_llm.constants) |
 | Build a TinyGPT model | [`tiny_gpt.TinyGPT`](tinygpt.md#tiny_gpt.TinyGPT) |
-| Train TinyGPT | [`tiny_gpt_trainer.train`](trainer.md#tiny_gpt_trainer.train) |
+| Train TinyGPT | [`tiny_gpt_trainer.train`](trainer.md#tiny_gpt_trainer.train_tiny_gpt) |
 | Generate text | [`tiny_gpt_trainer.generate_sample`](trainer.md#tiny_gpt_trainer.generate_sample) |
 | Load trained weights | [`tiny_gpt_trainer.load_trained_model`](trainer.md#tiny_gpt_trainer.load_trained_model) |
 

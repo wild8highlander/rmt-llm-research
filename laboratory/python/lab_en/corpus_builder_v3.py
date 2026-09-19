@@ -21,6 +21,7 @@ Pipeline:
 Usage::
 
     from corpus_builder_v3 import CorpusBuilder, CorpusConfig
+
     builder = CorpusBuilder(CorpusConfig(max_bytes=20_000_000))
     corpus = builder.build()
     print(f"Corpus: {len(corpus):,} bytes, {corpus.count(b'\\n'):,} lines")
@@ -33,12 +34,10 @@ License: Proprietary — All rights reserved.
 from __future__ import annotations
 
 import hashlib
-import math
-import os
 import re
-from dataclasses import dataclass, field
+from collections.abc import Iterable
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 
@@ -63,6 +62,7 @@ class CorpusConfig:
         exclude_patterns: Regex patterns for paths to exclude.
         doc_separator: Bytes inserted between documents.
     """
+
     max_bytes: int = 20_000_000
     min_file_bytes: int = 100
     max_file_bytes: int = 500_000
@@ -71,13 +71,22 @@ class CorpusConfig:
     max_line_length: int = 2000
     min_entropy: float = 2.0
     include_patterns: tuple[str, ...] = (
-        "*.py", "*.md", "*.txt", "*.rst",
-        "*.julia", "*.jl",
+        "*.py",
+        "*.md",
+        "*.txt",
+        "*.rst",
+        "*.julia",
+        "*.jl",
     )
     exclude_patterns: tuple[str, ...] = (
-        r"/__pycache__/", r"\.pyc$", r"/\.git/",
-        r"/results/", r"/\.venv/", r"/node_modules/",
-        r"test_", r"_test\.",
+        r"/__pycache__/",
+        r"\.pyc$",
+        r"/\.git/",
+        r"/results/",
+        r"/\.venv/",
+        r"/node_modules/",
+        r"test_",
+        r"_test\.",
     )
     doc_separator: bytes = b"\n\n=== DOC ===\n\n"
 
@@ -96,9 +105,13 @@ class CorpusBuilder:
         self.config = config or CorpusConfig()
         self._seen_hashes: set[str] = set()
         self._stats: dict[str, int] = {
-            "files_scanned": 0, "files_included": 0,
-            "files_excluded_size": 0, "files_excluded_pattern": 0,
-            "lines_total": 0, "lines_kept": 0, "lines_dedup": 0,
+            "files_scanned": 0,
+            "files_included": 0,
+            "files_excluded_size": 0,
+            "files_excluded_pattern": 0,
+            "lines_total": 0,
+            "lines_kept": 0,
+            "lines_dedup": 0,
             "lines_filtered": 0,
         }
 
@@ -107,10 +120,7 @@ class CorpusBuilder:
     # ------------------------------------------------------------------
     def _matches_exclude(self, path: str) -> bool:
         """Check if a path matches any exclude pattern."""
-        for pat in self.config.exclude_patterns:
-            if re.search(pat, path):
-                return True
-        return False
+        return any(re.search(pat, path) for pat in self.config.exclude_patterns)
 
     def collect_files(self, root: Path) -> list[Path]:
         """Collect all candidate files from ``root``.
@@ -154,8 +164,7 @@ class CorpusBuilder:
         """
         if not line:
             return 0.0
-        counts = np.bincount(np.frombuffer(line, dtype=np.uint8),
-                             minlength=256)
+        counts = np.bincount(np.frombuffer(line, dtype=np.uint8), minlength=256)
         probs = counts[counts > 0] / len(line)
         return float(-np.sum(probs * np.log2(probs)))
 
@@ -165,9 +174,7 @@ class CorpusBuilder:
             return False
         if len(line) > self.config.max_line_length:
             return False
-        if self._byte_entropy(line) < self.config.min_entropy:
-            return False
-        return True
+        return not self._byte_entropy(line) < self.config.min_entropy
 
     @staticmethod
     def _line_fingerprint(line: bytes) -> str:
@@ -237,7 +244,7 @@ class CorpusBuilder:
                 self._stats["files_included"] += 1
             if len(corpus) >= self.config.max_bytes:
                 break
-        return bytes(corpus[:self.config.max_bytes])
+        return bytes(corpus[: self.config.max_bytes])
 
     def _auto_detect_roots(self) -> list[Path]:
         """Walk up from this file to find the project root."""
@@ -287,6 +294,7 @@ class CurriculumStage:
         end_epoch: Last epoch (exclusive).
         corpus_slice: Slice of the corpus to use (start, end) in bytes.
     """
+
     name: str
     start_epoch: int
     end_epoch: int
@@ -294,7 +302,9 @@ class CurriculumStage:
 
 
 def build_curriculum(
-    corpus: bytes, n_stages: int = 3, total_epochs: int = 150,
+    corpus: bytes,
+    n_stages: int = 3,
+    total_epochs: int = 150,
 ) -> list[CurriculumStage]:
     """Split the corpus into ``n_stages`` for curriculum learning.
 
@@ -322,12 +332,14 @@ def build_curriculum(
         # Find the byte offset of this slice in the full corpus.
         # For simplicity, we store the slice as (start_byte, end_byte)
         # of the concatenated stage corpus.
-        stages.append(CurriculumStage(
-            name=f"stage_{i+1}",
-            start_epoch=i * epochs_per_stage,
-            end_epoch=(i + 1) * epochs_per_stage if i < n_stages - 1 else total_epochs,
-            corpus_slice=(0, len(stage_corpus)),
-        ))
+        stages.append(
+            CurriculumStage(
+                name=f"stage_{i + 1}",
+                start_epoch=i * epochs_per_stage,
+                end_epoch=(i + 1) * epochs_per_stage if i < n_stages - 1 else total_epochs,
+                corpus_slice=(0, len(stage_corpus)),
+            )
+        )
     return stages
 
 
@@ -341,13 +353,14 @@ if __name__ == "__main__":
     builder = CorpusBuilder(CorpusConfig(max_bytes=500_000))
     corpus = builder.build()
     print(f"\nCorpus size: {len(corpus):,} bytes")
-    print(f"Lines: {corpus.count(b'\\n'):,}")
-    print(f"Documents: {corpus.count(b'=== DOC ==='):,}")
+    n_newlines = corpus.count(b"\n")
+    print(f"Lines: {n_newlines:,}")
+    n_docs = corpus.count(b"=== DOC ===")
+    print(f"Documents: {n_docs:,}")
     print(f"\nStats:\n{builder.summary()}")
     print(f"\nFirst 200 bytes:\n{corpus[:200]!r}")
     # Curriculum.
     stages = build_curriculum(corpus, n_stages=3, total_epochs=150)
     print(f"\nCurriculum stages: {len(stages)}")
     for s in stages:
-        print(f"  {s.name}: epochs {s.start_epoch}-{s.end_epoch}, "
-              f"slice={s.corpus_slice}")
+        print(f"  {s.name}: epochs {s.start_epoch}-{s.end_epoch}, slice={s.corpus_slice}")

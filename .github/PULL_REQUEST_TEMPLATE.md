@@ -30,7 +30,7 @@
 
 <!-- For each file you touched, give a 1-line summary of what changed and why. -->
 
-```
+```text
 src/rmt_llm/marchenko_pastur.py  — fixed off-by-one in mp_bounds() when q > 1
 tests/test_mp.py                 — added regression test for q > 1 case
 ```

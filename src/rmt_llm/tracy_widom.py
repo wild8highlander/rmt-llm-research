@@ -26,6 +26,7 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import ArrayLike
 
+
 # High-accuracy lookup table for F_2(s), computed via Bornemann's method.
 # Covers s in [-5.0, 5.0] with ~10^-6 accuracy.
 TW_F2_TABLE: list[tuple[float, float]] = [
@@ -164,8 +165,9 @@ def tracy_widom_skewness() -> float:
     return 0.2241
 
 
-def tracy_widom_sample(n: int, matrix_size: int = 100,
-                       rng: np.random.Generator | None = None) -> np.ndarray:
+def tracy_widom_sample(
+    n: int, matrix_size: int = 100, rng: np.random.Generator | None = None
+) -> np.ndarray:
     """Sample from the Tracy-Widom distribution via GUE eigenvalue simulation.
 
     Generates n samples by computing the largest eigenvalue of GUE matrices
@@ -191,8 +193,9 @@ def tracy_widom_sample(n: int, matrix_size: int = 100,
     samples = np.empty(n)
     for i in range(n):
         # GUE: (H + H^T) / (2*sqrt(2N)), H ~ N(0,1) + i*N(0,1)
-        H = (rng.normal(0, 1, size=(matrix_size, matrix_size))
-             + 1j * rng.normal(0, 1, size=(matrix_size, matrix_size)))
+        H = rng.normal(0, 1, size=(matrix_size, matrix_size)) + 1j * rng.normal(
+            0, 1, size=(matrix_size, matrix_size)
+        )
         H_gue = (H + H.conj().T) / (2.0 * np.sqrt(2.0 * matrix_size))
         eigs = np.linalg.eigvalsh(H_gue.real)
         # The real part of GUE is sufficient for eigenvalue computation

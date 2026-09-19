@@ -9,20 +9,20 @@ import (
 
 func TestAll3DExperiments(t *testing.T) {
 	params := map[string]interface{}{
-		"hessian_grid_size":              16,
-		"trajectory_points":              32,
-		"pca_components":                 3,
-		"curvature_neighbors":            6,
-		"attention_flow_3d_resolution":   16,
-		"parameter_space_grid":           8,
-		"spectral_surface_layers":        4,
-		"n_agents":                       3,
-		"n_rounds":                       3,
-		"ncrit_threshold":                96.0,
-		"theta_b_deg":                    7.07,
-		"seed":                           42,
-		"temperature":                    "inf",
-		"max_tokens":                     "+inf",
+		"hessian_grid_size":            16,
+		"trajectory_points":            32,
+		"pca_components":               3,
+		"curvature_neighbors":          6,
+		"attention_flow_3d_resolution": 16,
+		"parameter_space_grid":         8,
+		"spectral_surface_layers":      4,
+		"n_agents":                     3,
+		"n_rounds":                     3,
+		"ncrit_threshold":              96.0,
+		"theta_b_deg":                  7.07,
+		"seed":                         42,
+		"temperature":                  "inf",
+		"max_tokens":                   "+inf",
 	}
 	combined := runAll3D(params)
 	if combined == nil {

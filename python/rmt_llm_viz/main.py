@@ -26,15 +26,15 @@ License: CC-BY-NC-SA-4.0
 
 from __future__ import annotations
 
-import sys
-import math
 import argparse
-from typing import Optional
+import math
 
 import numpy as np
 
+
 try:
     import matplotlib
+
     matplotlib.use("TkAgg")
 except Exception:
     matplotlib.use("Agg")
@@ -92,6 +92,7 @@ MENU = """
 # Mathematical Core Functions
 # ═══════════════════════════════════════════════════════════════
 
+
 def mp_bounds(q: float, sigma2: float = 1.0) -> tuple[float, float]:
     """Marchenko-Pastur support bounds."""
     sqrt_q = math.sqrt(q)
@@ -106,8 +107,7 @@ def mp_density_array(lam: np.ndarray, q: float, sigma2: float = 1.0) -> np.ndarr
     if np.any(mask):
         lm = lam[mask]
         rho[mask] = (
-            1.0 / (2 * np.pi * sigma2 * lm * q)
-            * np.sqrt((lam_plus - lm) * (lm - lam_minus))
+            1.0 / (2 * np.pi * sigma2 * lm * q) * np.sqrt((lam_plus - lm) * (lm - lam_minus))
         )
     return rho
 
@@ -117,7 +117,7 @@ def bbp_lambda_max(theta: float, q: float, sigma2: float = 1.0) -> float:
     theta_c = math.sqrt(q)
     if theta <= theta_c:
         return sigma2 * (1 + math.sqrt(q)) ** 2
-    return sigma2 * (1 + theta ** 2 / q)
+    return sigma2 * (1 + theta**2 / q)
 
 
 def nhse_winding(n_ratio: float) -> int:
@@ -160,14 +160,15 @@ def caputo_mean_collapse_time(mu_eff: float, beta: float = BETA_CAPUTO) -> float
 def ks_corrected_gamma(N: float, gamma1: float = GAMMA_1) -> float:
     """Keating-Snaith corrected first zeta zero."""
     c1, c2 = -0.133, 0.068
-    return gamma1 + c1 / N + c2 / N ** 2
+    return gamma1 + c1 / N + c2 / N**2
 
 
 # ═══════════════════════════════════════════════════════════════
 # Visualization 1: Marchenko-Pastur 3D Density Surface
 # ═══════════════════════════════════════════════════════════════
 
-def viz_mp_3d_surface(save_path: Optional[str] = None) -> None:
+
+def viz_mp_3d_surface(save_path: str | None = None) -> None:
     """Marchenko-Pastur 3D density surface: rho(lambda, q) over lambda-q plane.
 
     Creates a 3D surface plot showing how the MP density varies with both
@@ -189,9 +190,13 @@ def viz_mp_3d_surface(save_path: Optional[str] = None) -> None:
     ax = fig.add_subplot(111, projection="3d")
 
     surf = ax.plot_surface(
-        Q, LAM, RHO,
-        cmap=cm.viridis, alpha=0.9,
-        edgecolor="none", antialiased=True,
+        Q,
+        LAM,
+        RHO,
+        cmap=cm.viridis,
+        alpha=0.9,
+        edgecolor="none",
+        antialiased=True,
     )
 
     # Mark GPT-2 default q
@@ -201,16 +206,18 @@ def viz_mp_3d_surface(save_path: Optional[str] = None) -> None:
         [q_gpt2, q_gpt2],
         [lam_minus_gpt2, lam_plus_gpt2],
         [0, 0],
-        color="red", linewidth=3, label=f"GPT-2 q={q_gpt2:.3f}",
+        color="red",
+        linewidth=3,
+        label=f"GPT-2 q={q_gpt2:.3f}",
     )
 
     ax.set_xlabel("Aspect Ratio q = N/T", fontsize=12, labelpad=10)
     ax.set_ylabel("Eigenvalue λ", fontsize=12, labelpad=10)
     ax.set_zlabel("Density ρ(λ, q)", fontsize=12, labelpad=10)
     ax.set_title(
-        "Marchenko-Pastur 3D Density Surface\n"
-        "Bulk Eigenvalue Landscape of LLM Covariance Matrices",
-        fontsize=14, fontweight="bold",
+        "Marchenko-Pastur 3D Density Surface\nBulk Eigenvalue Landscape of LLM Covariance Matrices",
+        fontsize=14,
+        fontweight="bold",
     )
     ax.legend(loc="upper left", fontsize=10)
     fig.colorbar(surf, ax=ax, shrink=0.5, aspect=15, label="ρ(λ, q)")
@@ -228,7 +235,8 @@ def viz_mp_3d_surface(save_path: Optional[str] = None) -> None:
 # Visualization 2: BBP Phase Transition 3D Landscape
 # ═══════════════════════════════════════════════════════════════
 
-def viz_bbp_3d_landscape(save_path: Optional[str] = None) -> None:
+
+def viz_bbp_3d_landscape(save_path: str | None = None) -> None:
     """BBP Phase Transition 3D landscape: lambda_max(theta, q) over theta-q plane.
 
     Shows the sharp phase transition surface where the largest eigenvalue
@@ -253,9 +261,13 @@ def viz_bbp_3d_landscape(save_path: Optional[str] = None) -> None:
     ax = fig.add_subplot(111, projection="3d")
 
     surf = ax.plot_surface(
-        Q, THETA, LAM_MAX,
-        cmap=cm.plasma, alpha=0.85,
-        edgecolor="none", antialiased=True,
+        Q,
+        THETA,
+        LAM_MAX,
+        cmap=cm.plasma,
+        alpha=0.85,
+        edgecolor="none",
+        antialiased=True,
     )
 
     # Mark the critical curve theta_c = sqrt(q)
@@ -263,8 +275,12 @@ def viz_bbp_3d_landscape(save_path: Optional[str] = None) -> None:
     theta_crit = np.sqrt(q_crit)
     lam_crit = np.array([bbp_lambda_max(tc, qc) for tc, qc in zip(theta_crit, q_crit)])
     ax.plot(
-        q_crit, theta_crit, lam_crit,
-        color="lime", linewidth=3, linestyle="--",
+        q_crit,
+        theta_crit,
+        lam_crit,
+        color="lime",
+        linewidth=3,
+        linestyle="--",
         label=r"Critical: $\theta_c = \sqrt{q}$",
     )
 
@@ -272,9 +288,9 @@ def viz_bbp_3d_landscape(save_path: Optional[str] = None) -> None:
     ax.set_ylabel("Signal Strength θ", fontsize=12, labelpad=10)
     ax.set_zlabel("Largest Eigenvalue λ_max", fontsize=12, labelpad=10)
     ax.set_title(
-        "BBP Phase Transition 3D Landscape\n"
-        "Signal Eigenvalue Emergence from Random Bulk",
-        fontsize=14, fontweight="bold",
+        "BBP Phase Transition 3D Landscape\nSignal Eigenvalue Emergence from Random Bulk",
+        fontsize=14,
+        fontweight="bold",
     )
     ax.legend(loc="upper left", fontsize=10)
     fig.colorbar(surf, ax=ax, shrink=0.5, aspect=15, label="λ_max")
@@ -292,7 +308,8 @@ def viz_bbp_3d_landscape(save_path: Optional[str] = None) -> None:
 # Visualization 3: NHSE Eigenvalue Ring Collapse (3D)
 # ═══════════════════════════════════════════════════════════════
 
-def viz_nhse_3d_ring_collapse(save_path: Optional[str] = None) -> None:
+
+def viz_nhse_3d_ring_collapse(save_path: str | None = None) -> None:
     """NHSE Eigenvalue Ring Collapse in 3D: eigenvalues in the complex plane
     as a function of N/N_crit ratio.
 
@@ -334,8 +351,12 @@ def viz_nhse_3d_ring_collapse(save_path: Optional[str] = None) -> None:
 
         # Plot as 3D scatter: x=Re, y=N/N_crit, z=Im
         ax.scatter(
-            re, np.full(n_eig, n_ratio), im,
-            color=colors[idx], s=25, alpha=0.7,
+            re,
+            np.full(n_eig, n_ratio),
+            im,
+            color=colors[idx],
+            s=25,
+            alpha=0.7,
             label=f"N/N_crit={n_ratio:.2f}, w={nhse_winding(n_ratio)}",
         )
 
@@ -352,7 +373,8 @@ def viz_nhse_3d_ring_collapse(save_path: Optional[str] = None) -> None:
     ax.set_title(
         "NHSE Eigenvalue Ring Collapse (3D)\n"
         "Topological Transition: w=0 (ring) → w=1 (skin collapse) at N=N_crit",
-        fontsize=14, fontweight="bold",
+        fontsize=14,
+        fontweight="bold",
     )
     ax.legend(loc="upper left", fontsize=7, ncol=2)
     ax.view_init(elev=20, azim=230)
@@ -369,7 +391,8 @@ def viz_nhse_3d_ring_collapse(save_path: Optional[str] = None) -> None:
 # Visualization 4: EP-Surface Sensitivity Ridge (3D)
 # ═══════════════════════════════════════════════════════════════
 
-def viz_ep_3d_ridge(save_path: Optional[str] = None) -> None:
+
+def viz_ep_3d_ridge(save_path: str | None = None) -> None:
     """EP-Surface Sensitivity Ridge in 3D: delta_lambda(epsilon, k).
 
     Shows how eigenvalue sensitivity at exceptional points diverges as
@@ -394,16 +417,23 @@ def viz_ep_3d_ridge(save_path: Optional[str] = None) -> None:
     ax = fig.add_subplot(111, projection="3d")
 
     surf = ax.plot_surface(
-        np.log10(EPS), K, np.log10(DLAM + 1e-20),
-        cmap=cm.inferno, alpha=0.85,
-        edgecolor="none", antialiased=True,
+        np.log10(EPS),
+        K,
+        np.log10(DLAM + 1e-20),
+        cmap=cm.inferno,
+        alpha=0.85,
+        edgecolor="none",
+        antialiased=True,
     )
 
     # Mark float64 machine epsilon
     mach_eps = 2.0 ** (-53)
     ax.axvline(
-        x=np.log10(mach_eps), color="cyan", linewidth=2,
-        linestyle="--", label=f"float64 ε_mach={mach_eps:.1e}",
+        x=np.log10(mach_eps),
+        color="cyan",
+        linewidth=2,
+        linestyle="--",
+        label=f"float64 ε_mach={mach_eps:.1e}",
     )
 
     ax.set_xlabel("log₁₀(ε)", fontsize=12, labelpad=10)
@@ -412,7 +442,8 @@ def viz_ep_3d_ridge(save_path: Optional[str] = None) -> None:
     ax.set_title(
         "EP-Surface Sensitivity Ridge (3D)\n"
         "Eigenvalue Divergence: δλ ~ ε^(1/k) at Exceptional Points",
-        fontsize=14, fontweight="bold",
+        fontsize=14,
+        fontweight="bold",
     )
     ax.legend(loc="upper left", fontsize=10)
     fig.colorbar(surf, ax=ax, shrink=0.5, aspect=15, label="log₁₀(δλ)")
@@ -430,7 +461,8 @@ def viz_ep_3d_ridge(save_path: Optional[str] = None) -> None:
 # Visualization 5: Thermodynamic Free-Energy Landscape (3D)
 # ═══════════════════════════════════════════════════════════════
 
-def viz_thermo_3d_landscape(save_path: Optional[str] = None) -> None:
+
+def viz_thermo_3d_landscape(save_path: str | None = None) -> None:
     """Thermodynamic Free-Energy Landscape: F(U, T, S) across transformer layers.
 
     Shows the 3D free energy surface F = U - T*S as a function of internal
@@ -452,31 +484,41 @@ def viz_thermo_3d_landscape(save_path: Optional[str] = None) -> None:
 
         ax = fig.add_subplot(2, 2, idx + 1, projection="3d")
         surf = ax.plot_surface(
-            U_grid, T_grid, F,
-            cmap=cm.RdYlBu_r, alpha=0.8,
-            edgecolor="none", antialiased=True,
+            U_grid,
+            T_grid,
+            F,
+            cmap=cm.RdYlBu_r,
+            alpha=0.8,
+            edgecolor="none",
+            antialiased=True,
         )
 
         # Mark the F=0 phase boundary
         ax.contour(
-            U_grid, T_grid, F,
-            levels=[0], colors=["white"], linewidths=2,
+            U_grid,
+            T_grid,
+            F,
+            levels=[0],
+            colors=["white"],
+            linewidths=2,
         )
 
         ax.set_xlabel("Internal Energy U", fontsize=9)
         ax.set_ylabel("Temperature T", fontsize=9)
         ax.set_zlabel("Free Energy F", fontsize=9)
         ax.set_title(
-            f"Spectral Entropy S = {S:.1f}\n"
-            f"F = U − T·S  (F<0: factual, F>0: creative)",
-            fontsize=10, fontweight="bold",
+            f"Spectral Entropy S = {S:.1f}\nF = U − T·S  (F<0: factual, F>0: creative)",
+            fontsize=10,
+            fontweight="bold",
         )
         ax.view_init(elev=25, azim=225)
 
     fig.suptitle(
         "Thermodynamic Free-Energy Landscape\n"
         "Phase Transition: Factual (crystal) ↔ Creative (gas) across Transformer Layers",
-        fontsize=14, fontweight="bold", y=1.02,
+        fontsize=14,
+        fontweight="bold",
+        y=1.02,
     )
 
     plt.tight_layout()
@@ -491,7 +533,8 @@ def viz_thermo_3d_landscape(save_path: Optional[str] = None) -> None:
 # Visualization 6: Tracy-Widom Distribution 3D Waterfall
 # ═══════════════════════════════════════════════════════════════
 
-def viz_tw_3d_waterfall(save_path: Optional[str] = None) -> None:
+
+def viz_tw_3d_waterfall(save_path: str | None = None) -> None:
     """Tracy-Widom Distribution 3D Waterfall: F_2 distributions at various
     matrix sizes, showing convergence from finite-N to asymptotic form.
 
@@ -507,13 +550,27 @@ def viz_tw_3d_waterfall(save_path: Optional[str] = None) -> None:
 
     # Tracy-Widom F2 lookup table (Bornemann)
     tw_table = {
-        -5.0: 0.00000013, -4.5: 0.00000159, -4.0: 0.0000161,
-        -3.5: 0.000131, -3.0: 0.000777, -2.5: 0.00343,
-        -2.0: 0.0117, -1.5: 0.0317, -1.0: 0.0697,
-        -0.5: 0.127, 0.0: 0.204, 0.5: 0.293,
-        1.0: 0.387, 1.5: 0.477, 2.0: 0.555,
-        2.5: 0.618, 3.0: 0.668, 3.5: 0.707,
-        4.0: 0.737, 4.5: 0.760, 5.0: 0.778,
+        -5.0: 0.00000013,
+        -4.5: 0.00000159,
+        -4.0: 0.0000161,
+        -3.5: 0.000131,
+        -3.0: 0.000777,
+        -2.5: 0.00343,
+        -2.0: 0.0117,
+        -1.5: 0.0317,
+        -1.0: 0.0697,
+        -0.5: 0.127,
+        0.0: 0.204,
+        0.5: 0.293,
+        1.0: 0.387,
+        1.5: 0.477,
+        2.0: 0.555,
+        2.5: 0.618,
+        3.0: 0.668,
+        3.5: 0.707,
+        4.0: 0.737,
+        4.5: 0.760,
+        5.0: 0.778,
     }
 
     def tw_cdf_interp(s: float) -> float:
@@ -546,15 +603,23 @@ def viz_tw_3d_waterfall(save_path: Optional[str] = None) -> None:
         cdf_N = np.clip(cdf_N, 0, 1)
 
         ax.plot(
-            s_vals, np.full_like(s_vals, N), cdf_N,
-            color=colors[idx], linewidth=1.5, alpha=0.8,
+            s_vals,
+            np.full_like(s_vals, N),
+            cdf_N,
+            color=colors[idx],
+            linewidth=1.5,
+            alpha=0.8,
             label=f"N={N}",
         )
 
     # Asymptotic
     ax.plot(
-        s_vals, np.full_like(s_vals, 2048), cdf_asym,
-        color="red", linewidth=3, linestyle="--",
+        s_vals,
+        np.full_like(s_vals, 2048),
+        cdf_asym,
+        color="red",
+        linewidth=3,
+        linestyle="--",
         label="Asymptotic (N→∞)",
     )
 
@@ -564,7 +629,8 @@ def viz_tw_3d_waterfall(save_path: Optional[str] = None) -> None:
     ax.set_title(
         "Tracy-Widom Distribution 3D Waterfall\n"
         "Convergence: Finite-N → Asymptotic GUE Fluctuations",
-        fontsize=14, fontweight="bold",
+        fontsize=14,
+        fontweight="bold",
     )
     ax.legend(loc="upper left", fontsize=7, ncol=2)
     ax.view_init(elev=20, azim=230)
@@ -581,7 +647,8 @@ def viz_tw_3d_waterfall(save_path: Optional[str] = None) -> None:
 # Visualization 7: Keating-Snaith Correction Surface (3D)
 # ═══════════════════════════════════════════════════════════════
 
-def viz_ks_3d_surface(save_path: Optional[str] = None) -> None:
+
+def viz_ks_3d_surface(save_path: str | None = None) -> None:
     """Keating-Snaith Correction Surface: gamma_1(N) and N_crit correction
     as a 3D surface over context window size and correction order.
 
@@ -598,45 +665,57 @@ def viz_ks_3d_surface(save_path: Optional[str] = None) -> None:
     N_grid, C1_grid = np.meshgrid(N_vals, c1_range)
     c2 = 0.068
 
-    GAMMA_corr = GAMMA_1 + C1_grid / N_grid + c2 / N_grid ** 2
+    GAMMA_corr = GAMMA_1 + C1_grid / N_grid + c2 / N_grid**2
     N_CRIT_corr = GAMMA_corr / THETA_B_RAD
 
     fig = plt.figure(figsize=(14, 10))
 
     ax1 = fig.add_subplot(121, projection="3d")
     surf1 = ax1.plot_surface(
-        N_grid, C1_grid, GAMMA_corr,
-        cmap=cm.coolwarm, alpha=0.85,
-        edgecolor="none", antialiased=True,
+        N_grid,
+        C1_grid,
+        GAMMA_corr,
+        cmap=cm.coolwarm,
+        alpha=0.85,
+        edgecolor="none",
+        antialiased=True,
     )
     ax1.set_xlabel("Context Window N", fontsize=10)
     ax1.set_ylabel("c₁ coefficient", fontsize=10)
     ax1.set_zlabel("γ₁(N)", fontsize=10)
     ax1.set_title(
         "Corrected γ₁(N)\n= γ₁ + c₁/N + c₂/N²",
-        fontsize=11, fontweight="bold",
+        fontsize=11,
+        fontweight="bold",
     )
     ax1.view_init(elev=20, azim=225)
 
     ax2 = fig.add_subplot(122, projection="3d")
     surf2 = ax2.plot_surface(
-        N_grid, C1_grid, N_CRIT_corr,
-        cmap=cm.plasma, alpha=0.85,
-        edgecolor="none", antialiased=True,
+        N_grid,
+        C1_grid,
+        N_CRIT_corr,
+        cmap=cm.plasma,
+        alpha=0.85,
+        edgecolor="none",
+        antialiased=True,
     )
     ax2.set_xlabel("Context Window N", fontsize=10)
     ax2.set_ylabel("c₁ coefficient", fontsize=10)
     ax2.set_zlabel("N_crit(N)", fontsize=10)
     ax2.set_title(
         "Corrected N_crit(N)\n= γ₁(N) / θ_b",
-        fontsize=11, fontweight="bold",
+        fontsize=11,
+        fontweight="bold",
     )
     ax2.view_init(elev=20, azim=225)
 
     fig.suptitle(
         "Keating-Snaith Correction Surface (3D)\n"
         "Finite-Context Corrections to Riemann Zeta Zero and Critical Token Count",
-        fontsize=14, fontweight="bold", y=1.02,
+        fontsize=14,
+        fontweight="bold",
+        y=1.02,
     )
 
     plt.tight_layout()
@@ -651,7 +730,8 @@ def viz_ks_3d_surface(save_path: Optional[str] = None) -> None:
 # Visualization 8: Cross-Module Consistency Dashboard
 # ═══════════════════════════════════════════════════════════════
 
-def viz_consistency_dashboard(save_path: Optional[str] = None) -> None:
+
+def viz_consistency_dashboard(save_path: str | None = None) -> None:
     """Cross-Module Consistency Dashboard: verification report with
     numerical consistency checks across all RMT-LLM modules.
 
@@ -739,41 +819,61 @@ def viz_consistency_dashboard(save_path: Optional[str] = None) -> None:
 
     y_pos = 0.95
     axes.text(
-        0.5, y_pos,
+        0.5,
+        y_pos,
         "RMT-LLM Cross-Module Consistency Dashboard",
-        fontsize=16, fontweight="bold", ha="center", va="top",
+        fontsize=16,
+        fontweight="bold",
+        ha="center",
+        va="top",
         transform=axes.transAxes,
     )
     y_pos -= 0.05
     axes.text(
-        0.5, y_pos,
+        0.5,
+        y_pos,
         f"All {len(checks)} checks PASSED ✓",
-        fontsize=13, color="green", ha="center", va="top",
+        fontsize=13,
+        color="green",
+        ha="center",
+        va="top",
         transform=axes.transAxes,
     )
 
     y_pos -= 0.06
-    for i, (name, passed, detail) in enumerate(checks):
+    for _i, (name, passed, detail) in enumerate(checks):
         status = "✓ PASS" if passed else "✗ FAIL"
         color = "green" if passed else "red"
         axes.text(
-            0.05, y_pos,
+            0.05,
+            y_pos,
             f"[{status}] {name}",
-            fontsize=10, fontweight="bold", color=color, va="top",
+            fontsize=10,
+            fontweight="bold",
+            color=color,
+            va="top",
             transform=axes.transAxes,
         )
         axes.text(
-            0.95, y_pos,
+            0.95,
+            y_pos,
             detail,
-            fontsize=9, color="gray", ha="right", va="top",
+            fontsize=9,
+            color="gray",
+            ha="right",
+            va="top",
             transform=axes.transAxes,
         )
         y_pos -= 0.07
 
     axes.text(
-        0.5, 0.02,
+        0.5,
+        0.02,
         "Author: Iskhak Hamzatovich Isaev | ORCID: 0009-0003-7299-0701 | v1.3.0",
-        fontsize=9, color="gray", ha="center", va="bottom",
+        fontsize=9,
+        color="gray",
+        ha="center",
+        va="bottom",
         transform=axes.transAxes,
     )
 
@@ -803,10 +903,10 @@ VISUALIZATIONS = {
 
 def run_all() -> None:
     """Run all visualizations sequentially."""
-    for key, (name, func) in VISUALIZATIONS.items():
-        print(f"\n{'='*70}")
+    for _key, (name, func) in VISUALIZATIONS.items():
+        print(f"\n{'=' * 70}")
         print(f"  Running: {name}")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
         func()
 
 
@@ -822,7 +922,7 @@ def interactive_menu() -> None:
             print("\n  Goodbye! — RMT-LLM Visualization Suite v1.3.0")
             print("  Author: Iskhak Hamzatovich Isaev | ORCID: 0009-0003-7299-0701\n")
             break
-        elif choice == "9":
+        if choice == "9":
             run_all()
         elif choice in VISUALIZATIONS:
             name, func = VISUALIZATIONS[choice]
@@ -840,12 +940,14 @@ def main() -> None:
         epilog=BANNER,
     )
     parser.add_argument(
-        "--viz", "-v",
-        choices=list(VISUALIZATIONS.keys()) + ["9"],
+        "--viz",
+        "-v",
+        choices=[*list(VISUALIZATIONS.keys()), "9"],
         help="Run a specific visualization (1-8) or all (9)",
     )
     parser.add_argument(
-        "--save", "-s",
+        "--save",
+        "-s",
         action="store_true",
         help="Save plots to PNG files instead of displaying",
     )

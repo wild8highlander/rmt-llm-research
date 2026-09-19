@@ -29,8 +29,7 @@ K_B = 1.380649e-23  # Boltzmann constant (J/K)
 LN2 = np.log(2)
 
 
-def free_energy(internal_energy: float, temperature: float,
-                spectral_entropy: float) -> float:
+def free_energy(internal_energy: float, temperature: float, spectral_entropy: float) -> float:
     """Compute the thermodynamic free energy.
 
     F = U - T * S_spec
@@ -72,8 +71,7 @@ def landauer_cost(n_bits: int, temperature: float = 300.0) -> float:
     return n_bits * K_B * temperature * LN2
 
 
-def spectral_entropy(eigenvalues: np.ndarray,
-                     normalize: bool = True) -> float:
+def spectral_entropy(eigenvalues: np.ndarray, normalize: bool = True) -> float:
     """Compute the spectral (von Neumann) entropy of a density matrix.
 
     S = -sum(p_i * log(p_i))
@@ -108,8 +106,7 @@ def spectral_entropy(eigenvalues: np.ndarray,
     return -np.sum(eigenvalues[mask] * np.log(eigenvalues[mask]))
 
 
-def rg_flow_lambda(initial_lambda: float, layer: int,
-                   beta_rg: float = 0.1) -> float:
+def rg_flow_lambda(initial_lambda: float, layer: int, beta_rg: float = 0.1) -> float:
     """Compute the RG flow of a coupling across transformer layers.
 
     lambda(n) = lambda_0 * exp(-beta * n)
@@ -131,8 +128,7 @@ def rg_flow_lambda(initial_lambda: float, layer: int,
     return initial_lambda * np.exp(-beta_rg * layer)
 
 
-def rg_fixed_point(initial_lambda: float, beta_rg: float = 0.1,
-                   n_layers: int = 100) -> float:
+def rg_fixed_point(initial_lambda: float, beta_rg: float = 0.1, n_layers: int = 100) -> float:
     """Compute the RG fixed point by iterating the flow.
 
     Parameters
@@ -173,8 +169,7 @@ def cognitive_mode(f: float, threshold: float = 0.0) -> str:
     return "factual" if f < threshold else "creative"
 
 
-def autoregressive_irreversibility(n_tokens: int,
-                                   temperature: float = 300.0) -> float:
+def autoregressive_irreversibility(n_tokens: int, temperature: float = 300.0) -> float:  # noqa: ARG001 (temperature: API compat)
     """Compute the thermodynamic irreversibility of autoregressive generation.
 
     Each token overwrites previous context, costing at least k_B*T*ln(2)

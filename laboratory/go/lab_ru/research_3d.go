@@ -518,14 +518,14 @@ func gptConfig(params map[string]interface{}) map[string]interface{} {
 	vocabSize := int(clampInf(params["vocab_size"], 256, 1<<20))
 	seed := int64(clampInf(params["seed"], 42, 1<<30))
 	return map[string]interface{}{
-		"hidden_dim":   hiddenDim,
-		"n_layers":     nLayers,
-		"n_heads":      nHeads,
-		"vocab_size":   vocabSize,
-		"max_seq_len":  64,
-		"seed":         seed,
-		"model_type":   "tiny_gpt_synthetic",
-		"param_count":  hiddenDim * hiddenDim * nLayers,
+		"hidden_dim":  hiddenDim,
+		"n_layers":    nLayers,
+		"n_heads":     nHeads,
+		"vocab_size":  vocabSize,
+		"max_seq_len": 64,
+		"seed":        seed,
+		"model_type":  "tiny_gpt_synthetic",
+		"param_count": hiddenDim * hiddenDim * nLayers,
 	}
 }
 
@@ -698,7 +698,7 @@ func expHessianLossLandscape(params map[string]interface{}) map[string]interface
 	for i := 0; i < grid; i++ {
 		Z[i] = make([]float64, grid)
 		for j := 0; j < grid; j++ {
-			v := L0 + 0.5*(lam1*W1[i][j]*W1[i][j] - lam2*W2[i][j]*W2[i][j]) + 0.05*math.Sin(W1[i][j]*W2[i][j])
+			v := L0 + 0.5*(lam1*W1[i][j]*W1[i][j]-lam2*W2[i][j]*W2[i][j]) + 0.05*math.Sin(W1[i][j]*W2[i][j])
 			Z[i][j] = v
 			if v < zMin {
 				zMin = v
@@ -718,24 +718,24 @@ func expHessianLossLandscape(params map[string]interface{}) map[string]interface
 		"seed":        seed,
 	}
 	data := map[string]interface{}{
-		"experiment":       "hessian_loss_landscape",
-		"config":           cfg,
-		"grid_size":        grid,
-		"top_eigenvalues":  []float64{lam1, lam2},
-		"w1_grid":          W1,
-		"w2_grid":          W2,
-		"loss_surface":     Z,
-		"x":                W1,
-		"y":                W2,
-		"z":                Z,
+		"experiment":      "hessian_loss_landscape",
+		"config":          cfg,
+		"grid_size":       grid,
+		"top_eigenvalues": []float64{lam1, lam2},
+		"w1_grid":         W1,
+		"w2_grid":         W2,
+		"loss_surface":    Z,
+		"x":               W1,
+		"y":               W2,
+		"z":               Z,
 		"metrics": map[string]interface{}{
-			"lambda_max":    lam1,
-			"lambda_2":      lam2,
-			"spectral_gap":  lam1 - lam2,
-			"loss_min":      zMin,
-			"loss_max":      zMax,
-			"sharpness":     lam1,
-			"is_saddle":     isSaddle,
+			"lambda_max":   lam1,
+			"lambda_2":     lam2,
+			"spectral_gap": lam1 - lam2,
+			"loss_min":     zMin,
+			"loss_max":     zMax,
+			"sharpness":    lam1,
+			"is_saddle":    isSaddle,
 		},
 	}
 	return data
@@ -831,22 +831,22 @@ func expManifoldGeometry(params map[string]interface{}) map[string]interface{} {
 	}
 
 	data := map[string]interface{}{
-		"experiment":           "manifold_geometry",
-		"config":               cfg,
-		"n_samples":            len(proj),
-		"n_components":         nComponents,
-		"pca_eigenvalues":      eigvalsOut,
-		"participation_ratio":  pr,
-		"pca_points":           pca3,
-		"pca_colors":           colors,
-		"x":                    extractCol(pca3, 0),
-		"y":                    extractCol(pca3, 1),
-		"z":                    extractCol(pca3, 2),
+		"experiment":          "manifold_geometry",
+		"config":              cfg,
+		"n_samples":           len(proj),
+		"n_components":        nComponents,
+		"pca_eigenvalues":     eigvalsOut,
+		"participation_ratio": pr,
+		"pca_points":          pca3,
+		"pca_colors":          colors,
+		"x":                   extractCol(pca3, 0),
+		"y":                   extractCol(pca3, 1),
+		"z":                   extractCol(pca3, 2),
 		"metrics": map[string]interface{}{
-			"intrinsic_dim_pr":         pr,
-			"explained_variance_top3":  explainedVarTop3,
-			"top_eigenvalue":           topEv,
-			"manifold_volume_proxy":    manifoldVol,
+			"intrinsic_dim_pr":        pr,
+			"explained_variance_top3": explainedVarTop3,
+			"top_eigenvalue":          topEv,
+			"manifold_volume_proxy":   manifoldVol,
 		},
 	}
 	return data
@@ -1092,15 +1092,15 @@ func expSpectralSurfaceRegression(params map[string]interface{}) map[string]inte
 	}
 
 	data := map[string]interface{}{
-		"experiment":          "spectral_surface_regression",
-		"n_layers":            nLayers,
-		"n_tokens":            nTokens,
-		"lambda_max_grid":     lambdaMaxGrid,
-		"bifurcation_token":   bifToken,
-		"n_crit_predicted":    nCritPred,
-		"x":                   xLayers,
-		"y":                   yTokens,
-		"z":                   lambdaMaxGrid,
+		"experiment":        "spectral_surface_regression",
+		"n_layers":          nLayers,
+		"n_tokens":          nTokens,
+		"lambda_max_grid":   lambdaMaxGrid,
+		"bifurcation_token": bifToken,
+		"n_crit_predicted":  nCritPred,
+		"x":                 xLayers,
+		"y":                 yTokens,
+		"z":                 lambdaMaxGrid,
 		"metrics": map[string]interface{}{
 			"lambda_max_global":      lamMax,
 			"lambda_min_global":      lamMin,
@@ -1236,15 +1236,15 @@ func expRiemannianCurvature(params map[string]interface{}) map[string]interface{
 	highRatio := float64(len(highCurvIdx)) / math.Max(float64(N), 1)
 
 	data := map[string]interface{}{
-		"experiment":              "riemannian_curvature",
-		"n_samples":               N,
-		"n_neighbors":             nNeighbors,
-		"curvatures":              curvatures,
-		"points_3d":               P,
-		"high_curvature_indices":  highCurvIdx,
-		"x":                       extractCol(P, 0),
-		"y":                       extractCol(P, 1),
-		"z":                       extractCol(P, 2),
+		"experiment":             "riemannian_curvature",
+		"n_samples":              N,
+		"n_neighbors":            nNeighbors,
+		"curvatures":             curvatures,
+		"points_3d":              P,
+		"high_curvature_indices": highCurvIdx,
+		"x":                      extractCol(P, 0),
+		"y":                      extractCol(P, 1),
+		"z":                      extractCol(P, 2),
 		"metrics": map[string]interface{}{
 			"mean_curvature":       mean,
 			"std_curvature":        std,
@@ -1356,13 +1356,13 @@ func expAttentionFlow3D(params map[string]interface{}) map[string]interface{} {
 	}
 
 	data := map[string]interface{}{
-		"experiment":      "attention_flow_3d",
-		"resolution":      n,
-		"weights":         attn,
-		"spread_per_row":  spreadPerRow,
-		"x":               x,
-		"y":               y,
-		"z":               attn,
+		"experiment":     "attention_flow_3d",
+		"resolution":     n,
+		"weights":        attn,
+		"spread_per_row": spreadPerRow,
+		"x":              x,
+		"y":              y,
+		"z":              attn,
 		"metrics": map[string]interface{}{
 			"diagonality_score":         diagScore,
 			"smearing_score":            smearingScore,
@@ -1572,13 +1572,13 @@ func expCoalitionDrift(params map[string]interface{}) map[string]interface{} {
 	}
 
 	data := map[string]interface{}{
-		"experiment":  "coalition_drift",
-		"n_agents":    nAgents,
-		"n_rounds":    nRounds,
-		"per_round":   perRound,
-		"x":           roundsAxis,
-		"y":           agentsAxis,
-		"z":           perRound,
+		"experiment": "coalition_drift",
+		"n_agents":   nAgents,
+		"n_rounds":   nRounds,
+		"per_round":  perRound,
+		"x":          roundsAxis,
+		"y":          agentsAxis,
+		"z":          perRound,
 		"metrics": map[string]interface{}{
 			"initial_mean_deception": meanFirst,
 			"final_mean_deception":   meanLast,

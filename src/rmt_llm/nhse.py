@@ -20,7 +20,6 @@ References:
 from __future__ import annotations
 
 import numpy as np
-from numpy.typing import ArrayLike
 
 
 def nhse_winding_number(n_ratio: float, gamma: float) -> int:
@@ -69,9 +68,8 @@ def nhse_skin_strength(n_ratio: float, gamma: float) -> float:
     w = nhse_winding_number(n_ratio, gamma)
     if w == 0:
         return 0.0
-    else:
-        # Smooth transition: tanh-saturated growth
-        return np.tanh(gamma * (n_ratio - 1.0))
+    # Smooth transition: tanh-saturated growth
+    return np.tanh(gamma * (n_ratio - 1.0))
 
 
 def nhse_imag_collapse(n_ratio: float, gamma: float) -> float:
@@ -94,8 +92,7 @@ def nhse_imag_collapse(n_ratio: float, gamma: float) -> float:
     return nhse_skin_strength(n_ratio, gamma)
 
 
-def nhse_hamiltonian(size: int, gamma: float,
-                     rng: np.random.Generator | None = None) -> np.ndarray:
+def nhse_hamiltonian(size: int, gamma: float, rng: np.random.Generator | None = None) -> np.ndarray:
     """Generate a non-Hermitian Hamiltonian with skin effect.
 
     H = H_0 + i * gamma * Gamma
@@ -128,12 +125,10 @@ def nhse_hamiltonian(size: int, gamma: float,
     B = rng.normal(0, 1, size=(size, size))
     Gamma = (B - B.T) / 2.0  # anti-symmetric real matrix
 
-    H = H_0 + 1j * gamma * Gamma
-    return H
+    return H_0 + 1j * gamma * Gamma
 
 
-def nhse_eigenvalues(size: int, gamma: float,
-                     rng: np.random.Generator | None = None) -> np.ndarray:
+def nhse_eigenvalues(size: int, gamma: float, rng: np.random.Generator | None = None) -> np.ndarray:
     """Compute eigenvalues of a non-Hermitian Hamiltonian.
 
     Parameters
@@ -178,6 +173,5 @@ def nhse_point_gap(n_ratio: float, gamma: float) -> float:
     if n_ratio <= 1.0:
         # Below transition: gap is proportional to gamma
         return gamma * (1.0 - n_ratio)
-    else:
-        # Above transition: gap decays exponentially
-        return gamma * np.exp(-(n_ratio - 1.0) / gamma) if gamma > 0 else 0.0
+    # Above transition: gap decays exponentially
+    return gamma * np.exp(-(n_ratio - 1.0) / gamma) if gamma > 0 else 0.0

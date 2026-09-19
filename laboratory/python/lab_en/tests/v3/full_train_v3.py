@@ -29,40 +29,42 @@ from pathlib import Path
 
 import numpy as np
 
+
 # Make the lab importable.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from tiny_gpt_v3 import (
-    TinyGPTV3, TinyGPTV3Config, config_train_4m, config_4m,
-)
-from tiny_gpt_trainer_v3 import TrainerV3, TrainConfig
-from corpus_builder_v3 import CorpusBuilder, CorpusConfig
 from bpe_tokenizer_v3 import BPETokenizerV3
+from corpus_builder_v3 import CorpusBuilder, CorpusConfig
+from tiny_gpt_trainer_v3 import TrainConfig, TrainerV3
+from tiny_gpt_v3 import (
+    TinyGPTV3,
+    TinyGPTV3Config,
+)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="TinyGPT v3 full training")
-    parser.add_argument("--epochs", type=int, default=30,
-                        help="Number of training epochs (default 30)")
-    parser.add_argument("--vocab", type=int, default=512,
-                        help="BPE vocab size (default 512)")
-    parser.add_argument("--corpus-bytes", type=int, default=200_000,
-                        help="Max corpus bytes (default 200K)")
-    parser.add_argument("--hidden", type=int, default=128,
-                        help="Hidden dim (default 128, use 192 for full 4M)")
-    parser.add_argument("--layers", type=int, default=6,
-                        help="Number of layers (default 6, use 10 for full 4M)")
-    parser.add_argument("--seq-len", type=int, default=128,
-                        help="Sequence length (default 128)")
-    parser.add_argument("--batch", type=int, default=2,
-                        help="Effective batch size (default 2)")
-    parser.add_argument("--accum", type=int, default=2,
-                        help="Gradient accumulation steps (default 2)")
-    parser.add_argument("--lr", type=float, default=3e-3,
-                        help="Max learning rate (default 3e-3)")
+    parser.add_argument(
+        "--epochs", type=int, default=30, help="Number of training epochs (default 30)"
+    )
+    parser.add_argument("--vocab", type=int, default=512, help="BPE vocab size (default 512)")
+    parser.add_argument(
+        "--corpus-bytes", type=int, default=200_000, help="Max corpus bytes (default 200K)"
+    )
+    parser.add_argument(
+        "--hidden", type=int, default=128, help="Hidden dim (default 128, use 192 for full 4M)"
+    )
+    parser.add_argument(
+        "--layers", type=int, default=6, help="Number of layers (default 6, use 10 for full 4M)"
+    )
+    parser.add_argument("--seq-len", type=int, default=128, help="Sequence length (default 128)")
+    parser.add_argument("--batch", type=int, default=2, help="Effective batch size (default 2)")
+    parser.add_argument(
+        "--accum", type=int, default=2, help="Gradient accumulation steps (default 2)"
+    )
+    parser.add_argument("--lr", type=float, default=3e-3, help="Max learning rate (default 3e-3)")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--save", type=str, default="",
-                        help="Path to save trained weights (.npz)")
+    parser.add_argument("--save", type=str, default="", help="Path to save trained weights (.npz)")
     args = parser.parse_args()
 
     print("=" * 70)
@@ -74,7 +76,7 @@ def main() -> int:
     t0 = time.time()
     builder = CorpusBuilder(CorpusConfig(max_bytes=args.corpus_bytes))
     corpus_bytes = builder.build()
-    print(f"  Corpus: {len(corpus_bytes):,} bytes ({time.time()-t0:.1f}s)")
+    print(f"  Corpus: {len(corpus_bytes):,} bytes ({time.time() - t0:.1f}s)")
     print(f"  {builder.summary()}")
 
     # 2. Train BPE tokenizer.
@@ -84,8 +86,7 @@ def main() -> int:
     tokenizer.fit(corpus_bytes, verbose=False)
     n_merges = tokenizer.n_merges
     compression = tokenizer.compression_ratio(corpus_bytes)
-    print(f"  Merges: {n_merges}, compression: {compression:.2f}× "
-          f"({time.time()-t0:.1f}s)")
+    print(f"  Merges: {n_merges}, compression: {compression:.2f}× ({time.time() - t0:.1f}s)")
 
     # 3. Encode corpus.
     print("\n[3/5] Encoding corpus...")
@@ -94,8 +95,10 @@ def main() -> int:
     n_train = int(0.9 * len(token_ids))
     train_ids = token_ids[:n_train]
     val_ids = token_ids[n_train:]
-    print(f"  Tokens: {len(token_ids):,} (train={len(train_ids):,}, "
-          f"val={len(val_ids):,}) [{time.time()-t0:.1f}s]")
+    print(
+        f"  Tokens: {len(token_ids):,} (train={len(train_ids):,}, "
+        f"val={len(val_ids):,}) [{time.time() - t0:.1f}s]"
+    )
 
     # 4. Build model.
     print(f"\n[4/5] Building model (hidden={args.hidden}, layers={args.layers})...")
@@ -115,18 +118,21 @@ def main() -> int:
         init_scale=0.02,
         seed=args.seed,
     )
-    print(f"  Config: vocab={cfg.vocab_size}, hidden={cfg.hidden_dim}, "
-          f"layers={cfg.n_layers}, heads={cfg.n_heads}/{cfg.n_kv_heads}, "
-          f"seq={cfg.max_seq_len}")
-    print(f"  Tier 1+2: weight_tying={cfg.weight_tying}, "
-          f"label_smoothing={cfg.label_smoothing}, "
-          f"dropout={cfg.dropout}, grad_clip={cfg.grad_clip_norm}")
+    print(
+        f"  Config: vocab={cfg.vocab_size}, hidden={cfg.hidden_dim}, "
+        f"layers={cfg.n_layers}, heads={cfg.n_heads}/{cfg.n_kv_heads}, "
+        f"seq={cfg.max_seq_len}"
+    )
+    print(
+        f"  Tier 1+2: weight_tying={cfg.weight_tying}, "
+        f"label_smoothing={cfg.label_smoothing}, "
+        f"dropout={cfg.dropout}, grad_clip={cfg.grad_clip_norm}"
+    )
     print(f"  Parameters: {cfg.params_count:,}")
     model = TinyGPTV3(cfg)
 
     # 5. Train.
-    print(f"\n[5/5] Training {args.epochs} epochs "
-          f"(batch={args.batch}×{args.accum})...")
+    print(f"\n[5/5] Training {args.epochs} epochs (batch={args.batch}×{args.accum})...")
     train_cfg = TrainConfig(
         epochs=args.epochs,
         batch_size=args.batch,
@@ -150,13 +156,13 @@ def main() -> int:
     print("\n" + "=" * 70)
     print("FINAL RESULTS")
     print("=" * 70)
-    print(f"Total training time: {elapsed:.1f}s ({elapsed/60:.1f} min)")
+    print(f"Total training time: {elapsed:.1f}s ({elapsed / 60:.1f} min)")
     print(f"Final train loss:    {history['losses'][-1]:.4f}")
-    if history['val_losses']:
+    if history["val_losses"]:
         print(f"Final val loss:      {history['val_losses'][-1]:.4f}")
-    if history['val_match_rates']:
+    if history["val_match_rates"]:
         print(f"Final val match_rate: {history['val_match_rates'][-1]:.1%}")
-    if history['match_rates']:
+    if history["match_rates"]:
         print(f"Final train match_rate: {history['match_rates'][-1]:.1%}")
 
     # Sample generation.
@@ -166,8 +172,7 @@ def main() -> int:
         prompt_ids = np.array(tokenizer.encode(prompt_bytes), dtype=np.int64)
         if len(prompt_ids) == 0:
             continue
-        out = model.generate(prompt_ids, max_new_tokens=24,
-                              temperature=0.0)
+        out = model.generate(prompt_ids, max_new_tokens=24, temperature=0.0)
         full_ids = out["full_ids"]
         decoded = tokenizer.decode(full_ids)
         print(f"  Prompt: {prompt_bytes.decode()!r}")

@@ -8,24 +8,51 @@
 #               description: <short, ≤100 chars>
 #               aliases: [<old names that should be migrated>]
 
+- name: "breaking"
+  color: "d93f0b"
+  description: "Introduces breaking API/ABI changes — requires SemVer major bump"
+
 - name: "bug"
   color: "d73a4a"
   description: "Something isn't working — defect in code, math, docs, or CI"
   aliases: ["defect", "error"]
+
+- name: "ci"
+  color: "e99695"
+  description: "CI/CD changes — workflows, actions, runners"
+
+- name: "cpp"
+  color: "f34b7d"
+  description: "C++-specific changes"
+
+- name: "dependencies"
+  color: "0366d6"
+  description: "Dependency bump (Dependabot, Renovate, or manual)"
+
+- name: "discussion"
+  color: "d876e3"
+  description: "Open design question — should move to GitHub Discussions"
+
+- name: "docker"
+  color: "0db7ed"
+  description: "Docker / container-related changes"
+
+- name: "documentation"
+  color: "0075ca"
+  description: "Improvements or additions to docs, README, CHANGELOG, comments"
+
+- name: "duplicate"
+  color: "cfd3d7"
+  description: "This issue or PR already exists"
 
 - name: "enhancement"
   color: "a2eeef"
   description: "New feature or improvement of existing functionality"
   aliases: ["feature", "improvement"]
 
-- name: "documentation"
-  color: "0075ca"
-  description: "Improvements or additions to docs, README, CHANGELOG, comments"
-
-- name: "triage"
-  color: "fbca04"
-  description: "Needs triage — maintainers must review and re-label"
-  aliases: ["needs-triage", "unreviewed"]
+- name: "go"
+  color: "00add8"
+  description: "Go-specific changes"
 
 - name: "good first issue"
   color: "7057ff"
@@ -36,118 +63,91 @@
   color: "008672"
   description: "Extra attention is needed — maintainer welcomes community PRs"
 
-- name: "dependencies"
-  color: "0366d6"
-  description: "Dependency bump (Dependabot, Renovate, or manual)"
-
-- name: "ci"
-  color: "e99695"
-  description: "CI/CD changes — workflows, actions, runners"
-
-- name: "tests"
-  color: "b60205"
-  description: "Adds or modifies tests — pytest, Julia, Java, Rust"
-
-- name: "performance"
-  color: "0e8a16"
-  description: "Performance optimization — vectorization, JIT, memory"
-
-- name: "security"
-  color: "b60205"
-  description: "Security-sensitive — must follow SECURITY.md disclosure process"
-
-- name: "pinned"
-  color: "5319e7"
-  description: "Pinned by maintainer — never auto-close"
-
-- name: "roadmap"
-  color: "1d76db"
-  description: "Tracked in docs/ROADMAP.md — long-term commitment"
-
-- name: "stale"
-  color: "ededed"
-  description: "Auto-applied after 60 days of inactivity — will be closed"
-
-- name: "duplicate"
-  color: "cfd3d7"
-  description: "This issue or PR already exists"
-
 - name: "invalid"
   color: "e4e669"
   description: "Doesn't seem right — missing repro, not a bug, etc."
-
-- name: "wontfix"
-  color: "ffffff"
-  description: "Maintainer decided not to fix — out of scope or by design"
-
-- name: "question"
-  color: "d876e3"
-  description: "Further information is requested — move to Discussions if long"
-
-- name: "discussion"
-  color: "d876e3"
-  description: "Open design question — should move to GitHub Discussions"
-
-- name: "math"
-  color: "5319e7"
-  description: "Changes equations, constants, or numerical algorithms"
-
-- name: "translation"
-  color: "c5def5"
-  description: "EN ↔ RU sync, i18n, or new language port"
-
-- name: "breaking"
-  color: "d93f0b"
-  description: "Introduces breaking API/ABI changes — requires SemVer major bump"
-
-- name: "tiny-gpt"
-  color: "0e8a16"
-  description: "Changes the TinyGPT model, trainer, or tokenizer"
-
-- name: "rmt-module"
-  color: "1d76db"
-  description: "Adds or modifies an RMT module in src/rmt_llm/"
-
-- name: "lab"
-  color: "bfd4f2"
-  description: "Changes anything under laboratory/ — any language"
-
-- name: "visualization"
-  color: "a2eeef"
-  description: "New or modified visualization (2D / 3D / interactive)"
-
-- name: "docker"
-  color: "0db7ed"
-  description: "Docker / container-related changes"
-
-- name: "python"
-  color: "3776ab"
-  description: "Python-specific changes"
-
-- name: "julia"
-  color: "9558b2"
-  description: "Julia-specific changes"
 
 - name: "java"
   color: "ed8b00"
   description: "Java-specific changes"
 
-- name: "rust"
-  color: "dea584"
-  description: "Rust-specific changes"
+- name: "javascript"
+  color: "f1e05a"
+  description: "JS / React / Node.js changes (webapp)"
 
-- name: "go"
-  color: "00add8"
-  description: "Go-specific changes"
+- name: "julia"
+  color: "9558b2"
+  description: "Julia-specific changes"
 
-- name: "cpp"
-  color: "f34b7d"
-  description: "C++-specific changes"
+- name: "lab"
+  color: "bfd4f2"
+  description: "Changes anything under laboratory/ — any language"
+
+- name: "math"
+  color: "5319e7"
+  description: "Changes equations, constants, or numerical algorithms"
+
+- name: "performance"
+  color: "0e8a16"
+  description: "Performance optimization — vectorization, JIT, memory"
+
+- name: "pinned"
+  color: "5319e7"
+  description: "Pinned by maintainer — never auto-close"
+
+- name: "python"
+  color: "3776ab"
+  description: "Python-specific changes"
+
+- name: "question"
+  color: "d876e3"
+  description: "Further information is requested — move to Discussions if long"
 
 - name: "r-lang"
   color: "276dc3"
   description: "R-specific changes"
 
-- name: "javascript"
-  color: "f1e05a"
-  description: "JS / React / Node.js changes (webapp)"
+- name: "rmt-module"
+  color: "1d76db"
+  description: "Adds or modifies an RMT module in src/rmt_llm/"
+
+- name: "roadmap"
+  color: "1d76db"
+  description: "Tracked in docs/ROADMAP.md — long-term commitment"
+
+- name: "rust"
+  color: "dea584"
+  description: "Rust-specific changes"
+
+- name: "security"
+  color: "b60205"
+  description: "Security-sensitive — must follow SECURITY.md disclosure process"
+
+- name: "stale"
+  color: "ededed"
+  description: "Auto-applied after 60 days of inactivity — will be closed"
+
+- name: "tests"
+  color: "b60205"
+  description: "Adds or modifies tests — pytest, Julia, Java, Rust"
+
+- name: "tiny-gpt"
+  color: "0e8a16"
+  description: "Changes the TinyGPT model, trainer, or tokenizer"
+
+- name: "translation"
+  color: "c5def5"
+  description: "EN ↔ RU sync, i18n, or new language port"
+
+- name: "triage"
+  color: "fbca04"
+  description: "Needs triage — maintainers must review and re-label"
+  aliases: ["needs-triage", "unreviewed"]
+
+- name: "visualization"
+  color: "a2eeef"
+  description: "New or modified visualization (2D / 3D / interactive)"
+
+- name: "wontfix"
+  color: "ffffff"
+  description: "Maintainer decided not to fix — out of scope or by design"

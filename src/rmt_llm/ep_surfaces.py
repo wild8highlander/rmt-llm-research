@@ -93,8 +93,11 @@ def ep_order_from_separation(separation: float, epsilon: float = 1e-16) -> float
     return np.log(epsilon) / np.log(separation)
 
 
-def ep_is_near(n: int, eigenvalues: np.ndarray,
-               tol: float = 1e-6) -> tuple[bool, float]:
+def ep_is_near(
+    n: int,  # noqa: ARG001 (n kept for API compat)
+    eigenvalues: np.ndarray,
+    tol: float = 1e-6,
+) -> tuple[bool, float]:
     """Check if a set of eigenvalues is near an exceptional point.
 
     An EP is characterized by near-coalescence of eigenvalues. We check
@@ -115,7 +118,7 @@ def ep_is_near(n: int, eigenvalues: np.ndarray,
         Whether eigenvalues are near an EP, and the minimum separation.
     """
     if len(eigenvalues) < 2:
-        return False, float('inf')
+        return False, float("inf")
 
     # Compute pairwise distances
     diffs = np.abs(eigenvalues[:, None] - eigenvalues[None, :])
@@ -129,9 +132,9 @@ def ep_is_near(n: int, eigenvalues: np.ndarray,
     return relative_sep < tol, min_sep
 
 
-def ep_perturbed_matrix(size: int, order: int = 2,
-                        epsilon: float = 1e-10,
-                        rng: np.random.Generator | None = None) -> np.ndarray:
+def ep_perturbed_matrix(
+    size: int, order: int = 2, epsilon: float = 1e-10, rng: np.random.Generator | None = None
+) -> np.ndarray:
     """Generate a Jordan-block matrix near an EP of given order.
 
     The unperturbed matrix is a Jordan block of the given order, which has

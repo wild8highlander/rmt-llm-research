@@ -8,7 +8,7 @@ govern new contributions. Read this before making structural changes.
 
 ## 📐 Project Layout (top level)
 
-```
+```text
 rmt-llm-research/
 ├── src/rmt_llm/         # Python verification package (PyPI-installable)
 ├── laboratory/          # Research laboratory — 8 languages × EN+RU
@@ -34,7 +34,7 @@ rmt-llm-research/
 Pure-Python implementations of every mathematical object in the RMT-LLM
 theory. **No I/O, no plotting, no CLI** — just functions and constants.
 
-```
+```text
 src/rmt_llm/
 ├── constants.py             # Centralized numerical constants (N_crit, γ, etc.)
 ├── marchenko_pastur.py      # MP density, bounds, CDF, Stieltjes transform
@@ -57,7 +57,7 @@ API trivial to port to Julia, Java, Rust, Go, C++, and R (see Layer 2).
 The "playground" — 8 languages × 2 locales (EN + RU) implementing the same
 **interactive menu** with scenario runners, experiments, charts, and reports.
 
-```
+```text
 laboratory/
 ├── python/lab_en/   lab_ru/   # Reference implementation
 ├── julia/lab_en/    lab_ru/
@@ -79,7 +79,7 @@ and asserts they all parse against `laboratory/shared/schema.json`.
 
 The reference TinyGPT model and trainer live in `laboratory/python/lab_en/`:
 
-```
+```text
 laboratory/python/lab_en/
 ├── tiny_gpt.py             # 2.5M-param transformer (12 layers, hidden=128, BPE)
 ├── tiny_gpt_trainer.py     # Reverse-mode autodiff + Adam + cosine LR
@@ -100,7 +100,7 @@ Three full-featured interactive suites (Python CLI, Julia REPL, Java JavaFX)
 that produce 8 identical 3D visualizations each. They call into Layer 1 /
 Layer 2 modules for the math and only handle rendering.
 
-```
+```text
 python/rmt_llm_viz/main.py     # CLI: --viz 1..9, --save
 julia/RMTLLMViz/src/           # REPL: rmt_llm_viz_menu()
 java/rmt-llm-viz/.../App.java  # JavaFX: 8 tabs + sliders

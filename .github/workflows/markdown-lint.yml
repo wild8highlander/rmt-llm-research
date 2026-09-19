@@ -1,5 +1,7 @@
 # =============================================================================
 # Markdown lint CI — runs markdownlint-cli2 on all Markdown files.
+# Glob patterns, rule config and per-file overrides live in
+# .markdownlint-cli2.jsonc (single source of truth).
 # =============================================================================
 name: Markdown Lint
 
@@ -8,13 +10,13 @@ on:
     branches: [main]
     paths:
       - '**.md'
-      - '.markdownlint.json'
+      - '.markdownlint-cli2.jsonc'
       - '.github/workflows/markdown-lint.yml'
   pull_request:
     branches: [main]
     paths:
       - '**.md'
-      - '.markdownlint.json'
+      - '.markdownlint-cli2.jsonc'
       - '.github/workflows/markdown-lint.yml'
   workflow_dispatch:
 
@@ -43,8 +45,7 @@ jobs:
         run: npm install -g markdownlint-cli2
 
       - name: Run markdownlint-cli2
-        run: markdownlint-cli2 '**/*.md' '#CHANGELOG.md' '#laboratory/webapp/**' '#docs/site/**' '#node_modules/**' '#.git/**'
-        continue-on-error: false
+        run: markdownlint-cli2
 
       - name: Markdown link check
         uses: gaurav-nelson/github-action-markdown-link-check@v1

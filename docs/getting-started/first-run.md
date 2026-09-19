@@ -36,7 +36,7 @@ python main.py
 
 You'll see a 15-item menu:
 
-```
+```text
 === RMT-LLM Research Laboratory ===
 1.  Run scenario SCEN-LIE-01 ...
 2.  Run scenario SCEN-HALL-02 ...
@@ -59,7 +59,7 @@ Choose `14`. The trainer will:
 
 You'll see per-epoch progress:
 
-```
+```text
 [Epoch 01/30] loss=6.2251  grad_norm=2.41  lr=1.64e-04  mr=0.000%
 [Epoch 02/30] loss=5.4192  grad_norm=2.18  lr=2.31e-04  mr=0.000%
 ...
@@ -108,7 +108,7 @@ Choose `15` from the menu. You'll be prompted for:
 
 ### Sample output (temperature 0.5)
 
-```
+```text
 Prompt: 'def train('
 Output: 'def train(er, erFloatilamthpathvvth) ) catendpath:endpathnell'
 ```
@@ -124,7 +124,7 @@ expected for a 2.5M-param model trained on 2MB of source code.
 | `The RMT-LLM` | Tests prefix continuation |
 | `import numpy` | Tests import-statement structure |
 | `class Tiny` | Tests class-definition structure |
-| `# ` | Tests comment generation |
+| `#` | Tests comment generation |
 | Russian: `class Tiny` (in `lab_ru/`) | Tests the RU mirror |
 
 ### Try different temperatures
@@ -157,7 +157,7 @@ for epoch in history["epochs"][-5:]:
 
 Expected output (last 5 epochs):
 
-```
+```text
 Epoch 26  loss=0.0128  grad_norm=0.0150  lr=5.00e-05  mr=6.452%
 Epoch 27  loss=0.0099  grad_norm=0.0120  lr=5.00e-05  mr=6.452%
 Epoch 28  loss=0.0087  grad_norm=0.0100  lr=5.00e-05  mr=6.452%

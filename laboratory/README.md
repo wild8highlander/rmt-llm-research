@@ -21,7 +21,7 @@ This version expands the training corpus from 16 files (~240 KB) to **63 files (
   - Peak match_rate: 34.375% (epochs 6, 7, 8, 10)
   - Saved weights: `laboratory/python/lab_en/results/models/tiny_gpt_trained.npz` (595 KB)
   - Training history JSON: `laboratory/python/lab_en/results/models/training_history.json`
-- **Generation comparison**: untrained model emits random high-entropy bytes; trained model produces structured low-entropy patterns with frequent ASCII (` `, `\t`, `F`, `f`, `{`, `}` — top bytes in Python/JSON source)
+- **Generation comparison**: untrained model emits random high-entropy bytes; trained model produces structured low-entropy patterns with frequent ASCII (space, `\t`, `F`, `f`, `{`, `}` — top bytes in Python/JSON source)
 - **Why ~32% plateau**: TinyGPT is intentionally minimal (no MLP, no layernorm, ~2M params, byte-level vocab=256) — 32% is at the capacity ceiling. For 50%+, increase `n_layers` to 12, use BPE tokenizer, train 30+ epochs
 
 ## 🆕 v1.5.0 — TinyGPT Real-Corpus Training + 3D Modules for All Languages
@@ -57,7 +57,7 @@ This version adds **8 professional 3D chart types** + **9 new 3D research experi
 
 ## 📁 Directory structure
 
-```
+```text
 laboratory/
 ├── shared/                       # Shared protocol (JSON, language-agnostic)
 │   ├── schema.json               # JSON schema for infinite parameter system (incl. 3D params v1.1.0)
@@ -236,6 +236,7 @@ Every run produces (under `laboratory/results/`):
 ### Reports (in `reports/`)
 
 13 formats per run, each containing:
+
 - **Part I** — Detailed results with explanations
 - **Part II** — Full task launch logs
 
@@ -309,12 +310,14 @@ Every parameter accepts values in `[0, +∞)`. The string `"inf"` is accepted fo
 ## 🤖 Synthetic neural network (TinyGPT)
 
 A pure-NumPy tiny transformer (~2M parameters):
+
 - 6 layers, hidden dim 64, 4 attention heads, vocab 256 (byte-level)
 - Forward pass with hidden state capture per layer
 - Generation with temperature / top-k / top-p sampling
 - Synthetic reasoning trace that mimics the "hidden CoT" exposed by the news
 
 For richer experiments, the lab can also download small real models from:
+
 - **HuggingFace**: GPT-2 small (124M), DialoGPT-small (117M), TinyLlama-1.1B, BERT-base
 - **ONNX Model Zoo**: SqueezeNet 1.1
 - **Keras.js demos**: MNIST MLP (browser-only)
@@ -338,6 +341,7 @@ The React + Socket.io dashboard at `laboratory/webapp/` provides 9 tabs:
 9. **Logs** — Full log viewer with search and level filter
 
 Real-time updates flow via Socket.io:
+
 - Server spawns the Python lab as a subprocess
 - Python stdout is streamed as `log` events
 - Mock metrics are emitted as `metric` events
@@ -354,6 +358,7 @@ All laboratory code is licensed under the **Proprietary All-Rights-Reserved Lice
 ## 👤 Author
 
 **Iskhak Hamzatovich Isaev**
+
 - ORCID: [0009-0003-7299-0701](https://orcid.org/0009-0003-7299-0701)
 - GitHub: [wild8highlander](https://github.com/wild8highlander)
 - Repository: [rmt-llm-research](https://github.com/wild8highlander/rmt-llm-research)

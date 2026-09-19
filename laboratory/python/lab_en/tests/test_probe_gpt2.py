@@ -13,6 +13,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent / "src"))
 
@@ -27,7 +28,6 @@ from probe_real_gpt2 import (
 
 # ─── SyntheticProbe tests ──────────────────────────────────────────────────
 class TestSyntheticProbe:
-
     def test_construct(self):
         probe = SyntheticProbe(n_layers=4, hidden_dim=32, seed=42)
         assert probe.n_layers == 4
@@ -64,7 +64,6 @@ class TestSyntheticProbe:
 
 # ─── LayerSpectrum validation ──────────────────────────────────────────────
 class TestLayerSpectrum:
-
     def test_spectrum_fields(self):
         probe = SyntheticProbe(n_layers=2, hidden_dim=32, seed=42)
         result = probe.analyze_prompt("test prompt here")
@@ -88,7 +87,6 @@ class TestLayerSpectrum:
 
 # ─── MP bounds (general) ───────────────────────────────────────────────────
 class TestMPBoundsGeneral:
-
     def test_q_le_one(self):
         """For q ≤ 1, should match the standard MP bounds."""
         lo, hi = _mp_bounds_general(0.5, sigma2=1.0)
@@ -112,7 +110,6 @@ class TestMPBoundsGeneral:
 
 # ─── Reporting ─────────────────────────────────────────────────────────────
 class TestReporting:
-
     def test_report_contains_key_info(self):
         probe = SyntheticProbe(n_layers=3, hidden_dim=32, seed=42)
         result = probe.analyze_prompt("test")
@@ -126,6 +123,7 @@ class TestReporting:
         results = probe.analyze_prompts(["hello", "world"])
         json_str = GPT2Probe.to_json(results)
         import json
+
         parsed = json.loads(json_str)
         assert len(parsed) == 2
         assert "prompt" in parsed[0]
@@ -137,4 +135,5 @@ class TestReporting:
         path = str(tmp_path / "results.json")
         GPT2Probe.save_results(results, path)
         import os
+
         assert os.path.exists(path)

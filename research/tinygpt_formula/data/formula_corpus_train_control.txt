@@ -936,7 +936,7 @@ non-crossing partition formula. This function computes the first
 probability.
 
 Args:
-    moments: Power moments ``[m_1, m_2, 
+    moments: Power moments ``[m_1, m_2,
 code: m = np.asarray(moments, dtype=np.float64)
 n = min(n_terms, len(m))
 kappa = np.zeros(n, dtype=np.float64)
@@ -1296,7 +1296,7 @@ Parameters
 lam : array_like
     Eigenvalues at which to evaluate the density.
 q : float
-    
+
 code: lam = np.asarray(lam, dtype=float)
 lam_minus, lam_plus = mp_bounds(q, sigma2)
 mask = (lam > lam_minus) & (lam < lam_plus) & (lam > 0)
@@ -2149,4 +2149,3 @@ nhse_winding_number(n_ratio=0.5, gamma=1.0) => W = 2.297331; nhse_skin_strength 
 RULE marchenko_pastur: rho(lambda) = sqrt((lambda_+ - lambda)*(lambda - lambda_-)) / (2*pi*sigma2*q*lambda)
 ks_correction_series(n=256, max_order=3) => [-0.000652, 0.000000, -5.063793]
 RULE nhse: non-Hermitian skin effect — O(N) eigenvalues pile up at the boundary; winding number W = (1/2*pi) * Im * ln(det H)
-

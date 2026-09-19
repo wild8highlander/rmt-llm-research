@@ -1,6 +1,7 @@
 """
 Tests for Session 4: TrainerV3 + AdamV3 + TrainConfig.
 """
+
 from __future__ import annotations
 
 import sys
@@ -9,15 +10,15 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from tiny_gpt_v3 import TinyGPTV3, config_small, TinyGPTV3Config
-from tiny_gpt_trainer_v3 import AdamV3, TrainerV3, TrainConfig
+from tiny_gpt_trainer_v3 import AdamV3, TrainConfig, TrainerV3
+from tiny_gpt_v3 import TinyGPTV3, config_small
 
 
 # ─── AdamV3 tests ─────────────────────────────────────────────────────────
 class TestAdamV3:
-
     def test_adam_reduces_loss_on_simple_problem(self):
         """Adam should reduce loss on a simple quadratic."""
         # Minimize f(x) = (x - 3)^2. Gradient = 2(x - 3).
@@ -59,7 +60,6 @@ class TestAdamV3:
 
 # ─── TrainConfig tests ────────────────────────────────────────────────────
 class TestTrainConfig:
-
     def test_default_config(self):
         cfg = TrainConfig()
         assert cfg.epochs == 150
@@ -75,7 +75,6 @@ class TestTrainConfig:
 
 # ─── TrainerV3 tests ──────────────────────────────────────────────────────
 class TestTrainerV3:
-
     @pytest.fixture
     def small_model(self):
         cfg = config_small()
@@ -104,8 +103,7 @@ class TestTrainerV3:
     def test_make_sequences_too_short(self, small_model):
         """Should return empty list if tokens < seq_len."""
         trainer = TrainerV3(small_model, TrainConfig(epochs=1, verbose=False))
-        seqs = trainer._make_sequences(np.array([1, 2, 3], dtype=np.int64),
-                                       seq_len=10)
+        seqs = trainer._make_sequences(np.array([1, 2, 3], dtype=np.int64), seq_len=10)
         assert seqs == []
 
     def test_train_step_runs(self, small_model):
@@ -142,9 +140,14 @@ class TestTrainerV3:
         corpus = np.tile(pattern, 20)  # 20 repetitions
         val = np.tile(pattern, 5)
         train_cfg = TrainConfig(
-            epochs=20, batch_size=1, grad_accum_steps=1,
-            max_lr=5e-3, warmup_ratio=0.1, eval_interval=5,
-            early_stopping_patience=0, verbose=False,
+            epochs=20,
+            batch_size=1,
+            grad_accum_steps=1,
+            max_lr=5e-3,
+            warmup_ratio=0.1,
+            eval_interval=5,
+            early_stopping_patience=0,
+            verbose=False,
         )
         trainer = TrainerV3(model, train_cfg)
         history = trainer.train(corpus, val_ids=val)
@@ -176,23 +179,37 @@ class TestTrainerV3:
         m2.ln_f_gamma = m1.ln_f_gamma.copy()
         m2.ln_f_beta = m1.ln_f_beta.copy()
         for i in range(cfg.n_layers):
-            for attr in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k", "b_v", "b_o",
-                         "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                         "W_fc1", "W_fc2", "b_fc1", "b_fc2"):
-                setattr(m2.layers[i], attr,
-                        getattr(m1.layers[i], attr).copy())
+            for attr in (
+                "W_q",
+                "W_k",
+                "W_v",
+                "W_o",
+                "b_q",
+                "b_k",
+                "b_v",
+                "b_o",
+                "ln1_gamma",
+                "ln1_beta",
+                "ln2_gamma",
+                "ln2_beta",
+                "W_fc1",
+                "W_fc2",
+                "b_fc1",
+                "b_fc2",
+            ):
+                setattr(m2.layers[i], attr, getattr(m1.layers[i], attr).copy())
 
         rng = np.random.default_rng(42)
         corpus = rng.integers(0, cfg.vocab_size, size=500).astype(np.int64)
 
         # m1: batch_size=4, no accumulation.
-        t1 = TrainerV3(m1, TrainConfig(epochs=1, batch_size=4,
-                                        grad_accum_steps=1,
-                                        max_lr=1e-3, verbose=False))
+        t1 = TrainerV3(
+            m1, TrainConfig(epochs=1, batch_size=4, grad_accum_steps=1, max_lr=1e-3, verbose=False)
+        )
         # m2: batch_size=1, accumulation=4 (same effective batch).
-        t2 = TrainerV3(m2, TrainConfig(epochs=1, batch_size=1,
-                                        grad_accum_steps=4,
-                                        max_lr=1e-3, verbose=False))
+        t2 = TrainerV3(
+            m2, TrainConfig(epochs=1, batch_size=1, grad_accum_steps=4, max_lr=1e-3, verbose=False)
+        )
         # Both should run without error and produce finite losses.
         h1 = t1.train(corpus)
         h2 = t2.train(corpus)
@@ -208,9 +225,15 @@ class TestTrainerV3:
         # Train for a few steps.
         rng = np.random.default_rng(0)
         corpus = rng.integers(0, cfg.vocab_size, size=200).astype(np.int64)
-        trainer = TrainerV3(model, TrainConfig(
-            epochs=3, max_lr=1e-3, early_stopping_patience=0, verbose=False,
-        ))
+        trainer = TrainerV3(
+            model,
+            TrainConfig(
+                epochs=3,
+                max_lr=1e-3,
+                early_stopping_patience=0,
+                verbose=False,
+            ),
+        )
         trainer.train(corpus)
         # token_emb should have changed.
         assert not np.allclose(model.token_emb, emb_before)

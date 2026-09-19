@@ -44,7 +44,9 @@ Beta = Literal[1, 2, 4]
 # Gaussian ensembles: sample Wigner matrices
 # ---------------------------------------------------------------------------
 def gaussian_ensemble(
-    n: int, beta: int = 2, sigma: float = 1.0,
+    n: int,
+    beta: int = 2,
+    sigma: float = 1.0,
     rng: np.random.Generator | None = None,
 ) -> np.ndarray:
     """Sample a matrix from the Gaussian β-ensemble.
@@ -75,13 +77,13 @@ def gaussian_ensemble(
         A = rng.normal(0, sigma, (n, n))
         return (A + A.T) / np.sqrt(2)
     if beta == 2:
-        A = rng.normal(0, sigma / np.sqrt(2), (n, n)) + \
-            1j * rng.normal(0, sigma / np.sqrt(2), (n, n))
+        A = rng.normal(0, sigma / np.sqrt(2), (n, n)) + 1j * rng.normal(
+            0, sigma / np.sqrt(2), (n, n)
+        )
         return (A + A.conj().T) / np.sqrt(2)
     # beta == 4 — real representation of quaternion self-dual
     # Each quaternion entry [[a, b], [-b*, a*]] is a 2x2 block.
-    A = rng.normal(0, sigma / 2, (n, n)) + \
-        1j * rng.normal(0, sigma / 2, (n, n))
+    A = rng.normal(0, sigma / 2, (n, n)) + 1j * rng.normal(0, sigma / 2, (n, n))
     # Build the 2n x 2n real representation.
     Re = np.real(A)
     Im = np.imag(A)
@@ -92,7 +94,9 @@ def gaussian_ensemble(
 
 
 def ensemble_eigenvalues(
-    n: int, beta: int = 2, sigma: float = 1.0,
+    n: int,
+    beta: int = 2,
+    sigma: float = 1.0,
     rng: np.random.Generator | None = None,
 ) -> np.ndarray:
     """Sample eigenvalues from a Gaussian β-ensemble.
@@ -130,6 +134,7 @@ class DBMConfig:
         boundary: Optional reflecting boundary at ``±boundary``. If
             ``None``, no boundary is enforced.
     """
+
     n: int = 64
     beta: int = 2
     sigma: float = 1.0
@@ -175,8 +180,9 @@ class DysonBrownianMotion:
         if cfg.dt <= 0:
             raise ValueError(f"dt must be positive, got {cfg.dt}")
 
-    def initialize(self, eigvals: ArrayLike | None = None,
-                   rng: np.random.Generator | None = None) -> np.ndarray:
+    def initialize(
+        self, eigvals: ArrayLike | None = None, rng: np.random.Generator | None = None
+    ) -> np.ndarray:
         """Set the initial eigenvalue configuration.
 
         Args:
@@ -197,9 +203,7 @@ class DysonBrownianMotion:
         else:
             ev = np.asarray(eigvals, dtype=np.float64)
             if ev.shape != (cfg.n,):
-                raise ValueError(
-                    f"eigvals must have shape ({cfg.n},), got {ev.shape}"
-                )
+                raise ValueError(f"eigvals must have shape ({cfg.n},), got {ev.shape}")
             self._eigvals = np.sort(ev.copy())
         self._t = 0.0
         self._history = [self._eigvals.copy()]
@@ -246,11 +250,11 @@ class DysonBrownianMotion:
             if cfg.repulsion:
                 # Pairwise differences: λ_i - λ_j for all i ≠ j.
                 # Use broadcasting: diff[i,j] = lam[i] - lam[j].
-                diff = lam[:, None] - lam[None, :]          # (n, n)
+                diff = lam[:, None] - lam[None, :]  # (n, n)
                 # Regularize the diagonal to avoid division by zero.
                 np.fill_diagonal(diff, np.inf)
-                inv_diff = 1.0 / diff                         # (n, n)
-                drift = (beta * sigma ** 2 / (4 * n)) * inv_diff.sum(axis=1)
+                inv_diff = 1.0 / diff  # (n, n)
+                drift = (beta * sigma**2 / (4 * n)) * inv_diff.sum(axis=1)
             else:
                 drift = np.zeros(n)
             dW = self._rng.normal(0, np.sqrt(dt), n)
@@ -324,8 +328,7 @@ class DysonBrownianMotion:
         # Empirical CDF: F(λ_i) = i / N (rank-based).
         ranks = np.arange(1, n + 1, dtype=np.float64)
         # Unfolded = N * (F(λ) - F(λ_1)) / (F(λ_N) - F(λ_1)) → mean spacing 1.
-        unfolded = ranks - ranks[0]
-        return unfolded
+        return ranks - ranks[0]
 
 
 # ---------------------------------------------------------------------------
@@ -358,15 +361,15 @@ def wigner_surmise(s: ArrayLike, beta: int = 2) -> np.ndarray:
     if beta == 1:
         a, b = np.pi / 2, np.pi / 4
     elif beta == 2:
-        a, b = 32.0 / np.pi ** 2, 4.0 / np.pi
+        a, b = 32.0 / np.pi**2, 4.0 / np.pi
     else:  # beta == 4
-        a, b = (2 ** 18) / (3 ** 6 * np.pi ** 3), 64.0 / (9 * np.pi)
-    p = a * s ** beta * np.exp(-b * s ** 2)
-    return p
+        a, b = (2**18) / (3**6 * np.pi**3), 64.0 / (9 * np.pi)
+    return a * s**beta * np.exp(-b * s**2)
 
 
 def empirical_spacing_distribution(
-    eigvals: ArrayLike, normalize: bool = True,
+    eigvals: ArrayLike,
+    normalize: bool = True,
 ) -> np.ndarray:
     """Compute nearest-neighbor spacings of a sorted eigenvalue array.
 

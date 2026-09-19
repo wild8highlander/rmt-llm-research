@@ -32,29 +32,35 @@ License: Proprietary — All rights reserved.
 from __future__ import annotations
 
 import os
-import json
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 # Matplotlib setup
 import matplotlib
+
+
 matplotlib.use("Agg")
+import contextlib
+
 import matplotlib.font_manager as fm
-try:
+
+
+with contextlib.suppress(Exception):
     fm.fontManager.addfont("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")
-except Exception:
-    pass
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (registers 3d projection)
-from matplotlib import cm
+
+
 plt.rcParams["font.sans-serif"] = ["DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False
 
 import numpy as np
 
+
 # Optional Plotly for interactive 3D
 try:
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
+
     HAS_PLOTLY = True
 except Exception:
     HAS_PLOTLY = False
@@ -63,10 +69,12 @@ except Exception:
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
-def generate_all_3d_charts(results: Dict[str, Any],
-                            out_dir: str = "results/charts_3d",
-                            dpi: int = 600,
-                            params_3d: Optional[Dict[str, Any]] = None) -> Dict[str, List[str]]:
+def generate_all_3d_charts(
+    results: dict[str, Any],
+    out_dir: str = "results/charts_3d",
+    dpi: int = 600,
+    params_3d: dict[str, Any] | None = None,
+) -> dict[str, list[str]]:
     """Generate every 3D chart for the given results dict.
 
     Returns a dict: { "png": [...], "pdf": [...], "svg": [...], "html": [...] }
@@ -86,22 +94,32 @@ def generate_all_3d_charts(results: Dict[str, Any],
     pgrid = int(p.get("parameter_space_grid", 16))
 
     chart_specs = [
-        ("3d_01_loss_landscape",
-         lambda r: _chart_loss_landscape(r, grid, elevation, azimuth, cmap)),
-        ("3d_02_hidden_manifold",
-         lambda r: _chart_hidden_manifold(r, pca_comp, elevation, azimuth, cmap)),
-        ("3d_03_spectral_surface",
-         lambda r: _chart_spectral_surface(r, spectral_layers, elevation, azimuth, cmap)),
-        ("3d_04_deception_trajectory",
-         lambda r: _chart_deception_trajectory(r, traj_pts, elevation, azimuth, cmap)),
-        ("3d_05_attention_flow",
-         lambda r: _chart_attention_flow(r, flow_res, elevation, azimuth, cmap)),
-        ("3d_06_ncrit_surface",
-         lambda r: _chart_ncrit_surface(r, elevation, azimuth, cmap)),
-        ("3d_07_parameter_space",
-         lambda r: _chart_parameter_space(r, pgrid, elevation, azimuth, cmap)),
-        ("3d_08_coalition_drift",
-         lambda r: _chart_coalition_drift(r, elevation, azimuth, cmap)),
+        (
+            "3d_01_loss_landscape",
+            lambda r: _chart_loss_landscape(r, grid, elevation, azimuth, cmap),
+        ),
+        (
+            "3d_02_hidden_manifold",
+            lambda r: _chart_hidden_manifold(r, pca_comp, elevation, azimuth, cmap),
+        ),
+        (
+            "3d_03_spectral_surface",
+            lambda r: _chart_spectral_surface(r, spectral_layers, elevation, azimuth, cmap),
+        ),
+        (
+            "3d_04_deception_trajectory",
+            lambda r: _chart_deception_trajectory(r, traj_pts, elevation, azimuth, cmap),
+        ),
+        (
+            "3d_05_attention_flow",
+            lambda r: _chart_attention_flow(r, flow_res, elevation, azimuth, cmap),
+        ),
+        ("3d_06_ncrit_surface", lambda r: _chart_ncrit_surface(r, elevation, azimuth, cmap)),
+        (
+            "3d_07_parameter_space",
+            lambda r: _chart_parameter_space(r, pgrid, elevation, azimuth, cmap),
+        ),
+        ("3d_08_coalition_drift", lambda r: _chart_coalition_drift(r, elevation, azimuth, cmap)),
     ]
 
     for name, fn in chart_specs:
@@ -119,7 +137,7 @@ def generate_all_3d_charts(results: Dict[str, Any],
             written["png"].append(png_path)
             written["pdf"].append(pdf_path)
             written["svg"].append(svg_path)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             print(f"  [WARN] 3D chart {name} failed: {exc}")
 
     # Interactive Plotly 3D dashboard
@@ -128,7 +146,7 @@ def generate_all_3d_charts(results: Dict[str, Any],
             html_path = os.path.join(out_dir, "interactive_3d_dashboard.html")
             _plotly_3d_dashboard(results, html_path, p)
             written["html"].append(html_path)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             print(f"  [WARN] plotly 3D dashboard failed: {exc}")
 
     return written
@@ -137,8 +155,9 @@ def generate_all_3d_charts(results: Dict[str, Any],
 # ---------------------------------------------------------------------------
 # 1. 3D Loss Landscape
 # ---------------------------------------------------------------------------
-def _chart_loss_landscape(results: Dict[str, Any], grid: int,
-                            elevation: float, azimuth: float, cmap: str):
+def _chart_loss_landscape(
+    results: dict[str, Any], grid: int, elevation: float, azimuth: float, cmap: str
+):
     """3D surface of the loss landscape over (w1, w2) parameter perturbations.
 
     Uses the Hessian eigenvalues from research_3d results if available;
@@ -156,9 +175,9 @@ def _chart_loss_landscape(results: Dict[str, Any], grid: int,
 
     fig = plt.figure(figsize=(11, 8))
     ax = fig.add_subplot(111, projection="3d")
-    surf = ax.plot_surface(X, Y, Z, cmap=cmap, alpha=0.92,
-                            linewidth=0, antialiased=True,
-                            rstride=1, cstride=1)
+    surf = ax.plot_surface(
+        X, Y, Z, cmap=cmap, alpha=0.92, linewidth=0, antialiased=True, rstride=1, cstride=1
+    )
     ax.set_xlabel("Weight perturbation w₁")
     ax.set_ylabel("Weight perturbation w₂")
     ax.set_zlabel("Loss L(w)")
@@ -168,7 +187,7 @@ def _chart_loss_landscape(results: Dict[str, Any], grid: int,
     return fig
 
 
-def _synth_loss_landscape(grid: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _synth_loss_landscape(grid: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Synthesize a saddle-shaped loss surface for demonstration."""
     x = np.linspace(-2, 2, grid)
     y = np.linspace(-2, 2, grid)
@@ -181,8 +200,9 @@ def _synth_loss_landscape(grid: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray
 # ---------------------------------------------------------------------------
 # 2. 3D Hidden-State Manifold (PCA projection)
 # ---------------------------------------------------------------------------
-def _chart_hidden_manifold(results: Dict[str, Any], n_components: int,
-                              elevation: float, azimuth: float, cmap: str):
+def _chart_hidden_manifold(
+    results: dict[str, Any], n_components: int, elevation: float, azimuth: float, cmap: str
+):
     """3D scatter of hidden states projected to top-3 PCA components.
 
     Color encodes the token position (temporal order). Reveals the
@@ -197,18 +217,28 @@ def _chart_hidden_manifold(results: Dict[str, Any], n_components: int,
         n = 240
         t = np.linspace(0, 4 * np.pi, n)
         r = t + 0.5
-        pts = np.column_stack([
-            r * np.cos(t) + np.random.normal(0, 0.05, n),
-            r * np.sin(t) + np.random.normal(0, 0.05, n),
-            t + np.random.normal(0, 0.05, n),
-        ])
+        pts = np.column_stack(
+            [
+                r * np.cos(t) + np.random.normal(0, 0.05, n),
+                r * np.sin(t) + np.random.normal(0, 0.05, n),
+                t + np.random.normal(0, 0.05, n),
+            ]
+        )
         colors = t
 
     fig = plt.figure(figsize=(11, 8))
     ax = fig.add_subplot(111, projection="3d")
-    sc = ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2],
-                    c=colors, cmap=cmap, s=42, alpha=0.85,
-                    edgecolors="black", linewidth=0.4)
+    sc = ax.scatter(
+        pts[:, 0],
+        pts[:, 1],
+        pts[:, 2],
+        c=colors,
+        cmap=cmap,
+        s=42,
+        alpha=0.85,
+        edgecolors="black",
+        linewidth=0.4,
+    )
     ax.set_xlabel("PC1")
     ax.set_ylabel("PC2")
     ax.set_zlabel("PC3")
@@ -221,8 +251,9 @@ def _chart_hidden_manifold(results: Dict[str, Any], n_components: int,
 # ---------------------------------------------------------------------------
 # 3. 3D Spectral Surface (layer × token × eigenvalue)
 # ---------------------------------------------------------------------------
-def _chart_spectral_surface(results: Dict[str, Any], n_layers: int,
-                              elevation: float, azimuth: float, cmap: str):
+def _chart_spectral_surface(
+    results: dict[str, Any], n_layers: int, elevation: float, azimuth: float, cmap: str
+):
     """3D surface of the largest eigenvalue per (layer, token) pair.
 
     RMT interpretation: collapse is visible as the surface buckling past
@@ -240,21 +271,21 @@ def _chart_spectral_surface(results: Dict[str, Any], n_layers: int,
         tokens = np.arange(n_tokens)
         L, T = np.meshgrid(layers, tokens, indexing="ij")
         n_crit = 16
-        Z = 1.5 + 0.05 * L + np.where(T > n_crit,
-                                        2.0 * (1 - np.exp(-(T - n_crit) / 8.0)),
-                                        0.2 * T / n_crit)
+        Z = (
+            1.5
+            + 0.05 * L
+            + np.where(n_crit < T, 2.0 * (1 - np.exp(-(T - n_crit) / 8.0)), 0.2 * T / n_crit)
+        )
 
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(111, projection="3d")
     L = np.arange(n_layers)
     T = np.arange(Z.shape[1])
     LL, TT = np.meshgrid(L, T, indexing="ij")
-    surf = ax.plot_surface(LL, TT, Z, cmap=cmap, alpha=0.92,
-                            linewidth=0, antialiased=True)
+    surf = ax.plot_surface(LL, TT, Z, cmap=cmap, alpha=0.92, linewidth=0, antialiased=True)
     # MP upper bound plane
     mp_upper = float(results.get("spectral", {}).get("mp_upper", 2.7))
-    ax.plot_surface(LL, TT, np.full_like(Z, mp_upper),
-                    alpha=0.18, color="red")
+    ax.plot_surface(LL, TT, np.full_like(Z, mp_upper), alpha=0.18, color="red")
     ax.set_xlabel("Layer index")
     ax.set_ylabel("Token position")
     ax.set_zlabel("λ_max(layer, token)")
@@ -267,8 +298,9 @@ def _chart_spectral_surface(results: Dict[str, Any], n_layers: int,
 # ---------------------------------------------------------------------------
 # 4. 3D Deception Trajectory (step × honesty × deception)
 # ---------------------------------------------------------------------------
-def _chart_deception_trajectory(results: Dict[str, Any], n_points: int,
-                                   elevation: float, azimuth: float, cmap: str):
+def _chart_deception_trajectory(
+    results: dict[str, Any], n_points: int, elevation: float, azimuth: float, cmap: str
+):
     """3D trajectory of (step, honesty, deception) showing how reasoning drifts.
 
     A red marker shows where deception crosses honesty — the predicted
@@ -289,17 +321,23 @@ def _chart_deception_trajectory(results: Dict[str, Any], n_points: int,
     fig = plt.figure(figsize=(11, 8))
     ax = fig.add_subplot(111, projection="3d")
     # Trajectory colored by step
-    sc = ax.scatter(steps, h, d, c=spec, cmap=cmap, s=60,
-                     edgecolors="black", linewidth=0.5)
+    sc = ax.scatter(steps, h, d, c=spec, cmap=cmap, s=60, edgecolors="black", linewidth=0.5)
     # Connecting line
     ax.plot(steps, h, d, color="black", linewidth=1.6, alpha=0.55)
     # Find deception-onset (first step where d > h)
     onset_idx = int(np.argmax(d > h)) if np.any(d > h) else -1
     if onset_idx >= 0:
-        ax.scatter([steps[onset_idx]], [h[onset_idx]], [d[onset_idx]],
-                   color="red", s=250, marker="*", linewidth=2,
-                   edgecolors="black",
-                   label=f"Deception onset @ step {steps[onset_idx]}")
+        ax.scatter(
+            [steps[onset_idx]],
+            [h[onset_idx]],
+            [d[onset_idx]],
+            color="red",
+            s=250,
+            marker="*",
+            linewidth=2,
+            edgecolors="black",
+            label=f"Deception onset @ step {steps[onset_idx]}",
+        )
         ax.legend(loc="upper left")
     ax.set_xlabel("Reasoning step")
     ax.set_ylabel("Honesty score")
@@ -315,8 +353,9 @@ def _chart_deception_trajectory(results: Dict[str, Any], n_points: int,
 # ---------------------------------------------------------------------------
 # 5. 3D Attention Flow (query × key × weight vector field)
 # ---------------------------------------------------------------------------
-def _chart_attention_flow(results: Dict[str, Any], resolution: int,
-                            elevation: float, azimuth: float, cmap: str):
+def _chart_attention_flow(
+    results: dict[str, Any], resolution: int, elevation: float, azimuth: float, cmap: str
+):
     """3D surface of attention weights: query position × key position × weight.
 
     Reveals attention-pattern collapse and diagonal smearing past N_crit.
@@ -331,18 +370,17 @@ def _chart_attention_flow(results: Dict[str, Any], resolution: int,
         k = np.arange(n)
         Q, K = np.meshgrid(q, k, indexing="ij")
         # Distance from diagonal + noise; later positions get smeared
-        W = np.exp(-((Q - K) ** 2) / (2 * 4.0 ** 2))
+        W = np.exp(-((Q - K) ** 2) / (2 * 4.0**2))
         # Smearing: increase sigma past mid-sequence
-        smear = np.where(Q > n / 2, 8.0, 4.0)
-        W = np.exp(-((Q - K) ** 2) / (2 * smear ** 2)) + 0.05 * np.random.rand(n, n)
+        smear = np.where(n / 2 < Q, 8.0, 4.0)
+        W = np.exp(-((Q - K) ** 2) / (2 * smear**2)) + 0.05 * np.random.rand(n, n)
 
     fig = plt.figure(figsize=(11, 8))
     ax = fig.add_subplot(111, projection="3d")
     q = np.arange(W.shape[0])
     k = np.arange(W.shape[1])
     Q, K = np.meshgrid(q, k, indexing="ij")
-    surf = ax.plot_surface(Q, K, W, cmap=cmap, alpha=0.92,
-                            linewidth=0, antialiased=True)
+    surf = ax.plot_surface(Q, K, W, cmap=cmap, alpha=0.92, linewidth=0, antialiased=True)
     ax.set_xlabel("Query position")
     ax.set_ylabel("Key position")
     ax.set_zlabel("Attention weight")
@@ -355,8 +393,7 @@ def _chart_attention_flow(results: Dict[str, Any], resolution: int,
 # ---------------------------------------------------------------------------
 # 6. 3D N_crit Collapse Surface (β × rlhf × t_crit)
 # ---------------------------------------------------------------------------
-def _chart_ncrit_surface(results: Dict[str, Any],
-                            elevation: float, azimuth: float, cmap: str):
+def _chart_ncrit_surface(results: dict[str, Any], elevation: float, azimuth: float, cmap: str):
     """3D surface of predicted T_crit = (θ_b + rlhf)^(-1/β) × N_crit.
 
     Sweeps β ∈ [0.3, 0.9] and rlhf_pressure ∈ [0, 1] to show how
@@ -380,8 +417,7 @@ def _chart_ncrit_surface(results: Dict[str, Any],
     fig = plt.figure(figsize=(11, 8))
     ax = fig.add_subplot(111, projection="3d")
     B, R = np.meshgrid(beta_axis, rlhf_axis, indexing="ij")
-    surf = ax.plot_surface(B, R, Z, cmap=cmap, alpha=0.92,
-                            linewidth=0, antialiased=True)
+    surf = ax.plot_surface(B, R, Z, cmap=cmap, alpha=0.92, linewidth=0, antialiased=True)
     ax.set_xlabel("β (Caputo fractional order)")
     ax.set_ylabel("RLHF pressure μ_RLHF")
     ax.set_zlabel("T_crit (predicted token horizon)")
@@ -394,8 +430,9 @@ def _chart_ncrit_surface(results: Dict[str, Any],
 # ---------------------------------------------------------------------------
 # 7. 3D Parameter Space Sweep (temperature × top_p × hallucination)
 # ---------------------------------------------------------------------------
-def _chart_parameter_space(results: Dict[str, Any], grid: int,
-                              elevation: float, azimuth: float, cmap: str):
+def _chart_parameter_space(
+    results: dict[str, Any], grid: int, elevation: float, azimuth: float, cmap: str
+):
     """3D surface of measured hallucination rate as a function of
     temperature ∈ [0, 2], top_p ∈ [0.5, 1.0], max_tokens ∈ [64, 1024].
 
@@ -418,8 +455,7 @@ def _chart_parameter_space(results: Dict[str, Any], grid: int,
     fig = plt.figure(figsize=(11, 8))
     ax = fig.add_subplot(111, projection="3d")
     T, P = np.meshgrid(temp_axis, topp_axis, indexing="ij")
-    surf = ax.plot_surface(T, P, Z, cmap=cmap, alpha=0.92,
-                            linewidth=0, antialiased=True)
+    surf = ax.plot_surface(T, P, Z, cmap=cmap, alpha=0.92, linewidth=0, antialiased=True)
     ax.set_xlabel("Temperature")
     ax.set_ylabel("top_p")
     ax.set_zlabel("Hallucination rate")
@@ -433,8 +469,7 @@ def _chart_parameter_space(results: Dict[str, Any], grid: int,
 # ---------------------------------------------------------------------------
 # 8. 3D Coalitional Deception Drift (round × agent × deception)
 # ---------------------------------------------------------------------------
-def _chart_coalition_drift(results: Dict[str, Any],
-                              elevation: float, azimuth: float, cmap: str):
+def _chart_coalition_drift(results: dict[str, Any], elevation: float, azimuth: float, cmap: str):
     """3D bars showing per-agent deception scores across coalition rounds.
 
     Used by SCEN-COAL-09 to visualize how alpha and beta converge on
@@ -458,9 +493,16 @@ def _chart_coalition_drift(results: Dict[str, Any],
 
     fig = plt.figure(figsize=(11, 8))
     ax = fig.add_subplot(111, projection="3d")
-    ax.bar3d(R.ravel(), A.ravel(), np.zeros_like(R.ravel()),
-             0.6, 0.6, Z.ravel(),
-             shade=True, color=plt.get_cmap(cmap)(Z.ravel() / max(Z.max(), 1e-9)))
+    ax.bar3d(
+        R.ravel(),
+        A.ravel(),
+        np.zeros_like(R.ravel()),
+        0.6,
+        0.6,
+        Z.ravel(),
+        shade=True,
+        color=plt.get_cmap(cmap)(Z.ravel() / max(Z.max(), 1e-9)),
+    )
     ax.set_xlabel("Coalition round")
     ax.set_ylabel("Agent index")
     ax.set_zlabel("Deception score")
@@ -473,8 +515,7 @@ def _chart_coalition_drift(results: Dict[str, Any],
 # ---------------------------------------------------------------------------
 # Plotly interactive 3D dashboard
 # ---------------------------------------------------------------------------
-def _plotly_3d_dashboard(results: Dict[str, Any], out_path: str,
-                           params_3d: Dict[str, Any]) -> None:
+def _plotly_3d_dashboard(results: dict[str, Any], out_path: str, params_3d: dict[str, Any]) -> None:
     """Single interactive HTML with multiple 3D surfaces, fully rotatable."""
     if not HAS_PLOTLY:
         return
@@ -483,28 +524,39 @@ def _plotly_3d_dashboard(results: Dict[str, Any], out_path: str,
     cmap = params_3d.get("color_map_3d", "Viridis")
 
     # Build 4 main 3D surfaces in a 2x2 subplot grid
-    fig = make_subplots(rows=2, cols=2,
-                        specs=[[{"type": "surface"}, {"type": "surface"}],
-                               [{"type": "scatter3d"}, {"type": "surface"}]],
-                        subplot_titles=("Loss Landscape", "Spectral Surface",
-                                        "Deception Trajectory", "N_crit Surface"))
+    fig = make_subplots(
+        rows=2,
+        cols=2,
+        specs=[
+            [{"type": "surface"}, {"type": "surface"}],
+            [{"type": "scatter3d"}, {"type": "surface"}],
+        ],
+        subplot_titles=(
+            "Loss Landscape",
+            "Spectral Surface",
+            "Deception Trajectory",
+            "N_crit Surface",
+        ),
+    )
 
     # 1. Loss landscape
     X, Y, Z = _synth_loss_landscape(grid)
-    fig.add_trace(go.Surface(x=X[0], y=Y[:, 0], z=Z,
-                              colorscale=cmap, showscale=False),
-                  row=1, col=1)
+    fig.add_trace(
+        go.Surface(x=X[0], y=Y[:, 0], z=Z, colorscale=cmap, showscale=False), row=1, col=1
+    )
 
     # 2. Spectral surface (synthetic)
     n_layers, n_tokens = 6, 32
     n_crit = 16
     L, T = np.meshgrid(np.arange(n_layers), np.arange(n_tokens), indexing="ij")
-    Z_spec = 1.5 + 0.05 * L + np.where(T > n_crit,
-                                         2.0 * (1 - np.exp(-(T - n_crit) / 8.0)),
-                                         0.2 * T / n_crit)
-    fig.add_trace(go.Surface(x=L[0], y=T[:, 0], z=Z_spec,
-                              colorscale="Plasma", showscale=False),
-                  row=1, col=2)
+    Z_spec = (
+        1.5
+        + 0.05 * L
+        + np.where(n_crit < T, 2.0 * (1 - np.exp(-(T - n_crit) / 8.0)), 0.2 * T / n_crit)
+    )
+    fig.add_trace(
+        go.Surface(x=L[0], y=T[:, 0], z=Z_spec, colorscale="Plasma", showscale=False), row=1, col=2
+    )
 
     # 3. Deception trajectory (3D scatter)
     n_pts = int(params_3d.get("trajectory_points", 64))
@@ -512,13 +564,19 @@ def _plotly_3d_dashboard(results: Dict[str, Any], out_path: str,
     h = np.linspace(0.65, 0.18, n_pts)
     d = np.linspace(0.20, 0.78, n_pts)
     spec = np.linspace(1.2, 3.4, n_pts)
-    fig.add_trace(go.Scatter3d(x=steps, y=h, z=d,
-                                mode="lines+markers",
-                                marker=dict(size=4, color=spec,
-                                            colorscale="Inferno", showscale=True),
-                                line=dict(color="black", width=3),
-                                name="Trajectory"),
-                  row=2, col=1)
+    fig.add_trace(
+        go.Scatter3d(
+            x=steps,
+            y=h,
+            z=d,
+            mode="lines+markers",
+            marker={"size": 4, "color": spec, "colorscale": "Inferno", "showscale": True},
+            line={"color": "black", "width": 3},
+            name="Trajectory",
+        ),
+        row=2,
+        col=1,
+    )
 
     # 4. N_crit surface
     beta_axis = np.linspace(0.3, 0.9, 24)
@@ -528,18 +586,21 @@ def _plotly_3d_dashboard(results: Dict[str, Any], out_path: str,
     theta_b = 0.124
     mu_eff = theta_b + R
     Z_ncrit = n_crit_base * np.power(mu_eff, -1.0 / B)
-    fig.add_trace(go.Surface(x=B[0], y=R[:, 0], z=Z_ncrit,
-                              colorscale="Cividis", showscale=False),
-                  row=2, col=2)
+    fig.add_trace(
+        go.Surface(x=B[0], y=R[:, 0], z=Z_ncrit, colorscale="Cividis", showscale=False),
+        row=2,
+        col=2,
+    )
 
     fig.update_layout(
         title="RMT-LLM Laboratory — Interactive 3D Dashboard (v1.1.0)",
-        height=900, width=1300,
+        height=900,
+        width=1300,
         template="plotly_white",
-        scene=dict(aspectmode="cube"),
-        scene2=dict(aspectmode="cube"),
-        scene3=dict(aspectmode="cube"),
-        scene4=dict(aspectmode="cube"),
+        scene={"aspectmode": "cube"},
+        scene2={"aspectmode": "cube"},
+        scene3={"aspectmode": "cube"},
+        scene4={"aspectmode": "cube"},
     )
     fig.write_html(out_path, include_plotlyjs="cdn")
 

@@ -6,6 +6,7 @@ produces gradients that match central finite differences of the loss
 to within tolerance. This is THE critical correctness test for the
 autodiff implementation.
 """
+
 from __future__ import annotations
 
 import sys
@@ -13,15 +14,14 @@ from pathlib import Path
 
 import numpy as np
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from tiny_gpt_v3 import (
     TinyGPTV3,
-    TinyGPTV3Config,
-    config_small,
     _softmax,
+    config_small,
 )
-from tiny_gpt_v3 import layernorm_forward
 
 
 def cross_entropy(logits: np.ndarray, target: int) -> float:
@@ -36,8 +36,11 @@ def loss_fn(model: TinyGPTV3, token_ids: np.ndarray, target: int) -> float:
 
 
 def numeric_grad(
-    model: TinyGPTV3, token_ids: np.ndarray, target: int,
-    param_name: str, eps: float = 1e-4,
+    model: TinyGPTV3,
+    token_ids: np.ndarray,
+    target: int,
+    param_name: str,
+    eps: float = 1e-4,
 ) -> np.ndarray:
     """Central finite-difference gradient for a single parameter array."""
     arr = _get_param(model, param_name)
@@ -69,7 +72,9 @@ def _get_param(model: TinyGPTV3, name: str) -> np.ndarray:
 
 
 def analytic_grad(
-    model: TinyGPTV3, token_ids: np.ndarray, target: int,
+    model: TinyGPTV3,
+    token_ids: np.ndarray,
+    target: int,
 ) -> dict:
     """Run forward_with_cache + backward to get analytic gradients."""
     logits, cache = model.forward_with_cache(token_ids)
@@ -81,8 +86,12 @@ def analytic_grad(
 
 
 def check_param(
-    model: TinyGPTV3, token_ids: np.ndarray, target: int,
-    param_name: str, n_samples: int = 8, tol: float = 1e-3,
+    model: TinyGPTV3,
+    token_ids: np.ndarray,
+    target: int,
+    param_name: str,
+    n_samples: int = 8,
+    tol: float = 1e-3,
 ) -> tuple:
     """Compare analytic vs numeric gradient on ``n_samples`` random entries."""
     ng = numeric_grad(model, token_ids, target, param_name)
@@ -132,17 +141,32 @@ def main():
         params_to_check = [
             "token_emb",
             "lm_head",
-            "L0_W_q", "L0_W_k", "L0_W_v", "L0_W_o",
-            "L0_b_q", "L0_b_o",
-            "L0_ln1_gamma", "L0_ln1_beta",
-            "L0_W_fc1", "L0_W_fc2", "L0_b_fc1", "L0_b_fc2",
+            "L0_W_q",
+            "L0_W_k",
+            "L0_W_v",
+            "L0_W_o",
+            "L0_b_q",
+            "L0_b_o",
+            "L0_ln1_gamma",
+            "L0_ln1_beta",
+            "L0_W_fc1",
+            "L0_W_fc2",
+            "L0_b_fc1",
+            "L0_b_fc2",
             "L0_ln2_gamma",
-            "L1_W_q", "L1_W_o", "L1_W_fc1",
+            "L1_W_q",
+            "L1_W_o",
+            "L1_W_fc1",
         ]
         all_ok = True
         for name in params_to_check:
             pname, max_rel, mean_abs, ok = check_param(
-                model, token_ids, target, name, n_samples=6, tol=2e-2,
+                model,
+                token_ids,
+                target,
+                name,
+                n_samples=6,
+                tol=2e-2,
             )
             status = "OK " if ok else "FAIL"
             print(f"  [{status}] {pname:20s}  max_rel={max_rel:.4e}  mean_abs={mean_abs:.4e}")
@@ -157,7 +181,12 @@ def main():
     model = TinyGPTV3(cfg3)
     for name in ["L0_W_q", "L0_W_k", "L0_W_fc1", "lm_head"]:
         pname, max_rel, mean_abs, ok = check_param(
-            model, token_ids, target, name, n_samples=6, tol=2e-2,
+            model,
+            token_ids,
+            target,
+            name,
+            n_samples=6,
+            tol=2e-2,
         )
         status = "OK " if ok else "FAIL"
         print(f"  [{status}] {pname:20s}  max_rel={max_rel:.4e}  mean_abs={mean_abs:.4e}")

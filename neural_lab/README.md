@@ -1,29 +1,30 @@
 # RMT-LLM Neural Lab
 
-Веб-приложение (Next.js + TypeScript), где «живёт» обученная модель
-из `research/tinygpt_formula/`: playground вызывает `scripts/infer.py`
-через API, остальные вкладки показывают артефакты обучения.
+A web application (Next.js + TypeScript) where the trained model from
+`research/tinygpt_formula/` "lives": the playground calls `scripts/infer.py`
+through the API, while the other tabs display the training artifacts.
 
-## Вкладки
+## Tabs
 
-| Вкладка | Что показывает |
+| Tab | What it shows |
 |---|---|
-| Overview | сводка проекта: модель, корпус, цель ROADMAP |
-| Playground | живой инференс: 8 пресетов формул, температура, seed, число токенов |
-| Training | кривые лосса/перплексии/match_rate по реальной истории обучения |
-| Benchmark | held-out счёты (format/numeric/teacher-forced) + примеры ответов |
-| Questions | 4 открытых вопроса ROADMAP и их эмпирические решения |
-| Deployment | модели для дообучения, бесплатные серверы, найденные баги репозитория |
+| Overview | project summary: model, corpus, ROADMAP goal |
+| Playground | live inference: 8 formula presets, temperature, seed, token count |
+| Training | loss / perplexity / match_rate curves from the real training history |
+| Benchmark | held-out scores (format / numeric / teacher-forced) + answer samples |
+| Questions | the 4 ROADMAP open questions and their empirical answers |
+| Deployment | models for fine-tuning, free compute servers, repository bugs found |
 
-## Запуск
+## Getting started
 
 ```bash
 cd neural_lab
-npm install        # или bun install
+npm install        # or bun install
 npm run dev        # http://localhost:3000
 ```
 
-Требования: Node.js 20+; для вкладки Playground — Python 3.10+ и NumPy
-в системе (инференс вызывается как subprocess: `research/tinygpt_formula/scripts/infer.py`).
-API-эндпоинты: `/api/infer`, `/api/metrics`, `/api/evaluation`,
-`/api/open-questions`, `/api` (health — проверяет наличие файлов модели).
+Requirements: Node.js 20+; for the Playground tab, Python 3.10+ and NumPy
+must be available on the system (inference runs as a subprocess:
+`research/tinygpt_formula/scripts/infer.py`).
+API endpoints: `/api/infer`, `/api/metrics`, `/api/evaluation`,
+`/api/open-questions`, `/api` (health — checks for the model files).

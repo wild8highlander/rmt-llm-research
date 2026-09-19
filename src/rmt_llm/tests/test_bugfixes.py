@@ -8,6 +8,7 @@ Covers two core-library bugs that were fixed (see CHANGELOG [Unreleased]):
      np.random.Generator internally, so results were not reproducible.
      Fixed via an optional `rng` parameter (backwards compatible).
 """
+
 from __future__ import annotations
 
 import numpy as np

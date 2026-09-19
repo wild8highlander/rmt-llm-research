@@ -10,7 +10,7 @@ Language:   python
 Version:    en
 
 Scenario: default
-  
+
 
 Key metrics:
 

@@ -1,30 +1,29 @@
 """
 Tests for Session 2: Dropout + GPT-2 Scaled Initialization.
 """
+
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
 import numpy as np
-import pytest
+
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from tiny_gpt_v3 import (
     TinyGPTV3,
     TinyGPTV3Config,
-    config_small,
-    dropout_forward,
-    dropout_backward,
-    _init_layer_v3,
     _init_layer_v3_gpt2,
+    config_small,
+    dropout_backward,
+    dropout_forward,
 )
 
 
 # ─── Dropout tests ────────────────────────────────────────────────────────
 class TestDropout:
-
     def test_dropout_zero_p_is_identity(self):
         """p=0 should return x unchanged, mask=None."""
         rng = np.random.default_rng(0)
@@ -126,14 +125,18 @@ class TestDropout:
 
 # ─── GPT-2 Scaled Init tests ──────────────────────────────────────────────
 class TestGPT2ScaledInit:
-
     def test_residual_weights_smaller_than_non_residual(self):
         """Residual-path weights should have smaller std than non-residual."""
         rng = np.random.default_rng(42)
         layer = _init_layer_v3_gpt2(
-            rng=rng, H=64, kv_dim=32, mlp_dim=256,
-            use_layernorm=True, use_mlp=True,
-            n_layers=10, init_scale=0.02,
+            rng=rng,
+            H=64,
+            kv_dim=32,
+            mlp_dim=256,
+            use_layernorm=True,
+            use_mlp=True,
+            n_layers=10,
+            init_scale=0.02,
         )
         residual_std = layer.W_q.std()
         non_residual_std = layer.W_k.std()
@@ -147,16 +150,26 @@ class TestGPT2ScaledInit:
         # n_layers=2
         rng = np.random.default_rng(42)
         layer_shallow = _init_layer_v3_gpt2(
-            rng=rng, H=64, kv_dim=32, mlp_dim=256,
-            use_layernorm=True, use_mlp=True,
-            n_layers=2, init_scale=0.02,
+            rng=rng,
+            H=64,
+            kv_dim=32,
+            mlp_dim=256,
+            use_layernorm=True,
+            use_mlp=True,
+            n_layers=2,
+            init_scale=0.02,
         )
         # n_layers=20
         rng = np.random.default_rng(42)
         layer_deep = _init_layer_v3_gpt2(
-            rng=rng, H=64, kv_dim=32, mlp_dim=256,
-            use_layernorm=True, use_mlp=True,
-            n_layers=20, init_scale=0.02,
+            rng=rng,
+            H=64,
+            kv_dim=32,
+            mlp_dim=256,
+            use_layernorm=True,
+            use_mlp=True,
+            n_layers=20,
+            init_scale=0.02,
         )
         # Deeper → smaller residual scale.
         assert layer_deep.W_q.std() < layer_shallow.W_q.std()
@@ -167,9 +180,14 @@ class TestGPT2ScaledInit:
         n_layers = 10
         init_scale = 0.02
         layer = _init_layer_v3_gpt2(
-            rng=rng, H=256, kv_dim=64, mlp_dim=1024,
-            use_layernorm=True, use_mlp=True,
-            n_layers=n_layers, init_scale=init_scale,
+            rng=rng,
+            H=256,
+            kv_dim=64,
+            mlp_dim=1024,
+            use_layernorm=True,
+            use_mlp=True,
+            n_layers=n_layers,
+            init_scale=init_scale,
         )
         expected_std = init_scale / np.sqrt(2 * n_layers)
         actual_std = layer.W_q.std()

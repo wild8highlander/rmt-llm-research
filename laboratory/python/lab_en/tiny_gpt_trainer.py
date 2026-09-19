@@ -47,23 +47,35 @@ License: Proprietary — All rights reserved.
 
 from __future__ import annotations
 
+import contextlib
+import json
 import math
 import os
-import json
-import time
 import random
-from collections import Counter
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+import time
+from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
-
 from tiny_gpt import (
-    TinyGPT, TinyGPTConfig, _softmax,
-    layernorm_forward, layernorm_backward,
-    _gelu, _gelu_grad,
-    encode as byte_encode, decode as byte_decode,
+    TinyGPT,
+    TinyGPTConfig,
+    _gelu,
+    _gelu_grad,
+    _softmax,
+    layernorm_backward,
+    layernorm_forward,
 )
+from tiny_gpt import (
+    decode as byte_decode,
+)
+from tiny_gpt import (
+    encode as byte_encode,
+)
+
+
+# Public alias: tests and downstream users import ``softmax`` from this module.
+softmax = _softmax
 
 
 # ---------------------------------------------------------------------------
@@ -231,11 +243,11 @@ DEFAULT_CORPUS_PATHS = [
 ]
 
 
-def build_corpus(repo_root: str, paths: Optional[List[str]] = None) -> bytes:
+def build_corpus(repo_root: str, paths: list[str] | None = None) -> bytes:
     """Concatenate the listed files (relative to repo_root) into one byte
     stream. Missing files are silently skipped."""
     paths = paths or DEFAULT_CORPUS_PATHS
-    chunks: List[bytes] = []
+    chunks: list[bytes] = []
     for rel in paths:
         full = os.path.join(repo_root, rel)
         if os.path.isfile(full):
@@ -271,10 +283,10 @@ class BPETokenizer:
     def __init__(self, vocab_size: int = 512) -> None:
         assert vocab_size >= 256
         self.vocab_size = vocab_size
-        self.merges: List[Tuple[int, int]] = []          # list of (id_a, id_b)
-        self.merge_rank: Dict[Tuple[int, int], int] = {}  # pair -> rank (lower=earlier)
+        self.merges: list[tuple[int, int]] = []  # list of (id_a, id_b)
+        self.merge_rank: dict[tuple[int, int], int] = {}  # pair -> rank (lower=earlier)
         # id -> bytes (cached for decoding)
-        self._id2bytes: Dict[int, bytes] = {i: bytes([i]) for i in range(256)}
+        self._id2bytes: dict[int, bytes] = {i: bytes([i]) for i in range(256)}
 
     @property
     def n_merges(self) -> int:
@@ -283,8 +295,9 @@ class BPETokenizer:
     # ------------------------------------------------------------------
     # Train
     # ------------------------------------------------------------------
-    def train(self, corpus: bytes, target_merges: Optional[int] = None,
-              max_pass_bytes: int = 800_000) -> None:
+    def train(
+        self, corpus: bytes, target_merges: int | None = None, max_pass_bytes: int = 800_000
+    ) -> None:
         """Learn `target_merges` BPE merges from `corpus`.
 
         Vectorized with NumPy: pair counting uses ``np.unique`` on a
@@ -298,8 +311,9 @@ class BPETokenizer:
         if len(corpus) > max_pass_bytes:
             rng = random.Random(7)
             start = rng.randint(0, len(corpus) - max_pass_bytes)
-            data = np.frombuffer(corpus[start:start + max_pass_bytes],
-                                 dtype=np.uint8).astype(np.int64)
+            data = np.frombuffer(corpus[start : start + max_pass_bytes], dtype=np.uint8).astype(
+                np.int64
+            )
         else:
             data = np.frombuffer(corpus, dtype=np.uint8).astype(np.int64)
 
@@ -357,9 +371,9 @@ class BPETokenizer:
         return out
 
     @staticmethod
-    def _apply_merge(data: List[int], pair: Tuple[int, int], new_id: int) -> List[int]:
+    def _apply_merge(data: list[int], pair: tuple[int, int], new_id: int) -> list[int]:
         """Legacy pure-Python merge (unused by `train` but kept for tests)."""
-        out: List[int] = []
+        out: list[int] = []
         i = 0
         n = len(data)
         a, b = pair
@@ -383,10 +397,10 @@ class BPETokenizer:
         were learned.
         """
         if not self.merges:
-            return np.array(list(text.encode("utf-8", errors="replace")),
-                            dtype=np.int64)
-        data = np.frombuffer(text.encode("utf-8", errors="replace"),
-                             dtype=np.uint8).astype(np.int64)
+            return np.array(list(text.encode("utf-8", errors="replace")), dtype=np.int64)
+        data = np.frombuffer(text.encode("utf-8", errors="replace"), dtype=np.uint8).astype(
+            np.int64
+        )
         for rank, (a, b) in enumerate(self.merges):
             new_id = 256 + rank
             data = self._apply_merge_np(data, a, b, new_id)
@@ -411,14 +425,17 @@ class BPETokenizer:
     def save(self, path: str) -> None:
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
-            json.dump({
-                "vocab_size": self.vocab_size,
-                "merges": [[int(a), int(b)] for (a, b) in self.merges],
-            }, f)
+            json.dump(
+                {
+                    "vocab_size": self.vocab_size,
+                    "merges": [[int(a), int(b)] for (a, b) in self.merges],
+                },
+                f,
+            )
 
     @classmethod
-    def load(cls, path: str) -> "BPETokenizer":
-        with open(path, "r", encoding="utf-8") as f:
+    def load(cls, path: str) -> BPETokenizer:
+        with open(path, encoding="utf-8") as f:
             obj = json.load(f)
         tok = cls(vocab_size=obj["vocab_size"])
         for pair in obj["merges"]:
@@ -430,8 +447,7 @@ class BPETokenizer:
         return tok
 
 
-def make_dataset_tokens(token_ids: np.ndarray, seq_len: int = 32,
-                        stride: int = 16) -> np.ndarray:
+def make_dataset_tokens(token_ids: np.ndarray, seq_len: int = 32, stride: int = 16) -> np.ndarray:
     """Convert a 1-D array of BPE token IDs into (N, seq_len+1) windows."""
     N = max(0, (len(token_ids) - seq_len - 1) // stride + 1)
     if N == 0:
@@ -439,7 +455,7 @@ def make_dataset_tokens(token_ids: np.ndarray, seq_len: int = 32,
     windows = np.empty((N, seq_len + 1), dtype=np.int64)
     for i in range(N):
         start = i * stride
-        windows[i] = token_ids[start:start + seq_len + 1]
+        windows[i] = token_ids[start : start + seq_len + 1]
     return windows
 
 
@@ -450,15 +466,15 @@ def make_dataset_tokens(token_ids: np.ndarray, seq_len: int = 32,
 class ForwardCache:
     token_ids: np.ndarray
     x0: np.ndarray
-    per_layer: List[Dict[str, np.ndarray]]
-    x_final: np.ndarray           # hidden state before final LN
+    per_layer: list[dict[str, np.ndarray]]
+    x_final: np.ndarray  # hidden state before final LN
     ln_f_mu: np.ndarray
     ln_f_rstd: np.ndarray
     logits: np.ndarray
     probs: np.ndarray
 
 
-def forward_with_cache(model: TinyGPT, token_ids: np.ndarray) -> Tuple[np.ndarray, ForwardCache]:
+def forward_with_cache(model: TinyGPT, token_ids: np.ndarray) -> tuple[np.ndarray, ForwardCache]:
     """Forward pass with all intermediates needed for backward."""
     T = len(token_ids)
     H = model.config.hidden_dim
@@ -470,7 +486,7 @@ def forward_with_cache(model: TinyGPT, token_ids: np.ndarray) -> Tuple[np.ndarra
 
     x0 = model.token_emb[token_ids] + model.pos_emb[:T]
     x = x0.copy()
-    per_layer: List[Dict[str, np.ndarray]] = []
+    per_layer: list[dict[str, np.ndarray]] = []
 
     for layer in model.layers:
         # ---- Pre-LN1 + Attention ----
@@ -496,7 +512,7 @@ def forward_with_cache(model: TinyGPT, token_ids: np.ndarray) -> Tuple[np.ndarra
         ctx = ctx.transpose(1, 0, 2).reshape(T, H)
         attn_out = ctx @ layer.W_o + layer.b_o
 
-        x_mid = x + attn_out     # residual after attention
+        x_mid = x + attn_out  # residual after attention
 
         # ---- Pre-LN2 + MLP ----
         if use_ln:
@@ -507,27 +523,38 @@ def forward_with_cache(model: TinyGPT, token_ids: np.ndarray) -> Tuple[np.ndarra
 
         if use_mlp:
             h1 = h_norm2 @ layer.W_fc1 + layer.b_fc1
-            if act == "gelu":
-                h1_act = _gelu(h1)
-            else:
-                h1_act = np.maximum(h1, 0.0)
+            h1_act = _gelu(h1) if act == "gelu" else np.maximum(h1, 0.0)
             mlp_out = h1_act @ layer.W_fc2 + layer.b_fc2
             x_new = x_mid + mlp_out
         else:
             h1 = h1_act = mlp_out = None
             x_new = x_mid
 
-        per_layer.append({
-            "x_in": x.copy(),
-            "x_mid": x_mid.copy(),
-            "h_norm": h_norm, "ln1_mu": ln1_mu, "ln1_rstd": ln1_rstd,
-            "q": q, "k": k, "v": v,
-            "qh": qh, "kh": kh, "vh": vh,
-            "attn": attn, "ctx": ctx, "attn_out": attn_out,
-            "h_norm2": h_norm2, "ln2_mu": ln2_mu, "ln2_rstd": ln2_rstd,
-            "h1": h1, "h1_act": h1_act, "mlp_out": mlp_out,
-            "x_out": x_new.copy(),
-        })
+        per_layer.append(
+            {
+                "x_in": x.copy(),
+                "x_mid": x_mid.copy(),
+                "h_norm": h_norm,
+                "ln1_mu": ln1_mu,
+                "ln1_rstd": ln1_rstd,
+                "q": q,
+                "k": k,
+                "v": v,
+                "qh": qh,
+                "kh": kh,
+                "vh": vh,
+                "attn": attn,
+                "ctx": ctx,
+                "attn_out": attn_out,
+                "h_norm2": h_norm2,
+                "ln2_mu": ln2_mu,
+                "ln2_rstd": ln2_rstd,
+                "h1": h1,
+                "h1_act": h1_act,
+                "mlp_out": mlp_out,
+                "x_out": x_new.copy(),
+            }
+        )
         x = x_new
 
     x_final = x
@@ -542,9 +569,13 @@ def forward_with_cache(model: TinyGPT, token_ids: np.ndarray) -> Tuple[np.ndarra
 
     cache = ForwardCache(
         token_ids=token_ids.copy(),
-        x0=x0, per_layer=per_layer,
-        x_final=x_final, ln_f_mu=ln_f_mu, ln_f_rstd=ln_f_rstd,
-        logits=logits, probs=probs,
+        x0=x0,
+        per_layer=per_layer,
+        x_final=x_final,
+        ln_f_mu=ln_f_mu,
+        ln_f_rstd=ln_f_rstd,
+        logits=logits,
+        probs=probs,
     )
     return x, cache
 
@@ -556,7 +587,7 @@ def backward(
     model: TinyGPT,
     cache: ForwardCache,
     target_ids: np.ndarray,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Reverse-mode autodiff for cross-entropy at the LAST position only."""
     T = len(cache.token_ids)
     H = model.config.hidden_dim
@@ -577,8 +608,8 @@ def backward(
     # ----- Through final LN + lm_head -----
     # logits = x_norm @ lm_head -> d_lm_head = x_norm^T @ dlogits ; d_x_norm = dlogits @ lm_head^T
     x_norm_f = (cache.x_final - cache.ln_f_mu) * cache.ln_f_rstd if use_ln else cache.x_final
-    d_lm_head = x_norm_f.T @ dlogits                          # (H, V)
-    d_x_norm = dlogits @ model.lm_head.T                      # (T, H)
+    d_lm_head = x_norm_f.T @ dlogits  # (H, V)
+    d_x_norm = dlogits @ model.lm_head.T  # (T, H)
     if use_ln:
         d_x_final, d_ln_f_gamma, d_ln_f_beta = layernorm_backward(
             d_x_norm, cache.x_final, model.ln_f_gamma, cache.ln_f_mu, cache.ln_f_rstd
@@ -591,7 +622,7 @@ def backward(
     dx = d_x_final
 
     # ----- Backprop through layers (reverse order) -----
-    grads_per_layer: List[Dict[str, Any]] = []
+    grads_per_layer: list[dict[str, Any]] = []
     for li in range(model.config.n_layers - 1, -1, -1):
         layer = model.layers[li]
         c = cache.per_layer[li]
@@ -608,18 +639,18 @@ def backward(
             h1 = c["h1"]
             h_norm2 = c["h_norm2"]
             # mlp_out = h1_act @ W_fc2 + b_fc2
-            d_Wfc2 = h1_act.T @ d_mlp_out                   # (mlp_dim, H)
-            d_bfc2 = d_mlp_out.sum(axis=0)                   # (H,)
-            d_h1_act = d_mlp_out @ layer.W_fc2.T             # (T, mlp_dim)
+            d_Wfc2 = h1_act.T @ d_mlp_out  # (mlp_dim, H)
+            d_bfc2 = d_mlp_out.sum(axis=0)  # (H,)
+            d_h1_act = d_mlp_out @ layer.W_fc2.T  # (T, mlp_dim)
             # GELU backward
             if act == "gelu":
                 d_h1 = d_h1_act * _gelu_grad(h1)
             else:
                 d_h1 = d_h1_act * (h1 > 0).astype(d_h1_act.dtype)
             # h1 = h_norm2 @ W_fc1 + b_fc1
-            d_Wfc1 = h_norm2.T @ d_h1                        # (H, mlp_dim)
-            d_bfc1 = d_h1.sum(axis=0)                        # (mlp_dim,)
-            d_h_norm2 = d_h1 @ layer.W_fc1.T                 # (T, H)
+            d_Wfc1 = h_norm2.T @ d_h1  # (H, mlp_dim)
+            d_bfc1 = d_h1.sum(axis=0)  # (mlp_dim,)
+            d_h_norm2 = d_h1 @ layer.W_fc1.T  # (T, H)
         else:
             d_Wfc1 = d_bfc1 = d_Wfc2 = d_bfc2 = None
             d_h_norm2 = np.zeros_like(d_x_mid)
@@ -690,13 +721,26 @@ def backward(
             d_ln1_gamma = np.zeros_like(layer.ln1_gamma)
             d_ln1_beta = np.zeros_like(layer.ln1_beta)
 
-        grads_per_layer.append({
-            "W_q": d_Wq, "W_k": d_Wk, "W_v": d_Wv, "W_o": d_Wo,
-            "b_q": d_bq, "b_k": d_bk, "b_v": d_bv, "b_o": d_bo,
-            "ln1_gamma": d_ln1_gamma, "ln1_beta": d_ln1_beta,
-            "ln2_gamma": d_ln2_gamma, "ln2_beta": d_ln2_beta,
-            "W_fc1": d_Wfc1, "W_fc2": d_Wfc2, "b_fc1": d_bfc1, "b_fc2": d_bfc2,
-        })
+        grads_per_layer.append(
+            {
+                "W_q": d_Wq,
+                "W_k": d_Wk,
+                "W_v": d_Wv,
+                "W_o": d_Wo,
+                "b_q": d_bq,
+                "b_k": d_bk,
+                "b_v": d_bv,
+                "b_o": d_bo,
+                "ln1_gamma": d_ln1_gamma,
+                "ln1_beta": d_ln1_beta,
+                "ln2_gamma": d_ln2_gamma,
+                "ln2_beta": d_ln2_beta,
+                "W_fc1": d_Wfc1,
+                "W_fc2": d_Wfc2,
+                "b_fc1": d_bfc1,
+                "b_fc2": d_bfc2,
+            }
+        )
         dx = d_x_in
 
     # ----- Embedding gradients -----
@@ -728,11 +772,19 @@ class AdamState:
       - ``'constant'``: lr stays at `max_lr`
     """
 
-    def __init__(self, model: TinyGPT, lr: float = 3e-4,
-                 beta1: float = 0.9, beta2: float = 0.999,
-                 eps: float = 1e-8, weight_decay: float = 0.0,
-                 lr_schedule: str = "cosine", warmup_epochs: int = 3,
-                 total_epochs: int = 30, min_lr_ratio: float = 0.1) -> None:
+    def __init__(
+        self,
+        model: TinyGPT,
+        lr: float = 3e-4,
+        beta1: float = 0.9,
+        beta2: float = 0.999,
+        eps: float = 1e-8,
+        weight_decay: float = 0.0,
+        lr_schedule: str = "cosine",
+        warmup_epochs: int = 3,
+        total_epochs: int = 30,
+        min_lr_ratio: float = 0.1,
+    ) -> None:
         self.max_lr = lr
         self.lr = lr
         self.beta1 = beta1
@@ -760,26 +812,46 @@ class AdamState:
         self.m_layers = []
         self.v_layers = []
         for l in model.layers:
-            self.m_layers.append({
-                "W_q": np.zeros_like(l.W_q), "W_k": np.zeros_like(l.W_k),
-                "W_v": np.zeros_like(l.W_v), "W_o": np.zeros_like(l.W_o),
-                "b_q": np.zeros_like(l.b_q), "b_k": np.zeros_like(l.b_k),
-                "b_v": np.zeros_like(l.b_v), "b_o": np.zeros_like(l.b_o),
-                "ln1_gamma": np.zeros_like(l.ln1_gamma), "ln1_beta": np.zeros_like(l.ln1_beta),
-                "ln2_gamma": np.zeros_like(l.ln2_gamma), "ln2_beta": np.zeros_like(l.ln2_beta),
-                "W_fc1": np.zeros_like(l.W_fc1), "W_fc2": np.zeros_like(l.W_fc2),
-                "b_fc1": np.zeros_like(l.b_fc1), "b_fc2": np.zeros_like(l.b_fc2),
-            })
-            self.v_layers.append({
-                "W_q": np.zeros_like(l.W_q), "W_k": np.zeros_like(l.W_k),
-                "W_v": np.zeros_like(l.W_v), "W_o": np.zeros_like(l.W_o),
-                "b_q": np.zeros_like(l.b_q), "b_k": np.zeros_like(l.b_k),
-                "b_v": np.zeros_like(l.b_v), "b_o": np.zeros_like(l.b_o),
-                "ln1_gamma": np.zeros_like(l.ln1_gamma), "ln1_beta": np.zeros_like(l.ln1_beta),
-                "ln2_gamma": np.zeros_like(l.ln2_gamma), "ln2_beta": np.zeros_like(l.ln2_beta),
-                "W_fc1": np.zeros_like(l.W_fc1), "W_fc2": np.zeros_like(l.W_fc2),
-                "b_fc1": np.zeros_like(l.b_fc1), "b_fc2": np.zeros_like(l.b_fc2),
-            })
+            self.m_layers.append(
+                {
+                    "W_q": np.zeros_like(l.W_q),
+                    "W_k": np.zeros_like(l.W_k),
+                    "W_v": np.zeros_like(l.W_v),
+                    "W_o": np.zeros_like(l.W_o),
+                    "b_q": np.zeros_like(l.b_q),
+                    "b_k": np.zeros_like(l.b_k),
+                    "b_v": np.zeros_like(l.b_v),
+                    "b_o": np.zeros_like(l.b_o),
+                    "ln1_gamma": np.zeros_like(l.ln1_gamma),
+                    "ln1_beta": np.zeros_like(l.ln1_beta),
+                    "ln2_gamma": np.zeros_like(l.ln2_gamma),
+                    "ln2_beta": np.zeros_like(l.ln2_beta),
+                    "W_fc1": np.zeros_like(l.W_fc1),
+                    "W_fc2": np.zeros_like(l.W_fc2),
+                    "b_fc1": np.zeros_like(l.b_fc1),
+                    "b_fc2": np.zeros_like(l.b_fc2),
+                }
+            )
+            self.v_layers.append(
+                {
+                    "W_q": np.zeros_like(l.W_q),
+                    "W_k": np.zeros_like(l.W_k),
+                    "W_v": np.zeros_like(l.W_v),
+                    "W_o": np.zeros_like(l.W_o),
+                    "b_q": np.zeros_like(l.b_q),
+                    "b_k": np.zeros_like(l.b_k),
+                    "b_v": np.zeros_like(l.b_v),
+                    "b_o": np.zeros_like(l.b_o),
+                    "ln1_gamma": np.zeros_like(l.ln1_gamma),
+                    "ln1_beta": np.zeros_like(l.ln1_beta),
+                    "ln2_gamma": np.zeros_like(l.ln2_gamma),
+                    "ln2_beta": np.zeros_like(l.ln2_beta),
+                    "W_fc1": np.zeros_like(l.W_fc1),
+                    "W_fc2": np.zeros_like(l.W_fc2),
+                    "b_fc1": np.zeros_like(l.b_fc1),
+                    "b_fc2": np.zeros_like(l.b_fc2),
+                }
+            )
 
     # ------------------------------------------------------------------
     # LR scheduling
@@ -804,33 +876,51 @@ class AdamState:
     # ------------------------------------------------------------------
     # Adam step
     # ------------------------------------------------------------------
-    def _update_array(self, param: np.ndarray, grad: np.ndarray,
-                       m: np.ndarray, v: np.ndarray) -> None:
+    def _update_array(
+        self, param: np.ndarray, grad: np.ndarray, m: np.ndarray, v: np.ndarray
+    ) -> None:
         m *= self.beta1
         m += (1 - self.beta1) * grad
         v *= self.beta2
         v += (1 - self.beta2) * (grad * grad)
-        m_hat = m / (1 - self.beta1 ** self.t)
-        v_hat = v / (1 - self.beta2 ** self.t)
+        m_hat = m / (1 - self.beta1**self.t)
+        v_hat = v / (1 - self.beta2**self.t)
         if self.weight_decay > 0:
             param -= self.lr * (m_hat / (np.sqrt(v_hat) + self.eps) + self.weight_decay * param)
         else:
             param -= self.lr * m_hat / (np.sqrt(v_hat) + self.eps)
 
-    def step(self, model: TinyGPT, grads: Dict[str, Any]) -> None:
+    def step(self, model: TinyGPT, grads: dict[str, Any]) -> None:
         self.t += 1
         self._update_array(model.token_emb, grads["token_emb"], self.m_token_emb, self.v_token_emb)
-        self._update_array(model.pos_emb,   grads["pos_emb"],   self.m_pos_emb,   self.v_pos_emb)
-        self._update_array(model.lm_head,   grads["lm_head"],   self.m_lm_head,   self.v_lm_head)
-        self._update_array(model.ln_f_gamma, grads["ln_f_gamma"], self.m_ln_f_gamma, self.v_ln_f_gamma)
-        self._update_array(model.ln_f_beta,  grads["ln_f_beta"],  self.m_ln_f_beta,  self.v_ln_f_beta)
+        self._update_array(model.pos_emb, grads["pos_emb"], self.m_pos_emb, self.v_pos_emb)
+        self._update_array(model.lm_head, grads["lm_head"], self.m_lm_head, self.v_lm_head)
+        self._update_array(
+            model.ln_f_gamma, grads["ln_f_gamma"], self.m_ln_f_gamma, self.v_ln_f_gamma
+        )
+        self._update_array(model.ln_f_beta, grads["ln_f_beta"], self.m_ln_f_beta, self.v_ln_f_beta)
         for li, lg in enumerate(grads["layers"]):
             layer = model.layers[li]
             m = self.m_layers[li]
             v = self.v_layers[li]
-            for name in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k", "b_v", "b_o",
-                         "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                         "W_fc1", "W_fc2", "b_fc1", "b_fc2"):
+            for name in (
+                "W_q",
+                "W_k",
+                "W_v",
+                "W_o",
+                "b_q",
+                "b_k",
+                "b_v",
+                "b_o",
+                "ln1_gamma",
+                "ln1_beta",
+                "ln2_gamma",
+                "ln2_beta",
+                "W_fc1",
+                "W_fc2",
+                "b_fc1",
+                "b_fc2",
+            ):
                 if lg[name] is None:
                     continue
                 arr = getattr(layer, name)
@@ -846,21 +936,21 @@ class TrainConfig:
     seq_len: int = 32
     stride: int = 32
     batch_size: int = 8
-    vocab_size: int = 512          # BPE vocab (256 bytes + 256 merges by default)
-    bpe_merges: Optional[int] = None  # None -> vocab_size - 256
-    max_train_tokens: Optional[int] = 40000  # cap on tokens used for training (None = full corpus)
+    vocab_size: int = 512  # BPE vocab (256 bytes + 256 merges by default)
+    bpe_merges: int | None = None  # None -> vocab_size - 256
+    max_train_tokens: int | None = 40000  # cap on tokens used for training (None = full corpus)
     # Schedule
     epochs: Any = 30
     lr: float = 3e-4
     weight_decay: float = 1e-5
-    lr_schedule: str = "cosine"    # "cosine" | "constant"
+    lr_schedule: str = "cosine"  # "cosine" | "constant"
     warmup_epochs: int = 3
     min_lr_ratio: float = 0.1
     seed: int = 42
     max_finite_epochs: int = 10000
     eval_every: int = 3
     eval_samples: int = 64
-    checkpoint_every: int = 5    # save weights every N epochs (in addition to final)
+    checkpoint_every: int = 5  # save weights every N epochs (in addition to final)
     # Model
     hidden_dim: int = 128
     n_layers: int = 12
@@ -898,8 +988,7 @@ def cross_entropy_loss(logits: np.ndarray, target: int) -> float:
     return float(log_sum_exp - z[target])
 
 
-def evaluate_match_rate(model: TinyGPT, dataset: np.ndarray,
-                        n_samples: int = 64) -> Dict[str, Any]:
+def evaluate_match_rate(model: TinyGPT, dataset: np.ndarray, n_samples: int = 64) -> dict[str, Any]:
     if len(dataset) == 0:
         return {"match_rate": 0.0, "n_samples": 0, "loss": float("nan")}
     n = min(n_samples, len(dataset))
@@ -925,9 +1014,9 @@ def evaluate_match_rate(model: TinyGPT, dataset: np.ndarray,
 
 def train_tiny_gpt(
     repo_root: str,
-    config: Optional[TrainConfig] = None,
-    progress_cb: Optional[callable] = None,
-) -> Dict[str, Any]:
+    config: TrainConfig | None = None,
+    progress_cb: callable | None = None,
+) -> dict[str, Any]:
     """Run a full training pass. Returns a diagnostics dict."""
     config = config or TrainConfig()
     epochs = _resolve_epochs(config.epochs, config.max_finite_epochs)
@@ -937,11 +1026,9 @@ def train_tiny_gpt(
     bpe_target = config.bpe_merges if config.bpe_merges is not None else (config.vocab_size - 256)
     tokenizer = BPETokenizer(vocab_size=config.vocab_size)
     t_bpe0 = time.time()
-    print(f"  training BPE tokenizer ({bpe_target} merges, corpus={len(corpus):,}B)...",
-          flush=True)
+    print(f"  training BPE tokenizer ({bpe_target} merges, corpus={len(corpus):,}B)...", flush=True)
     tokenizer.train(corpus, target_merges=bpe_target)
-    print(f"  BPE trained in {time.time() - t_bpe0:.1f}s, merges={tokenizer.n_merges}",
-          flush=True)
+    print(f"  BPE trained in {time.time() - t_bpe0:.1f}s, merges={tokenizer.n_merges}", flush=True)
 
     # ----- Tokenize corpus + build dataset -----
     all_ids = tokenizer.encode(corpus.decode("utf-8", errors="replace"))
@@ -950,7 +1037,7 @@ def train_tiny_gpt(
         # Take a contiguous slice from the middle so we sample diverse content
         # (corpus is concatenation of files separated by <<DOC_END>>).
         offset = (len(all_ids) - config.max_train_tokens) // 2
-        all_ids = all_ids[offset:offset + config.max_train_tokens]
+        all_ids = all_ids[offset : offset + config.max_train_tokens]
         print(f"  subsampled to {len(all_ids):,} tokens (max_train_tokens cap)", flush=True)
     dataset = make_dataset_tokens(all_ids, seq_len=config.seq_len, stride=config.stride)
     n_windows = len(dataset)
@@ -993,16 +1080,22 @@ def train_tiny_gpt(
     tokenizer.save(bpe_path)
 
     optimizer = AdamState(
-        model, lr=config.lr, weight_decay=config.weight_decay,
-        lr_schedule=config.lr_schedule, warmup_epochs=config.warmup_epochs,
-        total_epochs=epochs, min_lr_ratio=config.min_lr_ratio,
+        model,
+        lr=config.lr,
+        weight_decay=config.weight_decay,
+        lr_schedule=config.lr_schedule,
+        warmup_epochs=config.warmup_epochs,
+        total_epochs=epochs,
+        min_lr_ratio=config.min_lr_ratio,
     )
 
-    history: List[Dict[str, Any]] = []
+    history: list[dict[str, Any]] = []
     t0 = time.time()
     baseline = evaluate_match_rate(model, eval_set, n_samples=config.eval_samples)
-    print(f"  baseline match_rate={baseline['match_rate']:.3%} loss={baseline['loss']:.4f}",
-          flush=True)
+    print(
+        f"  baseline match_rate={baseline['match_rate']:.3%} loss={baseline['loss']:.4f}",
+        flush=True,
+    )
 
     n_train = len(train_set)
     rng = np.random.default_rng(config.seed + 1)
@@ -1016,7 +1109,7 @@ def train_tiny_gpt(
         batch_idx = 0
 
         for start in range(0, n_train, config.batch_size):
-            bi = order[start:start + config.batch_size]
+            bi = order[start : start + config.batch_size]
             if len(bi) == 0:
                 continue
             # Update LR based on fractional epoch
@@ -1038,8 +1131,10 @@ def train_tiny_gpt(
                         "lm_head": grads["lm_head"].copy(),
                         "ln_f_gamma": grads["ln_f_gamma"].copy(),
                         "ln_f_beta": grads["ln_f_beta"].copy(),
-                        "layers": [{k: (v.copy() if v is not None else None)
-                                    for k, v in lg.items()} for lg in grads["layers"]],
+                        "layers": [
+                            {k: (v.copy() if v is not None else None) for k, v in lg.items()}
+                            for lg in grads["layers"]
+                        ],
                     }
                 else:
                     agg["token_emb"] += grads["token_emb"]
@@ -1072,12 +1167,17 @@ def train_tiny_gpt(
                         lg[k] *= inv
 
             gnorm = math.sqrt(
-                float(np.sum(agg["token_emb"] ** 2)) +
-                float(np.sum(agg["pos_emb"] ** 2)) +
-                float(np.sum(agg["lm_head"] ** 2)) +
-                float(np.sum(agg["ln_f_gamma"] ** 2)) +
-                float(np.sum(agg["ln_f_beta"] ** 2)) +
-                sum(float(np.sum(v ** 2)) for lg in agg["layers"] for v in lg.values() if v is not None)
+                float(np.sum(agg["token_emb"] ** 2))
+                + float(np.sum(agg["pos_emb"] ** 2))
+                + float(np.sum(agg["lm_head"] ** 2))
+                + float(np.sum(agg["ln_f_gamma"] ** 2))
+                + float(np.sum(agg["ln_f_beta"] ** 2))
+                + sum(
+                    float(np.sum(v**2))
+                    for lg in agg["layers"]
+                    for v in lg.values()
+                    if v is not None
+                )
             )
             grad_norm_acc += gnorm
 
@@ -1086,7 +1186,7 @@ def train_tiny_gpt(
         avg_loss = epoch_loss / max(1, epoch_steps)
         avg_gnorm = grad_norm_acc / max(1, n_batches_per_epoch)
 
-        record: Dict[str, Any] = {
+        record: dict[str, Any] = {
             "epoch": epoch + 1,
             "loss": avg_loss,
             "grad_norm": avg_gnorm,
@@ -1101,15 +1201,15 @@ def train_tiny_gpt(
         if config.checkpoint_every > 0 and (epoch + 1) % config.checkpoint_every == 0:
             try:
                 model.save_weights(weights_path)
-                print(f"  [checkpoint] saved weights to {weights_path} after epoch {epoch+1}",
-                      flush=True)
+                print(
+                    f"  [checkpoint] saved weights to {weights_path} after epoch {epoch + 1}",
+                    flush=True,
+                )
             except Exception as e:
                 print(f"  [checkpoint ERROR] {e}", flush=True)
         if progress_cb is not None:
-            try:
+            with contextlib.suppress(Exception):
                 progress_cb(record)
-            except Exception:
-                pass
 
     elapsed = time.time() - t0
 
@@ -1143,16 +1243,17 @@ def train_tiny_gpt(
 # ---------------------------------------------------------------------------
 # Sample generation after training (uses BPE)
 # ---------------------------------------------------------------------------
-def generate_sample(model: TinyGPT, prompt: str,
-                    tokenizer: Optional[BPETokenizer] = None,
-                    max_new_tokens: int = 48,
-                    temperature: float = 0.7, seed: int = 42) -> str:
+def generate_sample(
+    model: TinyGPT,
+    prompt: str,
+    tokenizer: BPETokenizer | None = None,
+    max_new_tokens: int = 48,
+    temperature: float = 0.7,
+    seed: int = 42,
+) -> str:
     """Generate text from `prompt`. Uses BPE if `tokenizer` provided,
     otherwise falls back to byte-level (for old weights)."""
-    if tokenizer is not None:
-        prompt_ids = tokenizer.encode(prompt)
-    else:
-        prompt_ids = byte_encode(prompt)
+    prompt_ids = tokenizer.encode(prompt) if tokenizer is not None else byte_encode(prompt)
     out = model.generate(
         prompt_ids,
         max_new_tokens=max_new_tokens,
@@ -1162,13 +1263,14 @@ def generate_sample(model: TinyGPT, prompt: str,
     )
     if tokenizer is not None:
         # Decode full sequence (prompt + generated) so multi-byte merges render correctly
-        full = list(int(i) for i in out["full_ids"])
+        full = [int(i) for i in out["full_ids"]]
         return tokenizer.decode(full)
     return byte_decode(out["output_ids"])
 
 
-def load_trained_model(weights_path: str,
-                       bpe_path: Optional[str] = None) -> Tuple[TinyGPT, Optional[BPETokenizer]]:
+def load_trained_model(
+    weights_path: str, bpe_path: str | None = None
+) -> tuple[TinyGPT, BPETokenizer | None]:
     """Load model + (optional) BPE tokenizer."""
     model = TinyGPT.load_weights(weights_path)
     tokenizer = None
@@ -1185,6 +1287,7 @@ def load_trained_model(weights_path: str,
 # ---------------------------------------------------------------------------
 def _cli() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="Train TinyGPT on the project corpus (v2)")
     parser.add_argument("--repo-root", default=".", help="Path to rmt-llm-research/ root")
     parser.add_argument("--epochs", default="30", help="Number of epochs (supports 'inf')")
@@ -1225,9 +1328,11 @@ def _cli() -> None:
         activation=args.activation,
     )
 
-    def progress(rec: Dict[str, Any]) -> None:
-        line = (f"  epoch {rec['epoch']:>4d}  loss={rec['loss']:.4f}  "
-                f"grad_norm={rec['grad_norm']:.4f}  lr={rec['lr']:.2e}")
+    def progress(rec: dict[str, Any]) -> None:
+        line = (
+            f"  epoch {rec['epoch']:>4d}  loss={rec['loss']:.4f}  "
+            f"grad_norm={rec['grad_norm']:.4f}  lr={rec['lr']:.2e}"
+        )
         if "match_rate" in rec:
             line += f"  match_rate={rec['match_rate']:.3%}"
         print(line, flush=True)
@@ -1236,9 +1341,11 @@ def _cli() -> None:
     corpus = build_corpus(args.repo_root)
     print(f"  corpus size: {len(corpus):,} bytes")
 
-    print(f"\nTraining TinyGPT v2 for {cfg.epochs} epochs "
-          f"(BPE vocab={cfg.vocab_size}, layers={cfg.n_layers}, hidden={cfg.hidden_dim}, "
-          f"MLP={cfg.use_mlp}, LN={cfg.use_layernorm}, schedule={cfg.lr_schedule})...")
+    print(
+        f"\nTraining TinyGPT v2 for {cfg.epochs} epochs "
+        f"(BPE vocab={cfg.vocab_size}, layers={cfg.n_layers}, hidden={cfg.hidden_dim}, "
+        f"MLP={cfg.use_mlp}, LN={cfg.use_layernorm}, schedule={cfg.lr_schedule})..."
+    )
     result = train_tiny_gpt(args.repo_root, cfg, progress_cb=progress)
 
     print(f"\n=== Training complete ({result['elapsed_seconds']:.1f}s) ===")
@@ -1256,8 +1363,7 @@ def _cli() -> None:
 
     print(f"\nGenerating sample from prompt: {args.prompt!r}")
     model, tok = load_trained_model(result["weights_path"], result["bpe_path"])
-    sample = generate_sample(model, args.prompt, tok,
-                              max_new_tokens=48, temperature=0.5, seed=42)
+    sample = generate_sample(model, args.prompt, tok, max_new_tokens=48, temperature=0.5, seed=42)
     print(f"  output: {sample!r}")
 
 

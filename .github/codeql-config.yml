@@ -1,0 +1,16 @@
+# CodeQL configuration — paths to analyze.
+# Referenced from .github/workflows/codeql.yml via `config-file:`.
+# https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning
+name: "RMT-LLM CodeQL Python analysis"
+
+paths:
+  - src
+  - laboratory/python
+  - python/rmt_llm_viz
+  - scripts
+
+paths-ignore:
+  - laboratory/webapp
+  - "**/tests/**"
+  - "**/test_*.py"
+  - "**/results/**"

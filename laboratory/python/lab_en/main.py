@@ -29,26 +29,28 @@ License: Proprietary — All rights reserved.
 
 from __future__ import annotations
 
+import datetime
 import json
 import os
 import sys
-import time
-import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
+
+import numpy as np
+
 
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import parameters as P
 import charts
 import charts_3d
+import model_downloader as md
+import parameters as P
 import reports
 import research
 import research_3d
 import scenarios as scen
-import model_downloader as md
 import tiny_gpt_trainer as trainer
-from tiny_gpt import TinyGPT, TinyGPTConfig, encode, decode
+from tiny_gpt import TinyGPT
 
 
 # ---------------------------------------------------------------------------
@@ -110,8 +112,8 @@ MENU = """
 # ---------------------------------------------------------------------------
 class Logger:
     def __init__(self) -> None:
-        self.lines: List[str] = []
-        self.path: Optional[str] = None
+        self.lines: list[str] = []
+        self.path: str | None = None
 
     def log(self, msg: str) -> None:
         ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -151,7 +153,7 @@ def action_run_scenario(logger: Logger) -> None:
         params = P.interactive_wizard()
     else:
         params = {p.name: p.default for p in P.default_parameter_space()}
-    logger.log(f"Parameters: {json.dumps({k: v for k, v in params.items()}, default=str)[:200]}")
+    logger.log(f"Parameters: {json.dumps(dict(params.items()), default=str)[:200]}")
 
     # Run
     results = scen.run_scenario(chosen, params, logs=logger.lines)
@@ -187,7 +189,7 @@ def action_custom_wizard(logger: Logger) -> None:
     """Menu item 3: full custom launch via interactive wizard."""
     logger.log("Starting custom launch (interactive wizard)")
     params = P.interactive_wizard()
-    logger.log(f"Custom params: {json.dumps({k: v for k, v in params.items()}, default=str)}")
+    logger.log(f"Custom params: {json.dumps(dict(params.items()), default=str)}")
 
     # Choose what to run
     print("\nWhat to run with these parameters?")
@@ -202,7 +204,7 @@ def action_custom_wizard(logger: Logger) -> None:
         idx = input("Scenario number: ").strip()
         if idx.isdigit() and 1 <= int(idx) <= len(scens):
             results = scen.run_scenario(scens[int(idx) - 1], params, logs=logger.lines)
-            _emit_outputs(results, logger, suffix=f"custom_scen_{scens[int(idx)-1]['id']}")
+            _emit_outputs(results, logger, suffix=f"custom_scen_{scens[int(idx) - 1]['id']}")
     elif sub == "2":
         for k, exp in research.EXPERIMENTS.items():
             print(f"  {k}. {exp.name}")
@@ -228,7 +230,7 @@ def action_custom_config(logger: Logger) -> None:
     params = cfg.get("parameters", cfg)
     # Validate
     space = {p.name: p for p in P.default_parameter_space()}
-    validated: Dict[str, Any] = {}
+    validated: dict[str, Any] = {}
     for k, v in params.items():
         if k in space:
             try:
@@ -291,7 +293,7 @@ def action_reports_only(logger: Logger) -> None:
     if not os.path.exists(path):
         print(f"Not found: {path}")
         return
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         results = json.load(f)
     logger.log(f"Loaded results from {path}")
     suffix = os.path.basename(path).replace("_results.json", "")
@@ -310,7 +312,7 @@ def action_charts_only(logger: Logger) -> None:
     if not os.path.exists(path):
         print(f"Not found: {path}")
         return
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         results = json.load(f)
     logger.log(f"Loaded results from {path}")
     written = charts.generate_all_charts(results, CHARTS_DIR)
@@ -325,7 +327,7 @@ def action_run_all(logger: Logger) -> None:
     logger.log("=== RUNNING ALL SCENARIOS + EXPERIMENTS ===")
     params = {p.name: p.default for p in P.default_parameter_space()}
 
-    all_results: List[Dict[str, Any]] = []
+    all_results: list[dict[str, Any]] = []
 
     # All scenarios
     scens = scen.list_scenarios_for_menu()
@@ -335,7 +337,7 @@ def action_run_all(logger: Logger) -> None:
             r = scen.run_scenario(sc, params, logs=logger.lines)
             all_results.append(r)
             _emit_outputs(r, logger, suffix=sc["id"], suppress_charts=False)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logger.log(f"  [ERROR] scenario {sc['id']} failed: {exc}")
 
     # All experiments
@@ -345,7 +347,7 @@ def action_run_all(logger: Logger) -> None:
             r = research.run_experiment(eid, params)
             all_results.append(r)
             _emit_outputs(r, logger, suffix=f"exp_{eid}", suppress_charts=False)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logger.log(f"  [ERROR] experiment {eid} failed: {exc}")
 
     # Master summary
@@ -360,10 +362,17 @@ def action_run_all(logger: Logger) -> None:
         "sub_results": all_results,
         "metrics": {
             "total_runs": len(all_results),
-            "scenario_match_rate": float(np.mean([
-                r.get("metrics", {}).get("match_rate", 0)
-                for r in all_results if "scenario_id" in r
-            ])) if any("scenario_id" in r for r in all_results) else 0,
+            "scenario_match_rate": float(
+                np.mean(
+                    [
+                        r.get("metrics", {}).get("match_rate", 0)
+                        for r in all_results
+                        if "scenario_id" in r
+                    ]
+                )
+            )
+            if any("scenario_id" in r for r in all_results)
+            else 0,
         },
     }
     _emit_outputs(summary, logger, suffix="FULL_LAB_RUN")
@@ -379,16 +388,18 @@ def action_show_parameters(logger: Logger) -> None:
         print(f"  {p.name:20s} type={p.type:12s} range=[{lo}, {hi}]  default={p.default}")
         if p.description:
             print(f"  {'':20s} {p.description}")
-    print(f"\nAll numeric parameters accept 'inf' for unbounded values.")
+    print("\nAll numeric parameters accept 'inf' for unbounded values.")
 
 
 def action_cross_verify(logger: Logger) -> None:
     """Menu item 10: cross-implementation verification."""
     logger.log("Cross-implementation verification")
     results = research.run_experiment("5", {})
-    logger.log(f"MP upper theory: {results['mp_upper_theory']:.4f}, "
-               f"empirical: {results['mp_upper_empirical']:.4f}, "
-               f"rel err: {results['metrics']['upper_rel_err']:.4f}")
+    logger.log(
+        f"MP upper theory: {results['mp_upper_theory']:.4f}, "
+        f"empirical: {results['mp_upper_empirical']:.4f}, "
+        f"rel err: {results['metrics']['upper_rel_err']:.4f}"
+    )
     _emit_outputs(results, logger, suffix="cross_verify")
 
 
@@ -432,18 +443,20 @@ def action_run_all_3d(logger: Logger) -> None:
     """Menu item 12: run all 9 3D experiments, generate 3D charts + comprehensive report."""
     logger.log("=== RUNNING ALL 3D EXPERIMENTS (v1.1.0) ===")
     params = {p.name: p.default for p in P.default_parameter_space()}
-    params.update({
-        "hessian_grid_size": 24,
-        "trajectory_points": 64,
-        "spectral_surface_layers": 6,
-        "pca_components": 3,
-        "attention_flow_3d_resolution": 32,
-        "parameter_space_grid": 16,
-        "curvature_neighbors": 8,
-        "color_map_3d": "viridis",
-        "elevation_3d": 30,
-        "azimuth_3d": 45,
-    })
+    params.update(
+        {
+            "hessian_grid_size": 24,
+            "trajectory_points": 64,
+            "spectral_surface_layers": 6,
+            "pca_components": 3,
+            "attention_flow_3d_resolution": 32,
+            "parameter_space_grid": 16,
+            "curvature_neighbors": 8,
+            "color_map_3d": "viridis",
+            "elevation_3d": 30,
+            "azimuth_3d": 45,
+        }
+    )
 
     combined = research_3d.run_all_3d_experiments(params)
     n_ok = sum(1 for e in combined["experiments"] if "error" not in e)
@@ -472,7 +485,7 @@ def action_3d_charts_only(logger: Logger) -> None:
     if not os.path.exists(path):
         print(f"Not found: {path}")
         return
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         results = json.load(f)
     logger.log(f"Loaded results from {path}")
     written = charts_3d.generate_all_3d_charts(results, CHARTS_3D_DIR)
@@ -517,13 +530,16 @@ def action_train_tiny_gpt(logger: Logger) -> None:
         stride=int(stride_in),
         seq_len=int(seq_in),
     )
-    logger.log(f"Training TinyGPT v2: epochs={epochs_in} lr={lr_in} "
-               f"batch={batch_in} stride={stride_in} seq_len={seq_in} "
-               f"layers=12 hidden=128 bpe=512 schedule=cosine")
+    logger.log(
+        f"Training TinyGPT v2: epochs={epochs_in} lr={lr_in} "
+        f"batch={batch_in} stride={stride_in} seq_len={seq_in} "
+        f"layers=12 hidden=128 bpe=512 schedule=cosine"
+    )
 
     def progress(rec):
-        msg = (f"  epoch {rec['epoch']:>3d}  loss={rec['loss']:.4f}  "
-               f"grad_norm={rec['grad_norm']:.4f}")
+        msg = (
+            f"  epoch {rec['epoch']:>3d}  loss={rec['loss']:.4f}  grad_norm={rec['grad_norm']:.4f}"
+        )
         if "match_rate" in rec:
             msg += f"  match_rate={rec['match_rate']:.3%}"
         print(msg)
@@ -544,9 +560,11 @@ def action_train_tiny_gpt(logger: Logger) -> None:
     print(f"  Weights             : {result['weights_path']}")
     print(f"  BPE merges file     : {result.get('bpe_path', '-')}")
 
-    logger.log(f"Training done: match_rate {result['baseline_match_rate']:.3%} -> "
-               f"{result['final_match_rate']:.3%}, "
-               f"loss {result['baseline_loss']:.4f} -> {result['final_loss']:.4f}")
+    logger.log(
+        f"Training done: match_rate {result['baseline_match_rate']:.3%} -> "
+        f"{result['final_match_rate']:.3%}, "
+        f"loss {result['baseline_loss']:.4f} -> {result['final_loss']:.4f}"
+    )
 
 
 def action_generate_from_trained(logger: Logger) -> None:
@@ -563,13 +581,16 @@ def action_generate_from_trained(logger: Logger) -> None:
     temp = float(input("Temperature [default=0.7]: ").strip() or "0.7")
     ntok = int(input("Max new tokens [default=64]: ").strip() or "64")
 
-    model, tok = trainer.load_trained_model(weights_path,
-                                             bpe_path if os.path.exists(bpe_path) else None)
-    logger.log(f"Loaded trained weights from {weights_path}"
-               + (f" + BPE from {bpe_path}" if tok else " (no BPE, byte-level fallback)"))
-    out = trainer.generate_sample(model, prompt, tok,
-                                   max_new_tokens=ntok,
-                                   temperature=temp, seed=42)
+    model, tok = trainer.load_trained_model(
+        weights_path, bpe_path if os.path.exists(bpe_path) else None
+    )
+    logger.log(
+        f"Loaded trained weights from {weights_path}"
+        + (f" + BPE from {bpe_path}" if tok else " (no BPE, byte-level fallback)")
+    )
+    out = trainer.generate_sample(
+        model, prompt, tok, max_new_tokens=ntok, temperature=temp, seed=42
+    )
     print(f"\nPrompt : {prompt!r}")
     print(f"Output : {out!r}")
     logger.log(f"Generated {len(out)} chars from prompt {prompt!r}")
@@ -578,8 +599,9 @@ def action_generate_from_trained(logger: Logger) -> None:
 # ---------------------------------------------------------------------------
 # Output emission
 # ---------------------------------------------------------------------------
-def _emit_outputs(results: Dict[str, Any], logger: Logger, suffix: str,
-                  suppress_charts: bool = False) -> None:
+def _emit_outputs(
+    results: dict[str, Any], logger: Logger, suffix: str, suppress_charts: bool = False
+) -> None:
     """Save results.json, generate charts + reports, save log."""
     ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     name = f"{ts}_{suffix}"
@@ -598,34 +620,36 @@ def _emit_outputs(results: Dict[str, Any], logger: Logger, suffix: str,
         logger.log(f"Charts: {n_charts} files in {charts_dir_run}")
 
     # 3. Generate reports in 13 formats
-    written_reports = reports.generate_all_reports(results, logger.lines,
-                                                   out_dir=REPORTS_DIR,
-                                                   experiment_name=name)
+    written_reports = reports.generate_all_reports(
+        results, logger.lines, out_dir=REPORTS_DIR, experiment_name=name
+    )
     logger.log(f"Reports: {len(written_reports)} formats in {REPORTS_DIR}")
 
     # 4. Save log
     log_path = logger.save(LOGS_DIR, f"{name}.log")
     logger.log(f"Log saved to {log_path}")
 
-    print(f"\n--- Output written ---")
+    print("\n--- Output written ---")
     print(f"  Results JSON : {res_path}")
     if not suppress_charts:
         print(f"  Charts       : {charts_dir_run}")
-    print(f"  Reports (13) : {REPORTS_DIR}/{name}.[txt|md|csv|html|json|pdf|docx|yaml|xml|tex|parquet|xlsx|sqlite]")
+    print(
+        f"  Reports (13) : {REPORTS_DIR}/{name}.[txt|md|csv|html|json|pdf|docx|yaml|xml|tex|parquet|xlsx|sqlite]"
+    )
     print(f"  Logs         : {log_path}")
 
 
-def _emit_reports_only(results: Dict[str, Any], logger: Logger, suffix: str) -> None:
-    written = reports.generate_all_reports(results, logger.lines,
-                                           out_dir=REPORTS_DIR,
-                                           experiment_name=suffix)
+def _emit_reports_only(results: dict[str, Any], logger: Logger, suffix: str) -> None:
+    written = reports.generate_all_reports(
+        results, logger.lines, out_dir=REPORTS_DIR, experiment_name=suffix
+    )
     logger.log(f"Reports regenerated: {len(written)} formats")
     print(f"\nReports written to {REPORTS_DIR}:")
     for fmt, p in written.items():
         print(f"  {fmt:8s} -> {p}")
 
 
-def _emit_3d_outputs(results: Dict[str, Any], logger: Logger, suffix: str) -> None:
+def _emit_3d_outputs(results: dict[str, Any], logger: Logger, suffix: str) -> None:
     """Save results.json, generate 3D charts + standard reports, save log."""
     ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     name = f"{ts}_{suffix}"
@@ -643,35 +667,40 @@ def _emit_3d_outputs(results: Dict[str, Any], logger: Logger, suffix: str) -> No
         "trajectory_points": results.get("parameters", {}).get("trajectory_points", 64),
         "spectral_surface_layers": results.get("parameters", {}).get("spectral_surface_layers", 6),
         "pca_components": results.get("parameters", {}).get("pca_components", 3),
-        "attention_flow_3d_resolution": results.get("parameters", {}).get("attention_flow_3d_resolution", 32),
+        "attention_flow_3d_resolution": results.get("parameters", {}).get(
+            "attention_flow_3d_resolution", 32
+        ),
         "parameter_space_grid": results.get("parameters", {}).get("parameter_space_grid", 16),
         "color_map_3d": results.get("parameters", {}).get("color_map_3d", "viridis"),
         "elevation_3d": results.get("parameters", {}).get("elevation_3d", 30),
         "azimuth_3d": results.get("parameters", {}).get("azimuth_3d", 45),
     }
-    written_3d = charts_3d.generate_all_3d_charts(results, charts_3d_dir_run,
-                                                     dpi=600, params_3d=params_3d)
+    written_3d = charts_3d.generate_all_3d_charts(
+        results, charts_3d_dir_run, dpi=600, params_3d=params_3d
+    )
     n_3d = sum(len(v) for v in written_3d.values())
     logger.log(f"3D charts: {n_3d} files in {charts_3d_dir_run}")
 
     # 3. Generate standard reports (13 formats)
-    written_reports = reports.generate_all_reports(results, logger.lines,
-                                                   out_dir=REPORTS_DIR,
-                                                   experiment_name=name)
+    written_reports = reports.generate_all_reports(
+        results, logger.lines, out_dir=REPORTS_DIR, experiment_name=name
+    )
     logger.log(f"Reports: {len(written_reports)} formats in {REPORTS_DIR}")
 
     # 4. Save log
     log_path = logger.save(LOGS_DIR, f"{name}.log")
     logger.log(f"Log saved to {log_path}")
 
-    print(f"\n--- 3D Output written ---")
+    print("\n--- 3D Output written ---")
     print(f"  Results JSON   : {res_path}")
     print(f"  3D Charts      : {charts_3d_dir_run}")
     print(f"    PNG (600 DPI): {len(written_3d['png'])} files")
     print(f"    PDF (vector) : {len(written_3d['pdf'])} files")
     print(f"    SVG (vector) : {len(written_3d['svg'])} files")
     print(f"    Plotly HTML  : {len(written_3d['html'])} files (interactive 3D)")
-    print(f"  Reports (13)   : {REPORTS_DIR}/{name}.[txt|md|csv|html|json|pdf|docx|yaml|xml|tex|parquet|xlsx|sqlite]")
+    print(
+        f"  Reports (13)   : {REPORTS_DIR}/{name}.[txt|md|csv|html|json|pdf|docx|yaml|xml|tex|parquet|xlsx|sqlite]"
+    )
     print(f"  Logs           : {log_path}")
 
 
@@ -692,7 +721,7 @@ def main() -> None:
                 logger.save(LOGS_DIR, "session.log")
                 print("\nGoodbye.")
                 break
-            elif choice == "1":
+            if choice == "1":
                 action_run_scenario(logger)
             elif choice == "2":
                 action_run_experiment(logger)
@@ -727,7 +756,7 @@ def main() -> None:
         except KeyboardInterrupt:
             print("\nInterrupted.")
             continue
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logger.log(f"[ERROR] {type(exc).__name__}: {exc}")
             print(f"\n[ERROR] {exc}")
 

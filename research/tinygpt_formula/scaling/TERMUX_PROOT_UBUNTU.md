@@ -1,47 +1,50 @@
-# Запуск эксперимента масштабирования на Android: Termux + proot-distro Ubuntu
+# Running the Scaling Experiment on Android: Termux + proot-distro Ubuntu
 
-> Пошаговая инструкция, как запустить A/B-эксперимент «формулы vs галлюцинации»
-> (`research/tinygpt_formula/scaling/`) прямо на телефоне: Termux → proot-distro →
-> Ubuntu → Python 3 + NumPy → обучение TinyGPT v3 (S 447K, опционально M ~1.1M).
-> Всё бесплатно, без root, без внешнего сервера.
+> A step-by-step guide to running the "formulas vs hallucinations" A/B
+> experiment (`research/tinygpt_formula/scaling/`) right on your phone:
+> Termux → proot-distro → Ubuntu → Python 3 + NumPy → TinyGPT v3 training
+> (S 447K, optionally M ~1.1M). Everything is free, no root, no external server.
 
-## 0. Почему через proot-distro Ubuntu, а не «голый» Termux
+## 0. Why proot-distro Ubuntu instead of "bare" Termux
 
 | | Termux (native) | Termux + proot Ubuntu |
 |---|---|---|
-| Python/NumPy | `pkg install python-numpy` (сборка под bionic) | `apt install python3-numpy` (официальные deb-пакеты Debian/Ubuntu arm64) |
-| Совместимость скриптов | иногда отличаются пути/символы | **полный glibc, как на ПК/CI** |
-| git, make, компиляторы | да, но пакеты Termux | да, из стандартного репозитория |
-| Скорость | ~100% | ~90-95% (proot-оверход syscall) |
+| Python/NumPy | `pkg install python-numpy` (bionic build) | `apt install python3-numpy` (official Debian/Ubuntu arm64 debs) |
+| Script compatibility | occasionally different paths/symbols | **full glibc, same as desktop/CI** |
+| git, make, compilers | yes, but Termux packages | yes, from the standard repository |
+| Speed | ~100% | ~90–95% (proot syscall overhead) |
 
-Эксперимент требует только Python 3.10+ и NumPy, поэтому оба пути рабочие;
-proot-distro даёт предсказуемую desktop-среду и удобен для пуша на GitHub.
+The experiment only needs Python 3.10+ and NumPy, so both paths work;
+proot-distro provides a predictable desktop-like environment and is convenient
+for pushing to GitHub.
 
-## 1. Установка Termux
+## 1. Installing Termux
 
-1. Ставьте Termux **из F-Droid** (https://f-droid.org) или с GitHub Releases
-   (github.com/termux/termux-app/releases). **Версия из Google Play устарела и не поддерживается.**
-2. Первый запуск: разрешите уведомления (нужны для wakelock-сессии).
+1. Install Termux **from F-Droid** (https://f-droid.org) or from GitHub
+   Releases (github.com/termux/termux-app/releases). **The Google Play version
+   is outdated and unmaintained.**
+2. First launch: allow notifications (needed for the wakelock session).
 
-## 2. Доступ к общей памяти (для распаковки ZIP из Downloads)
+## 2. Access to shared storage (to unzip a ZIP from Downloads)
 
 ```bash
-termux-setup-storage          # разрешите доступ к хранилищу
+termux-setup-storage          # allow storage access
 ```
-После этого `~/storage/downloads` = папка Downloads телефона.
 
-## 3. Установка Ubuntu через proot-distro
+Afterwards `~/storage/downloads` = the phone's Downloads folder.
+
+## 3. Installing Ubuntu via proot-distro
 
 ```bash
 pkg update -y && pkg upgrade -y
-pkg install -y proot-distro    # менеджер гостевых дистрибутивов
-proot-distro install ubuntu    # ~25 MB, без root
-proot-distro login ubuntu      # вход в Ubuntu (приглашение сменится на root@localhost)
+pkg install -y proot-distro    # guest distro manager
+proot-distro install ubuntu    # ~25 MB, no root
+proot-distro login ubuntu      # enter Ubuntu (the prompt becomes root@localhost)
 ```
 
-Выход из Ubuntu обратно в Termux: команда `exit`.
+To leave Ubuntu and return to Termux: run `exit`.
 
-## 4. Внутри Ubuntu: Python + NumPy + git
+## 4. Inside Ubuntu: Python + NumPy + git
 
 ```bash
 apt update -y
@@ -49,111 +52,134 @@ apt install -y python3 python3-numpy python3-pip git coreutils
 python3 -c "import numpy; print('numpy', numpy.__version__)"
 ```
 
-`python3-numpy` из apt — готовый пакет, компиляция не требуется.
+`python3-numpy` from apt is a ready-made package — no compilation needed.
 
-## 5. Получить репозиторий — два способа
+## 5. Getting the repository — two ways
 
-### Способ A: git clone (если scaling/ уже запушен на GitHub)
+### Option A: git clone (if scaling/ is already pushed to GitHub)
+
 ```bash
 git clone --depth 1 https://github.com/wild8highlander/rmt-llm-research.git
 cd rmt-llm-research/research/tinygpt_formula
 ```
 
-### Способ B: распаковать ZIP-пакет rmt-llm-push.zip из Downloads
+### Option B: unpack the rmt-llm-push.zip package from Downloads
+
 ```bash
-# в Termux (до входа в Ubuntu): ZIP из Downloads виден через ~/storage/downloads
+# in Termux (before entering Ubuntu): the ZIP from Downloads is visible via ~/storage/downloads
 pkg install -y unzip
 cp ~/storage/downloads/rmt-llm-push.zip ~/
 cd ~ && unzip -q rmt-llm-push.zip
-# внутри: rmt-llm-push/rmt-llm-research + push_to_github.sh + INSTRUCTIONS_TERMUX.md
+# inside: rmt-llm-push/rmt-llm-research + push_to_github.sh + INSTRUCTIONS_TERMUX.md
 
-# вход в Ubuntu и переход к папке (Termux home виден в proot как /host-rootfs/home/...):
+# enter Ubuntu and navigate to the folder (the Termux home is visible in proot as /host-rootfs/home/...):
 proot-distro login ubuntu --shared-tmp
 cd /host-rootfs/data/data/com.termux/files/home/rmt-llm-push/rmt-llm-research/research/tinygpt_formula
 ```
-Если путь `/host-rootfs/...` недоступен — просто скопируйте папку внутрь Ubuntu-домash:
+
+If the `/host-rootfs/...` path is unavailable — just copy the folder into the
+Ubuntu home:
+
 ```bash
-# в Termux:
+# in Termux:
 proot-distro login ubuntu -- mkdir -p /root/work
 cp -r ~/rmt-llm-push /sdcard/Download/ 2>/dev/null || true
-# затем в Ubuntu: cp -r /sdcard/Download/rmt-llm-push /root/work/ (нужен termux-setup-storage + bind)
+# then in Ubuntu: cp -r /sdcard/Download/rmt-llm-push /root/work/ (requires termux-setup-storage + bind)
 ```
-Проверенный минимальный вариант: `pkg install -y nano` не нужен — просто держите
-ZIP в `~/` и распаковывайте ВНУТРИ Ubuntu после копирования через `/sdcard`:
+
+A proven minimal route: `pkg install -y nano` is unnecessary — simply keep the
+ZIP in `~/` and unpack it INSIDE Ubuntu after copying via `/sdcard`:
+
 ```bash
 # Termux: cp ~/rmt-llm-push.zip /sdcard/Download/
 # Ubuntu: apt install -y unzip && cp /sdcard/Download/rmt-llm-push.zip . && unzip -q rmt-llm-push.zip
 ```
 
-## 6. Запуск эксперимента (S — базовая точка, ~20-40 мин на руку на телефоне)
+## 6. Running the experiment (S — the base point, ~20–40 min per arm on a phone)
 
 ```bash
-cd research/tinygpt_formula   # (или scaling/ целиком — см. путь выше)
+cd research/tinygpt_formula   # (or scaling/ entirely — see the path above)
 
-# 1) контрольный корпус (секунды)
+# 1) control corpus (seconds)
 python3 scaling/build_control_corpus.py
 
-# 2) быстрая проверка пайплайна (2 эпохи, ~2-3 мин)
+# 2) quick pipeline check (2 epochs, ~2–3 min)
 SCALING_SMOKE=1 python3 scaling/scaling_experiment.py
-rm -rf scaling/runs           # smoke-результаты в сводку не идут
+rm -rf scaling/runs           # smoke results are not included in the summary
 
-# 3) настоящий прогон S: обе руки (прерывание безопасно — resume)
+# 3) the real S run: both arms (interruption is safe — resume)
 SCALING_CELLS=S_formula,S_control SCALING_MAX_MINUTES=38 python3 scaling/scaling_experiment.py
-# не уложились в бюджет — просто запустите ту же команду ещё раз (продолжит)
+# over budget? just run the same command again (it continues)
 
-# результаты:
+# results:
 cat scaling/SCALING_RESULTS.md
 ```
 
-Опционально ночью — размер M (~1.1M): оставьте телефон на зарядке:
+Optionally overnight — size M (~1.1M): leave the phone charging:
+
 ```bash
-# в Termux (до входа в Ubuntu) запретите засыпание:
+# in Termux (before entering Ubuntu) prevent sleep:
 termux-wake-lock
-# затем в Ubuntu:
+# then in Ubuntu:
 SCALING_CELLS=M_formula,M_control SCALING_MAX_MINUTES=480 python3 scaling/scaling_experiment.py
-# после завершения (в Termux): termux-wake-unlock
+# after completion (in Termux): termux-wake-unlock
 ```
 
-## 7. Запушить результаты на GitHub из proot-Ubuntu
+## 7. Pushing the results to GitHub from proot-Ubuntu
 
 ```bash
-# внутри Ubuntu:
+# inside Ubuntu:
 apt install -y git
 cd rmt-llm-research
 git config user.name  "wild8highlander"
 git config user.email "wild8highlander@users.noreply.github.com"
 git add research/tinygpt_formula/scaling/SCALING_RESULTS.md research/tinygpt_formula/scaling/scaling_report.json
 git commit -m "feat(scaling): S-point A/B results from Termux/Ubuntu run"
-git remote -v   # origin должен указывать на ваш репозиторий
-# push с Personal Access Token (создайте на github.com → Settings → Developer settings → PAT, права repo):
-git push https://<ВАШ_PAT>@github.com/wild8highlander/rmt-llm-research.git main
+git remote -v   # origin must point to your repository
+# push with a Personal Access Token (create one at github.com → Settings → Developer settings → PAT, repo scope):
+git push https://<YOUR_PAT>@github.com/wild8highlander/rmt-llm-research.git main
 ```
-Токен в командной строке не сохраняется в конфиге git. Либо используйте готовый
-`push_to_github.sh` из ZIP-пакета (он валидирует токен и ищет репозиторий сам).
 
-## 8. Что ожидать по времени (ориентиры)
+The token in the command line is not stored in the git config. Alternatively,
+use the ready-made `push_to_github.sh` from the ZIP package (it validates the
+token and finds the repository on its own).
 
-| Этап | Флагман 2020-х (8 ядер) | Средний телефон (4-6 ядер) |
+## 8. What to expect time-wise (guidelines)
+
+| Stage | 2020s flagship (8 cores) | Average phone (4–6 cores) |
 |---|---|---|
-| SMOKE (2 эпохи S) | ~2 мин | ~4 мин |
-| S_formula (40 эпох) | ~15-20 мин | ~30-40 мин |
-| S_control (40 эпох) | ~15-20 мин | ~30-40 мин |
-| M (60 эпох, обе руки) | ~3-5 ч | ночь на зарядке |
-| L / XL | только Colab/Kaggle | только Colab/Kaggle |
+| SMOKE (2 S epochs) | ~2 min | ~4 min |
+| S_formula (40 epochs) | ~15–20 min | ~30–40 min |
+| S_control (40 epochs) | ~15–20 min | ~30–40 min |
+| M (60 epochs, both arms) | ~3–5 h | overnight on charger |
+| L / XL | Colab/Kaggle only | Colab/Kaggle only |
 
 ## 9. Troubleshooting
 
-- **`proot-distro: command not found`** — выполните `pkg update` и `pkg install proot-distro` ещё раз.
-- **`numpy` не ставится в нативном Termux** — используйте proot-Ubuntu (п. 3-4), там ставится из apt.
-- **Телефон греется / батарея тает** — норма для 40 эпох; ставьте на зарядку, `termux-wake-lock`, снимите чехол.
-- **Android убивает сессию** — держите Termux в фоне с wakelock, не свайпайте из recents; большая батарея + отключённая оптимизация батареи для Termux в настройках Android.
-- **`/sdcard` пуст в Ubuntu** — выполните `termux-setup-storage` в Termux и заходите через `proot-distro login ubuntu --bind /sdcard` (или скопируйте файлы через `~/storage`).
-- **prerывание обучения** — не страшно: веса и история пишутся каждую эпоху, повторный запуск продолжит (`RESUME с эпохи N`).
-- **Мало места** — `runs/` с весами ~2 МБ на ячейку; ZIP-пакет ~200 МБ (в основном `.git` и тест-артефакты репозитория).
+- **`proot-distro: command not found`** — run `pkg update` and
+  `pkg install proot-distro` again.
+- **`numpy` won't install in native Termux** — use proot-Ubuntu (steps 3–4),
+  where it installs from apt.
+- **The phone gets hot / the battery drains** — normal for 40 epochs; keep it
+  charging, `termux-wake-lock`, remove the case.
+- **Android kills the session** — keep Termux in the background with a
+  wakelock, don't swipe it away from recents; big battery + battery
+  optimization disabled for Termux in Android settings.
+- **`/sdcard` is empty in Ubuntu** — run `termux-setup-storage` in Termux and
+  log in via `proot-distro login ubuntu --bind /sdcard` (or copy files via
+  `~/storage`).
+- **Training interrupted** — no problem: weights and history are written every
+  epoch; a new run continues (`RESUME from epoch N`).
+- **Low on space** — `runs/` with weights is ~2 MB per cell; the ZIP package
+  is ~200 MB (mostly `.git` and repo test artifacts).
 
-## 10. Что почитать дальше
+## 10. What to read next
 
-- `research/tinygpt_formula/README.md` — что уже сделано в исследовании (обучение, бенчмарк, открытые вопросы).
-- `research/tinygpt_formula/scaling/SCALING_PLAN.md` — гипотезы H1-H4 и дизайн лестницы.
-- `INSTRUCTIONS_TERMUX.md` (в корне ZIP-пакета) — пуш всего репозитория на GitHub с телефона.
-- `colab/Scaling_Ladder_Hallucinations.ipynb` — тот же эксперимент на бесплатном Colab CPU/GPU.
+- `research/tinygpt_formula/README.md` — what the research has already done
+  (training, benchmark, open questions).
+- `research/tinygpt_formula/scaling/SCALING_PLAN.md` — hypotheses H1–H4 and
+  the ladder design.
+- `INSTRUCTIONS_TERMUX.md` (in the ZIP package root) — pushing the whole
+  repository to GitHub from a phone.
+- `colab/Scaling_Ladder_Hallucinations.ipynb` — the same experiment on free
+  Colab CPU/GPU.

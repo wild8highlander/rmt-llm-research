@@ -14,30 +14,29 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+
 # Make lab_en importable.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from tiny_gpt_v3 import (
-    MixedPrecisionCtx,
     TinyGPTV3,
     TinyGPTV3Config,
+    _softmax,
     config_4m,
     config_small,
     gqa_backward,
     gqa_forward,
-    layernorm_backward,
-    layernorm_forward,
     rope_apply,
     rope_backward,
     rope_freqs,
-    _gelu,
-    _gelu_grad,
-    _softmax,
 )
+
 
 # Hypothesis is optional.
 try:
-    from hypothesis import HealthCheck, given, settings, strategies as st
+    from hypothesis import HealthCheck, given, settings
+    from hypothesis import strategies as st
+
     _HAS_HYP = True
 except ImportError:
     _HAS_HYP = False
@@ -152,7 +151,7 @@ class TestGQA:
         q = np.random.randn(4, 4, 16)
         k = np.random.randn(4, 3, 16)
         v = np.random.randn(4, 3, 16)
-        with pytest.raises(ValueError, match="n_heads .* must be divisible"):
+        with pytest.raises(ValueError, match=r"n_heads .* must be divisible"):
             gqa_forward(q, k, v, 4, 3, 16, rope=False)
 
     def test_gqa_backward_shapes(self):
@@ -329,9 +328,24 @@ class TestBackward:
         m2.ln_f_gamma = m1.ln_f_gamma.copy()
         m2.ln_f_beta = m1.ln_f_beta.copy()
         for i in range(cfg.n_layers):
-            for attr in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k", "b_v", "b_o",
-                         "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                         "W_fc1", "W_fc2", "b_fc1", "b_fc2"):
+            for attr in (
+                "W_q",
+                "W_k",
+                "W_v",
+                "W_o",
+                "b_q",
+                "b_k",
+                "b_v",
+                "b_o",
+                "ln1_gamma",
+                "ln1_beta",
+                "ln2_gamma",
+                "ln2_beta",
+                "W_fc1",
+                "W_fc2",
+                "b_fc1",
+                "b_fc2",
+            ):
                 setattr(m2.layers[i], attr, getattr(m1.layers[i], attr).copy())
 
         logits1, cache1 = m1.forward_with_cache(tokens)
@@ -348,8 +362,9 @@ class TestBackward:
         g2 = m2.backward(cache2, dlogits.copy())
         for k in g1:
             if k in g2:
-                np.testing.assert_allclose(g1[k], g2[k], atol=1e-10,
-                                           err_msg=f"Mismatch in gradient {k}")
+                np.testing.assert_allclose(
+                    g1[k], g2[k], atol=1e-10, err_msg=f"Mismatch in gradient {k}"
+                )
 
 
 # ─── Mixed-precision tests ─────────────────────────────────────────────────

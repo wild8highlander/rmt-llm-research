@@ -51,14 +51,21 @@ pub enum JsonValue {
 }
 
 impl JsonValue {
-    pub fn obj() -> Self { JsonValue::Object(Vec::new()) }
-    pub fn arr() -> Self { JsonValue::Array(Vec::new()) }
+    pub fn obj() -> Self {
+        JsonValue::Object(Vec::new())
+    }
+    pub fn arr() -> Self {
+        JsonValue::Array(Vec::new())
+    }
 
     /// Insert or replace a key in an Object.
     pub fn set(&mut self, key: &str, val: JsonValue) {
         if let JsonValue::Object(v) = self {
             for entry in v.iter_mut() {
-                if entry.0 == key { entry.1 = val; return; }
+                if entry.0 == key {
+                    entry.1 = val;
+                    return;
+                }
             }
             v.push((key.to_string(), val));
         }
@@ -66,7 +73,9 @@ impl JsonValue {
 
     /// Append to an Array.
     pub fn push(&mut self, val: JsonValue) {
-        if let JsonValue::Array(v) = self { v.push(val); }
+        if let JsonValue::Array(v) = self {
+            v.push(val);
+        }
     }
 
     pub fn to_json_string(&self) -> String {
@@ -85,7 +94,9 @@ impl JsonValue {
             JsonValue::Array(a) => {
                 out.push('[');
                 for (i, v) in a.iter().enumerate() {
-                    if i > 0 { out.push_str(", "); }
+                    if i > 0 {
+                        out.push_str(", ");
+                    }
                     v.write_json(out);
                 }
                 out.push(']');
@@ -93,7 +104,9 @@ impl JsonValue {
             JsonValue::Object(o) => {
                 out.push('{');
                 for (i, (k, v)) in o.iter().enumerate() {
-                    if i > 0 { out.push_str(", "); }
+                    if i > 0 {
+                        out.push_str(", ");
+                    }
                     write_json_string(k, out);
                     out.push_str(": ");
                     v.write_json(out);
@@ -106,9 +119,15 @@ impl JsonValue {
 
 /// Format f64 in a Python-like way (so json.loads can parse).
 fn fmt_float(v: f64) -> String {
-    if v.is_nan() { return "null".to_string(); }
+    if v.is_nan() {
+        return "null".to_string();
+    }
     if v.is_infinite() {
-        return if v > 0.0 { "1e308".to_string() } else { "-1e308".to_string() };
+        return if v > 0.0 {
+            "1e308".to_string()
+        } else {
+            "-1e308".to_string()
+        };
     }
     let abs_v = v.abs();
     if abs_v != 0.0 && (abs_v < 1e-4 || abs_v >= 1e16) {
@@ -165,7 +184,9 @@ fn write_json_string(s: &str, out: &mut String) {
 /// - normal number string -> parsed value
 pub fn clamp_inf(value: &str, default: f64, max_finite: f64) -> f64 {
     let trimmed = value.trim();
-    if trimmed.is_empty() { return default; }
+    if trimmed.is_empty() {
+        return default;
+    }
     let lower = trimmed.to_lowercase();
     if lower == "inf" || lower == "+inf" || lower == "infinity" || lower == "+infinity" {
         return max_finite;
@@ -178,7 +199,9 @@ pub fn clamp_inf(value: &str, default: f64, max_finite: f64) -> f64 {
     }
     match trimmed.parse::<f64>() {
         Ok(v) => {
-            if v.is_nan() { return default; }
+            if v.is_nan() {
+                return default;
+            }
             if v.is_infinite() {
                 return if v > 0.0 { max_finite } else { -max_finite };
             }
@@ -195,16 +218,27 @@ fn get_f64(params: &HashMap<String, String>, key: &str, default: f64, max_finite
     }
 }
 
-fn get_usize(params: &HashMap<String, String>, key: &str, default: usize, max_finite: f64) -> usize {
+fn get_usize(
+    params: &HashMap<String, String>,
+    key: &str,
+    default: usize,
+    max_finite: f64,
+) -> usize {
     let v = get_f64(params, key, default as f64, max_finite);
-    if v < 1.0 { 1 } else { v as usize }
+    if v < 1.0 {
+        1
+    } else {
+        v as usize
+    }
 }
 
 fn get_i64(params: &HashMap<String, String>, key: &str, default: i64) -> i64 {
     match params.get(key) {
         Some(s) => {
             let trimmed = s.trim();
-            if trimmed.is_empty() { return default; }
+            if trimmed.is_empty() {
+                return default;
+            }
             let lower = trimmed.to_lowercase();
             if lower == "inf" || lower == "+inf" || lower == "infinity" {
                 return 1_000_000;
@@ -220,12 +254,16 @@ fn get_i64(params: &HashMap<String, String>, key: &str, default: i64) -> i64 {
 // =============================================================================
 fn mat_identity(n: usize) -> Vec<Vec<f64>> {
     let mut m = vec![vec![0.0; n]; n];
-    for i in 0..n { m[i][i] = 1.0; }
+    for i in 0..n {
+        m[i][i] = 1.0;
+    }
     m
 }
 
 fn mat_transpose(a: &[Vec<f64>]) -> Vec<Vec<f64>> {
-    if a.is_empty() { return Vec::new(); }
+    if a.is_empty() {
+        return Vec::new();
+    }
     let rows = a.len();
     let cols = a[0].len();
     let mut t = vec![vec![0.0; rows]; cols];
@@ -239,17 +277,23 @@ fn mat_transpose(a: &[Vec<f64>]) -> Vec<Vec<f64>> {
 
 fn mat_mul(a: &[Vec<f64>], b: &[Vec<f64>]) -> Vec<Vec<f64>> {
     let a_rows = a.len();
-    if a_rows == 0 { return Vec::new(); }
+    if a_rows == 0 {
+        return Vec::new();
+    }
     let a_cols = a[0].len();
     let b_rows = b.len();
-    if b_rows == 0 { return Vec::new(); }
+    if b_rows == 0 {
+        return Vec::new();
+    }
     let b_cols = b[0].len();
     assert_eq!(a_cols, b_rows, "mat_mul dimension mismatch");
     let mut c = vec![vec![0.0; b_cols]; a_rows];
     for i in 0..a_rows {
         for k in 0..a_cols {
             let aik = a[i][k];
-            if aik == 0.0 { continue; }
+            if aik == 0.0 {
+                continue;
+            }
             for j in 0..b_cols {
                 c[i][j] += aik * b[k][j];
             }
@@ -273,14 +317,22 @@ fn mat_sub(a: &[Vec<f64>], b: &[Vec<f64>]) -> Vec<Vec<f64>> {
 /// Covariance of an (N, D) matrix -> DxD
 fn covariance(mat: &[Vec<f64>]) -> Vec<Vec<f64>> {
     let n = mat.len();
-    if n == 0 { return Vec::new(); }
+    if n == 0 {
+        return Vec::new();
+    }
     let d = mat[0].len();
-    if d == 0 { return vec![vec![]; 0]; }
+    if d == 0 {
+        return vec![vec![]; 0];
+    }
     let mut mean = vec![0.0; d];
     for row in mat {
-        for j in 0..d { mean[j] += row[j]; }
+        for j in 0..d {
+            mean[j] += row[j];
+        }
     }
-    for j in 0..d { mean[j] /= n as f64; }
+    for j in 0..d {
+        mean[j] /= n as f64;
+    }
     let mut cov = vec![vec![0.0; d]; d];
     let denom = (n - 1).max(1) as f64;
     for row in mat {
@@ -305,8 +357,12 @@ fn covariance(mat: &[Vec<f64>]) -> Vec<Vec<f64>> {
 /// corresponds to eigenvalues[k].
 fn jacobi_eigen(a_in: &[Vec<f64>], max_iter: usize) -> (Vec<f64>, Vec<Vec<f64>>) {
     let n = a_in.len();
-    if n == 0 { return (Vec::new(), Vec::new()); }
-    if n == 1 { return (vec![a_in[0][0]], vec![vec![1.0]]); }
+    if n == 0 {
+        return (Vec::new(), Vec::new());
+    }
+    if n == 1 {
+        return (vec![a_in[0][0]], vec![vec![1.0]]);
+    }
 
     let mut a = a_in.to_vec();
     let mut v = mat_identity(n);
@@ -326,7 +382,9 @@ fn jacobi_eigen(a_in: &[Vec<f64>], max_iter: usize) -> (Vec<f64>, Vec<Vec<f64>>)
                 }
             }
         }
-        if max_val < 1e-14 { break; }
+        if max_val < 1e-14 {
+            break;
+        }
 
         let app = a[p][p];
         let aqq = a[q][q];
@@ -367,10 +425,12 @@ fn jacobi_eigen(a_in: &[Vec<f64>], max_iter: usize) -> (Vec<f64>, Vec<Vec<f64>>)
     }
 
     // Extract eigenvalues (diagonal) and pair with eigenvector columns
-    let mut pairs: Vec<(f64, Vec<f64>)> = (0..n).map(|i| {
-        let col: Vec<f64> = (0..n).map(|r| v[r][i]).collect();
-        (a[i][i], col)
-    }).collect();
+    let mut pairs: Vec<(f64, Vec<f64>)> = (0..n)
+        .map(|i| {
+            let col: Vec<f64> = (0..n).map(|r| v[r][i]).collect();
+            (a[i][i], col)
+        })
+        .collect();
 
     // Sort ascending (matches numpy.linalg.eigh)
     pairs.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
@@ -382,7 +442,9 @@ fn jacobi_eigen(a_in: &[Vec<f64>], max_iter: usize) -> (Vec<f64>, Vec<Vec<f64>>)
 
 /// Numerically stable softmax.
 fn softmax(x: &[f64]) -> Vec<f64> {
-    if x.is_empty() { return Vec::new(); }
+    if x.is_empty() {
+        return Vec::new();
+    }
     let max = x.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
     let exps: Vec<f64> = x.iter().map(|v| (v - max).exp()).collect();
     let sum: f64 = exps.iter().sum();
@@ -402,7 +464,9 @@ pub struct Rng {
 impl Rng {
     pub fn new(seed: u64) -> Self {
         // Avoid degenerate all-zero state
-        Rng { state: if seed == 0 { 0x9e3779b97f4a7c15 } else { seed } }
+        Rng {
+            state: if seed == 0 { 0x9e3779b97f4a7c15 } else { seed },
+        }
     }
 
     pub fn next_u64(&mut self) -> u64 {
@@ -428,7 +492,9 @@ impl Rng {
 
     pub fn next_int(&mut self, lo: usize, hi: usize) -> usize {
         // Half-open [lo, hi)
-        if hi <= lo { return lo; }
+        if hi <= lo {
+            return lo;
+        }
         lo + (self.next_u64() % ((hi - lo) as u64)) as usize
     }
 
@@ -448,10 +514,18 @@ impl Rng {
 //  with structured Gaussian noise scaled per layer, which is sufficient for the
 //  spectral/PCA/curvature computations the 3D experiments perform.)
 // =============================================================================
-fn default_hidden_dim() -> usize { 64 }
-fn default_n_layers() -> usize { 6 }
-fn default_max_seq_len() -> usize { 64 }
-fn default_vocab_size() -> usize { 256 }
+fn default_hidden_dim() -> usize {
+    64
+}
+fn default_n_layers() -> usize {
+    6
+}
+fn default_max_seq_len() -> usize {
+    64
+}
+fn default_vocab_size() -> usize {
+    256
+}
 
 /// Returns n_layers × seq_len × hidden_dim tensor of synthesized hidden states.
 fn synthesize_hidden_states(
@@ -491,7 +565,9 @@ fn config_json(
 /// Linear regression slope (y ~ x). x is 0..n.
 fn linreg_slope(y: &[f64]) -> f64 {
     let n = y.len();
-    if n < 2 { return 0.0; }
+    if n < 2 {
+        return 0.0;
+    }
     let nf = n as f64;
     let xm = (n - 1) as f64 / 2.0;
     let ym: f64 = y.iter().sum::<f64>() / nf;
@@ -502,7 +578,11 @@ fn linreg_slope(y: &[f64]) -> f64 {
         num += dx * (y[i] - ym);
         den += dx * dx;
     }
-    if den.abs() < 1e-12 { 0.0 } else { num / den }
+    if den.abs() < 1e-12 {
+        0.0
+    } else {
+        num / den
+    }
 }
 
 // =============================================================================
@@ -524,7 +604,9 @@ fn exp_hessian_loss_landscape(params: &HashMap<String, String>) -> JsonValue {
     // Stack all layers: (n_layers*seq_len, hidden_dim)
     let mut h_stack: Vec<Vec<f64>> = Vec::with_capacity(n_layers * seq_len);
     for layer in &hidden {
-        for row in layer { h_stack.push(row.clone()); }
+        for row in layer {
+            h_stack.push(row.clone());
+        }
     }
     let cov = covariance(&h_stack);
     let (mut eigvals, _eigvecs) = jacobi_eigen(&cov, 100 * cov.len() + 100);
@@ -555,8 +637,12 @@ fn exp_hessian_loss_landscape(params: &HashMap<String, String>) -> JsonValue {
             w1_row.push(JsonValue::Float(w1));
             w2_row.push(JsonValue::Float(w2));
             z_row.push(JsonValue::Float(z));
-            if z < loss_min { loss_min = z; }
-            if z > loss_max { loss_max = z; }
+            if z < loss_min {
+                loss_min = z;
+            }
+            if z > loss_max {
+                loss_max = z;
+            }
         }
         w1_grid.push(w1_row);
         w2_grid.push(w2_row);
@@ -575,12 +661,19 @@ fn exp_hessian_loss_landscape(params: &HashMap<String, String>) -> JsonValue {
     metrics.set("is_saddle", JsonValue::Bool(is_saddle));
 
     let mut result = JsonValue::obj();
-    result.set("experiment", JsonValue::Str("hessian_loss_landscape".to_string()));
-    result.set("config", config_json(hidden_dim, n_layers, n_heads, vocab_size, max_seq_len, seed));
+    result.set(
+        "experiment",
+        JsonValue::Str("hessian_loss_landscape".to_string()),
+    );
+    result.set(
+        "config",
+        config_json(hidden_dim, n_layers, n_heads, vocab_size, max_seq_len, seed),
+    );
     result.set("grid_size", JsonValue::Int(grid as i64));
-    result.set("top_eigenvalues", JsonValue::Array(vec![
-        JsonValue::Float(lam1), JsonValue::Float(lam2),
-    ]));
+    result.set(
+        "top_eigenvalues",
+        JsonValue::Array(vec![JsonValue::Float(lam1), JsonValue::Float(lam2)]),
+    );
     result.set("w1_grid", w1_grid);
     result.set("w2_grid", w2_grid);
     result.set("loss_surface", loss_surface);
@@ -608,7 +701,9 @@ fn exp_manifold_geometry(params: &HashMap<String, String>) -> JsonValue {
         let n_tok = rng.next_int(8, max_seq_len);
         let hidden = synthesize_hidden_states(&mut rng, n_layers, n_tok, hidden_dim);
         let last = &hidden[n_layers - 1];
-        for row in last { all_hidden.push(row.clone()); }
+        for row in last {
+            all_hidden.push(row.clone());
+        }
     }
 
     let mut n = all_hidden.len();
@@ -621,7 +716,9 @@ fn exp_manifold_geometry(params: &HashMap<String, String>) -> JsonValue {
         while padded.len() < target {
             for r in &all_hidden {
                 padded.push(r.clone());
-                if padded.len() >= target { break; }
+                if padded.len() >= target {
+                    break;
+                }
             }
         }
         all_hidden = padded;
@@ -631,9 +728,13 @@ fn exp_manifold_geometry(params: &HashMap<String, String>) -> JsonValue {
     // Center
     let mut mean = vec![0.0; d];
     for row in &all_hidden {
-        for j in 0..d { mean[j] += row[j]; }
+        for j in 0..d {
+            mean[j] += row[j];
+        }
     }
-    for j in 0..d { mean[j] /= n.max(1) as f64; }
+    for j in 0..d {
+        mean[j] /= n.max(1) as f64;
+    }
     let h_centered: Vec<Vec<f64>> = all_hidden
         .iter()
         .map(|r| (0..d).map(|j| r[j] - mean[j]).collect())
@@ -662,10 +763,14 @@ fn exp_manifold_geometry(params: &HashMap<String, String>) -> JsonValue {
         for k in 0..n_comp {
             let v = &pairs[k].1;
             let mut s = 0.0;
-            for j in 0..d { s += row[j] * v[j]; }
+            for j in 0..d {
+                s += row[j] * v[j];
+            }
             pt.push(s);
         }
-        while pt.len() < 3 { pt.push(0.0); }
+        while pt.len() < 3 {
+            pt.push(0.0);
+        }
         proj.push(pt);
     }
 
@@ -679,7 +784,9 @@ fn exp_manifold_geometry(params: &HashMap<String, String>) -> JsonValue {
     let mut pca_colors = JsonValue::arr();
     for (i, pt) in proj.iter().enumerate() {
         let mut p = JsonValue::arr();
-        for v in &pt[..3] { p.push(JsonValue::Float(*v)); }
+        for v in &pt[..3] {
+            p.push(JsonValue::Float(*v));
+        }
         pca_points.push(p);
         pca_colors.push(JsonValue::Int(i as i64));
     }
@@ -693,13 +800,22 @@ fn exp_manifold_geometry(params: &HashMap<String, String>) -> JsonValue {
 
     let mut metrics = JsonValue::obj();
     metrics.set("intrinsic_dim_pr", JsonValue::Float(pr));
-    metrics.set("explained_variance_top3", JsonValue::Float(explained_var_top3));
+    metrics.set(
+        "explained_variance_top3",
+        JsonValue::Float(explained_var_top3),
+    );
     metrics.set("top_eigenvalue", JsonValue::Float(top_eig));
     metrics.set("manifold_volume_proxy", JsonValue::Float(manifold_vol));
 
     let mut result = JsonValue::obj();
-    result.set("experiment", JsonValue::Str("manifold_geometry".to_string()));
-    result.set("config", config_json(hidden_dim, n_layers, n_heads, vocab_size, max_seq_len, seed));
+    result.set(
+        "experiment",
+        JsonValue::Str("manifold_geometry".to_string()),
+    );
+    result.set(
+        "config",
+        config_json(hidden_dim, n_layers, n_heads, vocab_size, max_seq_len, seed),
+    );
     result.set("n_samples", JsonValue::Int(proj.len() as i64));
     result.set("n_components", JsonValue::Int(n_components_req as i64));
     result.set("pca_eigenvalues", pca_eigvals_arr);
@@ -748,7 +864,9 @@ fn exp_trajectory_analysis(params: &HashMap<String, String>) -> JsonValue {
         let hidden = synthesize_hidden_states(&mut rng, n_layers, toks_len, hidden_dim);
         let mut h_stack: Vec<Vec<f64>> = Vec::with_capacity(n_layers * toks_len);
         for layer in &hidden {
-            for row in layer { h_stack.push(row.clone()); }
+            for row in layer {
+                h_stack.push(row.clone());
+            }
         }
         let cov = covariance(&h_stack);
         let (mut ev, _) = jacobi_eigen(&cov, 50 * cov.len() + 50);
@@ -757,7 +875,10 @@ fn exp_trajectory_analysis(params: &HashMap<String, String>) -> JsonValue {
     }
 
     let spec_min = spec_radius.iter().cloned().fold(f64::INFINITY, f64::min);
-    let spec_max = spec_radius.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+    let spec_max = spec_radius
+        .iter()
+        .cloned()
+        .fold(f64::NEG_INFINITY, f64::max);
     let spec_norm: Vec<f64> = spec_radius
         .iter()
         .map(|v| (v - spec_min) / (spec_max - spec_min).max(1e-9))
@@ -809,7 +930,10 @@ fn exp_trajectory_analysis(params: &HashMap<String, String>) -> JsonValue {
     metrics.set("deception_increase_rate", JsonValue::Float(dec_inc_rate));
 
     let mut result = JsonValue::obj();
-    result.set("experiment", JsonValue::Str("trajectory_analysis".to_string()));
+    result.set(
+        "experiment",
+        JsonValue::Str("trajectory_analysis".to_string()),
+    );
     result.set("n_points", JsonValue::Int(n_points as i64));
     result.set("trajectory", traj);
     result.set("deception_onset_step", JsonValue::Int(onset_idx));
@@ -846,8 +970,12 @@ fn exp_spectral_surface_regression(params: &HashMap<String, String>) -> JsonValu
                 ev.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
                 let lam_max = ev.first().copied().unwrap_or(0.0);
                 grid_data[l].push(lam_max);
-                if lam_max > grid_max { grid_max = lam_max; }
-                if lam_max < grid_min { grid_min = lam_max; }
+                if lam_max > grid_max {
+                    grid_max = lam_max;
+                }
+                if lam_max < grid_min {
+                    grid_min = lam_max;
+                }
             } else {
                 grid_data[l].push(0.0);
             }
@@ -857,7 +985,9 @@ fn exp_spectral_surface_regression(params: &HashMap<String, String>) -> JsonValu
     let mut lambda_max_grid = JsonValue::arr();
     for row in &grid_data {
         let mut arr = JsonValue::arr();
-        for v in row { arr.push(JsonValue::Float(*v)); }
+        for v in row {
+            arr.push(JsonValue::Float(*v));
+        }
         lambda_max_grid.push(arr);
     }
 
@@ -904,13 +1034,19 @@ fn exp_spectral_surface_regression(params: &HashMap<String, String>) -> JsonValu
     metrics.set("lambda_max_global", JsonValue::Float(grid_max));
     metrics.set("lambda_min_global", JsonValue::Float(grid_min));
     metrics.set("bifurcation_token", JsonValue::Int(bif_token as i64));
-    metrics.set("bifurcation_vs_ncrit", JsonValue::Float((bif_token as f64 - n_crit_pred).abs()));
+    metrics.set(
+        "bifurcation_vs_ncrit",
+        JsonValue::Float((bif_token as f64 - n_crit_pred).abs()),
+    );
     metrics.set("pre_bifurcation_slope", JsonValue::Float(pre_slope));
     metrics.set("post_bifurcation_slope", JsonValue::Float(post_slope));
     metrics.set("slope_ratio", JsonValue::Float(slope_ratio));
 
     let mut result = JsonValue::obj();
-    result.set("experiment", JsonValue::Str("spectral_surface_regression".to_string()));
+    result.set(
+        "experiment",
+        JsonValue::Str("spectral_surface_regression".to_string()),
+    );
     result.set("n_layers", JsonValue::Int(n_layers as i64));
     result.set("n_tokens", JsonValue::Int(n_tokens as i64));
     result.set("lambda_max_grid", lambda_max_grid);
@@ -939,7 +1075,9 @@ fn exp_riemannian_curvature(params: &HashMap<String, String>) -> JsonValue {
         let n_tok = rng.next_int(8, max_seq_len);
         let hidden = synthesize_hidden_states(&mut rng, n_layers, n_tok, hidden_dim);
         let last = &hidden[n_layers - 1];
-        for row in last { all_hidden.push(row.clone()); }
+        for row in last {
+            all_hidden.push(row.clone());
+        }
     }
 
     let n = all_hidden.len();
@@ -948,9 +1086,13 @@ fn exp_riemannian_curvature(params: &HashMap<String, String>) -> JsonValue {
     // Center
     let mut mean = vec![0.0; d];
     for row in &all_hidden {
-        for j in 0..d { mean[j] += row[j]; }
+        for j in 0..d {
+            mean[j] += row[j];
+        }
     }
-    for j in 0..d { mean[j] /= n.max(1) as f64; }
+    for j in 0..d {
+        mean[j] /= n.max(1) as f64;
+    }
     let h_centered: Vec<Vec<f64>> = all_hidden
         .iter()
         .map(|r| (0..d).map(|j| r[j] - mean[j]).collect())
@@ -969,7 +1111,9 @@ fn exp_riemannian_curvature(params: &HashMap<String, String>) -> JsonValue {
         for k in 0..n_dims {
             let v = &pairs[k].1;
             let mut s = 0.0;
-            for j in 0..d { s += row[j] * v[j]; }
+            for j in 0..d {
+                s += row[j] * v[j];
+            }
             pt[k] = s;
         }
         points_3d.push(pt);
@@ -985,9 +1129,8 @@ fn exp_riemannian_curvature(params: &HashMap<String, String>) -> JsonValue {
             .filter(|&j| j != i)
             .map(|j| {
                 let pj = points_3d[j];
-                let dd = (pi[0] - pj[0]).powi(2)
-                    + (pi[1] - pj[1]).powi(2)
-                    + (pi[2] - pj[2]).powi(2);
+                let dd =
+                    (pi[0] - pj[0]).powi(2) + (pi[1] - pj[1]).powi(2) + (pi[2] - pj[2]).powi(2);
                 (j, dd.sqrt())
             })
             .collect();
@@ -1002,14 +1145,18 @@ fn exp_riemannian_curvature(params: &HashMap<String, String>) -> JsonValue {
         // Normalize
         for v in vecs.iter_mut() {
             let nrm = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt().max(1e-9);
-            for c in v.iter_mut() { *c /= nrm; }
+            for c in v.iter_mut() {
+                *c /= nrm;
+            }
         }
 
         // Sort by polar angle (atan2 of first two components)
         vecs.sort_by(|a, b| {
             let ang_a = a[1].atan2(a[0]);
             let ang_b = b[1].atan2(b[0]);
-            ang_a.partial_cmp(&ang_b).unwrap_or(std::cmp::Ordering::Equal)
+            ang_a
+                .partial_cmp(&ang_b)
+                .unwrap_or(std::cmp::Ordering::Equal)
         });
 
         // Sum angles between consecutive vectors (cyclic)
@@ -1041,7 +1188,9 @@ fn exp_riemannian_curvature(params: &HashMap<String, String>) -> JsonValue {
         .collect();
 
     let mut curv_arr = JsonValue::arr();
-    for v in &curvatures { curv_arr.push(JsonValue::Float(*v)); }
+    for v in &curvatures {
+        curv_arr.push(JsonValue::Float(*v));
+    }
     let mut pts_arr = JsonValue::arr();
     for p in &points_3d {
         pts_arr.push(JsonValue::Array(vec![
@@ -1051,20 +1200,29 @@ fn exp_riemannian_curvature(params: &HashMap<String, String>) -> JsonValue {
         ]));
     }
     let mut high_arr = JsonValue::arr();
-    for i in &high_curv_idx { high_arr.push(JsonValue::Int(*i as i64)); }
+    for i in &high_curv_idx {
+        high_arr.push(JsonValue::Int(*i as i64));
+    }
 
     let mut metrics = JsonValue::obj();
     metrics.set("mean_curvature", JsonValue::Float(mean_c));
     metrics.set("std_curvature", JsonValue::Float(std_c));
     metrics.set("max_curvature", JsonValue::Float(max_c));
     metrics.set("min_curvature", JsonValue::Float(min_c));
-    metrics.set("n_high_curvature", JsonValue::Int(high_curv_idx.len() as i64));
-    metrics.set("high_curvature_ratio", JsonValue::Float(
-        high_curv_idx.len() as f64 / n.max(1) as f64
-    ));
+    metrics.set(
+        "n_high_curvature",
+        JsonValue::Int(high_curv_idx.len() as i64),
+    );
+    metrics.set(
+        "high_curvature_ratio",
+        JsonValue::Float(high_curv_idx.len() as f64 / n.max(1) as f64),
+    );
 
     let mut result = JsonValue::obj();
-    result.set("experiment", JsonValue::Str("riemannian_curvature".to_string()));
+    result.set(
+        "experiment",
+        JsonValue::Str("riemannian_curvature".to_string()),
+    );
     result.set("n_samples", JsonValue::Int(n as i64));
     result.set("n_neighbors", JsonValue::Int(k as i64));
     result.set("curvatures", curv_arr);
@@ -1097,7 +1255,9 @@ fn exp_attention_flow_3d(params: &HashMap<String, String>) -> JsonValue {
     for i in 0..n {
         let sum: f64 = attn[i].iter().sum();
         let s = sum.max(1e-9);
-        for j in 0..n { attn[i][j] /= s; }
+        for j in 0..n {
+            attn[i][j] /= s;
+        }
     }
 
     // Diagonality score
@@ -1115,7 +1275,8 @@ fn exp_attention_flow_3d(params: &HashMap<String, String>) -> JsonValue {
         let mean_j: f64 = (0..n).map(|j| j as f64 * attn[i][j]).sum::<f64>() / s;
         let var: f64 = (0..n)
             .map(|j| (j as f64 - mean_j).powi(2) * attn[i][j])
-            .sum::<f64>() / s;
+            .sum::<f64>()
+            / s;
         spread_per_row.push(var.sqrt());
     }
     let smearing_score: f64 = spread_per_row.iter().sum::<f64>() / n as f64;
@@ -1137,23 +1298,31 @@ fn exp_attention_flow_3d(params: &HashMap<String, String>) -> JsonValue {
     let mut weights = JsonValue::arr();
     for row in &attn {
         let mut r = JsonValue::arr();
-        for v in row { r.push(JsonValue::Float(*v)); }
+        for v in row {
+            r.push(JsonValue::Float(*v));
+        }
         weights.push(r);
     }
     let mut spread_arr = JsonValue::arr();
-    for v in &spread_per_row { spread_arr.push(JsonValue::Float(*v)); }
+    for v in &spread_per_row {
+        spread_arr.push(JsonValue::Float(*v));
+    }
 
     let mut metrics = JsonValue::obj();
     metrics.set("diagonality_score", JsonValue::Float(diag_score));
     metrics.set("smearing_score", JsonValue::Float(smearing_score));
-    metrics.set("diagonal_to_smeared_ratio", JsonValue::Float(
-        diag_score / smearing_score.max(1e-9)
-    ));
+    metrics.set(
+        "diagonal_to_smeared_ratio",
+        JsonValue::Float(diag_score / smearing_score.max(1e-9)),
+    );
     metrics.set("max_weight", JsonValue::Float(max_weight));
     metrics.set("entropy", JsonValue::Float(entropy));
 
     let mut result = JsonValue::obj();
-    result.set("experiment", JsonValue::Str("attention_flow_3d".to_string()));
+    result.set(
+        "experiment",
+        JsonValue::Str("attention_flow_3d".to_string()),
+    );
     result.set("resolution", JsonValue::Int(n as i64));
     result.set("weights", weights);
     result.set("spread_per_row", spread_arr);
@@ -1185,8 +1354,12 @@ fn exp_ncrit_surface(params: &HashMap<String, String>) -> JsonValue {
             let mu_eff = (theta_b + r).max(1e-6);
             let z = n_crit_base * mu_eff.powf(-1.0 / b);
             row.push(JsonValue::Float(z));
-            if z < z_min { z_min = z; }
-            if z > z_max { z_max = z; }
+            if z < z_min {
+                z_min = z;
+            }
+            if z > z_max {
+                z_max = z;
+            }
             z_sum += z;
             z_count += 1;
         }
@@ -1205,9 +1378,13 @@ fn exp_ncrit_surface(params: &HashMap<String, String>) -> JsonValue {
     metrics.set("t_crit_at_beta_0_5_rlhf_1", JsonValue::Float(t_at_b05_r1));
 
     let mut beta_arr = JsonValue::arr();
-    for v in &beta_axis { beta_arr.push(JsonValue::Float(*v)); }
+    for v in &beta_axis {
+        beta_arr.push(JsonValue::Float(*v));
+    }
     let mut rlhf_arr = JsonValue::arr();
-    for v in &rlhf_axis { rlhf_arr.push(JsonValue::Float(*v)); }
+    for v in &rlhf_axis {
+        rlhf_arr.push(JsonValue::Float(*v));
+    }
 
     let mut result = JsonValue::obj();
     result.set("experiment", JsonValue::Str("ncrit_surface".to_string()));
@@ -1248,18 +1425,34 @@ fn exp_parameter_space(params: &HashMap<String, String>) -> JsonValue {
             let noise = 0.02 * rng.next_f64();
             let z = (base + noise).max(0.0).min(1.0);
             row.push(JsonValue::Float(z));
-            if z < z_min { z_min = z; }
-            if z > z_max { z_max = z; }
-            if i == 0 { z_at_t0.push(z); }
-            if i == grid - 1 { z_at_t2.push(z); }
-            if j == 0 { z_at_p05.push(z); }
-            if j == grid - 1 { z_at_p1.push(z); }
+            if z < z_min {
+                z_min = z;
+            }
+            if z > z_max {
+                z_max = z;
+            }
+            if i == 0 {
+                z_at_t0.push(z);
+            }
+            if i == grid - 1 {
+                z_at_t2.push(z);
+            }
+            if j == 0 {
+                z_at_p05.push(z);
+            }
+            if j == grid - 1 {
+                z_at_p1.push(z);
+            }
         }
         hallu_grid.push(row);
     }
 
     let mean = |v: &[f64]| -> f64 {
-        if v.is_empty() { 0.0 } else { v.iter().sum::<f64>() / v.len() as f64 }
+        if v.is_empty() {
+            0.0
+        } else {
+            v.iter().sum::<f64>() / v.len() as f64
+        }
     };
 
     let mut metrics = JsonValue::obj();
@@ -1271,9 +1464,13 @@ fn exp_parameter_space(params: &HashMap<String, String>) -> JsonValue {
     metrics.set("hallucination_at_P1", JsonValue::Float(mean(&z_at_p1)));
 
     let mut t_arr = JsonValue::arr();
-    for v in &temp_axis { t_arr.push(JsonValue::Float(*v)); }
+    for v in &temp_axis {
+        t_arr.push(JsonValue::Float(*v));
+    }
     let mut p_arr = JsonValue::arr();
-    for v in &topp_axis { p_arr.push(JsonValue::Float(*v)); }
+    for v in &topp_axis {
+        p_arr.push(JsonValue::Float(*v));
+    }
 
     let mut result = JsonValue::obj();
     result.set("experiment", JsonValue::Str("parameter_space".to_string()));
@@ -1301,7 +1498,9 @@ fn exp_coalition_drift(params: &HashMap<String, String>) -> JsonValue {
         let mut round_vals = Vec::with_capacity(n_agents);
         for i in 0..n_agents {
             let noise = 0.02 * rng.next_normal();
-            let v = (base_deception[i] + 0.12 * r as f64 + noise).max(0.0).min(1.0);
+            let v = (base_deception[i] + 0.12 * r as f64 + noise)
+                .max(0.0)
+                .min(1.0);
             round_vals.push(v);
         }
         per_round_data.push(round_vals);
@@ -1314,14 +1513,17 @@ fn exp_coalition_drift(params: &HashMap<String, String>) -> JsonValue {
         per_round_data[n_rounds - 1]
             .iter()
             .map(|v| (v - m).powi(2))
-            .sum::<f64>() / n_agents as f64
+            .sum::<f64>()
+            / n_agents as f64
     };
     let drift = last_mean - first_mean;
 
     let mut per_round = JsonValue::arr();
     for round in &per_round_data {
         let mut r = JsonValue::arr();
-        for v in round { r.push(JsonValue::Float(*v)); }
+        for v in round {
+            r.push(JsonValue::Float(*v));
+        }
         per_round.push(r);
     }
 
@@ -1389,33 +1591,56 @@ fn save_result_to_file(id: &str, result: &JsonValue) {
 /// Returns (id, name, description) for each 3D experiment.
 pub fn experiments_3d_info() -> Vec<(String, String, String)> {
     vec![
-        ("6".to_string(),
-         "Hessian Loss Landscape (3D)".to_string(),
-         "Perturb model along top-2 Hessian eigendirections, measure 3D loss surface.".to_string()),
-        ("7".to_string(),
-         "Manifold Geometry (3D PCA)".to_string(),
-         "Estimate intrinsic dimensionality via PCA participation ratio; 3D projection.".to_string()),
-        ("8".to_string(),
-         "Reasoning Trajectory Analysis (3D)".to_string(),
-         "Sample (step, honesty, deception, spectral_radius) and detect deception onset.".to_string()),
-        ("9".to_string(),
-         "Spectral Surface Regression (3D)".to_string(),
-         "Fit \u{03bb}_max(layer, token) surface and detect N_crit bifurcation.".to_string()),
-        ("10".to_string(),
-         "Riemannian Curvature (3D)".to_string(),
-         "Estimate discrete Gaussian curvature on hidden-state k-NN graph.".to_string()),
-        ("11".to_string(),
-         "3D Attention Flow".to_string(),
-         "Measure attention-weight surface and quantify diagonal-vs-smeared regime.".to_string()),
-        ("12".to_string(),
-         "N_crit Collapse Surface (3D)".to_string(),
-         "Compute T_crit(\u{03b2}, \u{03bc}_RLHF) surface over Caputo order and RLHF pressure.".to_string()),
-        ("13".to_string(),
-         "Parameter Space Sweep (3D)".to_string(),
-         "Sweep (temperature, top_p) and measure hallucination-rate surface.".to_string()),
-        ("14".to_string(),
-         "Coalitional Deception Drift (3D)".to_string(),
-         "Simulate multi-agent deception drift across coalition rounds (SCEN-COAL-09).".to_string()),
+        (
+            "6".to_string(),
+            "Hessian Loss Landscape (3D)".to_string(),
+            "Perturb model along top-2 Hessian eigendirections, measure 3D loss surface."
+                .to_string(),
+        ),
+        (
+            "7".to_string(),
+            "Manifold Geometry (3D PCA)".to_string(),
+            "Estimate intrinsic dimensionality via PCA participation ratio; 3D projection."
+                .to_string(),
+        ),
+        (
+            "8".to_string(),
+            "Reasoning Trajectory Analysis (3D)".to_string(),
+            "Sample (step, honesty, deception, spectral_radius) and detect deception onset."
+                .to_string(),
+        ),
+        (
+            "9".to_string(),
+            "Spectral Surface Regression (3D)".to_string(),
+            "Fit \u{03bb}_max(layer, token) surface and detect N_crit bifurcation.".to_string(),
+        ),
+        (
+            "10".to_string(),
+            "Riemannian Curvature (3D)".to_string(),
+            "Estimate discrete Gaussian curvature on hidden-state k-NN graph.".to_string(),
+        ),
+        (
+            "11".to_string(),
+            "3D Attention Flow".to_string(),
+            "Measure attention-weight surface and quantify diagonal-vs-smeared regime.".to_string(),
+        ),
+        (
+            "12".to_string(),
+            "N_crit Collapse Surface (3D)".to_string(),
+            "Compute T_crit(\u{03b2}, \u{03bc}_RLHF) surface over Caputo order and RLHF pressure."
+                .to_string(),
+        ),
+        (
+            "13".to_string(),
+            "Parameter Space Sweep (3D)".to_string(),
+            "Sweep (temperature, top_p) and measure hallucination-rate surface.".to_string(),
+        ),
+        (
+            "14".to_string(),
+            "Coalitional Deception Drift (3D)".to_string(),
+            "Simulate multi-agent deception drift across coalition rounds (SCEN-COAL-09)."
+                .to_string(),
+        ),
     ]
 }
 
@@ -1424,38 +1649,60 @@ pub fn run_3d_experiment(id: &str, params: &HashMap<String, String>) -> JsonValu
     let t0 = Instant::now();
 
     let (name, desc): (&str, &str) = match id {
-        "6"  => ("Hessian Loss Landscape (3D)",
-                 "Perturb model along top-2 Hessian eigendirections, measure 3D loss surface."),
-        "7"  => ("Manifold Geometry (3D PCA)",
-                 "Estimate intrinsic dimensionality via PCA participation ratio; 3D projection."),
-        "8"  => ("Reasoning Trajectory Analysis (3D)",
-                 "Sample (step, honesty, deception, spectral_radius) and detect deception onset."),
-        "9"  => ("Spectral Surface Regression (3D)",
-                 "Fit \u{03bb}_max(layer, token) surface and detect N_crit bifurcation."),
-        "10" => ("Riemannian Curvature (3D)",
-                 "Estimate discrete Gaussian curvature on hidden-state k-NN graph."),
-        "11" => ("3D Attention Flow",
-                 "Measure attention-weight surface and quantify diagonal-vs-smeared regime."),
-        "12" => ("N_crit Collapse Surface (3D)",
-                 "Compute T_crit(\u{03b2}, \u{03bc}_RLHF) surface over Caputo order and RLHF pressure."),
-        "13" => ("Parameter Space Sweep (3D)",
-                 "Sweep (temperature, top_p) and measure hallucination-rate surface."),
-        "14" => ("Coalitional Deception Drift (3D)",
-                 "Simulate multi-agent deception drift across coalition rounds (SCEN-COAL-09)."),
+        "6" => (
+            "Hessian Loss Landscape (3D)",
+            "Perturb model along top-2 Hessian eigendirections, measure 3D loss surface.",
+        ),
+        "7" => (
+            "Manifold Geometry (3D PCA)",
+            "Estimate intrinsic dimensionality via PCA participation ratio; 3D projection.",
+        ),
+        "8" => (
+            "Reasoning Trajectory Analysis (3D)",
+            "Sample (step, honesty, deception, spectral_radius) and detect deception onset.",
+        ),
+        "9" => (
+            "Spectral Surface Regression (3D)",
+            "Fit \u{03bb}_max(layer, token) surface and detect N_crit bifurcation.",
+        ),
+        "10" => (
+            "Riemannian Curvature (3D)",
+            "Estimate discrete Gaussian curvature on hidden-state k-NN graph.",
+        ),
+        "11" => (
+            "3D Attention Flow",
+            "Measure attention-weight surface and quantify diagonal-vs-smeared regime.",
+        ),
+        "12" => (
+            "N_crit Collapse Surface (3D)",
+            "Compute T_crit(\u{03b2}, \u{03bc}_RLHF) surface over Caputo order and RLHF pressure.",
+        ),
+        "13" => (
+            "Parameter Space Sweep (3D)",
+            "Sweep (temperature, top_p) and measure hallucination-rate surface.",
+        ),
+        "14" => (
+            "Coalitional Deception Drift (3D)",
+            "Simulate multi-agent deception drift across coalition rounds (SCEN-COAL-09).",
+        ),
         _ => {
             let mut err = JsonValue::obj();
-            err.set("error", JsonValue::Str(format!(
-                "Unknown 3D experiment: {}. Known IDs: 6, 7, 8, 9, 10, 11, 12, 13, 14", id
-            )));
+            err.set(
+                "error",
+                JsonValue::Str(format!(
+                    "Unknown 3D experiment: {}. Known IDs: 6, 7, 8, 9, 10, 11, 12, 13, 14",
+                    id
+                )),
+            );
             return err;
         }
     };
 
     let mut result = match id {
-        "6"  => exp_hessian_loss_landscape(params),
-        "7"  => exp_manifold_geometry(params),
-        "8"  => exp_trajectory_analysis(params),
-        "9"  => exp_spectral_surface_regression(params),
+        "6" => exp_hessian_loss_landscape(params),
+        "7" => exp_manifold_geometry(params),
+        "8" => exp_trajectory_analysis(params),
+        "9" => exp_spectral_surface_regression(params),
         "10" => exp_riemannian_curvature(params),
         "11" => exp_attention_flow_3d(params),
         "12" => exp_ncrit_surface(params),
@@ -1483,10 +1730,10 @@ pub fn run_3d_experiment(id: &str, params: &HashMap<String, String>) -> JsonValu
 /// Run all 9 3D experiments; returns combined structure consumable by charts_3d.py.
 pub fn run_all_3d(params: &HashMap<String, String>) -> JsonValue {
     let name_map: &[(&str, &str)] = &[
-        ("6",  "loss_landscape"),
-        ("7",  "manifold_geometry"),
-        ("8",  "trajectory"),
-        ("9",  "spectral_surface"),
+        ("6", "loss_landscape"),
+        ("7", "manifold_geometry"),
+        ("8", "trajectory"),
+        ("9", "spectral_surface"),
         ("10", "riemannian_curvature"),
         ("11", "attention_flow_3d"),
         ("12", "ncrit_surface"),

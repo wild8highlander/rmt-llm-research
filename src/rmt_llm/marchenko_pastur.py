@@ -87,8 +87,7 @@ def mp_density(lam: ArrayLike, q: float, sigma2: float = 1.0) -> np.ndarray:
     return rho
 
 
-def mp_cdf(lam: ArrayLike, q: float, sigma2: float = 1.0,
-           n_points: int = 10000) -> np.ndarray:
+def mp_cdf(lam: ArrayLike, q: float, sigma2: float = 1.0, n_points: int = 10000) -> np.ndarray:
     """Compute the CDF of the Marchenko-Pastur distribution numerically.
 
     Parameters
@@ -140,8 +139,9 @@ def mp_cdf(lam: ArrayLike, q: float, sigma2: float = 1.0,
     return result
 
 
-def mp_sample(n: int, t: int, sigma2: float = 1.0,
-              rng: np.random.Generator | None = None) -> np.ndarray:
+def mp_sample(
+    n: int, t: int, sigma2: float = 1.0, rng: np.random.Generator | None = None
+) -> np.ndarray:
     """Sample eigenvalues from a random covariance matrix.
 
     Generates an N x T matrix with i.i.d. N(0, sigma2) entries and computes
@@ -199,5 +199,4 @@ def mp_stieltjes(z: complex, q: float, sigma2: float = 1.0) -> complex:
     # Choose branch with positive imaginary part when Im(z) > 0
     if sqrt_disc.imag < 0:
         sqrt_disc = -sqrt_disc
-    g = ((1.0 - q - z) + sqrt_disc) / (2.0 * sigma2 * q * z)
-    return g
+    return ((1.0 - q - z) + sqrt_disc) / (2.0 * sigma2 * q * z)

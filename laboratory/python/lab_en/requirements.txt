@@ -1,14 +1,14 @@
+matplotlib>=3.7
 # RMT-LLM Laboratory — Python dependencies
 numpy>=1.24
-matplotlib>=3.7
-pandas>=2.0
-pyarrow>=14.0          # for parquet
 openpyxl>=3.1          # for xlsx
-python-docx>=1.0       # for docx
-reportlab>=4.0         # for pdf
+pandas>=2.0
 plotly>=5.18           # for interactive HTML charts
-PyYAML>=6.0            # for yaml reports
 psutil>=5.9            # for memory measurements
+pyarrow>=14.0          # for parquet
+python-docx>=1.0       # for docx
+PyYAML>=6.0            # for yaml reports
+reportlab>=4.0         # for pdf
 # Optional, for downloading real HF models:
 # transformers>=4.36
 # torch>=2.1

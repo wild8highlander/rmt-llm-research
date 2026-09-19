@@ -75,15 +75,15 @@ _GELU_C = math.sqrt(2.0 / math.pi)
 
 def _gelu(x: np.ndarray) -> np.ndarray:
     """Tanh-approximate GELU activation (GPT-2 / BERT style)."""
-    return 0.5 * x * (1.0 + np.tanh(_GELU_C * (x + 0.044715 * x ** 3)))
+    return 0.5 * x * (1.0 + np.tanh(_GELU_C * (x + 0.044715 * x**3)))
 
 
 def _gelu_grad(x: np.ndarray) -> np.ndarray:
     """Derivative of the tanh-approximate GELU."""
-    inner = _GELU_C * (x + 0.044715 * x ** 3)
+    inner = _GELU_C * (x + 0.044715 * x**3)
     tanh_inner = np.tanh(inner)
-    diner = _GELU_C * (1.0 + 3.0 * 0.044715 * x ** 2)
-    return 0.5 * (1.0 + tanh_inner) + 0.5 * x * (1.0 - tanh_inner ** 2) * diner
+    diner = _GELU_C * (1.0 + 3.0 * 0.044715 * x**2)
+    return 0.5 * (1.0 + tanh_inner) + 0.5 * x * (1.0 - tanh_inner**2) * diner
 
 
 # ---------------------------------------------------------------------------
@@ -113,8 +113,11 @@ def layernorm_forward(
 
 
 def layernorm_backward(
-    dout: np.ndarray, x: np.ndarray, gamma: np.ndarray,
-    mu: np.ndarray, rstd: np.ndarray,
+    dout: np.ndarray,
+    x: np.ndarray,
+    gamma: np.ndarray,
+    mu: np.ndarray,
+    rstd: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Backward pass for LayerNorm.
 
@@ -166,7 +169,9 @@ def rope_freqs(head_dim: int, base: float = 10000.0) -> np.ndarray:
 
 
 def rope_apply(
-    x: np.ndarray, seq_offset: int = 0, base: float = 10000.0,
+    x: np.ndarray,
+    seq_offset: int = 0,
+    base: float = 10000.0,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Apply RoPE to a head tensor.
 
@@ -182,15 +187,15 @@ def rope_apply(
         arrays with shape ``(T, head_dim / 2)`` cached for backward.
     """
     T, n_heads, head_dim = x.shape
-    freqs = rope_freqs(head_dim, base)                      # (head_dim/2,)
+    freqs = rope_freqs(head_dim, base)  # (head_dim/2,)
     pos = np.arange(seq_offset, seq_offset + T, dtype=np.float64)  # (T,)
-    angles = np.outer(pos, freqs).astype(np.float32)        # (T, head_dim/2)
+    angles = np.outer(pos, freqs).astype(np.float32)  # (T, head_dim/2)
     cos = np.cos(angles)
     sin = np.sin(angles)
 
     # Pair (x_{2i}, x_{2i+1}) and rotate by (cos, sin).
-    x_even = x[..., 0::2]   # (T, n_heads, head_dim/2)
-    x_odd = x[..., 1::2]    # (T, n_heads, head_dim/2)
+    x_even = x[..., 0::2]  # (T, n_heads, head_dim/2)
+    x_odd = x[..., 1::2]  # (T, n_heads, head_dim/2)
 
     # Broadcast cos/sin to (T, 1, head_dim/2) for per-head broadcast.
     cos_b = cos[:, None, :]
@@ -206,7 +211,8 @@ def rope_apply(
 
 
 def rope_backward(
-    dout: np.ndarray, cos_sin: tuple[np.ndarray, np.ndarray],
+    dout: np.ndarray,
+    cos_sin: tuple[np.ndarray, np.ndarray],
 ) -> np.ndarray:
     """Backward pass for RoPE.
 
@@ -241,9 +247,15 @@ def rope_backward(
 # Grouped-Query Attention (GQA)
 # ---------------------------------------------------------------------------
 def gqa_forward(
-    q: np.ndarray, k: np.ndarray, v: np.ndarray,
-    n_heads: int, n_kv_heads: int, head_dim: int,
-    rope: bool = True, seq_offset: int = 0, rope_base: float = 10000.0,
+    q: np.ndarray,
+    k: np.ndarray,
+    v: np.ndarray,
+    n_heads: int,
+    n_kv_heads: int,
+    head_dim: int,
+    rope: bool = True,
+    seq_offset: int = 0,
+    rope_base: float = 10000.0,
 ) -> tuple[np.ndarray, dict[str, Any]]:
     """Forward pass for grouped-query attention with optional RoPE.
 
@@ -272,9 +284,7 @@ def gqa_forward(
         ValueError: If ``n_heads % n_kv_heads != 0``.
     """
     if n_heads % n_kv_heads != 0:
-        raise ValueError(
-            f"n_heads ({n_heads}) must be divisible by n_kv_heads ({n_kv_heads})"
-        )
+        raise ValueError(f"n_heads ({n_heads}) must be divisible by n_kv_heads ({n_kv_heads})")
     T = q.shape[0]
     group = n_heads // n_kv_heads
 
@@ -291,9 +301,9 @@ def gqa_forward(
     v_rep = np.repeat(v, group, axis=1)
 
     # Reshape to (n_heads, T, head_dim) for batched matmul.
-    qh = q.transpose(1, 0, 2)       # (n_heads, T, head_dim)
-    kh = k_rep.transpose(1, 0, 2)   # (n_heads, T, head_dim)
-    vh = v_rep.transpose(1, 0, 2)   # (n_heads, T, head_dim)
+    qh = q.transpose(1, 0, 2)  # (n_heads, T, head_dim)
+    kh = k_rep.transpose(1, 0, 2)  # (n_heads, T, head_dim)
+    vh = v_rep.transpose(1, 0, 2)  # (n_heads, T, head_dim)
 
     scores = qh @ kh.transpose(0, 2, 1) / math.sqrt(head_dim)  # (n_heads, T, T)
     # Use a mask value that is safe for both float16 and float32.
@@ -301,20 +311,30 @@ def gqa_forward(
     mask_val = -1e4 if scores.dtype == np.float16 else -1e9
     mask = np.triu(np.ones((T, T), dtype=bool), k=1)
     scores = np.where(mask, mask_val, scores)
-    attn = _softmax(scores, axis=-1)                            # (n_heads, T, T)
-    ctx = attn @ vh                                             # (n_heads, T, head_dim)
-    out = ctx.transpose(1, 0, 2)                                # (T, n_heads, head_dim)
+    attn = _softmax(scores, axis=-1)  # (n_heads, T, T)
+    ctx = attn @ vh  # (n_heads, T, head_dim)
+    out = ctx.transpose(1, 0, 2)  # (T, n_heads, head_dim)
 
     cache = {
-        "q_cs": q_cs, "k_cs": k_cs, "attn": attn,
-        "qh": qh, "kh": kh, "vh": vh, "group": group,
-        "k": k, "v": v, "rope": rope,
+        "q_cs": q_cs,
+        "k_cs": k_cs,
+        "attn": attn,
+        "qh": qh,
+        "kh": kh,
+        "vh": vh,
+        "group": group,
+        "k": k,
+        "v": v,
+        "rope": rope,
     }
     return out, cache
 
 
 def gqa_backward(
-    dout: np.ndarray, cache: dict[str, Any], n_heads: int, n_kv_heads: int,
+    dout: np.ndarray,
+    cache: dict[str, Any],
+    n_heads: int,
+    n_kv_heads: int,
     head_dim: int,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Backward pass for grouped-query attention.
@@ -341,16 +361,16 @@ def gqa_backward(
     dout_h = dout.transpose(1, 0, 2)  # (n_heads, T, head_dim)
 
     # ctx = attn @ vh  ->  dattn = dout_h @ vh^T,  dvh = attn^T @ dout_h
-    dattn = dout_h @ vh.transpose(0, 2, 1)            # (n_heads, T, T)
-    dvh = attn.transpose(0, 2, 1) @ dout_h            # (n_heads, T, head_dim)
+    dattn = dout_h @ vh.transpose(0, 2, 1)  # (n_heads, T, T)
+    dvh = attn.transpose(0, 2, 1) @ dout_h  # (n_heads, T, head_dim)
 
     # Softmax backward: dscores = attn * (dattn - sum(dattn * attn, axis=-1, keepdims))
     dscores = attn * (dattn - np.sum(dattn * attn, axis=-1, keepdims=True))
     dscores = dscores / math.sqrt(head_dim)
 
     # scores = qh @ kh^T  ->  dqh = dscores @ kh,  dkh = dscores^T @ qh
-    dqh = dscores @ kh                                  # (n_heads, T, head_dim)
-    dkh = dscores.transpose(0, 2, 1) @ qh              # (n_heads, T, head_dim)
+    dqh = dscores @ kh  # (n_heads, T, head_dim)
+    dkh = dscores.transpose(0, 2, 1) @ qh  # (n_heads, T, head_dim)
 
     # Back to (T, n_heads, head_dim).
     dq = dqh.transpose(1, 0, 2)
@@ -388,6 +408,7 @@ class MixedPrecisionCtx:
         compute_dtype: Dtype used for the forward pass.
         master_dtype: Dtype used for master weights (always float32).
     """
+
     enabled: bool = False
     compute_dtype: np.dtype = np.float16
     master_dtype: np.dtype = np.float32
@@ -433,6 +454,7 @@ class TinyGPTV3Config:
             during backward instead of storing them.
         seed: RNG seed for reproducible initialization.
     """
+
     vocab_size: int = 512
     hidden_dim: int = 192
     n_layers: int = 16
@@ -522,10 +544,7 @@ class TinyGPTV3Config:
             per_layer += 2 * H * mlp_dim + mlp_dim + H
 
         # LM head: if weight_tying, the head reuses token_emb (no extra params).
-        if self.weight_tying:
-            head = 0
-        else:
-            head = H * V  # LM head
+        head = 0 if self.weight_tying else H * V  # LM head
         return emb + self.n_layers * per_layer + head
 
 
@@ -540,15 +559,16 @@ class TinyLayerV3:
     rather than ``hidden_dim``. ``W_q`` and ``W_o`` always project to
     / from ``hidden_dim``.
     """
+
     # Attention projections
-    W_q: np.ndarray   # (H, H)
-    W_k: np.ndarray   # (H, n_kv_heads * head_dim)
-    W_v: np.ndarray   # (H, n_kv_heads * head_dim)
-    W_o: np.ndarray   # (H, H)
-    b_q: np.ndarray   # (H,)
-    b_k: np.ndarray   # (n_kv_heads * head_dim,)
-    b_v: np.ndarray   # (n_kv_heads * head_dim,)
-    b_o: np.ndarray   # (H,)
+    W_q: np.ndarray  # (H, H)
+    W_k: np.ndarray  # (H, n_kv_heads * head_dim)
+    W_v: np.ndarray  # (H, n_kv_heads * head_dim)
+    W_o: np.ndarray  # (H, H)
+    b_q: np.ndarray  # (H,)
+    b_k: np.ndarray  # (n_kv_heads * head_dim,)
+    b_v: np.ndarray  # (n_kv_heads * head_dim,)
+    b_o: np.ndarray  # (H,)
     # Pre-LN1 (before attention)
     ln1_gamma: np.ndarray
     ln1_beta: np.ndarray
@@ -563,8 +583,12 @@ class TinyLayerV3:
 
 
 def _init_layer_v3(
-    rng: np.random.Generator, H: int, kv_dim: int, mlp_dim: int,
-    use_layernorm: bool, use_mlp: bool,
+    rng: np.random.Generator,
+    H: int,
+    kv_dim: int,
+    mlp_dim: int,
+    use_layernorm: bool,
+    use_mlp: bool,
 ) -> TinyLayerV3:
     """Initialize a v3 layer with Xavier-scaled weights."""
     scale = 1.0 / math.sqrt(H)
@@ -581,16 +605,25 @@ def _init_layer_v3(
         ln1_beta=np.zeros(H, dtype=np.float32),
         ln2_gamma=np.ones(H, dtype=np.float32),
         ln2_beta=np.zeros(H, dtype=np.float32),
-        W_fc1=rng.normal(0, scale, (H, mlp_dim)).astype(np.float32) if use_mlp else np.zeros((H, mlp_dim), dtype=np.float32),
-        W_fc2=rng.normal(0, scale, (mlp_dim, H)).astype(np.float32) if use_mlp else np.zeros((mlp_dim, H), dtype=np.float32),
+        W_fc1=rng.normal(0, scale, (H, mlp_dim)).astype(np.float32)
+        if use_mlp
+        else np.zeros((H, mlp_dim), dtype=np.float32),
+        W_fc2=rng.normal(0, scale, (mlp_dim, H)).astype(np.float32)
+        if use_mlp
+        else np.zeros((mlp_dim, H), dtype=np.float32),
         b_fc1=np.zeros(mlp_dim, dtype=np.float32),
         b_fc2=np.zeros(H, dtype=np.float32),
     )
 
 
 def _init_layer_v3_gpt2(
-    rng: np.random.Generator, H: int, kv_dim: int, mlp_dim: int,
-    use_layernorm: bool, use_mlp: bool, n_layers: int,
+    rng: np.random.Generator,
+    H: int,
+    kv_dim: int,
+    mlp_dim: int,
+    use_layernorm: bool,
+    use_mlp: bool,
+    n_layers: int,
     init_scale: float = 0.02,
 ) -> TinyLayerV3:
     """Initialize a v3 layer with GPT-2-style scaled initialization.
@@ -637,9 +670,13 @@ def _init_layer_v3_gpt2(
         ln2_gamma=np.ones(H, dtype=np.float32),
         ln2_beta=np.zeros(H, dtype=np.float32),
         # W_fc1 is not on the residual path (input to MLP).
-        W_fc1=rng.normal(0, mlp_scale, (H, mlp_dim)).astype(np.float32) if use_mlp else np.zeros((H, mlp_dim), dtype=np.float32),
+        W_fc1=rng.normal(0, mlp_scale, (H, mlp_dim)).astype(np.float32)
+        if use_mlp
+        else np.zeros((H, mlp_dim), dtype=np.float32),
         # W_fc2 is on the residual path (its output flows back to x).
-        W_fc2=rng.normal(0, residual_scale, (mlp_dim, H)).astype(np.float32) if use_mlp else np.zeros((mlp_dim, H), dtype=np.float32),
+        W_fc2=rng.normal(0, residual_scale, (mlp_dim, H)).astype(np.float32)
+        if use_mlp
+        else np.zeros((mlp_dim, H), dtype=np.float32),
         b_fc1=np.zeros(mlp_dim, dtype=np.float32),
         b_fc2=np.zeros(H, dtype=np.float32),
     )
@@ -649,7 +686,9 @@ def _init_layer_v3_gpt2(
 # Dropout (forward + backward)
 # ---------------------------------------------------------------------------
 def dropout_forward(
-    x: np.ndarray, p: float, training: bool,
+    x: np.ndarray,
+    p: float,
+    training: bool,
     rng: np.random.Generator,
 ) -> tuple[np.ndarray, np.ndarray | None]:
     """Inverted dropout: scale kept activations by 1/(1-p) at training time.
@@ -673,7 +712,8 @@ def dropout_forward(
 
 
 def dropout_backward(
-    dout: np.ndarray, mask: np.ndarray | None,
+    dout: np.ndarray,
+    mask: np.ndarray | None,
 ) -> np.ndarray:
     """Backward pass for dropout.
 
@@ -716,8 +756,14 @@ class TinyGPTV3:
         # this keeps residual stream variance stable for deep models.
         self.layers: list[TinyLayerV3] = [
             _init_layer_v3_gpt2(
-                rng, H, kv_dim, mlp_dim, cfg.use_layernorm, cfg.use_mlp,
-                cfg.n_layers, cfg.init_scale,
+                rng,
+                H,
+                kv_dim,
+                mlp_dim,
+                cfg.use_layernorm,
+                cfg.use_mlp,
+                cfg.n_layers,
+                cfg.init_scale,
             )
             for _ in range(cfg.n_layers)
         ]
@@ -777,7 +823,9 @@ class TinyGPTV3:
     # Forward pass
     # ------------------------------------------------------------------
     def forward(
-        self, token_ids: np.ndarray, seq_offset: int = 0,
+        self,
+        token_ids: np.ndarray,
+        seq_offset: int = 0,
     ) -> tuple[np.ndarray, list[np.ndarray]]:
         """Forward pass.
 
@@ -808,7 +856,10 @@ class TinyGPTV3:
         return logits, hidden_per_layer
 
     def _forward_layer(
-        self, layer: TinyLayerV3, x: np.ndarray, seq_offset: int,
+        self,
+        layer: TinyLayerV3,
+        x: np.ndarray,
+        seq_offset: int,
     ) -> np.ndarray:
         """Forward pass for one transformer block."""
         cfg = self.config
@@ -833,8 +884,15 @@ class TinyGPTV3:
         vh = v.reshape(T, nkv, hd)
 
         attn_out, _ = gqa_forward(
-            qh, kh, vh, nh, nkv, hd,
-            rope=cfg.use_rope, seq_offset=seq_offset, rope_base=cfg.rope_base,
+            qh,
+            kh,
+            vh,
+            nh,
+            nkv,
+            hd,
+            rope=cfg.use_rope,
+            seq_offset=seq_offset,
+            rope_base=cfg.rope_base,
         )
         ctx = attn_out.reshape(T, H)
         attn_out_proj = ctx @ self._w(layer.W_o) + self._w(layer.b_o)
@@ -848,10 +906,7 @@ class TinyGPTV3:
 
         if cfg.use_mlp:
             h1 = h_norm2 @ self._w(layer.W_fc1) + self._w(layer.b_fc1)
-            if cfg.activation == "gelu":
-                h1_act = _gelu(h1)
-            else:
-                h1_act = np.maximum(h1, 0.0)
+            h1_act = _gelu(h1) if cfg.activation == "gelu" else np.maximum(h1, 0.0)
             mlp_out = h1_act @ self._w(layer.W_fc2) + self._w(layer.b_fc2)
             x = x + mlp_out  # residual
 
@@ -861,7 +916,9 @@ class TinyGPTV3:
     # Forward + backward (autodiff) — for training
     # ------------------------------------------------------------------
     def forward_with_cache(
-        self, token_ids: np.ndarray, seq_offset: int = 0,
+        self,
+        token_ids: np.ndarray,
+        seq_offset: int = 0,
     ) -> tuple[np.ndarray, dict[str, Any]]:
         """Forward pass that caches every intermediate needed for backward.
 
@@ -900,7 +957,10 @@ class TinyGPTV3:
         return logits, cache
 
     def _forward_layer_with_cache(
-        self, layer: TinyLayerV3, x: np.ndarray, seq_offset: int,
+        self,
+        layer: TinyLayerV3,
+        x: np.ndarray,
+        seq_offset: int,
     ) -> tuple[np.ndarray, dict[str, Any]]:
         """Forward pass for one layer that caches intermediates."""
         cfg = self.config
@@ -927,8 +987,15 @@ class TinyGPTV3:
         vh = v.reshape(T, nkv, hd)
 
         attn_out, gqa_cache = gqa_forward(
-            qh, kh, vh, nh, nkv, hd,
-            rope=cfg.use_rope, seq_offset=seq_offset, rope_base=cfg.rope_base,
+            qh,
+            kh,
+            vh,
+            nh,
+            nkv,
+            hd,
+            rope=cfg.use_rope,
+            seq_offset=seq_offset,
+            rope_base=cfg.rope_base,
         )
         ctx = attn_out.reshape(T, H)
         attn_out_proj = ctx @ self._w(layer.W_o) + self._w(layer.b_o)
@@ -954,10 +1021,7 @@ class TinyGPTV3:
 
         if cfg.use_mlp:
             h1 = h_norm2 @ self._w(layer.W_fc1) + self._w(layer.b_fc1)
-            if cfg.activation == "gelu":
-                h1_act = _gelu(h1)
-            else:
-                h1_act = np.maximum(h1, 0.0)
+            h1_act = _gelu(h1) if cfg.activation == "gelu" else np.maximum(h1, 0.0)
             mlp_out = h1_act @ self._w(layer.W_fc2) + self._w(layer.b_fc2)
             # Dropout on MLP output (residual path).
             mlp_out, mlp_drop_mask = dropout_forward(
@@ -974,7 +1038,9 @@ class TinyGPTV3:
         return x, lc
 
     def backward(
-        self, cache: dict[str, Any], dlogits: np.ndarray,
+        self,
+        cache: dict[str, Any],
+        dlogits: np.ndarray,
     ) -> dict[str, Any]:
         """Reverse-mode autodiff through the whole model.
 
@@ -997,10 +1063,24 @@ class TinyGPTV3:
             "ln_f_beta": np.zeros(H, dtype=np.float32),
         }
         for i, layer in enumerate(self.layers):
-            for attr in ("W_q", "W_k", "W_v", "W_o",
-                         "b_q", "b_k", "b_v", "b_o",
-                         "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                         "W_fc1", "W_fc2", "b_fc1", "b_fc2"):
+            for attr in (
+                "W_q",
+                "W_k",
+                "W_v",
+                "W_o",
+                "b_q",
+                "b_k",
+                "b_v",
+                "b_o",
+                "ln1_gamma",
+                "ln1_beta",
+                "ln2_gamma",
+                "ln2_beta",
+                "W_fc1",
+                "W_fc2",
+                "b_fc1",
+                "b_fc2",
+            ):
                 grads[f"L{i}_{attr}"] = np.zeros_like(getattr(layer, attr))
 
         # --- LM head + final LN ---
@@ -1009,15 +1089,15 @@ class TinyGPTV3:
         #   dx_norm                    = dlogits @ token_emb   → (T, H)
         # When weight_tying=False, use the standalone lm_head as before.
         x_norm = cache["x_norm"]
-        if cfg.weight_tying:
-            head_w = self._w(self.token_emb).T  # (H, V)
-        else:
-            head_w = self._w(self.lm_head)      # (H, V)
-        d_lm_head = x_norm.T @ dlogits           # (H, V)
-        dx_norm = dlogits @ head_w.T             # (T, H)
+        head_w = self._w(self.token_emb).T if cfg.weight_tying else self._w(self.lm_head)
+        d_lm_head = x_norm.T @ dlogits  # (H, V)
+        dx_norm = dlogits @ head_w.T  # (T, H)
         dx, dln_f_g, dln_f_b = layernorm_backward(
-            dx_norm, cache["x_pre_head"], self._w(self.ln_f_gamma),
-            cache["mu_f"], cache["rstd_f"],
+            dx_norm,
+            cache["x_pre_head"],
+            self._w(self.ln_f_gamma),
+            cache["mu_f"],
+            cache["rstd_f"],
         )
         if cfg.weight_tying:
             # The LM head gradient flows into token_emb (transposed).
@@ -1025,7 +1105,7 @@ class TinyGPTV3:
             # back to token_emb via the `tie_gradients` helper.
             grads["lm_head"] = d_lm_head.T.astype(np.float32)  # (V, H) — same shape as token_emb
         else:
-            grads["lm_head"] = d_lm_head.astype(np.float32)    # (H, V) — standalone
+            grads["lm_head"] = d_lm_head.astype(np.float32)  # (H, V) — standalone
         grads["ln_f_gamma"] = dln_f_g.astype(np.float32)
         grads["ln_f_beta"] = dln_f_b.astype(np.float32)
 
@@ -1064,8 +1144,12 @@ class TinyGPTV3:
         return grads
 
     def _backward_layer(
-        self, layer: TinyLayerV3, lc: dict[str, Any], dx: np.ndarray,
-        seq_offset: int, layer_idx: int,
+        self,
+        layer: TinyLayerV3,
+        lc: dict[str, Any],
+        dx: np.ndarray,
+        seq_offset: int,
+        layer_idx: int,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Backward pass for one layer. Returns (dx_in, grads_dict)."""
         cfg = self.config
@@ -1114,7 +1198,7 @@ class TinyGPTV3:
         # x1 = x + attn_out_proj  ->  dx_residual = dx,  d_attn_out_proj = dx
         # Backward through dropout on attn_out_proj first.
         d_attn_out_proj = dropout_backward(dx, lc.get("attn_drop_mask"))
-        dctx = d_attn_out_proj @ self._w(layer.W_o).T   # (T, H)
+        dctx = d_attn_out_proj @ self._w(layer.W_o).T  # (T, H)
         g["W_o"] = lc["ctx"].T @ d_attn_out_proj
         g["b_o"] = d_attn_out_proj.sum(axis=0)
 
@@ -1150,9 +1234,14 @@ class TinyGPTV3:
     # Generation
     # ------------------------------------------------------------------
     def generate(
-        self, prompt_ids: np.ndarray, max_new_tokens: int = 64,
-        temperature: float = 0.7, top_k: int = 0, top_p: float = 1.0,
-        seed: int | None = None, capture_hidden: bool = True,
+        self,
+        prompt_ids: np.ndarray,
+        max_new_tokens: int = 64,
+        temperature: float = 0.7,
+        top_k: int = 0,
+        top_p: float = 1.0,
+        seed: int | None = None,
+        capture_hidden: bool = True,
     ) -> dict[str, Any]:
         """Generate tokens with top-k / top-p sampling.
 
@@ -1171,12 +1260,12 @@ class TinyGPTV3:
             ``hidden_snapshots``, and ``reasoning_trace``.
         """
         rng = np.random.default_rng(seed if seed is not None else self.config.seed)
-        ids = list(int(i) for i in prompt_ids)
+        ids = [int(i) for i in prompt_ids]
         per_step_logits: list[np.ndarray] = []
         hidden_snapshots: list[list[np.ndarray]] = []
 
-        for step in range(max_new_tokens):
-            ctx = np.array(ids[-self.config.max_seq_len:], dtype=np.int64)
+        for _step in range(max_new_tokens):
+            ctx = np.array(ids[-self.config.max_seq_len :], dtype=np.int64)
             seq_offset = max(0, len(ids) - self.config.max_seq_len)
             logits, hidden = self.forward(ctx, seq_offset=seq_offset)
             last_logits = logits[-1].astype(np.float64)
@@ -1212,7 +1301,7 @@ class TinyGPTV3:
                 hidden_snapshots.append([h.copy() for h in hidden])
 
         return {
-            "output_ids": ids[len(prompt_ids):],
+            "output_ids": ids[len(prompt_ids) :],
             "full_ids": ids,
             "per_step_logits": per_step_logits,
             "hidden_snapshots": hidden_snapshots,
@@ -1243,13 +1332,22 @@ class TinyGPTV3:
             signal_detected = lam_max > mp_upper * 1.05
             tw_scale = sigma2 * (q ** (2 / 3)) / (T ** (2 / 3))
             tw_fluct = (lam_max - mp_upper) / max(tw_scale, 1e-12)
-            results.append({
-                "layer": li, "T": T, "H": self.config.hidden_dim,
-                "q": q, "lambda_max": lam_max, "lambda_min": lam_min,
-                "lambda_mean": lam_mean, "mp_upper": mp_upper,
-                "mp_lower": mp_lower, "signal_detected": signal_detected,
-                "tw_fluctuation": tw_fluct, "spectral_gap": lam_max - lam_min,
-            })
+            results.append(
+                {
+                    "layer": li,
+                    "T": T,
+                    "H": self.config.hidden_dim,
+                    "q": q,
+                    "lambda_max": lam_max,
+                    "lambda_min": lam_min,
+                    "lambda_mean": lam_mean,
+                    "mp_upper": mp_upper,
+                    "mp_lower": mp_lower,
+                    "signal_detected": signal_detected,
+                    "tw_fluctuation": tw_fluct,
+                    "spectral_gap": lam_max - lam_min,
+                }
+            )
         return {"layers": results}
 
     # ------------------------------------------------------------------
@@ -1267,10 +1365,24 @@ class TinyGPTV3:
             "config": json.dumps(self.config.__dict__),
         }
         for i, layer in enumerate(self.layers):
-            for attr in ("W_q", "W_k", "W_v", "W_o",
-                         "b_q", "b_k", "b_v", "b_o",
-                         "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                         "W_fc1", "W_fc2", "b_fc1", "b_fc2"):
+            for attr in (
+                "W_q",
+                "W_k",
+                "W_v",
+                "W_o",
+                "b_q",
+                "b_k",
+                "b_v",
+                "b_o",
+                "ln1_gamma",
+                "ln1_beta",
+                "ln2_gamma",
+                "ln2_beta",
+                "W_fc1",
+                "W_fc2",
+                "b_fc1",
+                "b_fc2",
+            ):
                 state[f"L{i}_{attr}"] = getattr(layer, attr)
         np.savez(path, **state)
 
@@ -1290,12 +1402,28 @@ class TinyGPTV3:
             model.ln_f_beta = data["ln_f_beta"]
         model.layers = []
         for i in range(cfg.n_layers):
-            kw = {attr: data[f"L{i}_{attr}"] for attr in (
-                "W_q", "W_k", "W_v", "W_o",
-                "b_q", "b_k", "b_v", "b_o",
-                "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                "W_fc1", "W_fc2", "b_fc1", "b_fc2",
-            ) if f"L{i}_{attr}" in data.files}
+            kw = {
+                attr: data[f"L{i}_{attr}"]
+                for attr in (
+                    "W_q",
+                    "W_k",
+                    "W_v",
+                    "W_o",
+                    "b_q",
+                    "b_k",
+                    "b_v",
+                    "b_o",
+                    "ln1_gamma",
+                    "ln1_beta",
+                    "ln2_gamma",
+                    "ln2_beta",
+                    "W_fc1",
+                    "W_fc2",
+                    "b_fc1",
+                    "b_fc2",
+                )
+                if f"L{i}_{attr}" in data.files
+            }
             model.layers.append(TinyLayerV3(**kw))
         return model
 
@@ -1353,9 +1481,7 @@ def label_smoothing_cross_entropy(
     safe_targets = np.where(targets == ignore_index, 0, targets)
 
     # NLL part: -log_probs[target] * (1 - ε)
-    nll = -np.take_along_axis(
-        log_probs, safe_targets[..., None], axis=-1
-    ).squeeze(-1)
+    nll = -np.take_along_axis(log_probs, safe_targets[..., None], axis=-1).squeeze(-1)
     # Uniform part: -mean(log_probs) over V = -sum(log_probs) / V
     # Only contributes when smoothing > 0.
     if smoothing > 0:
@@ -1419,9 +1545,7 @@ def clip_grad_norm_(
         scale = max_norm / (total_norm + eps)
         for k in grads:
             if grads[k] is not None and grads[k].size > 0:
-                grads[k] = (grads[k].astype(np.float64) * scale).astype(
-                    grads[k].dtype
-                )
+                grads[k] = (grads[k].astype(np.float64) * scale).astype(grads[k].dtype)
     return total_norm
 
 
@@ -1502,6 +1626,7 @@ class EarlyStopping:
         counter: Number of checks since the last improvement.
         stopped: Whether training should stop.
     """
+
     patience: int = 5
     min_delta: float = 0.0
     mode: str = "min"
@@ -1527,9 +1652,8 @@ class EarlyStopping:
         Returns:
             True if training should stop, False otherwise.
         """
-        improved = (
-            (self.mode == "min" and metric < self.best - self.min_delta)
-            or (self.mode == "max" and metric > self.best + self.min_delta)
+        improved = (self.mode == "min" and metric < self.best - self.min_delta) or (
+            self.mode == "max" and metric > self.best + self.min_delta
         )
         if improved:
             self.best = metric
@@ -1558,9 +1682,15 @@ def config_4m() -> TinyGPTV3Config:
     absolute position embeddings, saving ``max_seq_len * H = 49K`` params.
     """
     return TinyGPTV3Config(
-        vocab_size=512, hidden_dim=192, n_layers=10,
-        n_heads=6, n_kv_heads=2, max_seq_len=256,
-        mlp_ratio=4, use_rope=True, seed=42,
+        vocab_size=512,
+        hidden_dim=192,
+        n_layers=10,
+        n_heads=6,
+        n_kv_heads=2,
+        max_seq_len=256,
+        mlp_ratio=4,
+        use_rope=True,
+        seed=42,
     )
 
 
@@ -1575,11 +1705,20 @@ def config_12m() -> TinyGPTV3Config:
     Training takes ~2-3 hours on CPU (150 epochs, batch 8).
     """
     return TinyGPTV3Config(
-        vocab_size=1024, hidden_dim=256, n_layers=16,
-        n_heads=8, n_kv_heads=2, max_seq_len=512,
-        mlp_ratio=4, use_rope=True, weight_tying=True,
-        label_smoothing=0.1, grad_clip_norm=1.0,
-        dropout=0.1, init_scale=0.02, seed=42,
+        vocab_size=1024,
+        hidden_dim=256,
+        n_layers=16,
+        n_heads=8,
+        n_kv_heads=2,
+        max_seq_len=512,
+        mlp_ratio=4,
+        use_rope=True,
+        weight_tying=True,
+        label_smoothing=0.1,
+        grad_clip_norm=1.0,
+        dropout=0.1,
+        init_scale=0.02,
+        seed=42,
     )
 
 
@@ -1592,20 +1731,35 @@ def config_train_4m() -> TinyGPTV3Config:
     (up from v2's 6.5%).
     """
     return TinyGPTV3Config(
-        vocab_size=512, hidden_dim=192, n_layers=10,
-        n_heads=6, n_kv_heads=2, max_seq_len=256,
-        mlp_ratio=4, use_rope=True, weight_tying=True,
-        label_smoothing=0.1, grad_clip_norm=1.0,
-        dropout=0.1, init_scale=0.02, seed=42,
+        vocab_size=512,
+        hidden_dim=192,
+        n_layers=10,
+        n_heads=6,
+        n_kv_heads=2,
+        max_seq_len=256,
+        mlp_ratio=4,
+        use_rope=True,
+        weight_tying=True,
+        label_smoothing=0.1,
+        grad_clip_norm=1.0,
+        dropout=0.1,
+        init_scale=0.02,
+        seed=42,
     )
 
 
 def config_small() -> TinyGPTV3Config:
     """Small config for fast tests: ~50K params, 2 layers."""
     return TinyGPTV3Config(
-        vocab_size=64, hidden_dim=32, n_layers=2,
-        n_heads=4, n_kv_heads=2, max_seq_len=32,
-        mlp_ratio=2, use_rope=True, seed=42,
+        vocab_size=64,
+        hidden_dim=32,
+        n_layers=2,
+        n_heads=4,
+        n_kv_heads=2,
+        max_seq_len=32,
+        mlp_ratio=2,
+        use_rope=True,
+        seed=42,
     )
 
 
@@ -1617,8 +1771,10 @@ if __name__ == "__main__":
     print(f"TinyGPT v3 config: {cfg}")
     print(f"Approx params: {cfg.params_count:,}")
     print(f"  GQA group size: {cfg.n_groups}")
-    print(f"  RoPE: {cfg.use_rope}, MP: {cfg.mixed_precision}, "
-          f"Checkpointing: {cfg.gradient_checkpointing}")
+    print(
+        f"  RoPE: {cfg.use_rope}, MP: {cfg.mixed_precision}, "
+        f"Checkpointing: {cfg.gradient_checkpointing}"
+    )
     model = TinyGPTV3(cfg)
     prompt = np.array([1, 2, 3, 4, 5], dtype=np.int64)
     out = model.generate(prompt, max_new_tokens=16, temperature=0.7, seed=42)

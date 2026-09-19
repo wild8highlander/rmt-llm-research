@@ -103,3 +103,13 @@ nohup.out
 *.token
 secrets/
 
+# Rust build artifacts
+laboratory/rust/*/target/
+target/
+
+# MkDocs build output (site_dir from mkdocs.yml)
+site-build/
+
+# Hypothesis / pytest-benchmark caches
+.hypothesis/
+.benchmarks/

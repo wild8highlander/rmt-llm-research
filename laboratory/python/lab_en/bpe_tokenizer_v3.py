@@ -14,10 +14,12 @@ Contract implemented (fixed by tests/test_v3_session7.py):
   - compression_ratio, save/load JSON roundtrip, encode cache
   - untrained tokenizer (0 merges) encodes as raw byte ids
 """
+
 from __future__ import annotations
 
 import json
 from collections import Counter
+from itertools import pairwise
 
 import numpy as np
 
@@ -41,8 +43,7 @@ class BPETokenizerV3:
 
     def __init__(self, vocab_size: int = 1024):
         if vocab_size < 256:
-            raise ValueError(
-                f"vocab_size must be >= 256 (byte alphabet), got {vocab_size}")
+            raise ValueError(f"vocab_size must be >= 256 (byte alphabet), got {vocab_size}")
         self.vocab_size = int(vocab_size)
         self.merges: list[tuple[int, int]] = []
         self._ranks: dict[tuple[int, int], int] = {}
@@ -52,7 +53,7 @@ class BPETokenizerV3:
     # ------------------------------------------------------------------
     # training
     # ------------------------------------------------------------------
-    def fit(self, corpus: bytes | str, n_merges: int | None = None) -> "BPETokenizerV3":
+    def fit(self, corpus: bytes | str, n_merges: int | None = None) -> BPETokenizerV3:
         if isinstance(corpus, str):
             corpus = corpus.encode("utf-8")
         if n_merges is None:
@@ -61,7 +62,7 @@ class BPETokenizerV3:
 
         ids = list(corpus)
         for step in range(n_merges):
-            counts = Counter(zip(ids, ids[1:]))
+            counts = Counter(pairwise(ids))
             if not counts:
                 break
             # deterministic tie-break: highest count, then lexicographic pair
@@ -88,7 +89,7 @@ class BPETokenizerV3:
         ids = list(text)
         # GPT-2 style: repeatedly apply the lowest-rank (earliest-learned) merge
         while len(ids) >= 2:
-            pairs = set(zip(ids, ids[1:]))
+            pairs = set(pairwise(ids))
             best = min(pairs, key=lambda p: self._ranks.get(p, 1 << 30))
             if best not in self._ranks:
                 break
@@ -130,7 +131,7 @@ class BPETokenizerV3:
             json.dump(data, f)
 
     @classmethod
-    def load(cls, path: str) -> "BPETokenizerV3":
+    def load(cls, path: str) -> BPETokenizerV3:
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
         tok = cls(vocab_size=int(data["vocab_size"]))

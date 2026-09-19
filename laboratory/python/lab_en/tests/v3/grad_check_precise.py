@@ -3,6 +3,7 @@ Precise gradient check using float64 and only comparing entries where
 the numeric gradient is large enough for the relative error to be
 meaningful (avoids float32 finite-difference noise on near-zero entries).
 """
+
 from __future__ import annotations
 
 import sys
@@ -10,13 +11,13 @@ from pathlib import Path
 
 import numpy as np
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from tiny_gpt_v3 import (
     TinyGPTV3,
-    TinyGPTV3Config,
-    config_small,
     _softmax,
+    config_small,
 )
 
 
@@ -38,9 +39,24 @@ def to_float64(model: TinyGPTV3) -> None:
     model.ln_f_gamma = model.ln_f_gamma.astype(np.float64)
     model.ln_f_beta = model.ln_f_beta.astype(np.float64)
     for layer in model.layers:
-        for attr in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k", "b_v", "b_o",
-                     "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                     "W_fc1", "W_fc2", "b_fc1", "b_fc2"):
+        for attr in (
+            "W_q",
+            "W_k",
+            "W_v",
+            "W_o",
+            "b_q",
+            "b_k",
+            "b_v",
+            "b_o",
+            "ln1_gamma",
+            "ln1_beta",
+            "ln2_gamma",
+            "ln2_beta",
+            "W_fc1",
+            "W_fc2",
+            "b_fc1",
+            "b_fc2",
+        ):
             setattr(layer, attr, getattr(layer, attr).astype(np.float64))
 
 
@@ -111,8 +127,10 @@ def main():
     cfg.mixed_precision = False
     model = TinyGPTV3(cfg)
     to_float64(model)  # Cast to float64 for clean finite differences
-    print(f"Config: hidden={cfg.hidden_dim}, layers={cfg.n_layers}, "
-          f"heads={cfg.n_heads}, kv_heads={cfg.n_kv_heads}, rope={cfg.use_rope}")
+    print(
+        f"Config: hidden={cfg.hidden_dim}, layers={cfg.n_layers}, "
+        f"heads={cfg.n_heads}, kv_heads={cfg.n_kv_heads}, rope={cfg.use_rope}"
+    )
 
     rng = np.random.default_rng(42)
     token_ids = rng.integers(0, cfg.vocab_size, size=6).astype(np.int64)
@@ -124,23 +142,48 @@ def main():
     print(f"Target: {target}")
 
     params = [
-        "lm_head", "ln_f_gamma",
-        "L0_W_q", "L0_W_k", "L0_W_v", "L0_W_o",
-        "L0_b_q", "L0_b_k", "L0_b_v", "L0_b_o",
-        "L0_ln1_gamma", "L0_ln1_beta", "L0_ln2_gamma", "L0_ln2_beta",
-        "L0_W_fc1", "L0_W_fc2", "L0_b_fc1", "L0_b_fc2",
-        "L1_W_q", "L1_W_k", "L1_W_v", "L1_W_o",
-        "L1_W_fc1", "L1_W_fc2",
+        "lm_head",
+        "ln_f_gamma",
+        "L0_W_q",
+        "L0_W_k",
+        "L0_W_v",
+        "L0_W_o",
+        "L0_b_q",
+        "L0_b_k",
+        "L0_b_v",
+        "L0_b_o",
+        "L0_ln1_gamma",
+        "L0_ln1_beta",
+        "L0_ln2_gamma",
+        "L0_ln2_beta",
+        "L0_W_fc1",
+        "L0_W_fc2",
+        "L0_b_fc1",
+        "L0_b_fc2",
+        "L1_W_q",
+        "L1_W_k",
+        "L1_W_v",
+        "L1_W_o",
+        "L1_W_fc1",
+        "L1_W_fc2",
     ]
 
     all_ok = True
     for name in params:
         pname, max_rel, mean_abs, ok, n = check_param(
-            model, token_ids, target, name, eps=1e-6, abs_tol=1e-6, rel_tol=5e-4,
+            model,
+            token_ids,
+            target,
+            name,
+            eps=1e-6,
+            abs_tol=1e-6,
+            rel_tol=5e-4,
         )
         status = "OK  " if ok else "FAIL"
-        print(f"  [{status}] {pname:20s}  max_rel={max_rel:.4e}  "
-              f"mean_abs_diff={mean_abs:.4e}  n_checked={n}")
+        print(
+            f"  [{status}] {pname:20s}  max_rel={max_rel:.4e}  "
+            f"mean_abs_diff={mean_abs:.4e}  n_checked={n}"
+        )
         if not ok:
             all_ok = False
 
@@ -158,7 +201,9 @@ def main():
         max_rel = float(np.max(rel))
         ok = max_rel < 1e-4
         status = "OK  " if ok else "FAIL"
-        print(f"  [{status}] token_emb[{t}]         max_rel={max_rel:.4e}  n_checked={int(mask.sum())}")
+        print(
+            f"  [{status}] token_emb[{t}]         max_rel={max_rel:.4e}  n_checked={int(mask.sum())}"
+        )
         if not ok:
             all_ok = False
 
@@ -176,9 +221,24 @@ def main():
     model2.ln_f_beta = model.ln_f_beta.copy()
     for i, layer in enumerate(model2.layers):
         src = model.layers[i]
-        for attr in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k", "b_v", "b_o",
-                     "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                     "W_fc1", "W_fc2", "b_fc1", "b_fc2"):
+        for attr in (
+            "W_q",
+            "W_k",
+            "W_v",
+            "W_o",
+            "b_q",
+            "b_k",
+            "b_v",
+            "b_o",
+            "ln1_gamma",
+            "ln1_beta",
+            "ln2_gamma",
+            "ln2_beta",
+            "W_fc1",
+            "W_fc2",
+            "b_fc1",
+            "b_fc2",
+        ):
             setattr(layer, attr, getattr(src, attr).copy())
 
     g1 = analytic_grad(model, token_ids, target)
@@ -201,7 +261,13 @@ def main():
     to_float64(model3)
     for name in ["L0_W_q", "L0_W_k", "L0_W_fc1", "lm_head", "L1_W_o"]:
         pname, max_rel, mean_abs, ok, n = check_param(
-            model3, token_ids, target, name, eps=1e-6, abs_tol=1e-6, rel_tol=5e-4,
+            model3,
+            token_ids,
+            target,
+            name,
+            eps=1e-6,
+            abs_tol=1e-6,
+            rel_tol=5e-4,
         )
         status = "OK  " if ok else "FAIL"
         print(f"  [{status}] {pname:20s}  max_rel={max_rel:.4e}  n_checked={n}")

@@ -233,7 +233,7 @@ values** in `test_cross.py` and explain the change in the PR description.
 
 We follow a simplified **Conventional Commits** style:
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>
@@ -249,7 +249,7 @@ We follow a simplified **Conventional Commits** style:
 
 **Examples:**
 
-```
+```text
 feat(rmt): add Dyson Brownian motion module with 3 unit tests
 fix(tiny-gpt): clamp gradient norm before Adam step to prevent NaN
 docs(readme): add "What's New in v1.6.0" section
@@ -270,20 +270,26 @@ translation(lab_ru): sync tiny_gpt_trainer.py with EN v2 architecture
 ## 🔄 Pull Request Workflow
 
 1. **Fork** the repo and create a feature branch from `main`:
+
    ```bash
    git checkout -b feat/my-feature
    ```
+
 2. **Make your changes.** Commit early and often — we'll squash on merge if needed.
 3. **Run pre-commit locally:**
+
    ```bash
    pre-commit run --all-files
    ```
+
 4. **Run the relevant tests** (see [Testing](#-testing) above).
 5. **Update `CHANGELOG.md`** under `[Unreleased]` (or the latest version section).
 6. **Push to your fork:**
+
    ```bash
    git push origin feat/my-feature
    ```
+
 7. **Open a PR** against `main`. Fill in the PR template completely — the
    checklist is enforced by reviewers.
 8. **Address review feedback** with new commits (do not force-push unless asked).
@@ -390,9 +396,11 @@ The `_en` and `_ru` directories are kept in lock-step. To make changes:
 
 1. **Edit the EN version first.**
 2. **Run the sync script:**
+
    ```bash
    python scripts/sync_ru_trainer.py   # or equivalent for your module
    ```
+
 3. **Manually review** the generated RU file — auto-translation is a starting point, not a finish line
 4. **Verify both versions produce identical numerical output** — run both menus and diff the JSON
 
@@ -432,6 +440,7 @@ Contributors are recognized in three ways:
 2. **`CHANGELOG.md`** — credit in the relevant version section (`Thanks @username for …`)
 3. **`README.md` contributors table** — managed by
    [all-contributors](https://allcontributors.org/) bot. To add a contributor:
+
    ```bash
    # Install the CLI
    npm install -g all-contributors-cli
@@ -439,6 +448,7 @@ Contributors are recognized in three ways:
    # Add a contributor (use the right contribution type)
    all-contributors add <username> code,doc,test,translation
    ```
+
    Or comment on an issue: `@all-contributors please add @username for code`
 
 **Contribution types** recognized by the bot:

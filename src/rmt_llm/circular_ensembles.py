@@ -50,7 +50,8 @@ CircularBeta = Literal[1, 2, 4]
 # Haar-distributed unitary matrices
 # ---------------------------------------------------------------------------
 def haar_unitary(
-    n: int, rng: np.random.Generator | None = None,
+    n: int,
+    rng: np.random.Generator | None = None,
 ) -> np.ndarray:
     """Sample a Haar-distributed unitary matrix.
 
@@ -78,12 +79,12 @@ def haar_unitary(
     # Correct the QR decomposition for Haar measure.
     d = np.diag(R)
     ph = d / np.abs(d)
-    U = Q * ph[np.newaxis, :]
-    return U
+    return Q * ph[np.newaxis, :]
 
 
 def haar_orthogonal(
-    n: int, rng: np.random.Generator | None = None,
+    n: int,
+    rng: np.random.Generator | None = None,
 ) -> np.ndarray:
     """Sample a Haar-distributed orthogonal matrix.
 
@@ -111,7 +112,8 @@ def haar_orthogonal(
 # Circular ensemble generators
 # ---------------------------------------------------------------------------
 def circular_ensemble(
-    n: int, beta: int = 2,
+    n: int,
+    beta: int = 2,
     rng: np.random.Generator | None = None,
 ) -> np.ndarray:
     """Sample a matrix from the circular β-ensemble.
@@ -162,7 +164,8 @@ def circular_ensemble(
 
 
 def circular_eigenvalues(
-    n: int, beta: int = 2,
+    n: int,
+    beta: int = 2,
     rng: np.random.Generator | None = None,
 ) -> np.ndarray:
     """Sample eigenvalues (phases) from a circular β-ensemble.
@@ -186,7 +189,8 @@ def circular_eigenvalues(
 # Spectral statistics
 # ---------------------------------------------------------------------------
 def nearest_neighbor_spacing(
-    phases: ArrayLike, normalize: bool = True,
+    phases: ArrayLike,
+    normalize: bool = True,
 ) -> np.ndarray:
     """Compute nearest-neighbor spacings on the unit circle.
 
@@ -211,7 +215,8 @@ def nearest_neighbor_spacing(
 
 
 def form_factor(
-    phases: ArrayLike, max_k: int | None = None,
+    phases: ArrayLike,
+    max_k: int | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Compute the spectral form factor ``K(τ)``.
 
@@ -246,7 +251,9 @@ def form_factor(
 
 
 def number_variance(
-    phases: ArrayLike, max_L: float = 5.0, n_points: int = 50,
+    phases: ArrayLike,
+    max_L: float = 5.0,
+    n_points: int = 50,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Compute the number variance ``Σ²(L)``.
 
@@ -279,7 +286,6 @@ def number_variance(
         window = L * mean_spacing
         counts = []
         for start in p:
-            end = start + window
             # Handle circular wrap.
             shifted = (p - start) % (2 * np.pi)
             count = np.sum(shifted <= window)
@@ -315,10 +321,10 @@ def wigner_surmise_circular(s: ArrayLike, beta: int = 2) -> np.ndarray:
     if beta == 1:
         a, b = np.pi / 2, np.pi / 4
     elif beta == 2:
-        a, b = 32.0 / np.pi ** 2, 4.0 / np.pi
+        a, b = 32.0 / np.pi**2, 4.0 / np.pi
     else:
-        a, b = (2 ** 18) / (3 ** 6 * np.pi ** 3), 64.0 / (9 * np.pi)
-    return a * s ** beta * np.exp(-b * s ** 2)
+        a, b = (2**18) / (3**6 * np.pi**3), 64.0 / (9 * np.pi)
+    return a * s**beta * np.exp(-b * s**2)
 
 
 def theoretical_form_factor(tau: ArrayLike, beta: int = 2) -> np.ndarray:
@@ -334,19 +340,19 @@ def theoretical_form_factor(tau: ArrayLike, beta: int = 2) -> np.ndarray:
     if beta not in (1, 2, 4):
         raise ValueError(f"beta must be 1, 2, or 4, got {beta}")
     tau = np.asarray(tau, dtype=np.float64)
-    K = np.where(
+    return np.where(
         tau < 1.0,
         tau - (beta * tau / 2.0) * np.log1p(2.0 * tau / beta),
         1.0,
     )
-    return K
 
 
 # ---------------------------------------------------------------------------
 # Connection to attention matrices
 # ---------------------------------------------------------------------------
 def attention_phase_spectrum(
-    attn_matrix: ArrayLike, normalize: bool = True,
+    attn_matrix: ArrayLike,
+    normalize: bool = True,
 ) -> np.ndarray:
     """Compute the phase spectrum of an attention matrix.
 

@@ -5,12 +5,9 @@ spectral analysis, weight save/load, and low-level math helpers.
 
 from __future__ import annotations
 
-import math
 import os
 
 import numpy as np
-import pytest
-
 from tiny_gpt import (
     TinyGPT,
     TinyGPTConfig,
@@ -197,9 +194,7 @@ class TestGenerate:
         """At T=0, the newly-generated tokens should match argmax continuation."""
         prompt = np.array([1, 2, 3], dtype=np.int64)
         n_new = 3
-        result = small_model.generate(
-            prompt, max_new_tokens=n_new, temperature=0.0, seed=42
-        )
+        result = small_model.generate(prompt, max_new_tokens=n_new, temperature=0.0, seed=42)
         # Manually compute argmax continuation
         manual_new = []
         ctx = list(prompt)
@@ -378,7 +373,7 @@ class TestByteEncoding:
 
     def test_encode_returns_int_array(self):
         ids = encode("hello")
-        assert isinstance(ids, list) or isinstance(ids, np.ndarray)
+        assert isinstance(ids, (list, np.ndarray))
         assert len(ids) == 5  # 5 bytes in "hello"
 
     def test_encode_decode_roundtrip(self):

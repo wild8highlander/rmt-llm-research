@@ -1,6 +1,7 @@
 """
 Tests for Session 1 additions: weight tying, label smoothing, gradient clipping.
 """
+
 from __future__ import annotations
 
 import sys
@@ -9,21 +10,21 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from tiny_gpt_v3 import (
     TinyGPTV3,
     TinyGPTV3Config,
-    config_small,
-    clip_grad_norm_,
-    label_smoothing_cross_entropy,
     _softmax,
+    clip_grad_norm_,
+    config_small,
+    label_smoothing_cross_entropy,
 )
 
 
 # ─── Weight tying ─────────────────────────────────────────────────────────
 class TestWeightTying:
-
     def test_default_config_has_weight_tying(self):
         cfg = TinyGPTV3Config()
         assert cfg.weight_tying is True
@@ -67,9 +68,24 @@ class TestWeightTying:
         model.ln_f_gamma = model.ln_f_gamma.astype(np.float64)
         model.ln_f_beta = model.ln_f_beta.astype(np.float64)
         for layer in model.layers:
-            for attr in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k", "b_v", "b_o",
-                         "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                         "W_fc1", "W_fc2", "b_fc1", "b_fc2"):
+            for attr in (
+                "W_q",
+                "W_k",
+                "W_v",
+                "W_o",
+                "b_q",
+                "b_k",
+                "b_v",
+                "b_o",
+                "ln1_gamma",
+                "ln1_beta",
+                "ln2_gamma",
+                "ln2_beta",
+                "W_fc1",
+                "W_fc2",
+                "b_fc1",
+                "b_fc2",
+            ):
                 setattr(layer, attr, getattr(layer, attr).astype(np.float64))
 
         rng = np.random.default_rng(42)
@@ -98,14 +114,12 @@ class TestWeightTying:
         # The analytic gradient includes contributions from both the
         # embedding path AND the LM head path (weight tying).
         assert abs(numeric_grad - analytic_grad) / (abs(numeric_grad) + 1e-8) < 1e-3, (
-            f"tied grad mismatch: numeric={numeric_grad:.4e}, "
-            f"analytic={analytic_grad:.4e}"
+            f"tied grad mismatch: numeric={numeric_grad:.4e}, analytic={analytic_grad:.4e}"
         )
 
 
 # ─── Label smoothing ──────────────────────────────────────────────────────
 class TestLabelSmoothing:
-
     def test_zero_smoothing_matches_standard_ce(self):
         """smoothing=0 should reduce to standard cross-entropy."""
         rng = np.random.default_rng(0)
@@ -161,9 +175,7 @@ class TestLabelSmoothing:
 
     def test_invalid_smoothing_raises(self):
         with pytest.raises(ValueError, match="smoothing must be in"):
-            label_smoothing_cross_entropy(
-                np.zeros((2, 3)), np.array([0, 1]), smoothing=1.5
-            )
+            label_smoothing_cross_entropy(np.zeros((2, 3)), np.array([0, 1]), smoothing=1.5)
 
     def test_gradient_check_label_smoothing(self):
         """Finite-difference check of the dlogits gradient."""
@@ -185,14 +197,12 @@ class TestLabelSmoothing:
         numeric = float((l_plus - l_minus) / (2 * eps))
         analytic = float(dlogits[i, j])
         assert abs(numeric - analytic) / (abs(numeric) + 1e-6) < 5e-3, (
-            f"label smoothing grad mismatch: numeric={numeric:.4e}, "
-            f"analytic={analytic:.4e}"
+            f"label smoothing grad mismatch: numeric={numeric:.4e}, analytic={analytic:.4e}"
         )
 
 
 # ─── Gradient clipping ────────────────────────────────────────────────────
 class TestGradientClipping:
-
     def test_no_clip_when_under_threshold(self):
         grads = {"a": np.ones(10, dtype=np.float32) * 0.1}
         norm = clip_grad_norm_(grads, max_norm=10.0)
@@ -219,7 +229,7 @@ class TestGradientClipping:
 
     def test_multiple_arrays(self):
         grads = {
-            "a": np.array([3.0, 4.0]),   # norm 5
+            "a": np.array([3.0, 4.0]),  # norm 5
             "b": np.array([0.0, 12.0]),  # norm 12
         }
         # Total norm = sqrt(5² + 12²) = 13

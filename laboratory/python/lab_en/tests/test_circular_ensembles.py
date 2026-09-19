@@ -14,12 +14,13 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent / "src"))
 
 from rmt_llm.circular_ensembles import (
     attention_phase_spectrum,
-    circular_ensemble,
     circular_eigenvalues,
+    circular_ensemble,
     form_factor,
     haar_orthogonal,
     haar_unitary,
@@ -29,8 +30,11 @@ from rmt_llm.circular_ensembles import (
     wigner_surmise_circular,
 )
 
+
 try:
-    from hypothesis import given, settings, strategies as st
+    from hypothesis import given, settings
+    from hypothesis import strategies as st
+
     _HAS_HYP = True
 except ImportError:
     _HAS_HYP = False
@@ -38,7 +42,6 @@ except ImportError:
 
 # ─── Haar matrix tests ─────────────────────────────────────────────────────
 class TestHaarMatrices:
-
     def test_haar_unitary_is_unitary(self):
         U = haar_unitary(8, rng=np.random.default_rng(42))
         np.testing.assert_allclose(U @ U.conj().T, np.eye(8), atol=1e-10)
@@ -58,7 +61,6 @@ class TestHaarMatrices:
 
 # ─── Circular ensemble tests ───────────────────────────────────────────────
 class TestCircularEnsembles:
-
     @pytest.mark.parametrize("beta", [1, 2, 4])
     def test_circular_ensemble_shape(self, beta):
         n = 8
@@ -100,7 +102,6 @@ class TestCircularEnsembles:
 
 # ─── Level spacing tests ───────────────────────────────────────────────────
 class TestLevelSpacing:
-
     def test_nearest_neighbor_spacing_circular(self):
         """Circular spacing includes the wrap-around gap."""
         phases = np.array([0.1, 0.5, 1.0, 2.0])
@@ -126,7 +127,6 @@ class TestLevelSpacing:
 
 # ─── Form factor tests ─────────────────────────────────────────────────────
 class TestFormFactor:
-
     def test_form_factor_shape(self):
         phases = circular_eigenvalues(16, beta=2, rng=np.random.default_rng(0))
         tau, K = form_factor(phases, max_k=32)
@@ -156,7 +156,6 @@ class TestFormFactor:
 
 # ─── Number variance tests ─────────────────────────────────────────────────
 class TestNumberVariance:
-
     def test_number_variance_shape(self):
         phases = circular_eigenvalues(32, beta=2, rng=np.random.default_rng(0))
         L, var = number_variance(phases, max_L=3.0, n_points=20)
@@ -171,12 +170,12 @@ class TestNumberVariance:
 
 # ─── Wigner surmise (circular) ─────────────────────────────────────────────
 class TestWignerSurmiseCircular:
-
     @pytest.mark.parametrize("beta", [1, 2, 4])
     def test_normalization(self, beta):
         """The Wigner surmise should integrate to approximately 1."""
         try:
             from scipy.integrate import quad
+
             val, _ = quad(wigner_surmise_circular, 0, 20, args=(beta,))
             assert abs(val - 1.0) < 0.01
         except ImportError:
@@ -196,7 +195,6 @@ class TestWignerSurmiseCircular:
 
 # ─── Attention phase spectrum ──────────────────────────────────────────────
 class TestAttentionPhaseSpectrum:
-
     def test_phase_spectrum_shape(self):
         """Phase spectrum should return sorted phases in [0, 2π)."""
         rng = np.random.default_rng(0)
@@ -223,7 +221,6 @@ class TestAttentionPhaseSpectrum:
 if _HAS_HYP:
 
     class TestCircularProperties:
-
         @given(n=st.integers(min_value=4, max_value=16))
         @settings(max_examples=8, deadline=3000)
         def test_cue_eigenvalues_on_unit_circle(self, n):

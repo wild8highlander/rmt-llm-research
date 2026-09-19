@@ -139,7 +139,7 @@ print(f"Tracy-Widom mean:             {tw_mean:.3f}")
 
 - [Tutorial 2: Training TinyGPT](02-training-tinygpt.md) — train a real
   transformer from scratch
-- [API Reference: marchenko_pastur](../api/rmt-llm.md#marchenko_pastur)
+- [API Reference: marchenko_pastur](../api/rmt-llm.md#rmt_llm.marchenko_pastur)
   — every public function
 - [Theory overview](https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/en/RMT_LLM_Arxiv_Preprint.docx)
   — the full preprint

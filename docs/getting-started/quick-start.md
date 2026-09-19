@@ -26,7 +26,7 @@ make test-all                          # all 8 languages (slow!)
 
 Expected output (truncated):
 
-```
+```text
 laboratory/python/lab_en/tests/test_bpe.py ............  [ 11%]
 laboratory/python/lab_en/tests/test_tiny_gpt.py ......  [ 31%]
 laboratory/python/lab_en/tests/test_trainer.py ........ [ 58%]
@@ -54,7 +54,7 @@ print(f"MP density at λ=1.0: {rho:.4f}")
 
 Expected:
 
-```
+```text
 MP support: [0.028, 1.722]
 MP density at λ=1.0: 0.4127
 ```

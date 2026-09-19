@@ -10,7 +10,7 @@ Language:   unknown
 Version:    unknown
 
 Scenario: default
-  
+
 
 Key metrics:
   n_layers_analyzed              = 4

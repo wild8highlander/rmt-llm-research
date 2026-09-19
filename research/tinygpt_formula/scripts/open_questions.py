@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 open_questions.py — эмпирические тесты четырёх открытых вопросов из docs/ROADMAP.md
 на модели, обученной на формулах (research/tinygpt_formula/model/).

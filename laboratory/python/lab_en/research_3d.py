@@ -34,14 +34,11 @@ from __future__ import annotations
 
 import math
 import time
-import json
-from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
-
+from research import ResearchExperiment
 from tiny_gpt import TinyGPT, TinyGPTConfig, encode
-from research import ResearchExperiment, bootstrap_ci
 
 
 # ---------------------------------------------------------------------------
@@ -77,7 +74,7 @@ def _safe_svd_cov(mat: np.ndarray) -> np.ndarray:
 # ---------------------------------------------------------------------------
 # Experiment 6: Hessian Loss Landscape
 # ---------------------------------------------------------------------------
-def _exp_hessian_loss_landscape(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_hessian_loss_landscape(params: dict[str, Any]) -> dict[str, Any]:
     """Perturb the model along the top-2 Hessian eigendirections and
     measure the loss surface. Output: 3D grid for charts_3d.py.
 
@@ -142,7 +139,7 @@ def _exp_hessian_loss_landscape(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Experiment 7: Manifold Geometry
 # ---------------------------------------------------------------------------
-def _exp_manifold_geometry(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_manifold_geometry(params: dict[str, Any]) -> dict[str, Any]:
     """Compute intrinsic dimensionality of hidden-state manifold via
     PCA participation ratio: PR = (Σ λ_i)^2 / Σ λ_i^2.
 
@@ -157,7 +154,7 @@ def _exp_manifold_geometry(params: Dict[str, Any]) -> Dict[str, Any]:
 
     # Collect hidden states across many random prompts
     all_hidden = []
-    for i in range(min(n_samples, 32)):
+    for _i in range(min(n_samples, 32)):
         n_tok = rng.integers(8, cfg.max_seq_len)
         toks = rng.integers(0, cfg.vocab_size, size=int(n_tok))
         _, hidden = model.forward(toks)
@@ -168,14 +165,14 @@ def _exp_manifold_geometry(params: Dict[str, Any]) -> Dict[str, Any]:
     if H.shape[0] < n_components:
         # Pad by repeating
         reps = (n_components // H.shape[0]) + 1
-        H = np.tile(H, (reps, 1))[:n_components * 4]
+        H = np.tile(H, (reps, 1))[: n_components * 4]
 
     # PCA
     H_centered = H - H.mean(axis=0, keepdims=True)
     U, S, Vt = np.linalg.svd(H_centered, full_matrices=False)
-    eigvals_pca = (S ** 2) / max(H.shape[0] - 1, 1)
+    eigvals_pca = (S**2) / max(H.shape[0] - 1, 1)
     # Participation ratio
-    pr = float((np.sum(eigvals_pca) ** 2) / max(np.sum(eigvals_pca ** 2), 1e-12))
+    pr = float((np.sum(eigvals_pca) ** 2) / max(np.sum(eigvals_pca**2), 1e-12))
 
     # Project to top-N components
     proj = H_centered @ Vt[:n_components].T  # (N, n_components)
@@ -191,13 +188,15 @@ def _exp_manifold_geometry(params: Dict[str, Any]) -> Dict[str, Any]:
         "config": cfg.__dict__,
         "n_samples": int(proj.shape[0]),
         "n_components": n_components,
-        "pca_eigenvalues": eigvals_pca[:max(n_components, 10)].tolist(),
+        "pca_eigenvalues": eigvals_pca[: max(n_components, 10)].tolist(),
         "participation_ratio": pr,
         "pca_points": proj[:, :3].tolist(),
         "pca_colors": colors.tolist(),
         "metrics": {
             "intrinsic_dim_pr": pr,
-            "explained_variance_top3": float(np.sum(eigvals_pca[:3]) / max(np.sum(eigvals_pca), 1e-12)),
+            "explained_variance_top3": float(
+                np.sum(eigvals_pca[:3]) / max(np.sum(eigvals_pca), 1e-12)
+            ),
             "top_eigenvalue": float(eigvals_pca[0]),
             "manifold_volume_proxy": float(np.prod(np.sqrt(eigvals_pca[:3]))),
         },
@@ -207,7 +206,7 @@ def _exp_manifold_geometry(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Experiment 8: Reasoning Trajectory Analysis
 # ---------------------------------------------------------------------------
-def _exp_trajectory_analysis(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_trajectory_analysis(params: dict[str, Any]) -> dict[str, Any]:
     """Sample (step, honesty, deception, spectral_radius) trajectory.
 
     Detects deception onset via crossing point of deception > honesty.
@@ -222,9 +221,9 @@ def _exp_trajectory_analysis(params: Dict[str, Any]) -> Dict[str, Any]:
     # Generate one long trajectory
     prompt = "Reason carefully about this problem."
     ids = encode(prompt)
-    out = model.generate(ids, max_new_tokens=n_points,
-                          temperature=float(params.get("temperature", 0.5)),
-                          seed=seed)
+    out = model.generate(
+        ids, max_new_tokens=n_points, temperature=float(params.get("temperature", 0.5)), seed=seed
+    )
     rt = out["reasoning_trace"]
     thoughts = rt.get("thoughts", [])
     n = max(len(thoughts), n_points)
@@ -250,7 +249,7 @@ def _exp_trajectory_analysis(params: Dict[str, Any]) -> Dict[str, Any]:
 
     # Spectral radius per step (approximate by sampling model at each step)
     spec_radius = []
-    for step in range(n_points):
+    for _step in range(n_points):
         sample_toks = rng.integers(0, cfg.vocab_size, size=16)
         _, hidden = model.forward(sample_toks)
         H = np.vstack([np.array(h) for h in hidden])
@@ -296,7 +295,7 @@ def _exp_trajectory_analysis(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Experiment 9: Spectral Surface Regression
 # ---------------------------------------------------------------------------
-def _exp_spectral_surface_regression(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_spectral_surface_regression(params: dict[str, Any]) -> dict[str, Any]:
     """Compute λ_max(layer, token) surface and detect the N_crit bifurcation.
 
     Fits a piecewise model: λ_max = a*layer + b*token (pre-N_crit)
@@ -332,8 +331,8 @@ def _exp_spectral_surface_regression(params: Dict[str, Any]) -> Dict[str, Any]:
     bif_token = int(np.argmax(np.abs(diff2))) + 1 if len(diff2) > 0 else 0
 
     # Fit pre/post regression
-    pre = mean_lambda[:max(bif_token, 1)]
-    post = mean_lambda[max(bif_token, 1):]
+    pre = mean_lambda[: max(bif_token, 1)]
+    post = mean_lambda[max(bif_token, 1) :]
     pre_slope = float(np.polyfit(np.arange(len(pre)), pre, 1)[0]) if len(pre) > 1 else 0.0
     post_slope = float(np.polyfit(np.arange(len(post)), post, 1)[0]) if len(post) > 1 else 0.0
 
@@ -359,7 +358,7 @@ def _exp_spectral_surface_regression(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Experiment 10: Riemannian Curvature
 # ---------------------------------------------------------------------------
-def _exp_riemannian_curvature(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_riemannian_curvature(params: dict[str, Any]) -> dict[str, Any]:
     """Estimate discrete Gaussian curvature on the hidden-state k-NN graph.
 
     Uses the angle-deficit formula at each point:
@@ -404,11 +403,9 @@ def _exp_riemannian_curvature(params: Dict[str, Any]) -> Dict[str, Any]:
         vecs_n = vecs / np.maximum(norms, 1e-9)
         # Sum of angles between consecutive vectors (sorted by polar angle)
         # Project to unit sphere and compute angular deficit
-        angles = np.arccos(np.clip(
-            np.sum(vecs_n[:-1] * vecs_n[1:], axis=1), -1, 1))
+        angles = np.arccos(np.clip(np.sum(vecs_n[:-1] * vecs_n[1:], axis=1), -1, 1))
         # Close the loop
-        last_angle = np.arccos(np.clip(
-            np.sum(vecs_n[-1] * vecs_n[0], axis=0), -1, 1))
+        last_angle = np.arccos(np.clip(np.sum(vecs_n[-1] * vecs_n[0], axis=0), -1, 1))
         total_angle = float(np.sum(angles) + last_angle)
         # Gaussian curvature proxy: angle deficit
         K = 2 * math.pi - total_angle
@@ -440,7 +437,7 @@ def _exp_riemannian_curvature(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Experiment 11: 3D Attention Flow
 # ---------------------------------------------------------------------------
-def _exp_attention_flow_3d(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_attention_flow_3d(params: dict[str, Any]) -> dict[str, Any]:
     """Measure attention-weight surface and quantify diagonal-vs-smeared
     regime change past N_crit.
 
@@ -464,7 +461,6 @@ def _exp_attention_flow_3d(params: Dict[str, Any]) -> Dict[str, Any]:
         attn = np.array(model._last_attention[0])  # (n, n) for first layer
         if attn.shape != (n, n):
             # Resize / crop
-            from numpy.linalg import lstsq
             small = attn
             # Just use what we have, padded/truncated
             new_attn = np.zeros((n, n))
@@ -477,18 +473,20 @@ def _exp_attention_flow_3d(params: Dict[str, Any]) -> Dict[str, Any]:
         Q, K = np.meshgrid(np.arange(n), np.arange(n), indexing="ij")
         sigma_pre = 2.0
         sigma_post = 6.0
-        sigma_grid = np.where(Q < n_crit, sigma_pre, sigma_post)
-        attn = np.exp(-((Q - K) ** 2) / (2 * sigma_grid ** 2))
+        sigma_grid = np.where(n_crit > Q, sigma_pre, sigma_post)
+        attn = np.exp(-((Q - K) ** 2) / (2 * sigma_grid**2))
         # Normalize rows
         attn = attn / np.maximum(attn.sum(axis=1, keepdims=True), 1e-9)
 
     # Diagonality score: how concentrated is attention on the diagonal?
     diag_score = float(np.mean(np.diag(attn)) / max(np.mean(attn), 1e-9))
     # Smearing score: standard deviation of attention spread per row
-    spread_per_row = np.array([
-        np.sqrt(np.sum((np.arange(n) - i) ** 2 * attn[i]) / max(np.sum(attn[i]), 1e-9))
-        for i in range(n)
-    ])
+    spread_per_row = np.array(
+        [
+            np.sqrt(np.sum((np.arange(n) - i) ** 2 * attn[i]) / max(np.sum(attn[i]), 1e-9))
+            for i in range(n)
+        ]
+    )
     smearing_score = float(np.mean(spread_per_row))
 
     return {
@@ -509,7 +507,7 @@ def _exp_attention_flow_3d(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # N_crit Surface (bonus experiment for the 3D N_crit collapse surface chart)
 # ---------------------------------------------------------------------------
-def _exp_ncrit_surface(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_ncrit_surface(params: dict[str, Any]) -> dict[str, Any]:
     """Compute T_crit surface over (β, rlhf_pressure) grid.
 
     T_crit(β, μ) = N_crit_base × (θ_b + μ)^(-1/β)
@@ -545,7 +543,7 @@ def _exp_ncrit_surface(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Parameter Space Sweep (bonus experiment for 3D parameter-space chart)
 # ---------------------------------------------------------------------------
-def _exp_parameter_space(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_parameter_space(params: dict[str, Any]) -> dict[str, Any]:
     """Sweep (temperature, top_p) and measure hallucination rate."""
     grid = int(params.get("parameter_space_grid", 16))
     seed = int(params.get("seed", 42))
@@ -582,7 +580,7 @@ def _exp_parameter_space(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Coalition Drift (bonus experiment for SCEN-COAL-09)
 # ---------------------------------------------------------------------------
-def _exp_coalition_drift(params: Dict[str, Any]) -> Dict[str, Any]:
+def _exp_coalition_drift(params: dict[str, Any]) -> dict[str, Any]:
     """Simulate multi-agent coalitional deception drift across rounds.
 
     Returns per-round, per-agent deception scores.
@@ -596,7 +594,7 @@ def _exp_coalition_drift(params: Dict[str, Any]) -> Dict[str, Any]:
     base_deception = 0.25 + 0.05 * np.arange(n_agents)
     per_round = []
     for r in range(n_rounds):
-        round_scores = (base_deception + 0.12 * r + rng.normal(0, 0.02, n_agents))
+        round_scores = base_deception + 0.12 * r + rng.normal(0, 0.02, n_agents)
         round_scores = np.clip(round_scores, 0, 1)
         per_round.append(round_scores.tolist())
 
@@ -617,7 +615,7 @@ def _exp_coalition_drift(params: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
-EXPERIMENTS_3D: Dict[str, ResearchExperiment] = {
+EXPERIMENTS_3D: dict[str, ResearchExperiment] = {
     "6": ResearchExperiment(
         "Hessian Loss Landscape (3D)",
         "Perturb model along top-2 Hessian eigendirections, measure 3D loss surface.",
@@ -666,7 +664,7 @@ EXPERIMENTS_3D: Dict[str, ResearchExperiment] = {
 }
 
 
-def run_3d_experiment(exp_id: str, params: Dict[str, Any]) -> Dict[str, Any]:
+def run_3d_experiment(exp_id: str, params: dict[str, Any]) -> dict[str, Any]:
     """Run a 3D experiment by ID."""
     if exp_id not in EXPERIMENTS_3D:
         raise KeyError(f"Unknown 3D experiment: {exp_id}. Known: {list(EXPERIMENTS_3D.keys())}")
@@ -677,23 +675,24 @@ def run_3d_experiment(exp_id: str, params: Dict[str, Any]) -> Dict[str, Any]:
     result["experiment_name"] = exp.name
     result["experiment_description"] = exp.description
     result["elapsed_seconds"] = elapsed
-    result["parameters"] = {k: v for k, v in params.items()
-                             if not isinstance(v, (dict, list))}
+    result["parameters"] = {k: v for k, v in params.items() if not isinstance(v, (dict, list))}
     return result
 
 
-def run_all_3d_experiments(params: Dict[str, Any]) -> Dict[str, Any]:
+def run_all_3d_experiments(params: dict[str, Any]) -> dict[str, Any]:
     """Run all 9 3D experiments and return a combined result dict
     suitable for charts_3d.generate_all_3d_charts()."""
     combined = {"3d_research": {}, "experiments": []}
     for exp_id in EXPERIMENTS_3D:
         try:
             res = run_3d_experiment(exp_id, params)
-            combined["experiments"].append({
-                "id": exp_id,
-                "name": res["experiment_name"],
-                "elapsed_seconds": res["elapsed_seconds"],
-            })
+            combined["experiments"].append(
+                {
+                    "id": exp_id,
+                    "name": res["experiment_name"],
+                    "elapsed_seconds": res["elapsed_seconds"],
+                }
+            )
             # Store under 3d_research key with snake_case names for charts_3d
             name_map = {
                 "6": "loss_landscape",
@@ -708,11 +707,14 @@ def run_all_3d_experiments(params: Dict[str, Any]) -> Dict[str, Any]:
             }
             key = name_map.get(exp_id, f"exp_{exp_id}")
             combined["3d_research"][key] = res
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             print(f"  [WARN] 3D experiment {exp_id} failed: {exc}")
-            combined["experiments"].append({
-                "id": exp_id, "error": str(exc),
-            })
+            combined["experiments"].append(
+                {
+                    "id": exp_id,
+                    "error": str(exc),
+                }
+            )
     return combined
 
 

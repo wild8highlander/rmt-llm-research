@@ -43,7 +43,7 @@ print(tokenizer.decode(out))
 
 Typical output:
 
-```
+```text
 def train(arararars.llllllll...)
 ```
 

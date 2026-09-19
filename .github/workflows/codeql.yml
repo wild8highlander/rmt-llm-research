@@ -50,17 +50,8 @@ jobs:
           languages: ${{ matrix.language }}
           # Use the 'security-and-quality' suite for the most thorough scan
           queries: security-and-quality
-          # Override default config to scan laboratory/ in addition to src/
-          config: |
-            paths:
-              - src
-              - laboratory/python
-              - python/rmt_llm_viz
-              - scripts
-            paths-ignore:
-              - laboratory/webapp
-              - '**/tests/**'
-              - '**/test_*.py'
+          # Scan laboratory/ in addition to src/ (see .github/codeql-config.yml)
+          config-file: ./.github/codeql-config.yml
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3

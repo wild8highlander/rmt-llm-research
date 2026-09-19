@@ -19,24 +19,24 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import urllib.request
 import urllib.error
-from typing import Any, Dict, List, Optional
+import urllib.request
+from typing import Any
 
 
 REGISTRY_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "shared", "model_registry.json")
 
 
-def load_registry() -> Dict[str, Any]:
-    with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
+def load_registry() -> dict[str, Any]:
+    with open(REGISTRY_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 
-def list_models() -> List[Dict[str, Any]]:
+def list_models() -> list[dict[str, Any]]:
     return load_registry()["models"]
 
 
-def get_model(model_id: str) -> Optional[Dict[str, Any]]:
+def get_model(model_id: str) -> dict[str, Any] | None:
     for m in load_registry()["models"]:
         if m["id"] == model_id:
             return m
@@ -51,12 +51,20 @@ def sha256_file(path: str) -> str:
     return h.hexdigest()
 
 
-def download(url: str, dest: str, timeout: int = 60,
-             expected_sha256: Optional[str] = None) -> Dict[str, Any]:
+def download(
+    url: str, dest: str, timeout: int = 60, expected_sha256: str | None = None
+) -> dict[str, Any]:
     """Скачивает файл с прогрессом и опциональной проверкой контрольной суммы."""
     os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
-    info = {"url": url, "dest": dest, "ok": False, "bytes": 0,
-            "sha256": None, "verified": False, "error": None}
+    info = {
+        "url": url,
+        "dest": dest,
+        "ok": False,
+        "bytes": 0,
+        "sha256": None,
+        "verified": False,
+        "error": None,
+    }
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "rmt-llm-lab/1.0"})
         with urllib.request.urlopen(req, timeout=timeout) as resp, open(dest, "wb") as f:
@@ -75,17 +83,18 @@ def download(url: str, dest: str, timeout: int = 60,
         info["bytes"] = os.path.getsize(dest)
         info["sha256"] = sha256_file(dest)
         if expected_sha256:
-            info["verified"] = (info["sha256"] == expected_sha256)
+            info["verified"] = info["sha256"] == expected_sha256
         info["ok"] = True
     except urllib.error.URLError as exc:
         info["error"] = f"Ошибка URL: {exc}"
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         info["error"] = f"{type(exc).__name__}: {exc}"
     return info
 
 
-def fetch_model(model_id: str, dest_dir: str = "results/models",
-                skip_download: bool = False) -> Dict[str, Any]:
+def fetch_model(
+    model_id: str, dest_dir: str = "results/models", skip_download: bool = False
+) -> dict[str, Any]:
     """Высокоуровневая функция: загружает модель по ID из реестра.
     Возвращает dict с описанием модели и отчётом о загрузке.
     Если модель локальная, возвращает дескриптор локальной синтетической модели.
@@ -95,8 +104,12 @@ def fetch_model(model_id: str, dest_dir: str = "results/models",
         return {"ok": False, "error": f"Неизвестный model_id: {model_id}"}
 
     if model["source"] == "local":
-        return {"ok": True, "model": model, "local": True,
-                "message": "Локальная модель — загрузка не требуется. Используйте TinyGPT напрямую."}
+        return {
+            "ok": True,
+            "model": model,
+            "local": True,
+            "message": "Локальная модель — загрузка не требуется. Используйте TinyGPT напрямую.",
+        }
 
     os.makedirs(dest_dir, exist_ok=True)
     filename = model["url"].rsplit("/", 1)[-1] or f"{model_id}.bin"
@@ -119,7 +132,7 @@ def interactive_pick() -> str:
     print("\n=== РЕЕСТР МОДЕЛЕЙ ===")
     for i, m in enumerate(models, 1):
         sz = m.get("params_count", 0)
-        sz_str = f"{sz/1e6:.1f}M" if sz >= 1e6 else f"{sz}"
+        sz_str = f"{sz / 1e6:.1f}M" if sz >= 1e6 else f"{sz}"
         print(f"  {i:2d}. [{m['id']}] {m['name']} ({sz_str} парам., {m['format']})")
         print(f"      Источник: {m['source']}  Лицензия: {m.get('license', 'неизвестна')}")
         print(f"      {m.get('description', '')[:90]}")

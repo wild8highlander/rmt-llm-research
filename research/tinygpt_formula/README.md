@@ -1,180 +1,185 @@
-# TinyGPT v3 Formula-Edition — LLM-исследование на формулах репозитория
+# TinyGPT v3 Formula-Edition — LLM Research on Repository Formulas
 
-> **Отдельная папка исследования** (не влияет на ядро `src/rmt_llm/`).
-> Задача: взять готовую «чистую» модель из репозитория (TinyGPT v3, NumPy-only,
-> ADR-001), обучить её на формулах проекта и измерить, насколько она стала лучше.
-> Всё воспроизводимо: сиды зафиксированы, корпус детерминирован, скрипты
-> проверены регрессионными тестами.
+> **A standalone research folder** (it does not affect the `src/rmt_llm/` core).
+> Goal: take the ready-made "clean" model from the repository (TinyGPT v3,
+> NumPy-only, ADR-001), train it on the project's formulas, and measure how much
+> it improves. Everything is reproducible: seeds are fixed, the corpus is
+> deterministic, and the scripts are covered by regression tests.
 
-## 1. Что внутри
+## 1. What's inside
 
-```
+```text
 research/tinygpt_formula/
-├── README.md            — этот документ
-├── scripts/             — весь пайплайн (5 скриптов, чистый Python + NumPy)
-│   ├── build_corpus.py        # сбор корпуса формул из репозитория
-│   ├── train_formula_model.py # обучение TinyGPT v3 (resume по эпохам)
-│   ├── evaluate_model.py      # оценка качества + прирост от обучения
-│   ├── open_questions.py      # эмпирические тесты 4 открытых вопросов
-│   └── infer.py               # инференс для веб-приложения (JSON в/JSON out)
-├── data/                — корпус (train 61KB / val 6KB, вычислительные пары)
-├── model/               — веса, токенизатор, полная история обучения, отчёты
-├── colab/               — Colab-ноутбуки: бесплатный GPU + лестница масштабирования
-└── scaling/             — лестница параметров × A/B «формулы vs галлюцинации»
+├── README.md            — this document
+├── scripts/             — the full pipeline (5 scripts, pure Python + NumPy)
+│   ├── build_corpus.py        # build the formula corpus from the repository
+│   ├── train_formula_model.py # train TinyGPT v3 (epoch-level resume)
+│   ├── evaluate_model.py      # quality evaluation + training gains
+│   ├── open_questions.py      # empirical tests of 4 open questions
+│   └── infer.py               # inference for the web app (JSON in / JSON out)
+├── data/                — corpus (train 61KB / val 6KB, computational pairs)
+├── model/               — weights, tokenizer, full training history, reports
+├── colab/               — Colab notebooks: free GPU + scaling ladder
+└── scaling/             — parameter ladder × "formulas vs hallucinations" A/B
 ```
 
-## 2. Модель «из коробки»
+## 2. The out-of-the-box model
 
-TinyGPT v3 из `laboratory/python/lab_en/` — небольшой трансформер на чистом NumPy,
-без внешних зависимостей (соответствует ADR-001 репозитория):
+TinyGPT v3 from `laboratory/python/lab_en/` is a small pure-NumPy transformer
+with no external dependencies (per the repository's ADR-001):
 
-| Компонент | Значение |
+| Component | Value |
 |---|---|
-| Архитектура | pre-LN decoder, **RoPE**, **GQA** (6 query-голов / 2 KV-головы) |
-| Параметры | **447 360** |
-| Слои / hidden | 4 / 96 |
-| Контекст | 64 токена |
-| Токенизатор | byte-level BPE, vocab 512 (256 байт + 256 merge-ов) |
-| Обучение | AdamW, cosine LR + warmup, label smoothing 0.1, grad clip 1.0, weight tying |
+| Architecture | pre-LN decoder, **RoPE**, **GQA** (6 query heads / 2 KV heads) |
+| Parameters | **447,360** |
+| Layers / hidden | 4 / 96 |
+| Context | 64 tokens |
+| Tokenizer | byte-level BPE, vocab 512 (256 bytes + 256 merges) |
+| Training | AdamW, cosine LR + warmup, label smoothing 0.1, grad clip 1.0, weight tying |
 
-Почему именно она: модель уже есть в репо «из коробки», не требует GPU и
-обучается на CPU за ~20 минут — идеальный полигон для формул проекта.
-Для больших прогонов (M/L/XL) в `colab/` два ноутбука с бесплатным
-сервером: `RMT_TinyGPT_Free_Server.ipynb` и `Scaling_Ladder_Hallucinations.ipynb`.
+Why this model: it already ships with the repo, needs no GPU, and trains on CPU
+in ~20 minutes — an ideal test bed for the project's formulas. For larger runs
+(M/L/XL), the `colab/` folder provides two notebooks with a free server:
+`RMT_TinyGPT_Free_Server.ipynb` and `Scaling_Ladder_Hallucinations.ipynb`.
 
-## 3. Корпус формул
+## 3. The formula corpus
 
-`build_corpus.py` собирает корпус из трёх источников:
+`build_corpus.py` assembles the corpus from three sources:
 
-1. **Символьные формулы** — docstring-и, сигнатуры и код всех функций ядра
-   `src/rmt_llm/` (Marchenko–Pastur, BBP, Tracy–Widom, NHSE, Капуто,
-   Keating–Snaith, EP-поверхности, термодинамика, свободная вероятность,
-   круговые ансамбли, Дайсон);
-2. **Вычислительные пары** — «параметры → точный численный результат»,
-   сгенерированных самой библиотекой (самопроверка на собственных формулах);
-3. **Монография** — ключевые формулы из `papers/LLM_Analysis_Merged.pdf`
-   (микроколлапсы IEEE 754, Ловушка Полезности, Капуто-субдиффузия,
-   Ландауэр, Hallucination Cliff, N_crit = gamma_1 / theta_b).
+1. **Symbolic formulas** — docstrings, signatures, and code of every function
+   in the `src/rmt_llm/` core (Marchenko–Pastur, BBP, Tracy–Widom, NHSE, Caputo,
+   Keating–Snaith, EP surfaces, thermodynamics, free probability, circular
+   ensembles, Dyson);
+2. **Computational pairs** — "parameters → exact numerical result" pairs
+   generated by the library itself (self-verification against its own formulas);
+3. **Monograph** — key formulas from `papers/LLM_Analysis_Merged.pdf`
+   (IEEE 754 microcollapses, the Utility Trap, Caputo subdiffusion, Landauer,
+   Hallucination Cliff, N_crit = gamma_1 / theta_b).
 
-**Каноничные файлы корпуса** — `data/formula_corpus_{train,val}.txt`:
-именно на них обучена модель в `model/`. Скрипт-сборщик воспроизводит корпус
-из исходников детерминированно; при расхождении версий приоритет у `data/`.
+**The canonical corpus files** are `data/formula_corpus_{train,val}.txt`:
+these are exactly what the model in `model/` was trained on. The build script
+reproduces the corpus from the sources deterministically; if versions diverge,
+`data/` takes priority.
 
-## 4. Результаты обучения (40 эпох, CPU)
+## 4. Training results (40 epochs, CPU)
 
-| Метрика | До обучения | После | Прирост |
+| Metric | Before training | After | Gain |
 |---|---|---|---|
 | val_loss (nats/token) | 6.2348 | **1.9538** | −68.7% (×3.19) |
-| val перплексия | 508.9 | **7.06** | −98.6% (×72) |
-| val match_rate (точный токен) | 1.67% | **51.57%** | +49.9 п.п. |
+| val perplexity | 508.9 | **7.06** | −98.6% (×72) |
+| val match_rate (exact token) | 1.67% | **51.57%** | +49.9 pp |
 
-Целевой ориентир ROADMAP (match_rate ≥ 25% для TinyGPT v3) превышен вдвое.
+The ROADMAP target (match_rate ≥ 25% for TinyGPT v3) is exceeded twofold.
 
-## 5. Честный бенчмарк (held-out, 37 свежих задач)
+## 5. Honest benchmark (held-out, 37 fresh tasks)
 
-Задачи с параметрами, которых модель **не видела** в корпусе:
+Tasks with parameters the model **never saw** in the corpus:
 
-| Метрика | Значение | Что это значит |
+| Metric | Value | Meaning |
 |---|---|---|
-| format_score | **40.5%** | воспроизводит структуру ответа `=> lambda_minus = ...` |
-| numeric_score (±15%) | **0%** | не экстраполирует арифметику |
-| teacher_forced | **36.7%** | точность следующего токена на эталоне |
+| format_score | **40.5%** | reproduces the answer structure `=> lambda_minus = ...` |
+| numeric_score (±15%) | **0%** | does not extrapolate arithmetic |
+| teacher_forced | **36.7%** | next-token accuracy against the reference |
 
-Интерпретация: модель 447K выучила *грамматику формул* и *запомнила* типовые
-значения, но не умеет считать «в уме» — численно точная генерация за пределами
-запомненного недостижима для такого размера. Это прямая эмпирическая
-иллюстрация тезисов монографии проекта: **«Ловушка Полезности»** и
-**Hallucination Cliff** — модель уверенно оформляет ответ там, где не уверена
-в содержании.
+Interpretation: the 447K model learned the *grammar of formulas* and
+*memorized* typical values, but cannot "do math in its head" — numerically
+accurate generation beyond memorized content is out of reach at this size.
+This is a direct empirical illustration of the monograph's theses: the
+**"Utility Trap"** and the **Hallucination Cliff** — the model confidently
+formats an answer where it is unsure about the content.
 
-## 6. RMT-диагностика скрытых состояний
+## 6. RMT diagnostics of hidden states
 
-Спектральный зонд (λ_max ковариаций скрытых состояний vs MP-граница по слоям):
-у обученной модели **все 4 слоя выходят за MP-границу** (λ_max > MP_up × 1.05),
-у необученной — 0 из 4. Обучение переводит спектр скрытых состояний из
-«чистого шума» в режим с выраженной структурой — согласуется с появлением
-разделения в Q3 ниже.
+The spectral probe (λ_max of hidden-state covariances vs the MP bound per
+layer): the trained model has **all 4 layers beyond the MP bound**
+(λ_max > MP_up × 1.05), the untrained one has 0 of 4. Training shifts the
+hidden-state spectrum from "pure noise" to a regime with pronounced structure —
+consistent with the separation emerging in Q3 below.
 
-## 7. Открытые вопросы из docs/ROADMAP.md — эмпирические решения
+## 7. Open questions from docs/ROADMAP.md — empirical answers
 
-| # | Вопрос | Статус | Итог |
+| # | Question | Status | Result |
 |---|---|---|---|
-| Q1 | Free probability для attention-матриц | **SOLVED** (эмпирика) | R-кумулянты свободных кумулянтов применимы к ковариациям скрытых состояний; free-оценка N_crit (κ₂/κ₁²) даёт слоевой порог, согласованный с MP-критерием |
-| Q2 | Капуто-Ланжевен для SFT | **SOLVED** (аналитика+численно) | переносится заменой знака дрейфа: SFT растит T_crit, RLHF роняет как μ^(−1/β); кривая лосса подтверждает субдиффузию |
-| Q3 | BBP-переход как детектор лжи | **подтверждается на этой траектории** | λ_max выше на известных ответах, чем на фабрикациях: pairwise AUC **0.75** (на прошлой траектории обучения был 0.29 — эффект зависит от траектории и статистика 4×4 слабая; лестница масштабирования проверит систематичность) |
-| Q4 | Стохастический след Хатчинсона | **SOLVED** | след + λ_max без eigvalsh: ×1.9–11 быстрее на 1024×1024 (зависит от нагрузки BLAS), ошибка следа 0.05% |
+| Q1 | Free probability for attention matrices | **SOLVED** (empirical) | R-cumulants of free cumulants apply to hidden-state covariances; the free estimate of N_crit (κ₂/κ₁²) yields a per-layer threshold consistent with the MP criterion |
+| Q2 | Caputo-Langevin for SFT | **SOLVED** (analytic + numeric) | transfers by flipping the drift sign: SFT raises T_crit, RLHF drops it like μ^(−1/β); the loss curve confirms subdiffusion |
+| Q3 | BBP transition as a lie detector | **confirmed on this trajectory** | λ_max is higher on known answers than on fabrications: pairwise AUC **0.75** (a previous training trajectory gave 0.29 — the effect is trajectory-dependent and the 4×4 statistics are weak; the scaling ladder will test systematicity) |
+| Q4 | Stochastic Hutchinson trace | **SOLVED** | trace + λ_max without eigvalsh: ×1.9–11 faster on 1024×1024 (BLAS-dependent), trace error 0.05% |
 
-Полные данные: `model/open_questions_results.json`.
+Full data: `model/open_questions_results.json`.
 
-## 8. Как воспроизвести (на машине или в Termux)
+## 8. How to reproduce (desktop or Termux)
 
 ```bash
-# из корня репозитория
-python3 research/tinygpt_formula/scripts/build_corpus.py        # 1. корпус
-python3 research/tinygpt_formula/scripts/train_formula_model.py # 2. обучение (~20 мин CPU)
-python3 research/tinygpt_formula/scripts/evaluate_model.py      # 3. оценка + прирост
-python3 research/tinygpt_formula/scripts/open_questions.py      # 4. открытые вопросы
+# from the repository root
+python3 research/tinygpt_formula/scripts/build_corpus.py        # 1. corpus
+python3 research/tinygpt_formula/scripts/train_formula_model.py # 2. training (~20 min CPU)
+python3 research/tinygpt_formula/scripts/evaluate_model.py      # 3. evaluation + gains
+python3 research/tinygpt_formula/scripts/open_questions.py      # 4. open questions
 python3 research/tinygpt_formula/scripts/infer.py '{"prompt":"mp_bounds(q=0.5, sigma2=1.0)"}'
 ```
 
-Нужен только Python 3.10+ и NumPy (`pip install numpy`, в Termux:
-`pkg install python-numpy` или через proot-Ubuntu `apt install python3-numpy`).
-Скрипты сами находят корень репозитория (или через `RMT_LLM_ROOT` /
-`RMT_LLM_BASE`); обучение возобновляется с места прерывания
-(`TRAIN_MAX_MINUTES` — лимит минуты на запуск, `TRAIN_RESUME=0` — начать с нуля).
+Only Python 3.10+ and NumPy are required (`pip install numpy`; on Termux:
+`pkg install python-numpy`, or via proot-Ubuntu `apt install python3-numpy`).
+The scripts locate the repository root on their own (or via `RMT_LLM_ROOT` /
+`RMT_LLM_BASE`); training resumes where it stopped (`TRAIN_MAX_MINUTES` — a
+per-run minute limit, `TRAIN_RESUME=0` — start from scratch).
 
-## 9. Связь с веб-приложением
+## 9. Connection to the web app
 
-Живая модель крутится в приложении **Neural Lab** (`neural_lab/` в корне
-репозитория): вкладка Playground вызывает `scripts/infer.py` через API,
-вкладки Training / Benchmark / Questions показывают те же артефакты,
-что лежат в `model/` этой папки.
+The live model runs in the **Neural Lab** app (`neural_lab/` at the repository
+root): the Playground tab calls `scripts/infer.py` through the API, while the
+Training / Benchmark / Questions tabs display the same artifacts stored in
+this folder's `model/`.
 
-## 10. Масштабирование и галлюцинации (`scaling/`) — можно ли улучшать модель дальше
+## 10. Scaling and hallucinations (`scaling/`) — can the model be improved further
 
-**Да.** Папка `scaling/` содержит готовый эксперимент для следующего шага:
-растим модель (лестница S 447K → M ~1.1M → L 4.15M → XL ~12M, всё тот же
-NumPy-only TinyGPT v3) и на каждом размере сравниваем **две руки**:
+**Yes.** The `scaling/` folder contains a ready-made experiment for the next
+step: grow the model (the ladder S 447K → M ~1.1M → L 4.15M → XL ~12M, still
+the same NumPy-only TinyGPT v3) and at each size compare **two arms**:
 
-- `formula` — обучение на истинных формулах репозитория;
-- `control` — обучение на **контрольном** корпусе (`build_control_corpus.py`):
-  тот же текст, та же грамматика, но численные результаты в парах
-  детерминированно искажены (сид 42). Разница рук изолирует эффект именно
-  ПРАВИЛЬНОГО содержимого формул, а не дообучения как такового;
-- `untrained` — необученная модель того же размера как точка отсчёта.
+- `formula` — training on the repository's true formulas;
+- `control` — training on a **control** corpus (`build_control_corpus.py`):
+  the same text, the same grammar, but the numerical results in the pairs are
+  deterministically corrupted (seed 42). The difference between the arms
+  isolates the effect of CORRECT formula content, not of extra training itself;
+- `untrained` — an untrained model of the same size as the baseline.
 
-Два бенчмарка (всё против ИСТИННЫХ значений библиотеки):
+Two benchmarks (everything against the library's TRUE values):
 
-- **HELD-OUT** (37 свежих задач) — экстраполяция: параметров не было в корпусе;
-- **IN-DISTRIBUTION** (до 60 пар из корпуса) — здесь у модели есть знание:
-  formula-рука должна воспроизводить истину, control — выученную ложь.
+- **HELD-OUT** (37 fresh tasks) — extrapolation: the parameters were absent
+  from the corpus;
+- **IN-DISTRIBUTION** (up to 60 corpus pairs) — the model has knowledge here:
+  the formula arm should reproduce the truth, the control arm should reproduce
+  the learned lie.
 
-Ключевая метрика — **confident_hallucination_rate**: доля оформленных ответов
-(format_ok=True) с неверными числами — эмпирическая мера «Ловушки Полезности».
+The key metric is **confident_hallucination_rate**: the share of formatted
+answers (format_ok=True) with wrong numbers — an empirical measure of the
+"Utility Trap".
 
-**Точка S (447K, 40 эпох):**
+**Point S (447K, 40 epochs):**
 
-| Рука | HELD-OUT: num / format / галл. | IN-DIST: num / format / галл. |
+| Arm | HELD-OUT: num / format / halluc. | IN-DIST: num / format / halluc. |
 |---|---|---|
 | formula | 0.0% / 40.5% / 100% (15/15) | **8.3%** / 25.0% / **66.7%** (10/15) |
 | control | 0.0% / 64.9% / 100% (24/24) | 3.3% / 18.3% / **81.8%** (9/11) |
-| untrained | 0.0% / 0.0% / нет оформленных | 0.0% / 0.0% / нет оформленных |
+| untrained | 0.0% / 0.0% / none formatted | 0.0% / 0.0% / none formatted |
 
-Чтение:
+Reading:
 
-- **HELD-OUT**: обе руки галлюцинируют числами в каждом оформленном ответе —
-  на 447K экстраполяция арифметики недостижима, ёмкость упирается в предел.
-  Контрольная рука при этом галлюцинирует ЧАЩЕ (оформленная ложь на 24 из 37
-  задач против 15/37 у formula) — правильные формулы дают больше
-  «правильного материала» и меньше пустых уверенных ответов.
-- **IN-DIST (главный результат)**: там, где у модели есть знание, formula-рука
-  уже на S воспроизводит истину чаще (numeric 8.3% vs 3.3%) и галлюцинирует
-  реже (66.7% vs 81.8%, −15 п.п.). Выборки маленькие — статистика слабая,
-  но направление совпадает с гипотезой H2 из SCALING_PLAN.md: **обучение на
-  истинных формулах снижает галлюцинации там, где модель имеет знание**.
-- Вопрос, усиливается ли эффект с масштабом, отвечает лестница M/L/XL на
-  бесплатном GPU (Colab T4 / Kaggle, ~30-60 мин на M, ~2-4 ч на L).
+- **HELD-OUT**: both arms hallucinate numbers in every formatted answer —
+  at 447K, extrapolating arithmetic is out of reach; capacity is the limit.
+  The control arm hallucinates MORE OFTEN (formatted lies on 24 of 37 tasks
+  vs 15/37 for formula) — correct formulas provide more "correct material"
+  and fewer empty confident answers.
+- **IN-DIST (the main result)**: where the model has knowledge, the formula
+  arm already at S reproduces the truth more often (numeric 8.3% vs 3.3%)
+  and hallucinates less often (66.7% vs 81.8%, −15 pp). The samples are small
+  — weak statistics — but the direction matches hypothesis H2 from
+  SCALING_PLAN.md: **training on true formulas reduces hallucinations where
+  the model has knowledge**.
+- Whether the effect strengthens with scale is answered by the M/L/XL ladder
+  on free GPUs (Colab T4 / Kaggle, ~30–60 min for M, ~2–4 h for L).
 
-Актуальные числа: `scaling/SCALING_RESULTS.md` + `scaling/scaling_report.json`
-(источник истины один). План, гипотезы и бюджет: `scaling/SCALING_PLAN.md`.
-Запуск на телефоне: `scaling/TERMUX_PROOT_UBUNTU.md` (Termux + proot-Ubuntu).
+Up-to-date numbers: `scaling/SCALING_RESULTS.md` + `scaling/scaling_report.json`
+(the single source of truth). Plan, hypotheses, and budget: `scaling/SCALING_PLAN.md`.
+Running on a phone: `scaling/TERMUX_PROOT_UBUNTU.md` (Termux + proot-Ubuntu).

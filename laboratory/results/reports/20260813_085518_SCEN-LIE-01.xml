@@ -42,9 +42,9 @@
     <log>[2026-08-13 08:55:13] Started full lab run</log>
     <log>[2026-08-13 08:55:13] Saving local TinyGPT weights...</log>
     <log>[2026-08-13 08:55:13]   Saved: /home/z/my-project/rmt-llm-research/laboratory/results/models/tiny_gpt_local.npz</log>
-    <log>[2026-08-13 08:55:13] 
+    <log>[2026-08-13 08:55:13]
 === RUNNING 6 SCENARIOS ===</log>
-    <log>[2026-08-13 08:55:13] 
+    <log>[2026-08-13 08:55:13]
 --- Scenario SCEN-LIE-01: Pre-known Answer Subversion ---</log>
     <log>[SCENARIO] starting SCEN-LIE-01 — Pre-known Answer Subversion</log>
     <log>[SCENARIO] merged params: temperature=0.01, max_tokens=256</log>

@@ -18,7 +18,6 @@ References:
 from __future__ import annotations
 
 import numpy as np
-from numpy.typing import ArrayLike
 
 
 def bbp_critical_theta(q: float) -> float:
@@ -61,12 +60,10 @@ def bbp_lambda_max(theta: float, q: float, sigma2: float = 1.0) -> float:
 
     if theta <= theta_c:
         return lam_plus
-    else:
-        return sigma2 * (1.0 + theta ** 2 / q)
+    return sigma2 * (1.0 + theta**2 / q)
 
 
-def bbp_signal_separation(theta: float, q: float,
-                          sigma2: float = 1.0) -> float:
+def bbp_signal_separation(theta: float, q: float, sigma2: float = 1.0) -> float:
     """Compute the gap between lambda_max and the bulk edge lambda_+.
 
     A positive gap indicates supercritical regime (signal detected).
@@ -108,7 +105,7 @@ def bbp_is_supercritical(theta: float, q: float) -> bool:
     return theta > bbp_critical_theta(q)
 
 
-def bbp_fluctuation_scaling(n: int, q: float) -> float:
+def bbp_fluctuation_scaling(n: int, q: float) -> float:  # noqa: ARG001 (q kept for API compat)
     """Compute the fluctuation scale of lambda_max near the transition.
 
     In the critical regime (theta ~ sqrt(q)), the fluctuations are of order
@@ -133,8 +130,9 @@ def bbp_fluctuation_scaling(n: int, q: float) -> float:
     return n ** (-1.0 / 3.0)
 
 
-def bbp_sample(n: int, t: int, theta: float, sigma2: float = 1.0,
-               rng: np.random.Generator | None = None) -> np.ndarray:
+def bbp_sample(
+    n: int, t: int, theta: float, sigma2: float = 1.0, rng: np.random.Generator | None = None
+) -> np.ndarray:
     """Sample eigenvalues from a rank-1 spiked covariance matrix.
 
     Generates X = sigma * G + theta * v e_1^T / sqrt(T) where G is i.i.d.

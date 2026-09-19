@@ -15,6 +15,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent / "src"))
 
 from rmt_llm.free_probability import (
@@ -28,12 +29,11 @@ from rmt_llm.free_probability import (
     stieltjes_transform,
     subordination,
 )
-from rmt_llm.marchenko_pastur import mp_bounds, mp_sample
+from rmt_llm.marchenko_pastur import mp_sample
 
 
 # ─── Stieltjes transform ───────────────────────────────────────────────────
 class TestStieltjesTransform:
-
     def test_stieltjes_transform_shape(self):
         ev = np.array([1.0, 2.0, 3.0])
         g = stieltjes_transform(ev, 1j + 0.5)
@@ -64,7 +64,6 @@ class TestStieltjesTransform:
 
 # ─── R-transform ───────────────────────────────────────────────────────────
 class TestRTransform:
-
     def test_r_transform_mp_first_cumulant(self):
         """The first free cumulant of MP equals σ²."""
         # For MP(q, σ²), R(0) = σ². So κ_1 = σ².
@@ -79,7 +78,7 @@ class TestRTransform:
     def test_r_transform_series_constant_measure(self):
         """For a δ-measure at c, all cumulants except κ_1 are zero."""
         c = 3.0
-        moments = [c ** k for k in range(1, 6)]
+        moments = [c**k for k in range(1, 6)]
         kappa = r_transform_series(moments, n_terms=5)
         np.testing.assert_allclose(kappa[0], c, rtol=1e-10)
         # Higher cumulants should be ~0 for a deterministic measure.
@@ -104,7 +103,6 @@ class TestRTransform:
 
 # ─── S-transform ───────────────────────────────────────────────────────────
 class TestSTransform:
-
     def test_mp_s_transform_at_zero(self):
         """S_MP(0) = 1/σ²."""
         s = mp_s_transform(0.0j, q=0.5, sigma2=2.0)
@@ -122,7 +120,6 @@ class TestSTransform:
 
 # ─── Free convolution ──────────────────────────────────────────────────────
 class TestFreeConvolution:
-
     def test_additive_convolution_with_zero(self):
         """Free convolution with a point mass at 0 should be the identity."""
         ev_a = mp_sample(64, 128, rng=np.random.default_rng(1))
@@ -160,7 +157,6 @@ class TestFreeConvolution:
 
 # ─── Subordination ─────────────────────────────────────────────────────────
 class TestSubordination:
-
     def test_subordination_returns_result(self):
         ev_a = mp_sample(32, 64, rng=np.random.default_rng(1))
         ev_b = mp_sample(32, 64, rng=np.random.default_rng(2))

@@ -37,14 +37,11 @@ License: Proprietary — All rights reserved.
 from __future__ import annotations
 
 import math
-import time
 from dataclasses import dataclass, field
-from typing import Any
 
 import numpy as np
-
-from tiny_gpt_v3 import TinyGPTV3, TinyGPTV3Config, cosine_lr_schedule
-from tiny_gpt_trainer_v3 import TrainerV3, TrainConfig
+from tiny_gpt_trainer_v3 import TrainConfig, TrainerV3
+from tiny_gpt_v3 import TinyGPTV3
 
 
 # ---------------------------------------------------------------------------
@@ -60,6 +57,7 @@ class RangeTestResult:
         best_lr: LR with the steepest loss descent.
         steepest_descent_lr: LR where the loss drops fastest.
     """
+
     lrs: list[float] = field(default_factory=list)
     losses: list[float] = field(default_factory=list)
     best_lr: float = 0.0
@@ -76,7 +74,9 @@ class LRRangeTest:
     """
 
     def __init__(
-        self, model: TinyGPTV3, config: TrainConfig | None = None,
+        self,
+        model: TinyGPTV3,
+        config: TrainConfig | None = None,
     ) -> None:
         self.model = model
         self.config = config or TrainConfig()
@@ -92,10 +92,24 @@ class LRRangeTest:
             **{
                 f"L{i}_{attr}": getattr(layer, attr).copy()
                 for i, layer in enumerate(self.model.layers)
-                for attr in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k",
-                             "b_v", "b_o", "ln1_gamma", "ln1_beta",
-                             "ln2_gamma", "ln2_beta", "W_fc1", "W_fc2",
-                             "b_fc1", "b_fc2")
+                for attr in (
+                    "W_q",
+                    "W_k",
+                    "W_v",
+                    "W_o",
+                    "b_q",
+                    "b_k",
+                    "b_v",
+                    "b_o",
+                    "ln1_gamma",
+                    "ln1_beta",
+                    "ln2_gamma",
+                    "ln2_beta",
+                    "W_fc1",
+                    "W_fc2",
+                    "b_fc1",
+                    "b_fc2",
+                )
             },
         }
 
@@ -105,17 +119,34 @@ class LRRangeTest:
         self.model.ln_f_gamma = self._init_state["ln_f_gamma"].copy()
         self.model.ln_f_beta = self._init_state["ln_f_beta"].copy()
         for i, layer in enumerate(self.model.layers):
-            for attr in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k",
-                         "b_v", "b_o", "ln1_gamma", "ln1_beta",
-                         "ln2_gamma", "ln2_beta", "W_fc1", "W_fc2",
-                         "b_fc1", "b_fc2"):
-                setattr(layer, attr,
-                        self._init_state[f"L{i}_{attr}"].copy())
+            for attr in (
+                "W_q",
+                "W_k",
+                "W_v",
+                "W_o",
+                "b_q",
+                "b_k",
+                "b_v",
+                "b_o",
+                "ln1_gamma",
+                "ln1_beta",
+                "ln2_gamma",
+                "ln2_beta",
+                "W_fc1",
+                "W_fc2",
+                "b_fc1",
+                "b_fc2",
+            ):
+                setattr(layer, attr, self._init_state[f"L{i}_{attr}"].copy())
 
     def run(
-        self, train_ids: np.ndarray, val_ids: np.ndarray | None = None,
-        lr_min: float = 1e-5, lr_max: float = 1e-1,
-        n_steps: int = 30, verbose: bool = False,
+        self,
+        train_ids: np.ndarray,
+        val_ids: np.ndarray | None = None,
+        lr_min: float = 1e-5,
+        lr_max: float = 1e-1,
+        n_steps: int = 30,
+        verbose: bool = False,
     ) -> RangeTestResult:
         """Run the range test.
 
@@ -151,12 +182,16 @@ class LRRangeTest:
             target_ids = seq[1:].astype(np.int64)
             logits, cache = self.model.forward_with_cache(input_ids)
             from tiny_gpt_v3 import label_smoothing_cross_entropy
+
             loss, dlogits = label_smoothing_cross_entropy(
-                logits, target_ids, smoothing=cfg.label_smoothing,
+                logits,
+                target_ids,
+                smoothing=cfg.label_smoothing,
             )
             grads = self.model.backward(cache, dlogits)
             # Apply gradient clipping.
             from tiny_gpt_v3 import clip_grad_norm_
+
             if cfg.grad_clip_norm > 0:
                 clip_grad_norm_(grads, cfg.grad_clip_norm)
             # Apply Adam update with this LR.
@@ -164,7 +199,7 @@ class LRRangeTest:
             trainer._sync_params_back()
             losses.append(float(loss))
             if verbose and (i + 1) % 5 == 0:
-                print(f"  step {i+1}/{n_steps}: lr={lr:.2e} loss={loss:.4f}")
+                print(f"  step {i + 1}/{n_steps}: lr={lr:.2e} loss={loss:.4f}")
 
         # Find the steepest descent (most negative d(loss)/d(log_lr)).
         log_lrs = np.log10(lrs)
@@ -202,6 +237,7 @@ class GridSearchResult:
         best_lr: LR with the lowest val loss.
         best_val_loss: The lowest val loss achieved.
     """
+
     lr_results: dict[float, float] = field(default_factory=dict)
     best_lr: float = 0.0
     best_val_loss: float = float("inf")
@@ -219,7 +255,9 @@ class LRGridSearch:
     """
 
     def __init__(
-        self, model: TinyGPTV3, config: TrainConfig | None = None,
+        self,
+        model: TinyGPTV3,
+        config: TrainConfig | None = None,
     ) -> None:
         self.model = model
         self.config = config or TrainConfig()
@@ -234,10 +272,24 @@ class LRGridSearch:
             **{
                 f"L{i}_{attr}": getattr(layer, attr).copy()
                 for i, layer in enumerate(self.model.layers)
-                for attr in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k",
-                             "b_v", "b_o", "ln1_gamma", "ln1_beta",
-                             "ln2_gamma", "ln2_beta", "W_fc1", "W_fc2",
-                             "b_fc1", "b_fc2")
+                for attr in (
+                    "W_q",
+                    "W_k",
+                    "W_v",
+                    "W_o",
+                    "b_q",
+                    "b_k",
+                    "b_v",
+                    "b_o",
+                    "ln1_gamma",
+                    "ln1_beta",
+                    "ln2_gamma",
+                    "ln2_beta",
+                    "W_fc1",
+                    "W_fc2",
+                    "b_fc1",
+                    "b_fc2",
+                )
             },
         }
 
@@ -247,15 +299,30 @@ class LRGridSearch:
         self.model.ln_f_gamma = self._init_state["ln_f_gamma"].copy()
         self.model.ln_f_beta = self._init_state["ln_f_beta"].copy()
         for i, layer in enumerate(self.model.layers):
-            for attr in ("W_q", "W_k", "W_v", "W_o", "b_q", "b_k",
-                         "b_v", "b_o", "ln1_gamma", "ln1_beta",
-                         "ln2_gamma", "ln2_beta", "W_fc1", "W_fc2",
-                         "b_fc1", "b_fc2"):
-                setattr(layer, attr,
-                        self._init_state[f"L{i}_{attr}"].copy())
+            for attr in (
+                "W_q",
+                "W_k",
+                "W_v",
+                "W_o",
+                "b_q",
+                "b_k",
+                "b_v",
+                "b_o",
+                "ln1_gamma",
+                "ln1_beta",
+                "ln2_gamma",
+                "ln2_beta",
+                "W_fc1",
+                "W_fc2",
+                "b_fc1",
+                "b_fc2",
+            ):
+                setattr(layer, attr, self._init_state[f"L{i}_{attr}"].copy())
 
     def run(
-        self, train_ids: np.ndarray, val_ids: np.ndarray,
+        self,
+        train_ids: np.ndarray,
+        val_ids: np.ndarray,
         lr_grid: list[float] | None = None,
         verbose: bool = False,
     ) -> GridSearchResult:
@@ -315,6 +382,7 @@ if __name__ == "__main__":
     print("LR Search v3 — smoke test")
     print("=" * 60)
     from tiny_gpt_v3 import config_small
+
     cfg = config_small()
     cfg.weight_tying = True
     cfg.label_smoothing = 0.0
@@ -334,9 +402,9 @@ if __name__ == "__main__":
     print(f"Recommended LR (÷10): {rt_result.best_lr:.2e}")
 
     print("\n--- LR Grid Search ---")
-    gs = LRGridSearch(model, TrainConfig(epochs=3, eval_interval=1,
-                                          early_stopping_patience=0,
-                                          verbose=False))
+    gs = LRGridSearch(
+        model, TrainConfig(epochs=3, eval_interval=1, early_stopping_patience=0, verbose=False)
+    )
     gs_result = gs.run(corpus, val, lr_grid=[1e-3, 3e-3, 1e-2], verbose=True)
     print(f"\nBest LR: {gs_result.best_lr:.2e}")
     print(f"Best val_loss: {gs_result.best_val_loss:.4f}")

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 train_formula_model.py — Обучение TinyGPT v3 на корпусе формул rmt-llm-research.
 

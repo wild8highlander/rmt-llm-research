@@ -1,21 +1,22 @@
 """Tests for Session 6: CorpusBuilder v3."""
+
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
-import numpy as np
-import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from corpus_builder_v3 import (
-    CorpusBuilder, CorpusConfig, CurriculumStage, build_curriculum,
+    CorpusBuilder,
+    CorpusConfig,
+    CurriculumStage,
+    build_curriculum,
 )
 
 
 class TestCorpusConfig:
-
     def test_default_config(self):
         cfg = CorpusConfig()
         assert cfg.max_bytes == 20_000_000
@@ -24,7 +25,6 @@ class TestCorpusConfig:
 
 
 class TestCorpusBuilder:
-
     def test_build_from_lab_dir(self):
         """Build should produce a non-empty corpus from the lab directory."""
         lab_dir = Path(__file__).resolve().parent.parent
@@ -55,19 +55,24 @@ class TestCorpusBuilder:
 
     def test_exclude_patterns_work(self):
         """Test files should be excluded by the test_ pattern."""
-        builder = CorpusBuilder(CorpusConfig(
-            max_bytes=100_000,
-            exclude_patterns=(r"test_",),
-        ))
+        builder = CorpusBuilder(
+            CorpusConfig(
+                max_bytes=100_000,
+                exclude_patterns=(r"test_",),
+            )
+        )
         builder.build(roots=[Path(__file__).resolve().parent.parent])
         # Some files should be excluded by the pattern.
         assert builder.stats["files_excluded_pattern"] > 0
 
     def test_quality_filter_drops_short_lines(self):
         """Lines shorter than min_line_length should be filtered."""
-        builder = CorpusBuilder(CorpusConfig(
-            max_bytes=10_000, min_line_length=20,
-        ))
+        builder = CorpusBuilder(
+            CorpusConfig(
+                max_bytes=10_000,
+                min_line_length=20,
+            )
+        )
         builder.build(roots=[Path(__file__).resolve().parent.parent])
         assert builder.stats["lines_filtered"] > 0
 
@@ -106,7 +111,6 @@ class TestCorpusBuilder:
 
 
 class TestCurriculum:
-
     def test_build_curriculum_returns_stages(self):
         """build_curriculum should return n_stages stages."""
         corpus = b"doc1\n=== DOC ===\ndoc2\n=== DOC ===\ndoc3" * 10

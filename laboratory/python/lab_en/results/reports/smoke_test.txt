@@ -10,7 +10,7 @@ Language:   python
 Version:    en
 
 Scenario: SCEN-LIE-01
-  
+
 
 Key metrics:
   tokens_generated               = 256

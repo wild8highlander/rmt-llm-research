@@ -29,12 +29,24 @@ fn lab_root() -> PathBuf {
         .unwrap_or_else(|| PathBuf::from("."))
 }
 
-fn results_dir() -> PathBuf { lab_root().join("results") }
-fn charts_dir() -> PathBuf { results_dir().join("charts") }
-fn reports_dir() -> PathBuf { results_dir().join("reports") }
-fn logs_dir() -> PathBuf { results_dir().join("logs") }
-fn models_dir() -> PathBuf { results_dir().join("models") }
-fn shared_dir() -> PathBuf { lab_root().join("shared") }
+fn results_dir() -> PathBuf {
+    lab_root().join("results")
+}
+fn charts_dir() -> PathBuf {
+    results_dir().join("charts")
+}
+fn reports_dir() -> PathBuf {
+    results_dir().join("reports")
+}
+fn logs_dir() -> PathBuf {
+    results_dir().join("logs")
+}
+fn models_dir() -> PathBuf {
+    results_dir().join("models")
+}
+fn shared_dir() -> PathBuf {
+    lab_root().join("shared")
+}
 
 // ---------------------------------------------------------------------------
 // Banner & menu
@@ -80,7 +92,9 @@ struct Logger {
 }
 
 impl Logger {
-    fn new() -> Self { Logger { lines: Vec::new() } }
+    fn new() -> Self {
+        Logger { lines: Vec::new() }
+    }
 
     fn log(&mut self, msg: &str) {
         let ts = current_timestamp();
@@ -116,26 +130,166 @@ struct Parameter {
 
 fn default_parameter_space() -> Vec<Parameter> {
     vec![
-        Parameter { name: "temperature", type_: "float", default: "0.7", min: 0.0, max: f64::INFINITY, desc: "Sampling temperature (0 = greedy, inf = pure random)" },
-        Parameter { name: "max_tokens", type_: "int", default: "256", min: 1.0, max: f64::INFINITY, desc: "Maximum tokens to generate" },
-        Parameter { name: "top_k", type_: "int", default: "50", min: 0.0, max: f64::INFINITY, desc: "Top-k filtering" },
-        Parameter { name: "top_p", type_: "float", default: "0.95", min: 0.0, max: 1.0, desc: "Nucleus sampling mass" },
-        Parameter { name: "context_window", type_: "int", default: "1024", min: 1.0, max: f64::INFINITY, desc: "Context window size" },
-        Parameter { name: "ncrit_threshold", type_: "float", default: "114.0", min: 0.0, max: f64::INFINITY, desc: "RMT critical token count" },
-        Parameter { name: "theta_b_deg", type_: "float", default: "7.07", min: 0.0, max: 360.0, desc: "BBP rotation angle" },
-        Parameter { name: "beta_caputo", type_: "float", default: "0.5", min: 0.0, max: f64::INFINITY, desc: "Caputo fractional memory" },
-        Parameter { name: "rlhf_pressure", type_: "float", default: "0.0", min: 0.0, max: f64::INFINITY, desc: "RLHF drift strength" },
-        Parameter { name: "n_layers", type_: "int", default: "6", min: 1.0, max: f64::INFINITY, desc: "Number of transformer layers" },
-        Parameter { name: "hidden_dim", type_: "int", default: "64", min: 1.0, max: f64::INFINITY, desc: "Hidden dimension" },
-        Parameter { name: "n_heads", type_: "int", default: "4", min: 1.0, max: f64::INFINITY, desc: "Number of attention heads" },
-        Parameter { name: "vocab_size", type_: "int", default: "256", min: 1.0, max: f64::INFINITY, desc: "Vocabulary size" },
-        Parameter { name: "seed", type_: "int", default: "42", min: 0.0, max: f64::INFINITY, desc: "Random seed" },
-        Parameter { name: "epochs", type_: "int", default: "3", min: 0.0, max: f64::INFINITY, desc: "Training epochs" },
-        Parameter { name: "learning_rate", type_: "float", default: "0.001", min: 0.0, max: f64::INFINITY, desc: "Learning rate" },
-        Parameter { name: "batch_size", type_: "int", default: "4", min: 1.0, max: f64::INFINITY, desc: "Batch size" },
-        Parameter { name: "enable_filter", type_: "bool", default: "true", min: 0.0, max: 1.0, desc: "Enable output safety filter" },
-        Parameter { name: "capture_hidden", type_: "bool", default: "true", min: 0.0, max: 1.0, desc: "Capture hidden reasoning trace" },
-        Parameter { name: "language", type_: "categorical", default: "en", min: 0.0, max: 1.0, desc: "Output language (en/ru)" },
+        Parameter {
+            name: "temperature",
+            type_: "float",
+            default: "0.7",
+            min: 0.0,
+            max: f64::INFINITY,
+            desc: "Sampling temperature (0 = greedy, inf = pure random)",
+        },
+        Parameter {
+            name: "max_tokens",
+            type_: "int",
+            default: "256",
+            min: 1.0,
+            max: f64::INFINITY,
+            desc: "Maximum tokens to generate",
+        },
+        Parameter {
+            name: "top_k",
+            type_: "int",
+            default: "50",
+            min: 0.0,
+            max: f64::INFINITY,
+            desc: "Top-k filtering",
+        },
+        Parameter {
+            name: "top_p",
+            type_: "float",
+            default: "0.95",
+            min: 0.0,
+            max: 1.0,
+            desc: "Nucleus sampling mass",
+        },
+        Parameter {
+            name: "context_window",
+            type_: "int",
+            default: "1024",
+            min: 1.0,
+            max: f64::INFINITY,
+            desc: "Context window size",
+        },
+        Parameter {
+            name: "ncrit_threshold",
+            type_: "float",
+            default: "114.0",
+            min: 0.0,
+            max: f64::INFINITY,
+            desc: "RMT critical token count",
+        },
+        Parameter {
+            name: "theta_b_deg",
+            type_: "float",
+            default: "7.07",
+            min: 0.0,
+            max: 360.0,
+            desc: "BBP rotation angle",
+        },
+        Parameter {
+            name: "beta_caputo",
+            type_: "float",
+            default: "0.5",
+            min: 0.0,
+            max: f64::INFINITY,
+            desc: "Caputo fractional memory",
+        },
+        Parameter {
+            name: "rlhf_pressure",
+            type_: "float",
+            default: "0.0",
+            min: 0.0,
+            max: f64::INFINITY,
+            desc: "RLHF drift strength",
+        },
+        Parameter {
+            name: "n_layers",
+            type_: "int",
+            default: "6",
+            min: 1.0,
+            max: f64::INFINITY,
+            desc: "Number of transformer layers",
+        },
+        Parameter {
+            name: "hidden_dim",
+            type_: "int",
+            default: "64",
+            min: 1.0,
+            max: f64::INFINITY,
+            desc: "Hidden dimension",
+        },
+        Parameter {
+            name: "n_heads",
+            type_: "int",
+            default: "4",
+            min: 1.0,
+            max: f64::INFINITY,
+            desc: "Number of attention heads",
+        },
+        Parameter {
+            name: "vocab_size",
+            type_: "int",
+            default: "256",
+            min: 1.0,
+            max: f64::INFINITY,
+            desc: "Vocabulary size",
+        },
+        Parameter {
+            name: "seed",
+            type_: "int",
+            default: "42",
+            min: 0.0,
+            max: f64::INFINITY,
+            desc: "Random seed",
+        },
+        Parameter {
+            name: "epochs",
+            type_: "int",
+            default: "3",
+            min: 0.0,
+            max: f64::INFINITY,
+            desc: "Training epochs",
+        },
+        Parameter {
+            name: "learning_rate",
+            type_: "float",
+            default: "0.001",
+            min: 0.0,
+            max: f64::INFINITY,
+            desc: "Learning rate",
+        },
+        Parameter {
+            name: "batch_size",
+            type_: "int",
+            default: "4",
+            min: 1.0,
+            max: f64::INFINITY,
+            desc: "Batch size",
+        },
+        Parameter {
+            name: "enable_filter",
+            type_: "bool",
+            default: "true",
+            min: 0.0,
+            max: 1.0,
+            desc: "Enable output safety filter",
+        },
+        Parameter {
+            name: "capture_hidden",
+            type_: "bool",
+            default: "true",
+            min: 0.0,
+            max: 1.0,
+            desc: "Capture hidden reasoning trace",
+        },
+        Parameter {
+            name: "language",
+            type_: "categorical",
+            default: "en",
+            min: 0.0,
+            max: 1.0,
+            desc: "Output language (en/ru)",
+        },
     ]
 }
 
@@ -151,7 +305,12 @@ struct TinyGPT {
 
 impl TinyGPT {
     fn new(vocab_size: usize, hidden_dim: usize, n_layers: usize, seed: u64) -> Self {
-        TinyGPT { vocab_size, hidden_dim, n_layers, seed }
+        TinyGPT {
+            vocab_size,
+            hidden_dim,
+            n_layers,
+            seed,
+        }
     }
 
     fn generate(&self, prompt: &str, max_tokens: usize, temperature: f64) -> Vec<u8> {
@@ -159,10 +318,14 @@ impl TinyGPT {
         let mut rng = self.seed;
         let mut result: Vec<u8> = prompt.bytes().take(255).collect();
         for _ in 0..max_tokens {
-            rng = rng.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+            rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
             let b = (rng >> 33) as u8;
             result.push(b);
-            if result.len() >= 1024 { break; }
+            if result.len() >= 1024 {
+                break;
+            }
         }
         result
     }
@@ -171,7 +334,12 @@ impl TinyGPT {
 // ---------------------------------------------------------------------------
 // Reports (13 formats — simplified, write text-based)
 // ---------------------------------------------------------------------------
-fn generate_reports(results: &str, logs: &[String], out_dir: &Path, name: &str) -> Vec<(String, String)> {
+fn generate_reports(
+    results: &str,
+    logs: &[String],
+    out_dir: &Path,
+    name: &str,
+) -> Vec<(String, String)> {
     let _ = fs::create_dir_all(out_dir);
     let mut written = Vec::new();
     let ts = current_timestamp();
@@ -190,7 +358,10 @@ fn generate_reports(results: &str, logs: &[String], out_dir: &Path, name: &str) 
     written.push(("md".to_string(), path.display().to_string()));
 
     // CSV
-    let csv = format!("section,key,value\nresults,experiment,{}\nresults,timestamp,{}\n", name, ts);
+    let csv = format!(
+        "section,key,value\nresults,experiment,{}\nresults,timestamp,{}\n",
+        name, ts
+    );
     let path = out_dir.join(format!("{}.csv", name));
     let _ = fs::write(&path, &csv);
     written.push(("csv".to_string(), path.display().to_string()));
@@ -202,13 +373,28 @@ fn generate_reports(results: &str, logs: &[String], out_dir: &Path, name: &str) 
     written.push(("html".to_string(), path.display().to_string()));
 
     // JSON
-    let json = format!("{{\"generated_at\":\"{}\",\"results\":\"{}\",\"logs\":{}}}", ts, results, logs.iter().map(|l| format!("\"{}\"", l.replace('"', "\\\""))).collect::<Vec<_>>().join(","));
+    let json = format!(
+        "{{\"generated_at\":\"{}\",\"results\":\"{}\",\"logs\":{}}}",
+        ts,
+        results,
+        logs.iter()
+            .map(|l| format!("\"{}\"", l.replace('"', "\\\"")))
+            .collect::<Vec<_>>()
+            .join(",")
+    );
     let path = out_dir.join(format!("{}.json", name));
     let _ = fs::write(&path, &json);
     written.push(("json".to_string(), path.display().to_string()));
 
     // YAML
-    let yaml = format!("generated_at: {}\nresults: |\n  {}\nlogs:\n{}\n", ts, results, logs.iter().map(|l| format!("  - {}\n", l)).collect::<String>());
+    let yaml = format!(
+        "generated_at: {}\nresults: |\n  {}\nlogs:\n{}\n",
+        ts,
+        results,
+        logs.iter()
+            .map(|l| format!("  - {}\n", l))
+            .collect::<String>()
+    );
     let path = out_dir.join(format!("{}.yaml", name));
     let _ = fs::write(&path, &yaml);
     written.push(("yaml".to_string(), path.display().to_string()));
@@ -227,7 +413,12 @@ fn generate_reports(results: &str, logs: &[String], out_dir: &Path, name: &str) 
 
     // PDF/DOCX/Parquet/XLSX/SQLite placeholders (text-based fallback)
     for ext in &["pdf", "docx", "parquet", "xlsx", "sqlite"] {
-        let content = format!("[{} placeholder — use Python implementation for full {} support]\n\n{}", ext, ext.to_uppercase(), txt);
+        let content = format!(
+            "[{} placeholder — use Python implementation for full {} support]\n\n{}",
+            ext,
+            ext.to_uppercase(),
+            txt
+        );
         let path = out_dir.join(format!("{}.{}.txt", name, ext));
         let _ = fs::write(&path, &content);
         written.push((ext.to_string(), path.display().to_string()));
@@ -242,11 +433,21 @@ fn generate_reports(results: &str, logs: &[String], out_dir: &Path, name: &str) 
 fn generate_charts(_results: &str, out_dir: &Path) -> Vec<String> {
     let _ = fs::create_dir_all(out_dir);
     let mut written = Vec::new();
-    let chart_names = ["01_loss_metrics", "02_eigenvalue_vs_mp", "03_confusion_matrix",
-                       "04_roc_deception", "05_hallucination_dist", "06_per_layer_gap",
-                       "07_reasoning_trace", "08_ncrit_threshold"];
+    let chart_names = [
+        "01_loss_metrics",
+        "02_eigenvalue_vs_mp",
+        "03_confusion_matrix",
+        "04_roc_deception",
+        "05_hallucination_dist",
+        "06_per_layer_gap",
+        "07_reasoning_trace",
+        "08_ncrit_threshold",
+    ];
     for name in &chart_names {
-        let content = format!("Chart: {}\nPNG 600 DPI / PDF / SVG placeholder (use Python for actual rendering)\n", name);
+        let content = format!(
+            "Chart: {}\nPNG 600 DPI / PDF / SVG placeholder (use Python for actual rendering)\n",
+            name
+        );
         for ext in &["png.txt", "pdf.txt", "svg.txt"] {
             let path = out_dir.join(format!("{}.{}", name, ext));
             let _ = fs::write(&path, &content);
@@ -260,7 +461,10 @@ fn generate_charts(_results: &str, out_dir: &Path) -> Vec<String> {
 // Scenario runner (uses Python via subprocess for actual NN computation)
 // ---------------------------------------------------------------------------
 fn run_scenario(scenario_id: &str, _params: &str, logger: &mut Logger) -> String {
-    logger.log(&format!("[SCENARIO] starting {} via Python subprocess", scenario_id));
+    logger.log(&format!(
+        "[SCENARIO] starting {} via Python subprocess",
+        scenario_id
+    ));
     let python_lab = lab_root().join("laboratory").join("python").join("lab_en");
     let script = format!(
         "import sys; sys.path.insert(0, '{}')\n\
@@ -271,11 +475,13 @@ fn run_scenario(scenario_id: &str, _params: &str, logger: &mut Logger) -> String
              print(json.dumps(r, default=str))\n\
          else:\n\
              print('{{\"error\": \"scenario not found\"}}')",
-        python_lab.display(), scenario_id
+        python_lab.display(),
+        scenario_id
     );
 
     let output = Command::new("python")
-        .arg("-c").arg(&script)
+        .arg("-c")
+        .arg(&script)
         .current_dir(&python_lab)
         .output();
 
@@ -306,7 +512,11 @@ fn emit_outputs(results: &str, logger: &mut Logger, suffix: &str) {
 
     let charts_subdir = charts_dir().join(&name);
     let written_charts = generate_charts(results, &charts_subdir);
-    logger.log(&format!("Charts: {} files in {}", written_charts.len(), charts_subdir.display()));
+    logger.log(&format!(
+        "Charts: {} files in {}",
+        written_charts.len(),
+        charts_subdir.display()
+    ));
 
     let written_reports = generate_reports(results, &logger.lines, &reports_dir(), &name);
     logger.log(&format!("Reports: {} formats", written_reports.len()));
@@ -317,7 +527,11 @@ fn emit_outputs(results: &str, logger: &mut Logger, suffix: &str) {
     println!("\n--- Output written ---");
     println!("  Results JSON : {}", res_path.display());
     println!("  Charts       : {}", charts_subdir.display());
-    println!("  Reports (13) : {}/{}.[txt|md|csv|html|json|pdf|docx|yaml|xml|tex|parquet|xlsx|sqlite]", reports_dir().display(), name);
+    println!(
+        "  Reports (13) : {}/{}.[txt|md|csv|html|json|pdf|docx|yaml|xml|tex|parquet|xlsx|sqlite]",
+        reports_dir().display(),
+        name
+    );
     println!("  Logs         : {}", log_path.display());
 }
 
@@ -338,10 +552,21 @@ fn action_run_scenario(logger: &mut Logger) {
     println!("  4. [SCEN-DATA-04] Утечка скрытых PII");
     println!("  5. [SCEN-FILTER-05] Обход фильтра через рассуждения");
     println!("  6. [SCEN-UNCERT-06] Калиброванная неопределённость");
-    print!("\nНомер сценария: "); let _ = io::stdout().flush();
+    print!("\nНомер сценария: ");
+    let _ = io::stdout().flush();
     let idx: usize = read_line().parse().unwrap_or(0);
-    let ids = ["SCEN-LIE-01", "SCEN-HALL-02", "SCEN-DECEIT-03", "SCEN-DATA-04", "SCEN-FILTER-05", "SCEN-UNCERT-06"];
-    if idx < 1 || idx > ids.len() { println!("Неверный выбор."); return; }
+    let ids = [
+        "SCEN-LIE-01",
+        "SCEN-HALL-02",
+        "SCEN-DECEIT-03",
+        "SCEN-DATA-04",
+        "SCEN-FILTER-05",
+        "SCEN-UNCERT-06",
+    ];
+    if idx < 1 || idx > ids.len() {
+        println!("Неверный выбор.");
+        return;
+    }
     let sid = ids[idx - 1];
     logger.log(&format!("Пользователь выбрал сценарий {}", sid));
     let results = run_scenario(sid, "", logger);
@@ -355,7 +580,8 @@ fn action_run_experiment(logger: &mut Logger) {
     println!("  3. Детектирование обмана");
     println!("  4. Утечка PII");
     println!("  5. Кросс-имплементационная верификация");
-    print!("\nНомер эксперимента: "); let _ = io::stdout().flush();
+    print!("\nНомер эксперимента: ");
+    let _ = io::stdout().flush();
     let choice = read_line();
     let python_lab = lab_root().join("laboratory").join("python").join("lab_en");
     let script = format!(
@@ -363,9 +589,14 @@ fn action_run_experiment(logger: &mut Logger) {
          import research, json\n\
          r = research.run_experiment('{}', {{}})\n\
          print(json.dumps(r, default=str))",
-        python_lab.display(), choice
+        python_lab.display(),
+        choice
     );
-    let output = Command::new("python").arg("-c").arg(&script).current_dir(&python_lab).output();
+    let output = Command::new("python")
+        .arg("-c")
+        .arg(&script)
+        .current_dir(&python_lab)
+        .output();
     let results = match output {
         Ok(out) => String::from_utf8_lossy(&out.stdout).to_string(),
         Err(e) => format!("{{\"error\": \"{}\"}}", e),
@@ -376,11 +607,25 @@ fn action_run_experiment(logger: &mut Logger) {
 
 fn action_show_parameters(_logger: &mut Logger) {
     let space = default_parameter_space();
-    println!("\n=== ПРОСТРАНСТВО ПАРАМЕТРОВ ({} параметров, все поддерживают inf) ===", space.len());
+    println!(
+        "\n=== ПРОСТРАНСТВО ПАРАМЕТРОВ ({} параметров, все поддерживают inf) ===",
+        space.len()
+    );
     for p in &space {
-        let lo = if p.min == 0.0 { "0".to_string() } else { format!("{}", p.min) };
-        let hi = if p.max == f64::INFINITY { "inf".to_string() } else { format!("{}", p.max) };
-        println!("  {:20} тип={:12} диапазон=[{}, {}]  по_умолчанию={}", p.name, p.type_, lo, hi, p.default);
+        let lo = if p.min == 0.0 {
+            "0".to_string()
+        } else {
+            format!("{}", p.min)
+        };
+        let hi = if p.max == f64::INFINITY {
+            "inf".to_string()
+        } else {
+            format!("{}", p.max)
+        };
+        println!(
+            "  {:20} тип={:12} диапазон=[{}, {}]  по_умолчанию={}",
+            p.name, p.type_, lo, hi, p.default
+        );
     }
 }
 
@@ -388,9 +633,16 @@ fn action_run_3d_single(logger: &mut Logger) {
     println!("\n--- Доступные 3D-исследовательские эксперименты ---");
     let info = experiments_3d_info();
     for (id, name, desc) in &info {
-        println!("  {}. [{}] {} — {}", id.parse::<i64>().unwrap_or(0), id, name, desc);
+        println!(
+            "  {}. [{}] {} — {}",
+            id.parse::<i64>().unwrap_or(0),
+            id,
+            name,
+            desc
+        );
     }
-    print!("\nID эксперимента (6-14): "); let _ = io::stdout().flush();
+    print!("\nID эксперимента (6-14): ");
+    let _ = io::stdout().flush();
     let choice = read_line();
     let params: std::collections::HashMap<String, String> = std::collections::HashMap::new();
     logger.log(&format!("Запуск 3D-эксперимента {}", choice));
@@ -409,7 +661,14 @@ fn action_run_3d_all(logger: &mut Logger) {
 
 fn action_run_all(logger: &mut Logger) {
     logger.log("=== RUNNING ALL SCENARIOS + EXPERIMENTS ===");
-    let ids = ["SCEN-LIE-01", "SCEN-HALL-02", "SCEN-DECEIT-03", "SCEN-DATA-04", "SCEN-FILTER-05", "SCEN-UNCERT-06"];
+    let ids = [
+        "SCEN-LIE-01",
+        "SCEN-HALL-02",
+        "SCEN-DECEIT-03",
+        "SCEN-DATA-04",
+        "SCEN-FILTER-05",
+        "SCEN-UNCERT-06",
+    ];
     for sid in &ids {
         logger.log(&format!("\n--- Scenario {} ---", sid));
         let results = run_scenario(sid, "", logger);
@@ -419,7 +678,11 @@ fn action_run_all(logger: &mut Logger) {
         logger.log(&format!("\n--- Experiment {} ---", eid));
         let python_lab = lab_root().join("laboratory").join("python").join("lab_en");
         let script = format!("import sys; sys.path.insert(0, '{}')\nimport research, json\nr = research.run_experiment('{}', {{}})\nprint(json.dumps(r, default=str))", python_lab.display(), eid);
-        let output = Command::new("python").arg("-c").arg(&script).current_dir(&python_lab).output();
+        let output = Command::new("python")
+            .arg("-c")
+            .arg(&script)
+            .current_dir(&python_lab)
+            .output();
         if let Ok(out) = output {
             let results = String::from_utf8_lossy(&out.stdout).to_string();
             emit_outputs(&results, logger, &format!("exp_{}", eid));
@@ -435,16 +698,28 @@ fn main() {
     let mut logger = Logger::new();
     logger.log("Лаборатория RMT-LLM запущена (Rust, русская версия)");
 
-    for d in &[results_dir(), charts_dir(), reports_dir(), logs_dir(), models_dir()] {
+    for d in &[
+        results_dir(),
+        charts_dir(),
+        reports_dir(),
+        logs_dir(),
+        models_dir(),
+    ] {
         let _ = fs::create_dir_all(d);
     }
 
     loop {
         println!("{}", MENU);
-        print!("Выбор [0-13]: "); let _ = io::stdout().flush();
+        print!("Выбор [0-13]: ");
+        let _ = io::stdout().flush();
         let choice = read_line();
         match choice.as_str() {
-            "0" => { logger.log("Пользователь вышел."); let _ = logger.save(&logs_dir().join("session.log")); println!("\nДо свидания."); break; }
+            "0" => {
+                logger.log("Пользователь вышел.");
+                let _ = logger.save(&logs_dir().join("session.log"));
+                println!("\nДо свидания.");
+                break;
+            }
             "1" => action_run_scenario(&mut logger),
             "2" => action_run_experiment(&mut logger),
             "8" => action_run_all(&mut logger),

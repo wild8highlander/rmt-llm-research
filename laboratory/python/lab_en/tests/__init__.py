@@ -15,13 +15,15 @@ Run with:
 import os
 import sys
 
+
 _LAB_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if _LAB_DIR not in sys.path:
     sys.path.insert(0, _LAB_DIR)
 
 # Re-export submodules for convenience
-from tests.test_tiny_gpt import *  # noqa: F401,F403,E402
-from tests.test_bpe import *  # noqa: F401,F403,E402
-from tests.test_trainer import *  # noqa: F401,F403,E402
+from tests.test_bpe import *  # noqa: F403
+from tests.test_tiny_gpt import *  # noqa: F403
+from tests.test_trainer import *  # noqa: F403
+
 
 __all__ = []

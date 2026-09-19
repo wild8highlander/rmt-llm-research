@@ -101,7 +101,7 @@ make docker
 make docker-run
 ```
 
-See [Docker](../community/contributing.md#docker) for `docker-compose.yml`
+See [Docker](../community/contributing.md) for `docker-compose.yml`
 services (`lab`, `tests`, `tinygpt-train`, `docs`, `jupyter`, `shell`).
 
 ---

@@ -8,19 +8,21 @@ Used for verification of the lab after implementation.
 
 from __future__ import annotations
 
+import datetime
+import json
 import os
 import sys
-import json
-import datetime
+
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import parameters as P
 import charts
+import parameters as P
 import reports
 import research
 import scenarios as scen
 from tiny_gpt import TinyGPT
+
 
 LAB_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 RESULTS_DIR = os.path.join(LAB_ROOT, "results")
@@ -61,9 +63,9 @@ def emit(results, logger, suffix):
     n_charts = sum(len(v) for v in written_charts.values())
     logger.log(f"  Charts: {n_charts} files in {charts_dir}")
 
-    written_reports = reports.generate_all_reports(results, logger.lines,
-                                                   out_dir=REPORTS_DIR,
-                                                   experiment_name=name)
+    written_reports = reports.generate_all_reports(
+        results, logger.lines, out_dir=REPORTS_DIR, experiment_name=name
+    )
     logger.log(f"  Reports: {len(written_reports)} formats")
 
     log_path = os.path.join(LOGS_DIR, f"{name}.log")

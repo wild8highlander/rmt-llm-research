@@ -19,22 +19,43 @@ import math
 import numpy as np
 import pytest
 
+from rmt_llm.bbp_transition import (
+    bbp_critical_theta,
+    bbp_fluctuation_scaling,
+    bbp_is_supercritical,
+    bbp_lambda_max,
+    bbp_sample,
+    bbp_signal_separation,
+)
+from rmt_llm.caputo_fractional import (
+    caputo_fokker_planck_drift,
+    caputo_mean_collapse_time,
+    caputo_n_crit,
+)
 from rmt_llm.constants import (
     BETA_CAPUTO,
     GAMMA_1,
     GPT2_CONTEXT_WINDOW,
-    GPT2_HIDDEN_DIM,
-    GPT2_LAYERS,
     K_B,
     LN2,
-    N_CRIT_ESTIMATE,
-    Q_DEFAULT,
-    SIGMA2_DEFAULT,
     THETA_B_DEGREES,
     TW_MEAN,
     TW_SKEWNESS,
     TW_VARIANCE,
-    ZETA_ZEROS,
+)
+from rmt_llm.ep_surfaces import (
+    ep_is_near,
+    ep_order_from_separation,
+    ep_perturbed_matrix,
+    ep_rounding_sensitivity,
+    ep_sensitivity,
+)
+from rmt_llm.keating_snaith import (
+    ks_corrected_gamma,
+    ks_gue_mean_spacing,
+    ks_n_crit_correction,
+    ks_relative_correction,
+    ks_zeta_zero_statistics,
 )
 from rmt_llm.marchenko_pastur import (
     mp_bounds,
@@ -42,22 +63,6 @@ from rmt_llm.marchenko_pastur import (
     mp_density,
     mp_sample,
     mp_stieltjes,
-)
-from rmt_llm.bbp_transition import (
-    bbp_critical_theta,
-    bbp_fluctuation_scaling,
-    bbp_is_supercritical,
-    bbp_lambda_max,
-    bbp_signal_separation,
-    bbp_sample,
-)
-from rmt_llm.tracy_widom import (
-    tracy_widom_cdf,
-    tracy_widom_mean,
-    tracy_widom_pdf,
-    tracy_widom_sample,
-    tracy_widom_skewness,
-    tracy_widom_variance,
 )
 from rmt_llm.nhse import (
     nhse_eigenvalues,
@@ -67,26 +72,6 @@ from rmt_llm.nhse import (
     nhse_skin_strength,
     nhse_winding_number,
 )
-from rmt_llm.caputo_fractional import (
-    caputo_fokker_planck_drift,
-    caputo_mean_collapse_time,
-    caputo_n_crit,
-    caputo_quadratic_acceleration,
-)
-from rmt_llm.keating_snaith import (
-    ks_corrected_gamma,
-    ks_gue_mean_spacing,
-    ks_n_crit_correction,
-    ks_relative_correction,
-    ks_zeta_zero_statistics,
-)
-from rmt_llm.ep_surfaces import (
-    ep_is_near,
-    ep_order_from_separation,
-    ep_perturbed_matrix,
-    ep_rounding_sensitivity,
-    ep_sensitivity,
-)
 from rmt_llm.thermodynamics import (
     autoregressive_irreversibility,
     cognitive_mode,
@@ -95,6 +80,13 @@ from rmt_llm.thermodynamics import (
     rg_fixed_point,
     rg_flow_lambda,
     spectral_entropy,
+)
+from rmt_llm.tracy_widom import (
+    tracy_widom_cdf,
+    tracy_widom_mean,
+    tracy_widom_pdf,
+    tracy_widom_skewness,
+    tracy_widom_variance,
 )
 
 
@@ -164,7 +156,6 @@ class TestMarchenkoPasturDensity:
         lam_m, lam_p = mp_bounds(0.5, 1.0)
         lam = np.linspace(lam_m + 1e-6, lam_p - 1e-6, 10000)
         rho = mp_density(lam, 0.5, 1.0)
-        dx = lam[1] - lam[0]
         integral = np.trapezoid(rho, lam)
         np.testing.assert_allclose(integral, 1.0, atol=0.01)
 
@@ -263,7 +254,7 @@ class TestBBPTransition:
         q = 0.5
         for theta in [1.0, 1.5, 2.0]:
             lam_max = bbp_lambda_max(theta, q, 1.0)
-            expected = 1.0 * (1.0 + theta ** 2 / q)
+            expected = 1.0 * (1.0 + theta**2 / q)
             np.testing.assert_allclose(lam_max, expected, rtol=1e-10)
 
     def test_signal_separation_zero_below(self):
@@ -312,7 +303,8 @@ class TestTracyWidom:
     def test_cdf_range(self):
         s = np.linspace(-5, 5, 100)
         F = tracy_widom_cdf(s)
-        assert np.all(F >= 0) and np.all(F <= 1.01)  # slight tolerance
+        assert np.all(F >= 0)
+        assert np.all(F <= 1.01)  # slight tolerance
 
     def test_cdf_monotone(self):
         s = np.linspace(-5, 5, 100)

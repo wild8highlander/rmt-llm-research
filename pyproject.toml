@@ -1,322 +1,360 @@
 [build-system]
-requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
+requires = ["setuptools>=68.0", "wheel"]
 
 [project]
-name = "rmt-llm"
-# version removed per author request
-description = "Random Matrix Theory meets Large Language Models — spectral verification package + TinyGPT trainer + 8-language laboratory"
-readme = "README.md"
-license = {text = "Proprietary"}
-requires-python = ">=3.10"
 authors = [
-    {name = "Iskhak Hamzatovich Isaev", email = "aslan08_05@mail.ru"},
-]
-maintainers = [
-    {name = "Iskhak Hamzatovich Isaev", email = "aslan08_05@mail.ru"},
-]
-keywords = [
-    "random-matrix-theory",
-    "large-language-models",
-    "Marchenko-Pastur",
-    "BBP-transition",
-    "Tracy-Widom",
-    "NHSE",
-    "Caputo-fractional",
-    "Keating-Snaith",
-    "hallucinations",
-    "RLHF",
-    "spectral-analysis",
-    "TinyGPT",
-    "BPE-tokenizer",
-    "transformer",
-    "autodiff",
+  {email = "aslan08_05@mail.ru", name = "Iskhak Hamzatovich Isaev"}
 ]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Science/Research",
-    "Intended Audience :: Education",
-    "Topic :: Scientific/Engineering :: Mathematics",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Scientific/Engineering :: Physics",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
-    "Operating System :: OS Independent",
-    "Operating System :: POSIX :: Linux",
-    "Operating System :: MacOS",
-    "Operating System :: Microsoft :: Windows",
-    "Natural Language :: English",
-    "Natural Language :: Russian",
-    "Typing :: Typed",
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
+  "Natural Language :: Russian",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: OS Independent",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Typing :: Typed"
 ]
 dependencies = [
-    "numpy>=1.24",
+  "numpy>=1.24"
 ]
+description = "Random Matrix Theory meets Large Language Models — spectral verification package + TinyGPT trainer + 8-language laboratory"
+keywords = [
+  "BBP-transition",
+  "BPE-tokenizer",
+  "Caputo-fractional",
+  "Keating-Snaith",
+  "Marchenko-Pastur",
+  "NHSE",
+  "RLHF",
+  "TinyGPT",
+  "Tracy-Widom",
+  "autodiff",
+  "hallucinations",
+  "large-language-models",
+  "random-matrix-theory",
+  "spectral-analysis",
+  "transformer"
+]
+license = {text = "Proprietary"}
+maintainers = [
+  {email = "aslan08_05@mail.ru", name = "Iskhak Hamzatovich Isaev"}
+]
+name = "rmt-llm"
+readme = "README.md"
+requires-python = ">=3.10"
+version = "1.3.0"
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-    "pytest-xdist>=3.0",
-    "ruff>=0.6",
-    "mypy>=1.5",
-    "pre-commit>=3.5",
-    "matplotlib>=3.7",
-    "jupyter>=1.0",
-    "ipykernel>=6.0",
-    "build>=1.0",
-    "twine>=4.0",
-    "codespell>=2.2",
-    "tomli>=2.0; python_version < '3.11'",
-]
-test = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-    "pytest-xdist>=3.0",
-]
-notebooks = [
-    "matplotlib>=3.7",
-    "jupyter>=1.0",
-    "ipykernel>=6.0",
-]
-lab = [
-    "matplotlib>=3.7",
-    "plotly>=5.18",
-    "pandas>=2.0",
-    "pyyaml>=6.0",
-    "requests>=2.31",
-    "tqdm>=4.65",
-    "openpyxl>=3.1",
-    "pyarrow>=14.0",
-    "reportlab>=4.0",
-    "python-docx>=1.1",
-]
-docs = [
-    "mkdocs>=1.5",
-    "mkdocs-material>=9.4",
-    "mkdocstrings[python]>=0.24",
-    "pymdown-extensions>=10.0",
-    "mkdocs-git-revision-date-localized-plugin>=1.2",
-    "mkdocs-minify-plugin>=0.7",
-    "mkdocs-exclude>=1.0",
+all = [
+  "rmt-llm[dev,lab,docs,bench,notebooks]"
 ]
 bench = [
-    "hypothesis>=6.100",
-    "pytest-benchmark>=4.0",
+  "hypothesis>=6.100",
+  "pytest-benchmark>=4.0"
 ]
-all = [
-    "rmt-llm[dev,lab,docs,bench,notebooks]",
+dev = [
+  "build>=1.0",
+  "codespell>=2.2",
+  "ipykernel>=6.0",
+  "jupyter>=1.0",
+  "matplotlib>=3.7",
+  "mypy>=1.5",
+  "pre-commit>=3.5",
+  "pytest-cov>=4.0",
+  "pytest-xdist>=3.0",
+  "pytest>=7.0",
+  "ruff>=0.6",
+  "tomli>=2.0; python_version < '3.11'",
+  "twine>=4.0"
 ]
-
-[project.urls]
-Homepage = "https://github.com/wild8highlander/rmt-llm-research"
-Repository = "https://github.com/wild8highlander/rmt-llm-research"
-Documentation = "https://wild8highlander.github.io/rmt-llm-research"
-"Bug Tracker" = "https://github.com/wild8highlander/rmt-llm-research/issues"
-"Discussions" = "https://github.com/wild8highlander/rmt-llm-research/discussions"
-"Changelog" = "https://github.com/wild8highlander/rmt-llm-research/blob/main/CHANGELOG.md"
-"Roadmap" = "https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ROADMAP.md"
+docs = [
+  "mkdocs-exclude>=1.0",
+  "mkdocs-git-revision-date-localized-plugin>=1.2",
+  "mkdocs-material>=9.4",
+  "mkdocs-minify-plugin>=0.7",
+  "mkdocs>=1.5",
+  "mkdocstrings[python]>=0.24",
+  "pymdown-extensions>=10.0"
+]
+lab = [
+  "matplotlib>=3.7",
+  "openpyxl>=3.1",
+  "pandas>=2.0",
+  "plotly>=5.18",
+  "pyarrow>=14.0",
+  "python-docx>=1.1",
+  "pyyaml>=6.0",
+  "reportlab>=4.0",
+  "requests>=2.31",
+  "tqdm>=4.65"
+]
+notebooks = [
+  "ipykernel>=6.0",
+  "jupyter>=1.0",
+  "matplotlib>=3.7"
+]
+test = [
+  "pytest-cov>=4.0",
+  "pytest-xdist>=3.0",
+  "pytest>=7.0"
+]
 
 [project.scripts]
 rmt-llm-verify = "rmt_llm.__main__:main"
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-# =============================================================================
-# pytest
-# =============================================================================
-[tool.pytest.ini_options]
-minversion = "7.0"
-testpaths = ["src/rmt_llm/tests", "laboratory/python/lab_en/tests"]
-addopts = [
-    "-v",
-    "--tb=short",
-    "--strict-markers",
-    "--strict-config",
-    "--showlocals",
-    "--color=yes",
-]
-markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "stochastic: marks tests with stochastic elements",
-    "cross_impl: cross-implementation consistency tests (require Julia)",
-    "tiny_gpt: tests for TinyGPT model and trainer",
-    "bpe: tests for the BPE tokenizer",
-    "hypothesis: property-based tests (require hypothesis package)",
-    "benchmark: performance benchmarks (require pytest-benchmark package)",
-]
-filterwarnings = [
-    "error",
-    "ignore::DeprecationWarning:pkg_resources.*",
-    "ignore::PendingDeprecationWarning",
-]
-xfail_strict = true
-
-# =============================================================================
-# Coverage
-# =============================================================================
-[tool.coverage.run]
-source = ["rmt_llm", "laboratory.python.lab_en"]
-omit = [
-    "*/tests/*",
-    "*/__init__.py",
-    "*/conftest.py",
-    "*/setup.py",
-]
-branch = true
-parallel = true
-
-[tool.coverage.paths]
-source = [
-    "src/rmt_llm/",
-    "*/site-packages/rmt_llm/",
-]
-
-[tool.coverage.report]
-fail_under = 70
-show_missing = true
-skip_covered = false
-skip_empty = true
-precision = 2
-exclude_lines = [
-    "pragma: no cover",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
-    "@overload",
-    "\\.\\.\\.",
-]
-
-[tool.coverage.html]
-directory = "htmlcov"
-
-[tool.coverage.xml]
-output = "coverage.xml"
-
-# =============================================================================
-# Ruff — lint + format
-# =============================================================================
-[tool.ruff]
-target-version = "py310"
-line-length = 100
-indent-width = 4
-src = ["src/rmt_llm", "laboratory/python", "python/rmt_llm_viz", "scripts"]
-extend-exclude = [
-    "docs/site",
-    "laboratory/webapp/node_modules",
-    "laboratory/results",
-    "results",
-    "*.ipynb_checkpoints",
-]
-
-[tool.ruff.lint]
-select = [
-    "E",    # pycodestyle errors
-    "W",    # pycodestyle warnings
-    "F",    # Pyflakes
-    "I",    # isort
-    "N",    # pep8-naming
-    "B",    # flake8-bugbear
-    "C4",   # flake8-comprehensions
-    "UP",   # pyupgrade
-    "SIM",  # flake8-simplify
-    "A",    # flake8-builtins
-    "ARG",  # flake8-unused-arguments
-    "C90",  # mccabe complexity
-    "DOC",  # pydocstyle
-    "PIE",  # flake8-pie
-    "PT",   # flake8-pytest-style
-    "RET",  # flake8-return
-    "RUF",  # Ruff-specific rules
-    "S",    # flake8-bandit (security)
-    "T20",  # flake8-print
-    "YTT",  # flake8-2020
-]
-ignore = [
-    "E501",   # line too long (handled by formatter)
-    "E203",   # whitespace before ':' (Black-compatible)
-    "E731",   # lambda assignment (we use lambdas for short callbacks)
-    "S101",   # use of assert (needed in tests)
-    "S301",   # pickle (needed for loading weights — we trust our own files)
-    "B008",   # function call in default argument (Pydantic-style)
-    "DOC201", # return type not documented in docstring (too noisy for now)
-    "DOC501", # exception not documented (too noisy for now)
-    "T201",   # print() — we use it in CLI tools and labs
-]
-fixable = ["ALL"]
-unfixable = []
-
-[tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S101", "ARG", "DOC", "PT004"]
-"**/conftest.py" = ["S101", "ARG"]
-"laboratory/**/*.py" = ["T201", "DOC", "S101", "C901"]
-"scripts/**/*.py" = ["T201", "S101", "DOC"]
-"notebooks/**/*.py" = ["E402", "T201", "S101", "DOC"]
-
-[tool.ruff.lint.mccabe]
-max-complexity = 15
-
-[tool.ruff.lint.isort]
-known-first-party = ["rmt_llm"]
-force-single-line = false
-lines-after-imports = 2
-
-[tool.ruff.lint.pep8-naming]
-extend-ignore-names = ["test_*", "Test*", "setUp", "tearDown"]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "lf"
-docstring-code-format = true
-docstring-code-line-length = 80
-
-# =============================================================================
-# Mypy — type checking (advisory)
-# =============================================================================
-[tool.mypy]
-python_version = "3.10"
-warn_return_any = true
-warn_unused_configs = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unreachable = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-disallow_untyped_decorators = false
-check_untyped_defs = true
-no_implicit_optional = true
-no_implicit_reexport = false
-strict_equality = true
-show_error_codes = true
-show_column_numbers = true
-show_error_context = true
-pretty = true
-files = ["src/rmt_llm"]
-
-[[tool.mypy.overrides]]
-module = "numpy.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "matplotlib.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-disallow_untyped_defs = false
+[project.urls]
+"Bug Tracker" = "https://github.com/wild8highlander/rmt-llm-research/issues"
+"Changelog" = "https://github.com/wild8highlander/rmt-llm-research/blob/main/CHANGELOG.md"
+"Discussions" = "https://github.com/wild8highlander/rmt-llm-research/discussions"
+Documentation = "https://wild8highlander.github.io/rmt-llm-research"
+Homepage = "https://github.com/wild8highlander/rmt-llm-research"
+Repository = "https://github.com/wild8highlander/rmt-llm-research"
+"Roadmap" = "https://github.com/wild8highlander/rmt-llm-research/blob/main/docs/ROADMAP.md"
 
 # =============================================================================
 # Bandit — security linter (used in CI as advisory)
 # =============================================================================
 [tool.bandit]
+exclude_dirs = ["laboratory", "tests"]
+skips = ["B101"] # assert_used — needed in tests
 targets = ["src/rmt_llm"]
-exclude_dirs = ["tests", "laboratory"]
-skips = ["B101"]  # assert_used — needed in tests
+
+[tool.coverage]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.paths]
+source = [
+  "*/site-packages/rmt_llm/",
+  "src/rmt_llm/"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "@overload",
+  "\\.\\.\\.",
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+  "pragma: no cover",
+  "raise NotImplementedError"
+]
+fail_under = 70
+precision = 2
+show_missing = true
+skip_covered = false
+skip_empty = true
+
+# =============================================================================
+# Coverage
+# =============================================================================
+[tool.coverage.run]
+branch = true
+omit = [
+  "*/__init__.py",
+  "*/conftest.py",
+  "*/setup.py",
+  "*/tests/*"
+]
+parallel = true
+source = ["laboratory.python.lab_en", "rmt_llm"]
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+# =============================================================================
+# Interrogate — docstring coverage
+# =============================================================================
+[tool.interrogate]
+fail-under = 70
+ignore-nested-functions = true
+omit-covered-files = false
+
+# =============================================================================
+# Mypy — type checking (advisory)
+# =============================================================================
+[tool.mypy]
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = false
+disallow_untyped_defs = true
+files = ["src/rmt_llm"]
+no_implicit_optional = true
+no_implicit_reexport = false
+pretty = true
+python_version = "3.10"
+show_column_numbers = true
+show_error_codes = true
+show_error_context = true
+strict_equality = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = "numpy.*"
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = "matplotlib.*"
+
+[[tool.mypy.overrides]]
+disallow_untyped_defs = false
+module = "tests.*"
+
+# =============================================================================
+# pytest
+# =============================================================================
+[tool.pytest]
+
+[tool.pytest.ini_options]
+addopts = [
+  "--color=yes",
+  "--showlocals",
+  "--strict-config",
+  "--strict-markers",
+  "--tb=short",
+  "-v"
+]
+filterwarnings = [
+  "error",
+  "ignore::DeprecationWarning:pkg_resources.*",
+  "ignore::PendingDeprecationWarning"
+]
+markers = [
+  "benchmark: performance benchmarks (require pytest-benchmark package)",
+  "bpe: tests for the BPE tokenizer",
+  "cross_impl: cross-implementation consistency tests (require Julia)",
+  "hypothesis: property-based tests (require hypothesis package)",
+  "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+  "stochastic: marks tests with stochastic elements",
+  "tiny_gpt: tests for TinyGPT model and trainer"
+]
+minversion = "7.0"
+testpaths = ["laboratory/python/lab_en/tests", "src/rmt_llm/tests"]
+xfail_strict = true
+
+# =============================================================================
+# Ruff — lint + format
+# =============================================================================
+[tool.ruff]
+extend-exclude = [
+  "*.ipynb_checkpoints",
+  "docs/site",
+  "laboratory/results",
+  "laboratory/webapp/node_modules",
+  "results"
+]
+indent-width = 4
+line-length = 100
+src = ["laboratory/python", "python/rmt_llm_viz", "scripts", "src/rmt_llm"]
+target-version = "py310"
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 80
+indent-style = "space"
+line-ending = "lf"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+ignore = [
+  "B008", # function call in default argument (Pydantic-style)
+  "B905", # zip() without strict= (scientific code tolerates short sequences)
+  "DOC201", # return type not documented in docstring (too noisy for now)
+  "DOC501", # exception not documented (too noisy for now)
+  "E203", # whitespace before ':' (Black-compatible)
+  "E501", # line too long (handled by formatter)
+  "E731", # lambda assignment (we use lambdas for short callbacks)
+  "E741", # ambiguous variable name (l, I used in math formulas)
+  "N802", # function name should be lowercase (math notation: caputo_T_half)
+  "N803", # argument name should be lowercase (math symbols: lambda, Sigma)
+  "N806", # variable in function should be lowercase (math symbols: H, W, Sigma)
+  "N812", # lowercase imported as non-lowercase (parameters as P — lab convention)
+  "PT011", # pytest-raises-too-broad (ValueError without match is fine in labs)
+  "RUF001", # ambiguous unicode character (Greek letters in math strings)
+  "RUF002", # ambiguous unicode character in docstring (Greek letters)
+  "RUF003", # ambiguous unicode character in comment (Greek letters)
+  "S101", # use of assert (needed in tests)
+  "S110", # try-except-pass (tolerated in lab CLI tools)
+  "S112", # try-except-continue (tolerated in lab CLI tools)
+  "S301", # pickle (needed for loading weights — we trust our own files)
+  "S311", # stdlib random (fine for scientific simulation, not crypto)
+  "S324", # md5 (used only for cache keys, not security)
+  "T201" # print() — we use it in CLI tools and labs
+]
+select = [
+  "A", # flake8-builtins
+  "ARG", # flake8-unused-arguments
+  "B", # flake8-bugbear
+  "C4", # flake8-comprehensions
+  "C90", # mccabe complexity
+  "DOC", # pydocstyle
+  "E", # pycodestyle errors
+  "F", # Pyflakes
+  "I", # isort
+  "N", # pep8-naming
+  "PIE", # flake8-pie
+  "PT", # flake8-pytest-style
+  "RET", # flake8-return
+  "RUF", # Ruff-specific rules
+  "S", # flake8-bandit (security)
+  "SIM", # flake8-simplify
+  "T20", # flake8-print
+  "UP", # pyupgrade
+  "W", # pycodestyle warnings
+  "YTT" # flake8-2020
+]
+unfixable = []
+
+[tool.ruff.lint.isort]
+force-single-line = false
+known-first-party = ["rmt_llm"]
+lines-after-imports = 2
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = ["Test*", "setUp", "tearDown", "test_*"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/conftest.py" = ["ARG", "S101"]
+"laboratory/**/*.py" = ["ARG001", "ARG002", "C901", "DOC", "E402", "F841", "RUF059", "S101", "S310", "T201"]
+"laboratory/python/lab_en/model_downloader.py" = ["S310"]
+"notebooks/**/*.py" = ["DOC", "E402", "S101", "T201"]
+"python/**/*.py" = ["F841", "RUF059"]
+"scripts/**/*.py" = ["DOC", "E402", "S101", "T201"]
+"tests/**/*.py" = ["ARG", "DOC", "F841", "PT004", "RUF059", "S101"]
+
+[tool.setuptools]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# =============================================================================
+# Vulture — dead code detection (pre-commit passes paths via config)
+# =============================================================================
+[tool.vulture]
+exclude = ["*/tests/*", "tests/"]
+min_confidence = 80
+paths = ["laboratory/python", "scripts", "src"]

@@ -11,22 +11,24 @@ built from the project's own source code, for 30 epochs. Verifies that:
 This is the validation that the Tier 1+2 recipe actually delivers the
 predicted ~16% match_rate improvement.
 """
+
 from __future__ import annotations
 
-import os
 import sys
 import time
 from pathlib import Path
 
 import numpy as np
 
+
 # Make the lab importable.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
+from tiny_gpt_trainer_v3 import TrainConfig, TrainerV3
 from tiny_gpt_v3 import (
-    TinyGPTV3, TinyGPTV3Config, config_train_4m, config_small,
+    TinyGPTV3,
+    TinyGPTV3Config,
 )
-from tiny_gpt_trainer_v3 import TrainerV3, TrainConfig
 
 
 # ---------------------------------------------------------------------------
@@ -104,12 +106,12 @@ def main() -> int:
 
     # 3. Build the model with the training-ready config (byte-level vocab=256).
     cfg = TinyGPTV3Config(
-        vocab_size=256,        # byte-level
-        hidden_dim=64,         # smaller for fast smoke test
+        vocab_size=256,  # byte-level
+        hidden_dim=64,  # smaller for fast smoke test
         n_layers=2,
         n_heads=4,
         n_kv_heads=2,
-        max_seq_len=64,        # shorter sequences for smoke test
+        max_seq_len=64,  # shorter sequences for smoke test
         mlp_ratio=2,
         use_rope=True,
         weight_tying=True,
@@ -119,11 +121,15 @@ def main() -> int:
         init_scale=0.02,
         seed=42,
     )
-    print(f"\nModel config: vocab={cfg.vocab_size}, hidden={cfg.hidden_dim}, "
-          f"layers={cfg.n_layers}, heads={cfg.n_heads}/{cfg.n_kv_heads}, "
-          f"seq={cfg.max_seq_len}")
-    print(f"  weight_tying={cfg.weight_tying}, label_smoothing={cfg.label_smoothing}, "
-          f"dropout={cfg.dropout}, grad_clip={cfg.grad_clip_norm}")
+    print(
+        f"\nModel config: vocab={cfg.vocab_size}, hidden={cfg.hidden_dim}, "
+        f"layers={cfg.n_layers}, heads={cfg.n_heads}/{cfg.n_kv_heads}, "
+        f"seq={cfg.max_seq_len}"
+    )
+    print(
+        f"  weight_tying={cfg.weight_tying}, label_smoothing={cfg.label_smoothing}, "
+        f"dropout={cfg.dropout}, grad_clip={cfg.grad_clip_norm}"
+    )
     print(f"  Parameters: {cfg.params_count:,}")
 
     model = TinyGPTV3(cfg)
@@ -132,7 +138,7 @@ def main() -> int:
     train_cfg = TrainConfig(
         epochs=5,
         batch_size=1,
-        grad_accum_steps=2,    # effective batch = 2
+        grad_accum_steps=2,  # effective batch = 2
         max_lr=3e-3,
         warmup_ratio=0.1,
         min_lr_ratio=0.1,
@@ -142,9 +148,11 @@ def main() -> int:
         early_stopping_patience=0,  # disable for smoke test
         verbose=True,
     )
-    print(f"\nTraining: {train_cfg.epochs} epochs, "
-          f"batch={train_cfg.batch_size}×{train_cfg.grad_accum_steps}, "
-          f"max_lr={train_cfg.max_lr}")
+    print(
+        f"\nTraining: {train_cfg.epochs} epochs, "
+        f"batch={train_cfg.batch_size}×{train_cfg.grad_accum_steps}, "
+        f"max_lr={train_cfg.max_lr}"
+    )
 
     start = time.time()
     trainer = TrainerV3(model, train_cfg)
@@ -155,11 +163,23 @@ def main() -> int:
     print("\n" + "=" * 70)
     print("RESULTS")
     print("=" * 70)
-    print(f"Total training time: {elapsed:.1f}s ({elapsed/60:.1f} min)")
+    print(f"Total training time: {elapsed:.1f}s ({elapsed / 60:.1f} min)")
     print(f"Final train loss:   {history['losses'][-1]:.4f}")
-    print(f"Final train match_rate: {history['match_rates'][-1]:.1%}" if history['match_rates'] else "  (no eval)")
-    print(f"Final val loss:     {history['val_losses'][-1]:.4f}" if history['val_losses'] else "  (no val)")
-    print(f"Final val match_rate: {history['val_match_rates'][-1]:.1%}" if history['val_match_rates'] else "  (no val)")
+    print(
+        f"Final train match_rate: {history['match_rates'][-1]:.1%}"
+        if history["match_rates"]
+        else "  (no eval)"
+    )
+    print(
+        f"Final val loss:     {history['val_losses'][-1]:.4f}"
+        if history["val_losses"]
+        else "  (no val)"
+    )
+    print(
+        f"Final val match_rate: {history['val_match_rates'][-1]:.1%}"
+        if history["val_match_rates"]
+        else "  (no val)"
+    )
 
     # 6. Compare to v2 baseline (6.5%).
     if history["val_match_rates"]:
@@ -177,10 +197,10 @@ def main() -> int:
     # 7. Generate a sample to qualitatively verify.
     print("\n" + "-" * 70)
     print("Sample generation (greedy, temperature=0):")
-    prompt = np.array([ord('d'), ord('e'), ord('f')], dtype=np.int64)
+    prompt = np.array([ord("d"), ord("e"), ord("f")], dtype=np.int64)
     out = model.generate(prompt, max_new_tokens=32, temperature=0.0)
     decoded = bytes(np.clip(out["full_ids"], 0, 255).astype(np.uint8))
-    print(f"  Prompt: 'def'")
+    print("  Prompt: 'def'")
     print(f"  Output: {decoded!r}")
 
     return 0

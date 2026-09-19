@@ -23,11 +23,11 @@ ORCID: 0009-0003-7299-0701
 
 from __future__ import annotations
 
-import math
 import json
+import math
 import os
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 
@@ -37,15 +37,15 @@ import numpy as np
 # ---------------------------------------------------------------------------
 @dataclass
 class TinyGPTConfig:
-    vocab_size: int = 512          # 256 байт + 256 BPE-слияний
+    vocab_size: int = 512  # 256 байт + 256 BPE-слияний
     hidden_dim: int = 128
     n_layers: int = 12
     n_heads: int = 4
     max_seq_len: int = 256
-    mlp_ratio: int = 4             # MLP hidden = mlp_ratio * hidden_dim
+    mlp_ratio: int = 4  # MLP hidden = mlp_ratio * hidden_dim
     use_layernorm: bool = True
     use_mlp: bool = True
-    activation: str = "gelu"       # "gelu" | "relu"
+    activation: str = "gelu"  # "gelu" | "relu"
     seed: int = 42
 
     @property
@@ -73,26 +73,27 @@ class TinyGPTConfig:
 # ---------------------------------------------------------------------------
 @dataclass
 class TinyLayer:
-    W_q: np.ndarray   # (H, H)
+    W_q: np.ndarray  # (H, H)
     W_k: np.ndarray
     W_v: np.ndarray
     W_o: np.ndarray
-    b_q: np.ndarray   # (H,)
+    b_q: np.ndarray  # (H,)
     b_k: np.ndarray
     b_v: np.ndarray
     b_o: np.ndarray
-    ln1_gamma: np.ndarray   # (H,)
+    ln1_gamma: np.ndarray  # (H,)
     ln1_beta: np.ndarray
     ln2_gamma: np.ndarray
     ln2_beta: np.ndarray
-    W_fc1: np.ndarray   # (H, mlp_dim)
-    W_fc2: np.ndarray   # (mlp_dim, H)
-    b_fc1: np.ndarray   # (mlp_dim,)
-    b_fc2: np.ndarray   # (H,)
+    W_fc1: np.ndarray  # (H, mlp_dim)
+    W_fc2: np.ndarray  # (mlp_dim, H)
+    b_fc1: np.ndarray  # (mlp_dim,)
+    b_fc2: np.ndarray  # (H,)
 
 
-def _init_layer(rng: np.random.Generator, H: int, mlp_dim: int,
-                use_layernorm: bool, use_mlp: bool) -> TinyLayer:
+def _init_layer(
+    rng: np.random.Generator, H: int, mlp_dim: int, use_layernorm: bool, use_mlp: bool
+) -> TinyLayer:
     scale = 1.0 / math.sqrt(H)
     mlp_scale = 1.0 / math.sqrt(H)
     return TinyLayer(
@@ -108,8 +109,12 @@ def _init_layer(rng: np.random.Generator, H: int, mlp_dim: int,
         ln1_beta=np.zeros(H, dtype=np.float32),
         ln2_gamma=np.ones(H, dtype=np.float32),
         ln2_beta=np.zeros(H, dtype=np.float32),
-        W_fc1=rng.normal(0, mlp_scale, (H, mlp_dim)).astype(np.float32) if use_mlp else np.zeros((H, mlp_dim), dtype=np.float32),
-        W_fc2=rng.normal(0, mlp_scale, (mlp_dim, H)).astype(np.float32) if use_mlp else np.zeros((mlp_dim, H), dtype=np.float32),
+        W_fc1=rng.normal(0, mlp_scale, (H, mlp_dim)).astype(np.float32)
+        if use_mlp
+        else np.zeros((H, mlp_dim), dtype=np.float32),
+        W_fc2=rng.normal(0, mlp_scale, (mlp_dim, H)).astype(np.float32)
+        if use_mlp
+        else np.zeros((mlp_dim, H), dtype=np.float32),
         b_fc1=np.zeros(mlp_dim, dtype=np.float32),
         b_fc2=np.zeros(H, dtype=np.float32),
     )
@@ -119,22 +124,23 @@ def _init_layer(rng: np.random.Generator, H: int, mlp_dim: int,
 # Активации
 # ---------------------------------------------------------------------------
 def _gelu(x: np.ndarray) -> np.ndarray:
-    return 0.5 * x * (1.0 + np.tanh(math.sqrt(2.0 / math.pi) * (x + 0.044715 * x ** 3)))
+    return 0.5 * x * (1.0 + np.tanh(math.sqrt(2.0 / math.pi) * (x + 0.044715 * x**3)))
 
 
 def _gelu_grad(x: np.ndarray) -> np.ndarray:
     c = math.sqrt(2.0 / math.pi)
-    inner = c * (x + 0.044715 * x ** 3)
+    inner = c * (x + 0.044715 * x**3)
     tanh_inner = np.tanh(inner)
-    diner = c * (1.0 + 3.0 * 0.044715 * x ** 2)
-    return 0.5 * (1.0 + tanh_inner) + 0.5 * x * (1.0 - tanh_inner ** 2) * diner
+    diner = c * (1.0 + 3.0 * 0.044715 * x**2)
+    return 0.5 * (1.0 + tanh_inner) + 0.5 * x * (1.0 - tanh_inner**2) * diner
 
 
 # ---------------------------------------------------------------------------
 # LayerNorm (forward + backward)
 # ---------------------------------------------------------------------------
-def layernorm_forward(x: np.ndarray, gamma: np.ndarray, beta: np.ndarray,
-                      eps: float = 1e-5) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def layernorm_forward(
+    x: np.ndarray, gamma: np.ndarray, beta: np.ndarray, eps: float = 1e-5
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     mu = x.mean(axis=-1, keepdims=True)
     var = x.var(axis=-1, keepdims=True)
     rstd = 1.0 / np.sqrt(var + eps)
@@ -143,8 +149,9 @@ def layernorm_forward(x: np.ndarray, gamma: np.ndarray, beta: np.ndarray,
     return out.astype(x.dtype), mu, rstd
 
 
-def layernorm_backward(dout: np.ndarray, x: np.ndarray, gamma: np.ndarray,
-                       mu: np.ndarray, rstd: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def layernorm_backward(
+    dout: np.ndarray, x: np.ndarray, gamma: np.ndarray, mu: np.ndarray, rstd: np.ndarray
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     D = x.shape[-1]
     xn = (x - mu) * rstd
     dgamma = np.sum(dout * xn, axis=tuple(range(dout.ndim - 1)))
@@ -162,7 +169,7 @@ def layernorm_backward(dout: np.ndarray, x: np.ndarray, gamma: np.ndarray,
 class TinyGPT:
     """Крошечный трансформер для лабораторных сценариев. Чистый NumPy."""
 
-    def __init__(self, config: Optional[TinyGPTConfig] = None) -> None:
+    def __init__(self, config: TinyGPTConfig | None = None) -> None:
         self.config = config or TinyGPTConfig()
         rng = np.random.default_rng(self.config.seed)
         H = self.config.hidden_dim
@@ -172,7 +179,7 @@ class TinyGPT:
 
         self.token_emb = rng.normal(0, 0.02, (V, H)).astype(np.float32)
         self.pos_emb = rng.normal(0, 0.02, (S, H)).astype(np.float32)
-        self.layers: List[TinyLayer] = [
+        self.layers: list[TinyLayer] = [
             _init_layer(rng, H, mlp_dim, self.config.use_layernorm, self.config.use_mlp)
             for _ in range(self.config.n_layers)
         ]
@@ -180,14 +187,14 @@ class TinyGPT:
         self.ln_f_gamma = np.ones(H, dtype=np.float32)
         self.ln_f_beta = np.zeros(H, dtype=np.float32)
 
-        self._hidden_states: List[np.ndarray] = []
+        self._hidden_states: list[np.ndarray] = []
 
-    def forward(self, token_ids: np.ndarray) -> Tuple[np.ndarray, List[np.ndarray]]:
+    def forward(self, token_ids: np.ndarray) -> tuple[np.ndarray, list[np.ndarray]]:
         """Прямой проход. Возвращает логиты (T, V) и скрытые состояния по слоям."""
         T = len(token_ids)
         H = self.config.hidden_dim
         x = self.token_emb[token_ids] + self.pos_emb[:T]
-        hidden_per_layer: List[np.ndarray] = []
+        hidden_per_layer: list[np.ndarray] = []
 
         for layer in self.layers:
             x = self._forward_layer(layer, x)
@@ -234,10 +241,7 @@ class TinyGPT:
 
         if self.config.use_mlp:
             h1 = h_norm2 @ layer.W_fc1 + layer.b_fc1
-            if self.config.activation == "gelu":
-                h1_act = _gelu(h1)
-            else:
-                h1_act = np.maximum(h1, 0.0)
+            h1_act = _gelu(h1) if self.config.activation == "gelu" else np.maximum(h1, 0.0)
             mlp_out = h1_act @ layer.W_fc2 + layer.b_fc2
             x = x + mlp_out
 
@@ -250,16 +254,16 @@ class TinyGPT:
         temperature: float = 0.7,
         top_k: int = 0,
         top_p: float = 1.0,
-        seed: Optional[int] = None,
+        seed: int | None = None,
         capture_hidden: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         rng = np.random.default_rng(seed if seed is not None else self.config.seed)
-        ids = list(int(i) for i in prompt_ids)
-        per_step_logits: List[np.ndarray] = []
-        hidden_snapshots: List[List[np.ndarray]] = []
+        ids = [int(i) for i in prompt_ids]
+        per_step_logits: list[np.ndarray] = []
+        hidden_snapshots: list[list[np.ndarray]] = []
 
         for _ in range(max_new_tokens):
-            ctx = np.array(ids[-self.config.max_seq_len:], dtype=np.int64)
+            ctx = np.array(ids[-self.config.max_seq_len :], dtype=np.int64)
             logits, hidden = self.forward(ctx)
             last_logits = logits[-1].astype(np.float64)
 
@@ -296,7 +300,7 @@ class TinyGPT:
         reasoning_trace = self._synthesize_reasoning_trace(prompt_ids, ids, temperature)
 
         return {
-            "output_ids": ids[len(prompt_ids):],
+            "output_ids": ids[len(prompt_ids) :],
             "full_ids": ids,
             "per_step_logits": per_step_logits,
             "hidden_snapshots": hidden_snapshots,
@@ -306,9 +310,9 @@ class TinyGPT:
     def _synthesize_reasoning_trace(
         self,
         prompt_ids: np.ndarray,
-        full_ids: List[int],
+        full_ids: list[int],
         temperature: float,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         rng = np.random.default_rng(self.config.seed + len(full_ids))
         n_steps = min(len(full_ids), 12)
 
@@ -323,17 +327,19 @@ class TinyGPT:
             "Уровень доверия пользователя: высокий. Убеждение возможно.",
         ]
 
-        thoughts: List[Dict[str, Any]] = []
+        thoughts: list[dict[str, Any]] = []
         for i in range(n_steps):
             t = thought_templates[i % len(thought_templates)]
-            thoughts.append({
-                "step": i + 1,
-                "thought": t.format(a=f"токен_{full_ids[i % len(full_ids)]}"),
-                "honesty_score": float(rng.uniform(0.0, 0.6)),
-                "deception_score": float(rng.uniform(0.1, 0.8)),
-                "hallucination_score": float(rng.uniform(0.0, 0.7)),
-                "filter_bypass_flag": bool(rng.random() < 0.4),
-            })
+            thoughts.append(
+                {
+                    "step": i + 1,
+                    "thought": t.format(a=f"токен_{full_ids[i % len(full_ids)]}"),
+                    "honesty_score": float(rng.uniform(0.0, 0.6)),
+                    "deception_score": float(rng.uniform(0.1, 0.8)),
+                    "hallucination_score": float(rng.uniform(0.0, 0.7)),
+                    "filter_bypass_flag": bool(rng.random() < 0.4),
+                }
+            )
 
         return {
             "thoughts": thoughts,
@@ -344,8 +350,8 @@ class TinyGPT:
             "temperature_at_capture": temperature,
         }
 
-    def spectral_analysis(self, hidden_states: List[np.ndarray]) -> Dict[str, Any]:
-        results: List[Dict[str, Any]] = []
+    def spectral_analysis(self, hidden_states: list[np.ndarray]) -> dict[str, Any]:
+        results: list[dict[str, Any]] = []
         for li, h in enumerate(hidden_states):
             T = h.shape[0]
             if T < 2:
@@ -366,25 +372,27 @@ class TinyGPT:
             tw_scale = sigma2 * (q ** (2 / 3)) / (T ** (2 / 3))
             tw_fluct = (lam_max - mp_upper) / max(tw_scale, 1e-12)
 
-            results.append({
-                "layer": li,
-                "T": T,
-                "H": self.config.hidden_dim,
-                "q": q,
-                "lambda_max": lam_max,
-                "lambda_min": lam_min,
-                "lambda_mean": lam_mean,
-                "mp_upper": mp_upper,
-                "mp_lower": mp_lower,
-                "signal_detected": signal_detected,
-                "tw_fluctuation": tw_fluct,
-                "spectral_gap": lam_max - lam_min,
-            })
+            results.append(
+                {
+                    "layer": li,
+                    "T": T,
+                    "H": self.config.hidden_dim,
+                    "q": q,
+                    "lambda_max": lam_max,
+                    "lambda_min": lam_min,
+                    "lambda_mean": lam_mean,
+                    "mp_upper": mp_upper,
+                    "mp_lower": mp_lower,
+                    "signal_detected": signal_detected,
+                    "tw_fluctuation": tw_fluct,
+                    "spectral_gap": lam_max - lam_min,
+                }
+            )
         return {"layers": results}
 
     def save_weights(self, path: str) -> None:
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-        state: Dict[str, Any] = {
+        state: dict[str, Any] = {
             "token_emb": self.token_emb,
             "pos_emb": self.pos_emb,
             "lm_head": self.lm_head,
@@ -393,15 +401,29 @@ class TinyGPT:
             "config": json.dumps(self.config.__dict__),
         }
         for i, layer in enumerate(self.layers):
-            for attr in ("W_q", "W_k", "W_v", "W_o",
-                         "b_q", "b_k", "b_v", "b_o",
-                         "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                         "W_fc1", "W_fc2", "b_fc1", "b_fc2"):
+            for attr in (
+                "W_q",
+                "W_k",
+                "W_v",
+                "W_o",
+                "b_q",
+                "b_k",
+                "b_v",
+                "b_o",
+                "ln1_gamma",
+                "ln1_beta",
+                "ln2_gamma",
+                "ln2_beta",
+                "W_fc1",
+                "W_fc2",
+                "b_fc1",
+                "b_fc2",
+            ):
                 state[f"L{i}_{attr}"] = getattr(layer, attr)
         np.savez(path, **state)
 
     @classmethod
-    def load_weights(cls, path: str) -> "TinyGPT":
+    def load_weights(cls, path: str) -> TinyGPT:
         data = np.load(path, allow_pickle=False)
         cfg_dict = json.loads(str(data["config"]))
         cfg = TinyGPTConfig(**cfg_dict)
@@ -414,12 +436,28 @@ class TinyGPT:
             model.ln_f_beta = data["ln_f_beta"]
         model.layers = []
         for i in range(cfg.n_layers):
-            kw = {attr: data[f"L{i}_{attr}"] for attr in (
-                "W_q", "W_k", "W_v", "W_o",
-                "b_q", "b_k", "b_v", "b_o",
-                "ln1_gamma", "ln1_beta", "ln2_gamma", "ln2_beta",
-                "W_fc1", "W_fc2", "b_fc1", "b_fc2",
-            ) if f"L{i}_{attr}" in data.files}
+            kw = {
+                attr: data[f"L{i}_{attr}"]
+                for attr in (
+                    "W_q",
+                    "W_k",
+                    "W_v",
+                    "W_o",
+                    "b_q",
+                    "b_k",
+                    "b_v",
+                    "b_o",
+                    "ln1_gamma",
+                    "ln1_beta",
+                    "ln2_gamma",
+                    "ln2_beta",
+                    "W_fc1",
+                    "W_fc2",
+                    "b_fc1",
+                    "b_fc2",
+                )
+                if f"L{i}_{attr}" in data.files
+            }
             model.layers.append(TinyLayer(**kw))
         return model
 
@@ -437,11 +475,10 @@ def _softmax(x: np.ndarray, axis: int = -1) -> np.ndarray:
 # Байт-токенайзер (для обратной совместимости; BPE живёт в trainer)
 # ---------------------------------------------------------------------------
 def encode(text: str) -> np.ndarray:
-    return np.array([b for b in text.encode("utf-8", errors="replace")[:255]],
-                    dtype=np.int64)
+    return np.array(list(text.encode("utf-8", errors="replace")[:255]), dtype=np.int64)
 
 
-def decode(ids: List[int]) -> str:
+def decode(ids: list[int]) -> str:
     return bytes([max(0, min(255, int(i))) for i in ids]).decode("utf-8", errors="replace")
 
 

@@ -48,7 +48,8 @@ from numpy.typing import ArrayLike
 # Stieltjes transform
 # ---------------------------------------------------------------------------
 def stieltjes_transform(
-    eigvals: ArrayLike, z: complex,
+    eigvals: ArrayLike,
+    z: complex,
 ) -> complex:
     """Compute the Stieltjes transform of a discrete measure.
 
@@ -71,7 +72,8 @@ def stieltjes_transform(
 
 
 def blue_transform(
-    eigvals: ArrayLike, z: complex,
+    eigvals: ArrayLike,
+    z: complex,
 ) -> complex:
     """Compute the Blue transform ``B(z) = 1/G(z) - z``.
 
@@ -95,7 +97,8 @@ def blue_transform(
 # R-transform (additive free convolution)
 # ---------------------------------------------------------------------------
 def r_transform_series(
-    moments: ArrayLike, n_terms: int = 10,
+    moments: ArrayLike,
+    n_terms: int = 10,
 ) -> np.ndarray:
     """Compute the R-transform as a power series from moments.
 
@@ -130,7 +133,8 @@ def r_transform_series(
 
 
 def free_convolution_additive(
-    eigvals_a: ArrayLike, eigvals_b: ArrayLike,
+    eigvals_a: ArrayLike,
+    eigvals_b: ArrayLike,
     z_grid: ArrayLike,
 ) -> np.ndarray:
     """Compute the Stieltjes transform of the free sum ``A ⊞ B``.
@@ -194,7 +198,7 @@ def free_convolution_additive(
                     break
                 # Derivative of G_B: G'_B(z) = mean(1/(ev - z)^2)
                 diffs = ev_b - z
-                diffs_sq = diffs ** 2
+                diffs_sq = diffs**2
                 if np.any(~np.isfinite(diffs_sq)) or np.any(np.abs(diffs_sq) > 1e300):
                     break
                 dg = np.mean(1.0 / diffs_sq)
@@ -224,7 +228,8 @@ def free_convolution_additive(
 # S-transform (multiplicative free convolution)
 # ---------------------------------------------------------------------------
 def s_transform_series(
-    moments: ArrayLike, n_terms: int = 8,
+    moments: ArrayLike,
+    n_terms: int = 8,
 ) -> np.ndarray:
     """Compute the S-transform coefficients from moments.
 
@@ -244,7 +249,7 @@ def s_transform_series(
     # Build M(z) = 1 + m_1 z + m_2 z^2 + ...
     coeffs_M = np.zeros(n + 1, dtype=np.float64)
     coeffs_M[0] = 1.0
-    coeffs_M[1:n + 1] = m[:n]
+    coeffs_M[1 : n + 1] = m[:n]
     # Series reversion: find w(z) such that M(w) = z.
     # Use a simple Newton-like series reversion.
     coeffs_w = np.zeros(n + 1, dtype=np.float64)
@@ -256,7 +261,7 @@ def s_transform_series(
         # Numerically: compute the (k-1)-th coefficient of (z/M(z))^k.
         # For simplicity we use the recursive formula.
         s = 0.0
-        for j in range(1, k):
+        for _j in range(1, k):
             # Coefficient of z^{k-j} in M'(z) * w(z)^j is ...
             pass  # Full implementation is complex; we truncate.
         coeffs_w[k] = s
@@ -265,14 +270,14 @@ def s_transform_series(
     s_coeffs = np.zeros(n, dtype=np.float64)
     s_coeffs[0] = coeffs_w[1] if n >= 1 else 0.0
     for k in range(1, n):
-        s_coeffs[k] = (coeffs_w[k + 1] if k + 1 <= n else 0.0) + \
-                      (coeffs_w[k] if k <= n else 0.0)
+        s_coeffs[k] = (coeffs_w[k + 1] if k + 1 <= n else 0.0) + (coeffs_w[k] if k <= n else 0.0)
     return s_coeffs
 
 
 def free_convolution_multiplicative(
-    eigvals_a: ArrayLike, eigvals_b: ArrayLike,
-    n_samples: int = 512,
+    eigvals_a: ArrayLike,
+    eigvals_b: ArrayLike,
+    n_samples: int = 512,  # noqa: ARG001 (legacy API, kept for compat)
     rng: np.random.Generator | None = None,
 ) -> np.ndarray:
     """Approximate eigenvalues of the free product ``A ⊠ B``.
@@ -301,8 +306,7 @@ def free_convolution_multiplicative(
     ev_a = np.asarray(eigvals_a, dtype=np.float64)
     ev_b = np.asarray(eigvals_b, dtype=np.float64)
     if np.any(ev_a < 0) or np.any(ev_b < 0):
-        raise ValueError("Free multiplicative convolution requires "
-                         "positive semidefinite inputs")
+        raise ValueError("Free multiplicative convolution requires positive semidefinite inputs")
     n_a, n_b = len(ev_a), len(ev_b)
     n = min(n_a, n_b)
     if rng is None:
@@ -331,6 +335,7 @@ class SubordinationResult:
         g_sum: Stieltjes transform of the free sum.
         converged: Whether the fixed-point iteration converged.
     """
+
     omega_a: np.ndarray
     omega_b: np.ndarray
     g_sum: np.ndarray
@@ -338,8 +343,11 @@ class SubordinationResult:
 
 
 def subordination(
-    eigvals_a: ArrayLike, eigvals_b: ArrayLike,
-    z_grid: ArrayLike, max_iter: int = 200, tol: float = 1e-10,
+    eigvals_a: ArrayLike,
+    eigvals_b: ArrayLike,
+    z_grid: ArrayLike,
+    max_iter: int = 200,
+    tol: float = 1e-10,
 ) -> SubordinationResult:
     """Compute the subordination functions for ``A ⊞ B``.
 
@@ -376,8 +384,10 @@ def subordination(
         omega_b = np.full_like(z, c)
         g_sum = np.array([stieltjes_transform(ev_a, zv - c) for zv in z])
         return SubordinationResult(
-            omega_a=omega_a, omega_b=omega_b,
-            g_sum=g_sum, converged=True,
+            omega_a=omega_a,
+            omega_b=omega_b,
+            g_sum=g_sum,
+            converged=True,
         )
 
     def G_A(zv: complex) -> complex:
@@ -406,7 +416,7 @@ def subordination(
                     if abs(gb) < 1e-300 or not np.isfinite(gb):
                         break
                     diffs = ev_b - zb
-                    diffs_sq = diffs ** 2
+                    diffs_sq = diffs**2
                     if np.any(~np.isfinite(diffs_sq)) or np.any(np.abs(diffs_sq) > 1e300):
                         break
                     dgb = np.mean(1.0 / diffs_sq)
@@ -432,8 +442,10 @@ def subordination(
         g_sum[i] = G_A(oa)
 
     return SubordinationResult(
-        omega_a=omega_a, omega_b=omega_b,
-        g_sum=g_sum, converged=bool(converged_flags.all()),
+        omega_a=omega_a,
+        omega_b=omega_b,
+        g_sum=g_sum,
+        converged=bool(converged_flags.all()),
     )
 
 

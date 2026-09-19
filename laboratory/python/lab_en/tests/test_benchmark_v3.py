@@ -18,6 +18,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 try:
@@ -33,22 +34,35 @@ from tiny_gpt_v3 import TinyGPTV3Config as V3Config
 
 # ─── Fixtures ──────────────────────────────────────────────────────────────
 
+
 def _v2_config():
     return V2Config(
-        vocab_size=128, hidden_dim=64, n_layers=4, n_heads=4,
-        max_seq_len=32, use_mlp=True, use_layernorm=True, seed=42,
+        vocab_size=128,
+        hidden_dim=64,
+        n_layers=4,
+        n_heads=4,
+        max_seq_len=32,
+        use_mlp=True,
+        use_layernorm=True,
+        seed=42,
     )
 
 
-def _v3_config(use_gqa=True, use_rope=True, mixed_precision=False,
-               gradient_checkpointing=False):
+def _v3_config(use_gqa=True, use_rope=True, mixed_precision=False, gradient_checkpointing=False):
     n_kv_heads = 2 if use_gqa else 4
     return V3Config(
-        vocab_size=128, hidden_dim=64, n_layers=4, n_heads=4,
-        n_kv_heads=n_kv_heads, max_seq_len=32, use_mlp=True,
-        use_layernorm=True, use_rope=use_rope,
+        vocab_size=128,
+        hidden_dim=64,
+        n_layers=4,
+        n_heads=4,
+        n_kv_heads=n_kv_heads,
+        max_seq_len=32,
+        use_mlp=True,
+        use_layernorm=True,
+        use_rope=use_rope,
         mixed_precision=mixed_precision,
-        gradient_checkpointing=gradient_checkpointing, seed=42,
+        gradient_checkpointing=gradient_checkpointing,
+        seed=42,
     )
 
 
@@ -78,6 +92,7 @@ def v3_ckpt_model():
 
 
 # ─── Forward pass benchmarks ───────────────────────────────────────────────
+
 
 class TestForwardBenchmarks:
     """Compare forward pass throughput: v2 vs v3 variants."""
@@ -125,6 +140,7 @@ class TestForwardBenchmarks:
 
 # ─── Backward pass benchmarks ──────────────────────────────────────────────
 
+
 class TestBackwardBenchmarks:
     """Compare backward pass throughput: v3 vs v3 with checkpointing."""
 
@@ -155,6 +171,7 @@ class TestBackwardBenchmarks:
 
 # ─── Generation benchmarks ─────────────────────────────────────────────────
 
+
 class TestGenerationBenchmarks:
     """Compare generation throughput."""
 
@@ -180,6 +197,7 @@ class TestGenerationBenchmarks:
 
 
 # ─── Parameter count comparison ────────────────────────────────────────────
+
 
 class TestParamCount:
     """Verify that GQA + RoPE reduce the parameter count."""

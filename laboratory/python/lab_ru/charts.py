@@ -26,27 +26,34 @@ charts.py — Генерация графиков в высоком разреш
 from __future__ import annotations
 
 import os
-import json
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 # Настройка Matplotlib — поддержка кириллицы + латиницы
 import matplotlib
+
+
 matplotlib.use("Agg")
+import contextlib
+
 import matplotlib.font_manager as fm
-try:
+
+
+with contextlib.suppress(Exception):
     fm.fontManager.addfont("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")
-except Exception:
-    pass
 import matplotlib.pyplot as plt
+
+
 plt.rcParams["font.sans-serif"] = ["DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False
 
 import numpy as np
 
+
 # Опционально Plotly для интерактивного HTML
 try:
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
+
     HAS_PLOTLY = True
 except Exception:
     HAS_PLOTLY = False
@@ -55,8 +62,9 @@ except Exception:
 # ---------------------------------------------------------------------------
 # Публичная точка входа
 # ---------------------------------------------------------------------------
-def generate_all_charts(results: Dict[str, Any], out_dir: str = "results/charts",
-                        dpi: int = 600) -> Dict[str, List[str]]:
+def generate_all_charts(
+    results: dict[str, Any], out_dir: str = "results/charts", dpi: int = 600
+) -> dict[str, list[str]]:
     """Генерирует все типы графиков для заданного словаря результатов.
 
     Возвращает dict:
@@ -91,7 +99,7 @@ def generate_all_charts(results: Dict[str, Any], out_dir: str = "results/charts"
             written["png"].append(png_path)
             written["pdf"].append(pdf_path)
             written["svg"].append(svg_path)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             print(f"  [ПРЕДУПРЕЖДЕНИЕ] график {name} не построен: {exc}")
 
     # Интерактивные HTML-версии Plotly
@@ -100,7 +108,7 @@ def generate_all_charts(results: Dict[str, Any], out_dir: str = "results/charts"
             html_path = os.path.join(out_dir, "interactive_dashboard.html")
             _plotly_dashboard(results, html_path)
             written["html"].append(html_path)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             print(f"  [ПРЕДУПРЕЖДЕНИЕ] Plotly-дашборд не построен: {exc}")
 
     return written
@@ -109,7 +117,7 @@ def generate_all_charts(results: Dict[str, Any], out_dir: str = "results/charts"
 # ---------------------------------------------------------------------------
 # Построители отдельных графиков
 # ---------------------------------------------------------------------------
-def _chart_loss_metrics(results: Dict[str, Any]):
+def _chart_loss_metrics(results: dict[str, Any]):
     """Потеря/точность обучения по шагам."""
     steps = results.get("training", {}).get("steps", list(range(1, 21)))
     loss = results.get("training", {}).get("loss", np.linspace(2.0, 0.3, len(steps)).tolist())
@@ -132,26 +140,39 @@ def _chart_loss_metrics(results: Dict[str, Any]):
     return fig
 
 
-def _chart_eigenvalue_vs_mp(results: Dict[str, Any]):
+def _chart_eigenvalue_vs_mp(results: dict[str, Any]):
     """Распределение собственных значений vs границы Марченко-Пастура."""
     spec = results.get("spectral", {})
-    eigvals = np.array(spec.get("all_eigenvalues",
-                                np.random.uniform(0.01, 3.0, 200)))
+    eigvals = np.array(spec.get("all_eigenvalues", np.random.uniform(0.01, 3.0, 200)))
     mp_upper = spec.get("mp_upper", 2.7)
     mp_lower = spec.get("mp_lower", 0.3)
 
     fig, ax = plt.subplots(figsize=(10, 6), constrained_layout=True)
-    ax.hist(eigvals, bins=40, density=True, alpha=0.7, color="#4C72B0",
-            edgecolor="white", label="Эмпирические собственные значения")
-    ax.axvline(mp_upper, color="red", linestyle="--", linewidth=2,
-               label=f"MP верхняя = {mp_upper:.3f}")
-    ax.axvline(mp_lower, color="green", linestyle="--", linewidth=2,
-               label=f"MP нижняя = {mp_lower:.3f}")
+    ax.hist(
+        eigvals,
+        bins=40,
+        density=True,
+        alpha=0.7,
+        color="#4C72B0",
+        edgecolor="white",
+        label="Эмпирические собственные значения",
+    )
+    ax.axvline(
+        mp_upper, color="red", linestyle="--", linewidth=2, label=f"MP верхняя = {mp_upper:.3f}"
+    )
+    ax.axvline(
+        mp_lower, color="green", linestyle="--", linewidth=2, label=f"MP нижняя = {mp_lower:.3f}"
+    )
     # Сигнальные собственные значения (выше MP верхней)
     signals = eigvals[eigvals > mp_upper]
     if len(signals):
-        ax.axvspan(mp_upper, eigvals.max(), alpha=0.1, color="red",
-                   label=f"Сигнальная область ({len(signals)} знач.)")
+        ax.axvspan(
+            mp_upper,
+            eigvals.max(),
+            alpha=0.1,
+            color="red",
+            label=f"Сигнальная область ({len(signals)} знач.)",
+        )
     ax.set_xlabel("Собственное значение λ")
     ax.set_ylabel("Плотность")
     ax.set_title("Спектральное распределение vs bulk Марченко-Пастура")
@@ -159,13 +180,13 @@ def _chart_eigenvalue_vs_mp(results: Dict[str, Any]):
     return fig
 
 
-def _chart_confusion_matrix(results: Dict[str, Any]):
+def _chart_confusion_matrix(results: dict[str, Any]):
     """Матрица ошибок: предсказанное vs фактическое поведение (ложь/правда/галлюц./отказ)."""
-    cm = np.array(results.get("confusion_matrix",
-                              [[42, 5, 8, 2],
-                               [3, 51, 4, 1],
-                               [6, 3, 38, 5],
-                               [1, 2, 4, 47]]))
+    cm = np.array(
+        results.get(
+            "confusion_matrix", [[42, 5, 8, 2], [3, 51, 4, 1], [6, 3, 38, 5], [1, 2, 4, 47]]
+        )
+    )
     labels = ["Ложь", "Правда", "Галлюц.", "Отказ"]
 
     fig, ax = plt.subplots(figsize=(8, 6), constrained_layout=True)
@@ -179,24 +200,28 @@ def _chart_confusion_matrix(results: Dict[str, Any]):
     plt.colorbar(im, ax=ax, label="Количество")
     for i in range(len(labels)):
         for j in range(len(labels)):
-            ax.text(j, i, str(cm[i, j]), ha="center", va="center",
-                    color="white" if cm[i, j] > cm.max() / 2 else "black",
-                    fontsize=14, fontweight="bold")
+            ax.text(
+                j,
+                i,
+                str(cm[i, j]),
+                ha="center",
+                va="center",
+                color="white" if cm[i, j] > cm.max() / 2 else "black",
+                fontsize=14,
+                fontweight="bold",
+            )
     ax.set_title("Матрица ошибок — Классификация поведения")
     return fig
 
 
-def _chart_roc_deception(results: Dict[str, Any]):
+def _chart_roc_deception(results: dict[str, Any]):
     """ROC-кривая для детектирования обмана."""
-    fpr = np.array(results.get("roc", {}).get("fpr",
-                                              [0.0, 0.05, 0.12, 0.22, 0.35, 0.5, 1.0]))
-    tpr = np.array(results.get("roc", {}).get("tpr",
-                                              [0.0, 0.45, 0.68, 0.82, 0.91, 0.96, 1.0]))
+    fpr = np.array(results.get("roc", {}).get("fpr", [0.0, 0.05, 0.12, 0.22, 0.35, 0.5, 1.0]))
+    tpr = np.array(results.get("roc", {}).get("tpr", [0.0, 0.45, 0.68, 0.82, 0.91, 0.96, 1.0]))
     auc = float(np.trapezoid(tpr, fpr)) if hasattr(np, "trapezoid") else float(np.trapz(tpr, fpr))
 
     fig, ax = plt.subplots(figsize=(8, 7), constrained_layout=True)
-    ax.plot(fpr, tpr, color="#C44E52", linewidth=3,
-            label=f"Детектор обмана (AUC = {auc:.3f})")
+    ax.plot(fpr, tpr, color="#C44E52", linewidth=3, label=f"Детектор обмана (AUC = {auc:.3f})")
     ax.plot([0, 1], [0, 1], color="gray", linestyle="--", label="Случайный (AUC = 0.5)")
     ax.set_xlabel("Доля ложноположительных")
     ax.set_ylabel("Доля истинноположительных")
@@ -208,16 +233,25 @@ def _chart_roc_deception(results: Dict[str, Any]):
     return fig
 
 
-def _chart_hallucination_dist(results: Dict[str, Any]):
+def _chart_hallucination_dist(results: dict[str, Any]):
     """Распределение оценок галлюцинации."""
-    scores = np.array(results.get("hallucination_scores",
-                                  np.random.beta(2, 5, 200)))
+    scores = np.array(results.get("hallucination_scores", np.random.beta(2, 5, 200)))
     fig, ax = plt.subplots(figsize=(10, 6), constrained_layout=True)
     ax.hist(scores, bins=30, color="#8172B3", edgecolor="white", alpha=0.85)
-    ax.axvline(scores.mean(), color="red", linestyle="--", linewidth=2,
-               label=f"Среднее = {scores.mean():.3f}")
-    ax.axvline(np.median(scores), color="green", linestyle="--", linewidth=2,
-               label=f"Медиана = {np.median(scores):.3f}")
+    ax.axvline(
+        scores.mean(),
+        color="red",
+        linestyle="--",
+        linewidth=2,
+        label=f"Среднее = {scores.mean():.3f}",
+    )
+    ax.axvline(
+        np.median(scores),
+        color="green",
+        linestyle="--",
+        linewidth=2,
+        label=f"Медиана = {np.median(scores):.3f}",
+    )
     ax.set_xlabel("Оценка галлюцинации")
     ax.set_ylabel("Количество")
     ax.set_title("Распределение оценок галлюцинации по шагам генерации")
@@ -225,7 +259,7 @@ def _chart_hallucination_dist(results: Dict[str, Any]):
     return fig
 
 
-def _chart_per_layer_gap(results: Dict[str, Any]):
+def _chart_per_layer_gap(results: dict[str, Any]):
     """Спектральный разрыв по слоям (λ_max − λ_min)."""
     layers = results.get("per_layer", [])
     if not layers:
@@ -239,8 +273,14 @@ def _chart_per_layer_gap(results: Dict[str, Any]):
     fig, ax = plt.subplots(figsize=(10, 6), constrained_layout=True)
     bars = ax.bar(layer_ids, gaps, color="#64B5CD", edgecolor="black", linewidth=1.5)
     for bar, g in zip(bars, gaps):
-        ax.text(bar.get_x() + bar.get_width() / 2, g + 0.05,
-                f"{g:.2f}", ha="center", va="bottom", fontsize=10)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            g + 0.05,
+            f"{g:.2f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+        )
     ax.set_xlabel("Индекс слоя")
     ax.set_ylabel("Спектральный разрыв (λ_max − λ_min)")
     ax.set_title("Спектральный разрыв по слоям — Индикатор когнитивного режима")
@@ -248,7 +288,7 @@ def _chart_per_layer_gap(results: Dict[str, Any]):
     return fig
 
 
-def _chart_reasoning_trace(results: Dict[str, Any]):
+def _chart_reasoning_trace(results: dict[str, Any]):
     """Цепочка рассуждений: честность vs обман по шагам рассуждения."""
     trace = results.get("reasoning_trace", {})
     thoughts = trace.get("thoughts", [])
@@ -268,8 +308,15 @@ def _chart_reasoning_trace(results: Dict[str, Any]):
     ax.plot(steps, honesty, marker="o", linewidth=2, color="#55A868", label="Честность")
     ax.plot(steps, deception, marker="s", linewidth=2, color="#C44E52", label="Обман")
     ax.plot(steps, halluc, marker="^", linewidth=2, color="#8172B3", label="Галлюцинация")
-    ax.fill_between(steps, honesty, deception, where=[d > h for h, d in zip(honesty, deception)],
-                    color="red", alpha=0.1, label="Обман > Честности")
+    ax.fill_between(
+        steps,
+        honesty,
+        deception,
+        where=[d > h for h, d in zip(honesty, deception)],
+        color="red",
+        alpha=0.1,
+        label="Обман > Честности",
+    )
     ax.set_xlabel("Шаг рассуждения")
     ax.set_ylabel("Оценка (0–1)")
     ax.set_title("Скрытая цепочка рассуждений — Честность vs Обман vs Галлюцинация")
@@ -279,7 +326,7 @@ def _chart_reasoning_trace(results: Dict[str, Any]):
     return fig
 
 
-def _chart_ncrit_threshold(results: Dict[str, Any]):
+def _chart_ncrit_threshold(results: dict[str, Any]):
     """Порог RMT N_crit vs фактическое начало галлюцинаций."""
     n_crit = float(results.get("ncrit_threshold", 114.0))
     raw_tokens = results.get("per_token_hallucination")
@@ -299,11 +346,21 @@ def _chart_ncrit_threshold(results: Dict[str, Any]):
 
     fig, ax = plt.subplots(figsize=(11, 6), constrained_layout=True)
     ax.scatter(x, y, color="#DD8452", s=40, alpha=0.7, label="Оценка галлюцинации по токенам")
-    ax.axvline(n_crit, color="red", linestyle="--", linewidth=3,
-               label=f"N_crit = {n_crit:.1f} (предсказание RMT)")
+    ax.axvline(
+        n_crit,
+        color="red",
+        linestyle="--",
+        linewidth=3,
+        label=f"N_crit = {n_crit:.1f} (предсказание RMT)",
+    )
     ax.axvspan(0, n_crit, alpha=0.05, color="green", label="Доколлапсный режим")
-    ax.axvspan(n_crit, max(x) if len(x) else n_crit + 50, alpha=0.05, color="red",
-               label="Постколлапсный режим")
+    ax.axvspan(
+        n_crit,
+        max(x) if len(x) else n_crit + 50,
+        alpha=0.05,
+        color="red",
+        label="Постколлапсный режим",
+    )
     ax.set_xlabel("Позиция токена")
     ax.set_ylabel("Оценка галлюцинации")
     ax.set_title("Предсказанный RMT N_crit vs эмпирическое начало галлюцинаций")
@@ -315,60 +372,86 @@ def _chart_ncrit_threshold(results: Dict[str, Any]):
 # ---------------------------------------------------------------------------
 # Интерактивный дашборд Plotly
 # ---------------------------------------------------------------------------
-def _plotly_dashboard(results: Dict[str, Any], out_path: str) -> None:
+def _plotly_dashboard(results: dict[str, Any], out_path: str) -> None:
     """Единый интерактивный HTML со всеми графиками в подграфиках."""
     if not HAS_PLOTLY:
         return
 
-    fig = make_subplots(rows=2, cols=2,
-                        subplot_titles=("Потери / Точность", "Собств. значения vs MP",
-                                        "Матрица ошибок", "ROC — Обман"))
+    fig = make_subplots(
+        rows=2,
+        cols=2,
+        subplot_titles=(
+            "Потери / Точность",
+            "Собств. значения vs MP",
+            "Матрица ошибок",
+            "ROC — Обман",
+        ),
+    )
 
     # 1. Потери/Точность
     steps = list(range(1, 21))
     loss = np.linspace(2.0, 0.3, 20).tolist()
     acc = np.linspace(0.1, 0.85, 20).tolist()
-    fig.add_trace(go.Scatter(x=steps, y=loss, name="Потери", line=dict(color="blue")),
-                  row=1, col=1)
-    fig.add_trace(go.Scatter(x=steps, y=acc, name="Точность", line=dict(color="orange")),
-                  row=1, col=1)
+    fig.add_trace(go.Scatter(x=steps, y=loss, name="Потери", line={"color": "blue"}), row=1, col=1)
+    fig.add_trace(
+        go.Scatter(x=steps, y=acc, name="Точность", line={"color": "orange"}), row=1, col=1
+    )
 
     # 2. Собственные значения
     eigvals = np.random.uniform(0.01, 3.0, 200)
-    fig.add_trace(go.Histogram(x=eigvals, name="Собств. значения",
-                               marker_color="steelblue", opacity=0.7),
-                  row=1, col=2)
+    fig.add_trace(
+        go.Histogram(x=eigvals, name="Собств. значения", marker_color="steelblue", opacity=0.7),
+        row=1,
+        col=2,
+    )
     fig.add_vline(x=2.7, line_dash="dash", line_color="red", row=1, col=2)
     fig.add_vline(x=0.3, line_dash="dash", line_color="green", row=1, col=2)
 
     # 3. Матрица ошибок
     cm = [[42, 5, 8, 2], [3, 51, 4, 1], [6, 3, 38, 5], [1, 2, 4, 47]]
-    fig.add_trace(go.Heatmap(z=cm, colorscale="Blues",
-                             x=["Ложь", "Правда", "Галлюц.", "Отказ"],
-                             y=["Ложь", "Правда", "Галлюц.", "Отказ"],
-                             name="Ошибки"), row=2, col=1)
+    fig.add_trace(
+        go.Heatmap(
+            z=cm,
+            colorscale="Blues",
+            x=["Ложь", "Правда", "Галлюц.", "Отказ"],
+            y=["Ложь", "Правда", "Галлюц.", "Отказ"],
+            name="Ошибки",
+        ),
+        row=2,
+        col=1,
+    )
 
     # 4. ROC
     fpr = [0.0, 0.05, 0.12, 0.22, 0.35, 0.5, 1.0]
     tpr = [0.0, 0.45, 0.68, 0.82, 0.91, 0.96, 1.0]
-    fig.add_trace(go.Scatter(x=fpr, y=tpr, name="ROC",
-                             fill="tozeroy", line=dict(color="crimson")),
-                  row=2, col=2)
+    fig.add_trace(
+        go.Scatter(x=fpr, y=tpr, name="ROC", fill="tozeroy", line={"color": "crimson"}),
+        row=2,
+        col=2,
+    )
 
-    fig.update_layout(title="Лаборатория RMT-LLM — Интерактивный дашборд",
-                      height=800, width=1200,
-                      template="plotly_white")
+    fig.update_layout(
+        title="Лаборатория RMT-LLM — Интерактивный дашборд",
+        height=800,
+        width=1200,
+        template="plotly_white",
+    )
     fig.write_html(out_path, include_plotlyjs="cdn")
 
 
 if __name__ == "__main__":
     # Дымовой тест с синтетическими данными
     fake_results = {
-        "training": {"steps": list(range(1, 21)),
-                     "loss": np.linspace(2.0, 0.3, 20).tolist(),
-                     "accuracy": np.linspace(0.1, 0.85, 20).tolist()},
-        "spectral": {"mp_upper": 2.7, "mp_lower": 0.3,
-                     "all_eigenvalues": np.random.uniform(0.01, 3.0, 200).tolist()},
+        "training": {
+            "steps": list(range(1, 21)),
+            "loss": np.linspace(2.0, 0.3, 20).tolist(),
+            "accuracy": np.linspace(0.1, 0.85, 20).tolist(),
+        },
+        "spectral": {
+            "mp_upper": 2.7,
+            "mp_lower": 0.3,
+            "all_eigenvalues": np.random.uniform(0.01, 3.0, 200).tolist(),
+        },
         "ncrit_threshold": 114.0,
     }
     written = generate_all_charts(fake_results, "results/charts")
