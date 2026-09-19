@@ -94,6 +94,12 @@ nohup.out
 .env.local
 *.pem
 *.key
-*_token*
+# NOTE: narrowed from the previous `*_token*`, which accidentally excluded
+# laboratory/python/lab_en/bpe_tokenizer_v3.py (it contains "token").
+# These patterns still catch credential files:
+*_token.txt
+*_token.json
+*_token.env
+*.token
 secrets/
 

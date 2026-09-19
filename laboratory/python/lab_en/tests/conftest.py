@@ -16,6 +16,20 @@ _LAB_DIR = Path(__file__).resolve().parent.parent
 if str(_LAB_DIR) not in sys.path:
     sys.path.insert(0, str(_LAB_DIR))
 
+# BUGFIX: repo src/ must be importable too — tests like test_circular_ensembles,
+# test_dyson_brownian and test_free_probability do `from rmt_llm.<mod> import ...`
+# (package import), which requires <repo>/src on sys.path unless the package
+# is pip-installed. Walk up from this conftest until src/rmt_llm is found.
+_REPO_SRC = None
+_c = Path(__file__).resolve()
+for _ in range(6):
+    _c = _c.parent
+    if (_c / "src" / "rmt_llm").is_dir():
+        _REPO_SRC = _c / "src"
+        break
+if _REPO_SRC is not None and str(_REPO_SRC) not in sys.path:
+    sys.path.insert(0, str(_REPO_SRC))
+
 
 @pytest.fixture(scope="session")
 def rng() -> np.random.Generator:
