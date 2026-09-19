@@ -21,7 +21,7 @@
     "express": "^4.19.2",
     "cors": "^2.8.5",
     "recharts": "^2.12.7",
-    "plotly.js-dist-min": "^2.34.0",
+    "plotly.js-dist-min": "^3.7.0",
     "react-plotly.js": "^2.6.0",
     "lucide-react": "^0.395.0",
     "clsx": "^2.1.1",
