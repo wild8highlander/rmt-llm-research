@@ -165,7 +165,7 @@ class TestMarchenkoPasturDensity:
         lam = np.linspace(lam_m + 1e-6, lam_p - 1e-6, 10000)
         rho = mp_density(lam, 0.5, 1.0)
         dx = lam[1] - lam[0]
-        integral = np.trapz(rho, lam)
+        integral = np.trapezoid(rho, lam)
         np.testing.assert_allclose(integral, 1.0, atol=0.01)
 
     def test_density_peak_at_left_edge(self):

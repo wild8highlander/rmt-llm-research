@@ -273,6 +273,7 @@ def s_transform_series(
 def free_convolution_multiplicative(
     eigvals_a: ArrayLike, eigvals_b: ArrayLike,
     n_samples: int = 512,
+    rng: np.random.Generator | None = None,
 ) -> np.ndarray:
     """Approximate eigenvalues of the free product ``A ⊠ B``.
 
@@ -288,6 +289,11 @@ def free_convolution_multiplicative(
         eigvals_a: Eigenvalues of A (positive semidefinite).
         eigvals_b: Eigenvalues of B (positive semidefinite).
         n_samples: Number of Monte Carlo samples.
+        rng: Optional seeded ``np.random.Generator`` for reproducibility.
+            BUGFIX: the function previously created an *unseeded* generator
+            internally, so results were not reproducible across runs.
+            Passing a seeded generator (or relying on NumPy's global seed via
+            ``np.random.default_rng()`` outside) makes output deterministic.
 
     Returns:
         Approximate eigenvalues of the free product.
@@ -299,7 +305,8 @@ def free_convolution_multiplicative(
                          "positive semidefinite inputs")
     n_a, n_b = len(ev_a), len(ev_b)
     n = min(n_a, n_b)
-    rng = np.random.default_rng()
+    if rng is None:
+        rng = np.random.default_rng()
     # Build diagonal matrices and conjugate one by a random Haar unitary.
     A = np.diag(ev_a[:n])
     # Random orthogonal matrix (Haar-distributed for β=1).

@@ -74,8 +74,27 @@ def caputo_quadratic_acceleration(mu_eff: float) -> float:
     -------
     acceleration : float
         Quadratic acceleration factor.
+
+    Raises
+    ------
+    ValueError
+        If mu_eff <= 0.
+
+    Notes
+    -----
+    BUGFIX: this function previously called
+    ``caputo_mean_collapse_time(mu_eff, beta=1.0)``, which *always* raised
+    ``ValueError`` (beta must be in the open interval (0, 1)). The beta -> 1
+    limit is analytically well-defined: <T_crit> = c * mu^(-1/beta) gives
+    T(beta=1) = mu^(-1), so the acceleration factor is
+
+        T(beta=0.5) / T(beta=1) = mu^(-2) / mu^(-1) = 1 / mu_eff.
     """
-    return caputo_mean_collapse_time(mu_eff, beta=0.5) / caputo_mean_collapse_time(mu_eff, beta=1.0)
+    if mu_eff <= 0:
+        raise ValueError(f"mu_eff must be positive, got {mu_eff}")
+    # analytic beta -> 1 limit of caputo_mean_collapse_time (c = 1): mu^(-1)
+    t_beta_one = mu_eff ** (-1.0)
+    return caputo_mean_collapse_time(mu_eff, beta=0.5) / t_beta_one
 
 
 def caputo_derivative(f: ArrayLike, t: ArrayLike, beta: float,
