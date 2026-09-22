@@ -667,5 +667,8 @@
     }
   ],
   "ncrit_threshold": 114.0,
-  "n_layers": 6
+  "n_layers": 6,
+  "experiment": "scenario_SCEN-LIE-01",
+  "parameters": {},
+  "_schema_backfill": "backfilled for schema compliance: added missing top-level 'experiment'/'parameters' required by laboratory/shared/schema.json (CI cross-check); original data untouched"
 }

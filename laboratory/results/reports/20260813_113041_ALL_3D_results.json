@@ -27774,7 +27774,7 @@
         "slope_ratio": -779186.8409512038
       },
       "experiment_name": "Spectral Surface Regression (3D)",
-      "experiment_description": "Fit \u03bb_max(layer, token) surface and detect N_crit bifurcation.",
+      "experiment_description": "Fit λ_max(layer, token) surface and detect N_crit bifurcation.",
       "elapsed_seconds": 0.12309419699886348,
       "parameters": {
         "hidden_dim": 64,
@@ -54974,7 +54974,7 @@
         "t_crit_at_beta_0_5_rlhf_1": 90.3316721676805
       },
       "experiment_name": "N_crit Collapse Surface (3D)",
-      "experiment_description": "Compute T_crit(\u03b2, \u03bc_RLHF) surface over Caputo order and RLHF pressure.",
+      "experiment_description": "Compute T_crit(β, μ_RLHF) surface over Caputo order and RLHF pressure.",
       "elapsed_seconds": 0.0001664989995333599,
       "parameters": {
         "hidden_dim": 64,
@@ -55441,5 +55441,22 @@
       "name": "Coalitional Deception Drift (3D)",
       "elapsed_seconds": 0.00014881599963700864
     }
-  ]
+  ],
+  "experiment": "3D",
+  "parameters": {
+    "hidden_dim": 64,
+    "n_layers": 6,
+    "n_heads": 4,
+    "seed": 42,
+    "hessian_grid_size": 16,
+    "manifold_dims": 3,
+    "trajectory_points": 60,
+    "spectral_surface_resolution": 12,
+    "curvature_neighbors": 5,
+    "attention_flow_3d_resolution": 16,
+    "ncrit_surface_resolution": 10,
+    "param_space_resolution": 10,
+    "coalition_rounds": 5
+  },
+  "_schema_backfill": "backfilled for schema compliance: added missing top-level 'experiment'/'parameters' required by laboratory/shared/schema.json (CI cross-check); original data untouched"
 }

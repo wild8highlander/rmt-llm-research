@@ -4,7 +4,7 @@ requires = ["setuptools>=68.0", "wheel"]
 
 [project]
 authors = [
-  {email = "aslan08_05@mail.ru", name = "Iskhak Hamzatovich Isaev"}
+  { email = "aslan08_05@mail.ru", name = "Iskhak Hamzatovich Isaev" }
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -48,9 +48,9 @@ keywords = [
   "spectral-analysis",
   "transformer"
 ]
-license = {text = "Proprietary"}
+license = { text = "Proprietary" }
 maintainers = [
-  {email = "aslan08_05@mail.ru", name = "Iskhak Hamzatovich Isaev"}
+  { email = "aslan08_05@mail.ru", name = "Iskhak Hamzatovich Isaev" }
 ]
 name = "rmt-llm"
 readme = "README.md"

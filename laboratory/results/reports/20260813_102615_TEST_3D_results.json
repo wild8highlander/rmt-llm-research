@@ -57504,5 +57504,40 @@
   "ncrit_threshold": 114.0,
   "spectral": {
     "mp_upper": 2.7
-  }
+  },
+  "experiment": "TEST_3D_FULL",
+  "parameters": {
+    "temperature": 0.7,
+    "max_tokens": 256,
+    "top_k": 50,
+    "top_p": 0.95,
+    "context_window": 1024,
+    "ncrit_threshold": 114.0,
+    "theta_b_deg": 7.07,
+    "beta_caputo": 0.5,
+    "rlhf_pressure": 0.0,
+    "n_layers": 6,
+    "hidden_dim": 64,
+    "n_heads": 4,
+    "vocab_size": 256,
+    "seed": 42,
+    "epochs": 3,
+    "learning_rate": 0.001,
+    "batch_size": 4,
+    "enable_filter": true,
+    "capture_hidden": true,
+    "language": "en",
+    "report_format": "all",
+    "hessian_grid_size": 24,
+    "trajectory_points": 64,
+    "spectral_surface_layers": 6,
+    "pca_components": 3,
+    "attention_flow_3d_resolution": 32,
+    "parameter_space_grid": 16,
+    "curvature_neighbors": 8,
+    "color_map_3d": "viridis",
+    "elevation_3d": 30,
+    "azimuth_3d": 45
+  },
+  "_schema_backfill": "backfilled for schema compliance: added missing top-level 'experiment'/'parameters' required by laboratory/shared/schema.json (CI cross-check); original data untouched"
 }

@@ -204,6 +204,10 @@ repos:
     hooks:
       - id: hadolint-docker
         name: Dockerfile lint (hadolint)
+        # DL3008/DL3013: apt/pip package versions are managed through the
+        # base image + pyproject extras, pinning every package is impractical.
+        # DL3003: multi-command RUN with `cd` into Julia package dirs.
+        args: [--ignore, DL3008, --ignore, DL3013, --ignore, DL3003]
         files: '(^|/)Dockerfile([.].*)?$'
 
   # ─── Security: pip-audit ──────────────────────────────────────────────────
@@ -213,7 +217,14 @@ repos:
       - id: pip-audit
         name: Pip-audit (security)
         files: ^(pyproject\.toml|requirements.*\.txt)$
-        args: [--requirement, requirements.txt, --strict]
+        # NOTE: there is no root requirements.txt in this repo; audit the
+        # per-lab requirement files instead (both exist and are maintained).
+        args:
+          - --requirement
+          - laboratory/python/lab_en/requirements.txt
+          - --requirement
+          - laboratory/python/lab_ru/requirements.txt
+          - --strict
 
   # ─── Security: gitleaks (secret scanner) ──────────────────────────────────
   - repo: https://github.com/gitleaks/gitleaks
@@ -240,7 +251,9 @@ repos:
             .*\.sqlite|
             .*\.pdf|
             .*\.docx|
+            .*\.html|
             laboratory/results/.*|
+            laboratory/python/[^/]+/results/.*|
             results/.*|
             CHANGELOG\.md
           )$
