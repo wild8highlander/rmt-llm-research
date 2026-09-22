@@ -6,7 +6,7 @@
 # =============================================================================
 
 # ─── Stage 1: Python base ───────────────────────────────────────────────────
-FROM python:3.12-slim-bookworm AS python-base
+FROM python:3.14-slim-bookworm AS python-base
 
 LABEL org.opencontainers.image.title="rmt-llm-research"
 LABEL org.opencontainers.image.description="Random Matrix Theory meets Large Language Models — spectral verification + TinyGPT trainer + 8-language laboratory"
