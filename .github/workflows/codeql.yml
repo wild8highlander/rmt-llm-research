@@ -62,9 +62,6 @@ jobs:
           category: "/language:${{ matrix.language }}"
           # Upload SARIF for the security tab
           output: sarif-results
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: sarif-results
-          wait-for-processing: true
+        # NOTE: github/codeql-action/analyze already uploads the SARIF results
+        # to the Security tab. A separate upload-sarif step would re-upload the
+        # same file and fail with a category conflict, so it must not be added.

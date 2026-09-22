@@ -1,9 +1,9 @@
+#syntax=docker/dockerfile:1.7
 # =============================================================================
 # Dockerfile — reproducible research environment for rmt-llm-research.
 # Builds a self-contained image with Python, Julia, Java, and Node.js so that
 # all 8 laboratory language ports + 3 visualization suites can run.
 # =============================================================================
-#syntax=docker/dockerfile:1.7
 
 # ─── Stage 1: Python base ───────────────────────────────────────────────────
 FROM python:3.12-slim-bookworm AS python-base

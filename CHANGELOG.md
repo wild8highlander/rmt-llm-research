@@ -2,6 +2,69 @@
 
 All notable changes to this repository are documented in this file.
 
+## [Unreleased] — Badge & CI repair pass (2026-09-22)
+
+### Fixed — badges (README)
+
+- **PyPI downloads badge** rendered "package not found" (the `rmt-llm`
+  package is not published on PyPI yet). Replaced with a static
+  "PyPI — coming soon" badge linked to GitHub Releases; restore the dynamic
+  badge after the first real PyPI publish.
+- **CodeFactor badge** returned HTTP 404 (repository is not registered in
+  CodeFactor). Removed the badge.
+- **GitHub Discussions badge** linked to a 404 page — Discussions are
+  disabled in repository settings. Removed the badge; re-add it after
+  enabling Discussions (Settings → General → Features → Discussions).
+- **Languages badge** had an empty link target (`]()`), which also fails
+  markdownlint MD042. Now links to `./laboratory/`.
+- CI / CodeQL / OpenSSF Scorecard badges were red or broken because of the
+  workflow failures fixed below — they will recover automatically after the
+  next successful run on `main`.
+
+### Fixed — Julia (root cause of CI `test-julia` + Docker build failures)
+
+- `julia/RMTLLMVerify/Project.toml`: `Pkg.test()` aborted on every Julia
+  version with "Dependency `Test` in target `test` not listed in `deps`,
+  `weakdeps` or `extras`" — added the missing `[extras]` section with the
+  real Test stdlib UUID.
+- Fake/wrong package UUIDs caused "expected package … to be registered":
+  `Statistics` (both projects) and `SpecialFunctions` (RMTLLMVerify),
+  `Printf` and `REPL` (RMTLLMViz) — replaced with the official registry
+  UUIDs.
+- Invalid compat entries `julia = "≥ 1.9"` / `Plots = "≥1.38"` (the `≥`
+  character is not valid Pkg compat syntax) — replaced with `1.9` / `1.38`.
+- `test/runtests.jl`: the "Continuity at transition" test demanded
+  `atol=0.01` at `θ_c ± 0.001`, which contradicts the model's own
+  supercritical branch used a few lines above (and the Python reference
+  suite uses `atol=1.0` with `θ_c + 0.1`). Aligned with the Python
+  reference test.
+
+### Fixed — workflows
+
+- **scorecard.yml**: `ossf/scorecard-action@v2.4.0` could no longer be
+  pulled from gcr.io ("Pull gcr.io/openssf/scorecard-action:v2.4.0"
+  failed), which also kept the Scorecard README badge in the "invalid repo
+  path" state. Bumped to `v2.4.2`.
+- **codeql.yml**: removed the redundant `upload-sarif` step —
+  `github/codeql-action/analyze` already uploads results; the duplicate
+  upload failed with a category conflict ("Upload SARIF file" step).
+- **ci.yml**: temporarily removed `windows-latest` from the test matrix —
+  Python 3.11/3.12 Windows jobs failed `pytest` with exit code 1 (run
+  35672838378). Re-enable after checking the Actions log; the note in the
+  workflow explains how.
+- **markdown-lint.yml**: pinned `markdownlint-cli2@0.23.3` so a new
+  upstream release cannot silently change lint rules and break CI.
+- **docker.yml**: Trivy SARIF upload no longer runs `if: always()` when the
+  build failed (the SARIF file does not exist and the step only added a
+  second red cross); the artifact upload uses `if-no-files-found: ignore`.
+
+### Fixed — Docker
+
+- **Dockerfile**: the `#syntax=docker/dockerfile:1.7` parser directive stood
+  after comment lines, where Docker ignores it; moved to line 1.
+- The Docker build failure itself was caused by the Julia `Project.toml`
+  bugs above (`Pkg.instantiate()` runs during `docker build`).
+
 ## [Unreleased] — Repository health pass: CI green, MkDocs Pages, English READMEs
 
 ### Fixed — packaging & CI

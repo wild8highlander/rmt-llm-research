@@ -42,7 +42,8 @@ jobs:
           node-version: "20"
 
       - name: Install markdownlint-cli2
-        run: npm install -g markdownlint-cli2
+        # Pinned: unpinned installs let new releases change rules and break CI
+        run: npm install -g markdownlint-cli2@0.23.3
 
       - name: Run markdownlint-cli2
         run: markdownlint-cli2
