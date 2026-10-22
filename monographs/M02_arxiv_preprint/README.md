@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🚀 M02 · ArXiv Preprint
@@ -32,7 +32,7 @@ GOE-like spacing statistics.
 | Suite | 9 experiment families |
 | Real-model probe | `laboratory/python/lab_en/probe_real_gpt2.py` |
 
-**Aurora supplement (Appendices A–F).** Cell-by-cell Colab → repository
+**Repository supplement (Appendices A–F).** Cell-by-cell Colab → repository
 migration table, the metric inventory with exact functions, polyglot ports and
 test coverage, a figure atlas (MP, Tracy–Widom, ROC), the measured registry and
 the reproduction path.
@@ -43,7 +43,7 @@ the reproduction path.
 
 | File | Content |
 |---|---|
-| `RMT_LLM_Arxiv_Preprint.docx` | the study + Aurora supplement (English) |
+| `RMT_LLM_Arxiv_Preprint.docx` | the study + repository supplement (English) |
 | `RMT_LLM_Arxiv_Preprint_RU.docx` | the same edition in Russian |
 | `cover plates` | [`assets/branding/covers/cover_M02_EN.png`](../../assets/branding/covers/) · `_RU.png` |
 

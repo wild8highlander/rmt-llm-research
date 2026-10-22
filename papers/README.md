@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 📜 papers — Monograph
@@ -22,10 +22,10 @@ The monograph is the theoretical backbone of this repository:
 - the "10 paths to N_crit" argument (Keating–Snaith, Caputo,
   Landauer, …);
 - the Utility Trap and Hallucination Cliff phenomena that the empirical
-  pipelines in [`research/tinygpt_formula/`](../research/tinygpt_formula/README.md)
+  pipelines in [`research/tinygpt_formula/`](../neural_lab/research/tinygpt_formula/README.md)
   test directly.
 
-The per-monograph Word editions (English and Russian, with the Aurora
+The per-monograph Word editions (English and Russian, with repository
 supplements) live in [`monographs/`](../monographs/README.md) — M05 is the
 DOCX twin of this PDF.
 Cite via the repository `CITATION.cff` (Zenodo DOI

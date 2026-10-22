@@ -1,21 +1,21 @@
 # GitHub Settings — one-time cosmetics (manual, ~3 minutes)
 
 This file is a checklist for the repository-owner settings that cannot
-live inside the code. Apply once after pushing the `cosmetic-aurora`
-branch; everything else (READMEs, banners, charts) is already in the
+live inside the code. Apply once after merging the
+updates; everything else (READMEs, banners, charts) is already in the
 tree.
 
 ## 1. Description (About → ⚙️)
 
-```
+```text
 Random Matrix Theory meets LLMs — spectral analysis of activations,
 hallucination detection, and the mathematical inevitability of
-autoregressive collapse. 8 languages, 240+ tests, Black Aurora edition.
+autoregressive collapse. 8 languages, 240+ tests.
 ```
 
 Shorter alternative:
 
-```
+```text
 Spectral analysis of LLM activations through the lens of Random Matrix
 Theory — hallucination detection, cognitive modes, collapse theory.
 ```
@@ -24,7 +24,7 @@ Theory — hallucination detection, cognitive modes, collapse theory.
 
 Paste the list (18 topics, order does not matter):
 
-```
+```text
 random-matrix-theory, llm, spectral-analysis, hallucination-detection,
 marchenko-pastur, tracy-widom, bbp-transition, transformers, tinygpt,
 numpy, julia, java, rust, go, cpp, r, research, machine-learning
@@ -61,7 +61,7 @@ Telegram, LinkedIn and search results.
 
 For the next release, pair the tag with:
 
-```
-Black Aurora edition — animated SVG identity, 600 dpi figure gallery,
+```text
+Animated SVG identity, 600 dpi figure gallery,
 and beautified documentation across 50+ folders.
 ```

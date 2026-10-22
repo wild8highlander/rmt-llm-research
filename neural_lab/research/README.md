@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🔬 research — Standalone Programs
 
 <p align="center">
   <em>Self-contained research programs on top of the core</em><br><br>
-  <img src="../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-research-a78bfa" alt="repository root"></a>
   <img src="https://img.shields.io/badge/tinygpt%20formula-00ffa3" alt="TinyGPT Formula">
 </p>

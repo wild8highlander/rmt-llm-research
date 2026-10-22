@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../../README.md"><img src="../../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🧠 model — Artifacts
 
 <p align="center">
   <em>Weights, tokenizer and every evaluation artifact of the formula model</em><br><br>
-  <img src="../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-research-a78bfa" alt="tinygpt_formula/"></a>
   <img src="https://img.shields.io/badge/artifacts-f472b6" alt="artifacts"><img src="https://img.shields.io/badge/numpy%20weights-3776AB" alt="NumPy weights">
 </p>
@@ -26,7 +26,7 @@ Everything the trained model leaves behind. These files are
 
 Regenerate with
 [`scripts/train_formula_model.py`](../scripts/README.md); the web view
-of these artifacts is the [`neural_lab/`](../../../neural_lab/README.md)
+of these artifacts is the [`neural_lab/`](../../../README.md)
 application.
 
 ---

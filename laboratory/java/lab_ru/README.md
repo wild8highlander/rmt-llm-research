@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🧪 Java Laboratory (RU)
@@ -51,7 +51,7 @@ laboratory root.
 
 The same lab exists in: [Python](../../python/) · [Julia](../../julia/) · [Rust](../../rust/) · [Go](../../go/) · [C++](../../cpp/) · [R](../../r/) — and in
 [TinyGPT-driven notebooks](../../../notebooks/README.md) and the
-[3D visualization suites](../../../python/rmt_llm_viz/README.md).
+[3D visualization suites](../../python/python/rmt_llm_viz/README.md).
 
 ---
 

@@ -60,9 +60,9 @@
 
 ---
 
-## 🎨 Visual Identity — Black Aurora
+## 🎨 Visual Identity
 
-The project ships its own **Black Aurora** visual identity: a deep
+The project ships its own visual identity: a deep
 near-black space and the full northern-lights spectrum — emerald →
 cyan → violet → pink — flowing over it. The logos are **animated SVGs**
 (they play right here on GitHub — no JavaScript), and every folder
@@ -323,23 +323,23 @@ cd java/rmt-llm-viz
 
 | File | Description |
 |------|-------------|
-| [`docs/en/RMT_LLM_Spectral_Analysis.docx`](./docs/en/RMT_LLM_Spectral_Analysis.docx) | Full monograph — RMT spectral analysis of LLM activations (8 chapters + appendices) |
-| [`docs/en/Complex_Analytical_Model_Inevitable_Hallucinations.docx`](./docs/en/Complex_Analytical_Model_Inevitable_Hallucinations.docx) | 10 independent paths to N_crit — NHSE, Caputo, EP-surfaces, Keating-Snaith |
-| [`docs/en/LLM_Analysis_Merged.docx`](./docs/en/LLM_Analysis_Merged.docx) | RLHF utility trap, Landauer principle, thermodynamic irreversibility of lies |
-| [`docs/en/RMT_LLM_Arxiv_Preprint.docx`](./docs/en/RMT_LLM_Arxiv_Preprint.docx) | Arxiv preprint — spectral statistics of LLM activation matrices |
-| [`docs/en/RMT_LLM_BlackGold_Preprint_v1.docx`](./docs/en/RMT_LLM_BlackGold_Preprint_v1.docx) | BlackGold preprint v1 — RMT approach to cognitive mode detection |
-| [`docs/en/RMT_LLM_BlackGold_Preprint_v2.docx`](./docs/en/RMT_LLM_BlackGold_Preprint_v2.docx) | BlackGold preprint v2 — expanded analysis with BBP transition |
+| [`monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis.docx`](./monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis.docx) | Full monograph — RMT spectral analysis of LLM activations (8 chapters + appendices) |
+| [`monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations.docx`](./monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations.docx) | 10 independent paths to N_crit — NHSE, Caputo, EP-surfaces, Keating-Snaith |
+| [`monographs/M05_llm_analysis_merged/LLM_Analysis_Merged.docx`](./monographs/M05_llm_analysis_merged/LLM_Analysis_Merged.docx) | RLHF utility trap, Landauer principle, thermodynamic irreversibility of lies |
+| [`monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint.docx`](./monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint.docx) | Arxiv preprint — spectral statistics of LLM activation matrices |
+| [`monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1.docx`](./monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1.docx) | BlackGold preprint v1 — RMT approach to cognitive mode detection |
+| [`monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2.docx`](./monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2.docx) | BlackGold preprint v2 — expanded analysis with BBP transition |
 
 ### Russian (Originals + Translations)
 
 | File | Description |
 |------|-------------|
-| [`docs/ru/RMT_LLM_Spectral_Analysis_RU.docx`](./docs/ru/RMT_LLM_Spectral_Analysis_RU.docx) | Полная монография — СМТ и спектральный анализ активаций БЯМ |
-| [`docs/ru/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx`](./docs/ru/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx) | Комплексно-аналитическая модель неизбежных галлюцинаций |
-| [`docs/ru/LLM_Analysis_Merged_RU.docx`](./docs/ru/LLM_Analysis_Merged_RU.docx) | RLHF-ловушка, принцип Ландауэра, термодинамика лжи |
-| [`docs/ru/RMT_LLM_Arxiv_Preprint_RU.docx`](./docs/ru/RMT_LLM_Arxiv_Preprint_RU.docx) | Препринт arXiv — спектральная статистика матриц активаций БЯМ |
-| [`docs/ru/RMT_LLM_BlackGold_Preprint_v1_RU.docx`](./docs/ru/RMT_LLM_BlackGold_Preprint_v1_RU.docx) | BlackGold-препринт v1 — подход на основе ТСМ к обнаружению когнитивного режима |
-| [`docs/ru/RMT_LLM_BlackGold_Preprint_v2_RU.docx`](./docs/ru/RMT_LLM_BlackGold_Preprint_v2_RU.docx) | BlackGold-препринт v2 — расширенный анализ с переходом BBP |
+| [`monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis_RU.docx`](./monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis_RU.docx) | Полная монография — СМТ и спектральный анализ активаций БЯМ |
+| [`monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx`](./monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx) | Комплексно-аналитическая модель неизбежных галлюцинаций |
+| [`monographs/M05_llm_analysis_merged/LLM_Analysis_Merged_RU.docx`](./monographs/M05_llm_analysis_merged/LLM_Analysis_Merged_RU.docx) | RLHF-ловушка, принцип Ландауэра, термодинамика лжи |
+| [`monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint_RU.docx`](./monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint_RU.docx) | Препринт arXiv — спектральная статистика матриц активаций БЯМ |
+| [`monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1_RU.docx`](./monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1_RU.docx) | BlackGold-препринт v1 — подход на основе ТСМ к обнаружению когнитивного режима |
+| [`monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2_RU.docx`](./monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2_RU.docx) | BlackGold-препринт v2 — расширенный анализ с переходом BBP |
 
 ---
 
@@ -368,10 +368,10 @@ cd java/rmt-llm-viz
 
 ### Recommended reading order
 
-1. `docs/en/RMT_LLM_Arxiv_Preprint.docx` — concise overview of the spectral approach
-2. `docs/en/LLM_Analysis_Merged.docx` — the RLHF utility trap and thermodynamic argument
-3. `docs/en/Complex_Analytical_Model_Inevitable_Hallucinations.docx` — 10 paths to N_crit
-4. `docs/en/RMT_LLM_Spectral_Analysis.docx` — full monograph with all details
+1. `monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint.docx` — concise overview of the spectral approach
+2. `monographs/M05_llm_analysis_merged/LLM_Analysis_Merged.docx` — the RLHF utility trap and thermodynamic argument
+3. `monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations.docx` — 10 paths to N_crit
+4. `monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis.docx` — full monograph with all details
 
 ### Run verification tests
 
@@ -424,6 +424,13 @@ This repo follows best practices from the best-maintained open-source projects o
 | [`.github/workflows/scorecard.yml`](./.github/workflows/scorecard.yml) | OpenSSF Scorecard supply-chain scoring                                         |
 | [`.github/workflows/zenodo.yml`](./.github/workflows/zenodo.yml) | Archive releases to Zenodo (DOI minting)                                       |
 | [`.github/workflows/deploy-docs.yml`](./.github/workflows/deploy-docs.yml) | GitHub Pages deployment                                                        |
+| [`.github/workflows/benchmark.yml`](./.github/workflows/benchmark.yml)  | pytest-benchmark + hypothesis property tests, nightly trend tracking           |
+| [`.github/workflows/links.yml`](./.github/workflows/links.yml)          | Relative-link and path validation for every markdown file                      |
+| [`.github/workflows/schema.yml`](./.github/workflows/schema.yml)        | Syntax + required-field validation of all laboratory results JSON              |
+| [`.github/workflows/stale.yml`](./.github/workflows/stale.yml)          | Auto-close inactive issues/PRs after 60 days                                   |
+| [`.github/workflows/labels.yml`](./.github/workflows/labels.yml)        | Sync the 30 standardized labels from `.github/labels.yml`                      |
+| [`.github/workflows/greetings.yml`](./.github/workflows/greetings.yml)  | Welcome message for first-time issues and PRs                                  |
+| [`.github/workflows/dependency-review.yml`](./.github/workflows/dependency-review.yml) | Dependency review on every pull request                        |
 | [`.pre-commit-config.yaml`](./.pre-commit-config.yaml)    | 30+ hooks: ruff, ruff-format, mypy, codespell, shellcheck, hadolint, gitleaks  |
 
 ### Community & governance
@@ -434,8 +441,8 @@ This repo follows best practices from the best-maintained open-source projects o
 | [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) | PR template with checklist + breaking-change section     |
 | [`.github/CODEOWNERS`](./.github/CODEOWNERS)                           | Automatic review requests by directory                   |
 | [`.github/dependabot.yml`](./.github/dependabot.yml)                   | 9 ecosystems: pip, actions, julia, npm, cargo, gradle, gomod, docker |
-| [`.github/stale.yml`](./.github/stale.yml)                             | Auto-close inactive issues/PRs after 60 days             |
-| [`.github/labels.yml`](./.github/labels.yml)                            | 30 standardized issue/PR labels with colors              |
+| [`.github/workflows/stale.yml`](./.github/workflows/stale.yml)          | Auto-close inactive issues/PRs (configured in the workflow itself)             |
+| [`.github/labels.yml`](./.github/labels.yml)                            | 30 standardized issue/PR labels with colors                                    |
 | [`.github/FUNDING.yml`](./.github/FUNDING.yml)                         | Sponsor buttons                                          |
 | [`.github/SUPPORT.md`](./.github/SUPPORT.md)                           | "Getting help" guide                                     |
 | [`SECURITY.md`](./SECURITY.md)                                         | Vulnerability disclosure policy + threat model           |

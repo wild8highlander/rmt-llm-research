@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="64" alt="RMT × LLM Research — Black Aurora"></a><br>
-  <img src="../assets/branding/aurora-divider.svg" width="420" alt="">
+  <a href="../README.md"><img src="../../assets/branding/aurora-icon.svg" width="64" alt="RMT × LLM Research"></a><br>
+  <img src="../../assets/branding/aurora-divider.svg" width="420" alt="">
 </p>
 
 # Scripts — Developer Utilities

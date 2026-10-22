@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🧪 Python Laboratory (RU)
@@ -25,7 +25,7 @@ RMT-LLM: те же границы Марченко–Пастура, ландш�
 и отчёты в нескольких форматах (JSON · CSV · Markdown · HTML · TeX) —
 те же артефакты, что живут в `results/`.
 
-### ✅ Тесты
+## ✅ Тесты
 
 101 модульный тест покрывает модель, BPE-токенизатор, оптимизатор Adam, полный backward pass (с численной проверкой градиентов) и end-to-end обучение — запуск: `pytest tests/`.
 
@@ -60,7 +60,7 @@ laboratory root.
 
 The same lab exists in: [Julia](../../julia/) · [Java](../../java/) · [Rust](../../rust/) · [Go](../../go/) · [C++](../../cpp/) · [R](../../r/) — and in
 [TinyGPT-driven notebooks](../../../notebooks/README.md) and the
-[3D visualization suites](../../../python/rmt_llm_viz/README.md).
+[3D visualization suites](../../python/python/rmt_llm_viz/README.md).
 
 ---
 

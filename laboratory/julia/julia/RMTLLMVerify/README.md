@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🔬 RMTLLMVerify
 
 <p align="center">
   <em>The Julia verifier — every reference value, re-derived independently</em><br><br>
-  <img src="../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-julia-9558B2" alt="julia/"></a>
   <img src="https://img.shields.io/badge/julia%201.9%20%7C%201.10%20%7C%201.11-9558B2" alt="Julia 1.9–1.11"><img src="https://img.shields.io/badge/pkg.test-00ffa3" alt="Pkg.test">
 </p>
@@ -27,7 +27,7 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-Its numeric twin is the Python core [`src/rmt_llm/`](../../src/rmt_llm/README.md);
+Its numeric twin is the Python core [`src/rmt_llm/`](../../../../src/rmt_llm/README.md);
 its visual twin is [`RMTLLMViz/`](../RMTLLMViz/README.md).
 
 ---

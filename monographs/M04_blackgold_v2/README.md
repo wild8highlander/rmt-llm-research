@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🥈 M04 · BlackGold v2
@@ -29,7 +29,7 @@ with three arms, the seven-language laboratory and the 600-dpi figure atlas.
 | Scenario registry | 13 behavioural scenarios, 7 language ports |
 | Result artefacts | 181 reports · 11 atlas plates |
 
-**Aurora supplement (Appendices A–G).** The v1→v2 delta, the three-arm ladder
+**Repository supplement (Appendices A–G).** The v1→v2 delta, the three-arm ladder
 in detail (why confidence is a learned behaviour), the scaling-ladder commands,
 a figure atlas (heatmap, training dynamics, languages, dashboard) and the
 repository map.
@@ -40,7 +40,7 @@ repository map.
 
 | File | Content |
 |---|---|
-| `RMT_LLM_BlackGold_Preprint_v2.docx` | the study + Aurora supplement (English) |
+| `RMT_LLM_BlackGold_Preprint_v2.docx` | the study + repository supplement (English) |
 | `RMT_LLM_BlackGold_Preprint_v2_RU.docx` | the same edition in Russian |
 | `cover plates` | [`assets/branding/covers/cover_M04_EN.png`](../../assets/branding/covers/) · `_RU.png` |
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🧭 M01 · Spectral Analysis
@@ -21,7 +21,7 @@
 from the Marchenko–Pastur law through the BBP phase transition and Tracy–Widom
 statistics to the free-energy analogy `F = U − TS_spec` and the renormalization-group
 flow across transformer layers. Every distribution has an executable
-counterpart in `src/rmt_llm/`, and the Aurora supplement makes the pairing explicit.
+counterpart in `src/rmt_llm/`, and the repository supplement makes the pairing explicit.
 
 | Key fact | Where it lives |
 |---|---|
@@ -31,7 +31,7 @@ counterpart in `src/rmt_llm/`, and the Aurora supplement makes the pairing expli
 | Spectral entropy → bound/gas modes | `thermodynamics.spectral_entropy` |
 | RG flow `rg_flow_lambda` → fixed point | `thermodynamics.py` |
 
-**Aurora supplement (Part II).** Theory → module map for 7 concept families, the
+**Repository supplement (Part II).** Theory → module map for 7 concept families, the
 polyglot laboratory (7 languages × en/ru) and the 480-test perimeter, a figure
 atlas (MP, entropy, heatmap, dashboard), the measured-results registry, the
 notation cross-reference and the reproduction checklist, plus the full
@@ -43,7 +43,7 @@ repository map.
 
 | File | Content |
 |---|---|
-| `RMT_LLM_Spectral_Analysis.docx` | the study + Aurora supplement (English) |
+| `RMT_LLM_Spectral_Analysis.docx` | the study + repository supplement (English) |
 | `RMT_LLM_Spectral_Analysis_RU.docx` | the same edition in Russian |
 | `cover plates` | [`assets/branding/covers/cover_M01_EN.png`](../../assets/branding/covers/) · `_RU.png` |
 

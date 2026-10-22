@@ -20,6 +20,15 @@ edit_uri: edit/main/docs/
 docs_dir: docs
 site_dir: site-build
 
+# README.md files with index.md twins are excluded from the site build
+# (mkdocs >= 1.5 native option — prevents 'conflicts with index.md' warnings);
+# they remain fully rendered on GitHub.
+exclude_docs: |
+  README.md
+  api/README.md
+  architecture/README.md
+  tutorials/README.md
+
 # ─── Theme ───────────────────────────────────────────────────────────────────
 theme:
   name: material
@@ -116,8 +125,6 @@ plugins:
       glob:
         - "*.docx"
         - "*.pdf"
-        - "en/*"
-        - "ru/*"
         - "site/*"
 
 # ─── Markdown extensions ─────────────────────────────────────────────────────
@@ -215,4 +222,5 @@ nav:
       - Roadmap: community/roadmap.md
       - Security: community/security.md
       - Code of Conduct: community/code-of-conduct.md
+      - Research Roadmap: ROADMAP.md
   - Changelog: changelog.md

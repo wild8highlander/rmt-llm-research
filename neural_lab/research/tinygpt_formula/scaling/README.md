@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../../README.md"><img src="../../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 📈 scaling — A/B Study
 
 <p align="center">
   <em>How hallucination confidence scales with parameters — formula vs control</em><br><br>
-  <img src="../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-research-a78bfa" alt="tinygpt_formula/"></a>
   <img src="https://img.shields.io/badge/study-a78bfa" alt="study"><img src="https://img.shields.io/badge/a%2Fb%20design-22d3ee" alt="A/B design">
 </p>

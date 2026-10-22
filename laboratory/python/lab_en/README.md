@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🧪 Python Laboratory (EN)
@@ -26,7 +26,7 @@ spectral sweep, then export chart bundles (PNG / SVG / PDF triplets) and
 multi-format reports (JSON · CSV · Markdown · HTML · TeX) — the same
 artifacts you will find in `results/`.
 
-### ✅ Test suite
+## ✅ Test suite
 
 101 unit tests cover the model, the BPE tokenizer, the Adam optimizer, the full backward pass (with numerical gradient checking) and end-to-end training — run them with `pytest tests/`.
 
@@ -61,7 +61,7 @@ laboratory root.
 
 The same lab exists in: [Julia](../../julia/) · [Java](../../java/) · [Rust](../../rust/) · [Go](../../go/) · [C++](../../cpp/) · [R](../../r/) — and in
 [TinyGPT-driven notebooks](../../../notebooks/README.md) and the
-[3D visualization suites](../../../python/rmt_llm_viz/README.md).
+[3D visualization suites](../../python/python/rmt_llm_viz/README.md).
 
 ---
 

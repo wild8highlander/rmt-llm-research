@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 📚 docs — Documentation Hub
@@ -25,8 +25,8 @@ reference, architecture decisions, and community governance.
 | [`api/`](api/) | API reference for the core package, TinyGPT, BPE, trainer |
 | [`architecture/`](architecture/) | principles, request flow, ADR archive |
 | [`community/`](community/) | code of conduct, contributing, roadmap, security |
-| [`en/`](en/) | research papers (English, `.docx`) |
-| [`ru/`](ru/) | research papers (Russian, `.docx`) |
+| [`monographs/en/`](../monographs/en/) | research papers (English, `.docx`) |
+| [`monographs/ru/`](../monographs/ru/) | research papers (Russian, `.docx`) |
 | [`ROADMAP.md`](ROADMAP.md) | the research roadmap — including the open questions |
 | [`changelog.md`](changelog.md) | documentation changelog |
 

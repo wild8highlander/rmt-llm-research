@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🌌 RMT-LLM Viz — Python
 
 <p align="center">
   <em>Interactive 3D visualization of the spectral mathematics, NumPy + Matplotlib</em><br><br>
-  <img src="../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-python-3776AB" alt="python/"></a>
   <img src="https://img.shields.io/badge/python-3776AB" alt="Python"><img src="https://img.shields.io/badge/numpy%20%2B%20matplotlib-22d3ee" alt="NumPy+Matplotlib">
 </p>
@@ -32,8 +32,8 @@ pip install -e ".[dev]"        # from the repository root
 python python/rmt_llm_viz/main.py
 ```
 
-Siblings: the [JavaFX suite](../../java/rmt-llm-viz/README.md) and the
-[Julia suite](../../julia/RMTLLMViz/README.md) render the same scenes.
+Siblings: the [JavaFX suite](../../../java/java/rmt-llm-viz/README.md) and the
+[Julia suite](../../../julia/julia/RMTLLMViz/README.md) render the same scenes.
 
 ---
 

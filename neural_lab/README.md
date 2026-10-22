@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🌐 neural_lab — Web App
@@ -12,7 +12,7 @@
 </p>
 
 A web application (Next.js + TypeScript) where the trained model from
-[`research/tinygpt_formula/`](../research/tinygpt_formula/README.md)
+[`research/tinygpt_formula/`](research/tinygpt_formula/README.md)
 "lives": the playground calls `scripts/infer.py` through the API, while
 the other tabs display the training artifacts.
 
@@ -39,6 +39,6 @@ npm run dev        # http://localhost:3000
 
 <p align="center">
   <sub>
-    <a href="../README.md">← root</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../README.md">🏠 repository root</a> · <a href="../research/tinygpt_formula/README.md">the model →</a>
+    <a href="../README.md">← root</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../README.md">🏠 repository root</a> · <a href="research/tinygpt_formula/README.md">the model →</a>
   </sub>
 </p>

@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../../README.md"><img src="../../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🗂️ data — Corpora
 
 <p align="center">
   <em>The formula corpus and its control twin</em><br><br>
-  <img src="../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-research-a78bfa" alt="tinygpt_formula/"></a>
   <img src="https://img.shields.io/badge/corpus-00ffa3" alt="corpus"><img src="https://img.shields.io/badge/train%20%2B%20val%20%2B%20control-22d3ee" alt="train+val+control">
 </p>

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🥇 M03 · BlackGold v1
@@ -31,7 +31,7 @@ information-theoretic connections and the BBP schematic.
 | Prompt-length dependence (§5.4) | `corpus_builder_v3.py` |
 | Empirical SFF & heatmap (§7) | `circular_ensembles.form_factor`; `gen_charts.py` |
 
-**Aurora supplement (Appendices A–F).** Architecture split (mathematical vs
+**Repository supplement (Appendices A–F).** Architecture split (mathematical vs
 empirical layer), the experiment-to-command map, a figure atlas (Dyson BM, BBP
 spike, heatmap, dashboard), the verification registry and the repository map.
 
@@ -41,7 +41,7 @@ spike, heatmap, dashboard), the verification registry and the repository map.
 
 | File | Content |
 |---|---|
-| `RMT_LLM_BlackGold_Preprint_v1.docx` | the study + Aurora supplement (English) |
+| `RMT_LLM_BlackGold_Preprint_v1.docx` | the study + repository supplement (English) |
 | `RMT_LLM_BlackGold_Preprint_v1_RU.docx` | the same edition in Russian |
 | `cover plates` | [`assets/branding/covers/cover_M03_EN.png`](../../assets/branding/covers/) · `_RU.png` |
 

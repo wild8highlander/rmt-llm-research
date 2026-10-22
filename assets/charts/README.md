@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 📊 charts — Gallery
@@ -11,13 +11,13 @@
   <img src="https://img.shields.io/badge/600%20dpi-22d3ee" alt="600 dpi"><img src="https://img.shields.io/badge/11%20figures-a78bfa" alt="11 figures">
 </p>
 
-Two families of figures in the Black Aurora style. The **theory panels**
+Two families of figures in the same dark-spectrum style. The **theory panels**
 are faithful demonstrations of the mathematics implemented in
 `src/rmt_llm/` (synthetic data, marked on-chart); the **metrics
 figures** are computed from the actual repository tree and CI
 configuration.
 
-### Theory panels
+## Theory panels
 
 | File | Content |
 |---|---|
@@ -31,7 +31,7 @@ configuration.
 | `hallucination_roc.png` | ROC of the spectral hallucination detector |
 | `training_dynamics.png` | TinyGPT v2 loss / match-rate reference run |
 
-### Repository metrics
+## Repository metrics
 
 | File | Content |
 |---|---|
@@ -41,7 +41,7 @@ configuration.
 Regenerate:
 
 ```bash
-python scripts/gen_charts.py     # matplotlib, 600 dpi, aurora colormap
+python scripts/gen_charts.py     # matplotlib, 600 dpi, custom colormap
 ```
 
 ---

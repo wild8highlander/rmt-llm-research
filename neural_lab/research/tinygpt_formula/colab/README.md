@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../../README.md"><img src="../../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # ☁️ colab — Notebooks
 
 <p align="center">
   <em>Run the formula experiments on free cloud GPUs</em><br><br>
-  <img src="../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-research-a78bfa" alt="tinygpt_formula/"></a>
   <img src="https://img.shields.io/badge/colab-F9AB00" alt="Colab"><img src="https://img.shields.io/badge/2%20notebooks-22d3ee" alt="2 notebooks">
 </p>

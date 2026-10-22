@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🔮 M05 · The Merged Monograph
@@ -32,7 +32,7 @@ thermodynamics of false truth (Landauer cost, non-Markovian memory).
 | SCEN-LIE-01 deception / honesty | 0.4080 / 0.2868 | `results/reports/` |
 | SCEN-LIE-01 filter bypasses | 12 | same |
 
-**Aurora supplement (Appendices A–G).** The paired test verified at training
+**Repository supplement (Appendices A–G).** The paired test verified at training
 scale, the utility trap as executable code (`caputo_fokker_planck_drift`,
 `caputo_n_crit`, `landauer_cost`, `cognitive_mode`), the 13-scenario registry,
 the spectral anatomy of a lie (why a clean spectrum can hide a dirty
@@ -45,7 +45,7 @@ The merged PDF edition lives in [`papers/`](../../papers/README.md).
 
 | File | Content |
 |---|---|
-| `LLM_Analysis_Merged.docx` | the study + Aurora supplement (English) |
+| `LLM_Analysis_Merged.docx` | the study + repository supplement (English) |
 | `LLM_Analysis_Merged_RU.docx` | the same edition in Russian |
 | `cover plates` | [`assets/branding/covers/cover_M05_EN.png`](../../assets/branding/covers/) · `_RU.png` |
 

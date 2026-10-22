@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🔮 julia — Julia Packages
 
 <p align="center">
   <em>The independent verifier and the Julia visualization twin</em><br><br>
-  <img src="../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-julia-9558B2" alt="repository root"></a>
   <img src="https://img.shields.io/badge/julia%201.9–1.11-9558B2" alt="Julia 1.9–1.11">
 </p>

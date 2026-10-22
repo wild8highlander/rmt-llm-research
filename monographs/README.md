@@ -1,26 +1,26 @@
 <p align="center">
-  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 📚 monographs — Standalone Research Editions
 
 <p align="center">
-  <em>6 self-sufficient studies · 12 documents · DOCX · RU / EN · Aurora edition</em><br><br>
+  <em>6 self-sufficient studies · 12 documents · DOCX · RU / EN</em><br><br>
   <img src="../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-monographs-a78bfa" alt="repository root"></a>
-  <img src="https://img.shields.io/badge/6%20monographs-f472b6" alt="6 monographs"><img src="https://img.shields.io/badge/12%20docx-8ca3c7" alt="12%20docx"><img src="https://img.shields.io/badge/aurora%20edition-00ffa3" alt="aurora%20edition">
+  <img src="https://img.shields.io/badge/6%20monographs-f472b6" alt="6 monographs"><img src="https://img.shields.io/badge/12%20docx-8ca3c7" alt="12%20docx">
 </p>
 
 <p align="center">
-  <img src="../assets/branding/covers/cover_M01_EN.png" width="230" alt="Aurora cover M01">
+  <img src="../assets/branding/covers/cover_M01_EN.png" width="230" alt="Cover M01">
   &nbsp;&nbsp;
-  <img src="../assets/branding/covers/cover_M05_RU.png" width="230" alt="Aurora cover M05 RU">
+  <img src="../assets/branding/covers/cover_M05_RU.png" width="230" alt="Cover M05 RU">
   &nbsp;&nbsp;
-  <img src="../assets/branding/covers/cover_M06_EN.png" width="230" alt="Aurora cover M06">
+  <img src="../assets/branding/covers/cover_M06_EN.png" width="230" alt="Cover M06">
 </p>
 
 Each research paper of the project is packaged as a **standalone monograph**:
-a full-page Aurora cover, the original study, and — new in this edition — a
+a full-page dark cover, the original study, and — new in this edition — a
 repository supplement that maps every chapter onto working code, registers the
 measured numbers and reproduces the figure atlas. The monographs can be read,
 cited and used individually — at any time and in any order.
@@ -44,15 +44,15 @@ cited and used individually — at any time and in any order.
 
 All 12 documents (DOCX in both languages) follow one scheme:
 
-```
+```text
 ┌────────────────────────────────────────────────────────────┐
-│  COVER — full-page Black Aurora plate (M0X / 06, RU or EN) │
+│  COVER — full-page dark plate (M0X / 06, RU or EN)         │
 ├────────────────────────────────────────────────────────────┤
 │  ORIGINAL STUDY — the paper exactly as written, with its   │
 │  own TOC, tables and figures; headings recolored to the    │
-│  Aurora spectrum (emerald → cyan → violet → pink)          │
+│  spectrum (emerald → cyan → violet → pink)                 │
 ├────────────────────────────────────────────────────────────┤
-│  AURORA SUPPLEMENT — the repository part:                  │
+│  SUPPLEMENT — the repository part:                         │
 │    · theory → module map (src/rmt_llm/, laboratory/)       │
 │    · measured-results registry with provenance             │
 │    · figure atlas: 600-dpi plates from assets/charts/      │
@@ -64,7 +64,7 @@ Files in each folder:
 
 | File | Content |
 |---|---|
-| `<monograph>.docx` | the full study + Aurora supplement (English, DOCX) |
+| `<monograph>.docx` | the full study + repository supplement (English, DOCX) |
 | `<monograph>_RU.docx` | the same edition in Russian |
 | `README.md` | this navigation page: essence, key numbers, companions |
 
@@ -74,10 +74,10 @@ The 600-dpi cover plates live in
 
 ---
 
-## 🌌 What the Aurora edition adds
+## 🌌 What this edition adds
 
-- **Restyled identity** — legacy gold/blue accents are remapped to the Black
-  Aurora spectrum; every document opens with a full-page dark cover.
+- **Restyled identity** — legacy gold/blue accents are remapped to the northern-lights
+  spectrum; every document opens with a full-page dark cover.
 - **Repository supplement** — a new closing part (10+ pages per edition) that
   the original papers could not contain: the theory-to-code map for
   `src/rmt_llm/`, the polyglot laboratory (7 languages × en/ru), the 480-test
@@ -93,7 +93,7 @@ The 600-dpi cover plates live in
 
 ## 🧭 Reading paths
 
-```
+```text
 M02 pilot ──────→ M03 v1 ──────→ M04 v2        (the empirical campaign)
    │
 M01 theory ──────→ M06 ten paths               (the mathematical core)

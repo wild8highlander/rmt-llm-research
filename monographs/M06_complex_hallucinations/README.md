@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🌀 M06 · Inevitable Hallucinations
@@ -36,7 +36,7 @@ the others.
 [`src/rmt_llm/constants.py`](../../src/rmt_llm/constants.py), with the full
 20-zero census reproduced in the supplement.
 
-**Aurora supplement (Appendices A–G).** The mechanism → module map for all
+**Repository supplement (Appendices A–G).** The mechanism → module map for all
 paths, the exact-constants table, the tabulated zero census, a figure atlas
 (circle law, Tracy–Widom, BBP), the exit-code protocol and the reproduction
 checklist.
@@ -47,7 +47,7 @@ checklist.
 
 | File | Content |
 |---|---|
-| `Complex_Analytical_Model_Inevitable_Hallucinations.docx` | the study + Aurora supplement (English) |
+| `Complex_Analytical_Model_Inevitable_Hallucinations.docx` | the study + repository supplement (English) |
 | `Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx` | the same edition in Russian |
 | `cover plates` | [`assets/branding/covers/cover_M06_EN.png`](../../assets/branding/covers/) · `_RU.png` |
 

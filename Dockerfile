@@ -75,7 +75,7 @@ ENV JULIA_DEPOT_PATH=/opt/julia-depot \
     JULIA_NUM_THREADS=auto
 
 # Pre-instantiate Julia packages to cache them in the image
-COPY julia/ /workspace/julia/
+COPY laboratory/julia/julia/ /workspace/julia/
 RUN cd /workspace/julia/RMTLLMVerify \
  && julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()' \
  && cd /workspace/julia/RMTLLMViz \

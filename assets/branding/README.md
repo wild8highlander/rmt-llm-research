@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # ✨ branding — Logos & Avatars
@@ -21,7 +21,7 @@
 
 ## Effects inside
 
-Layered aurora waves with Gaussian-blur glow and gradient-flow hue
+Layered northern-lights waves with Gaussian-blur glow and gradient-flow hue
 animation, twinkling star fields, orbiting eigenvalue particles, a
 rotating λ ring, a comet sweep, and animated gradient chips — all
 implemented with embedded CSS keyframes and SMIL. No JavaScript, so the

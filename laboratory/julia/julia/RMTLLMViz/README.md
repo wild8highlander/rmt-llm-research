@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🖼️ RMTLLMViz
 
 <p align="center">
   <em>The Julia twin of the 3D visualization suite</em><br><br>
-  <img src="../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-julia-9558B2" alt="julia/"></a>
   <img src="https://img.shields.io/badge/julia-9558B2" alt="Julia"><img src="https://img.shields.io/badge/plots.jl-a78bfa" alt="Plots.jl">
 </p>
@@ -27,14 +27,14 @@ julia --project=. src/RMTLLMViz.jl
 ```
 
 Siblings: [`RMTLLMVerify/`](../RMTLLMVerify/README.md) (numbers),
-[`python/rmt_llm_viz/`](../../python/rmt_llm_viz/README.md) (Python
-edition), [`java/rmt-llm-viz/`](../../java/rmt-llm-viz/README.md)
+[`python/rmt_llm_viz/`](../../../python/python/rmt_llm_viz/README.md) (Python
+edition), [`java/rmt-llm-viz/`](../../../java/java/rmt-llm-viz/README.md)
 (JavaFX edition).
 
 ---
 
 <p align="center">
   <sub>
-    <a href="../README.md">← julia</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../README.md">🏠 repository root</a> · <a href="../../python/rmt_llm_viz/README.md">Python viz →</a>
+    <a href="../README.md">← julia</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../README.md">🏠 repository root</a> · <a href="../../../python/python/rmt_llm_viz/README.md">Python viz →</a>
   </sub>
 </p>

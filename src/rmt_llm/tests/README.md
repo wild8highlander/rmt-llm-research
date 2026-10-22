@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🧪 Test Suite
@@ -34,13 +34,13 @@ make test-bench                       # performance benchmarks
 ```
 
 The numbers these tests assert on are the same reference values the
-[Julia verifier](../../../julia/RMTLLMVerify/README.md) re-checks on
+[Julia verifier](../../../laboratory/julia/julia/RMTLLMVerify/README.md) re-checks on
 Julia 1.9 / 1.10 / 1.11 — one contract, two languages.
 
 ---
 
 <p align="center">
   <sub>
-    <a href="../README.md">← rmt_llm</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../../README.md">🏠 repository root</a> · <a href="../../../julia/RMTLLMVerify/README.md">Julia verifier →</a>
+    <a href="../README.md">← rmt_llm</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../../README.md">🏠 repository root</a> · <a href="../../../laboratory/julia/julia/RMTLLMVerify/README.md">Julia verifier →</a>
   </sub>
 </p>

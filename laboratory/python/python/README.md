@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🐍 python — Python Suite
 
 <p align="center">
   <em>The interactive 3D visualization toolkit, NumPy + Matplotlib only</em><br><br>
-  <img src="../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <img src="../../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
   <a href="../README.md"><img src="https://img.shields.io/badge/folder-python-3776AB" alt="repository root"></a>
   <img src="https://img.shields.io/badge/python-3776AB" alt="Python"><img src="https://img.shields.io/badge/no%20gui%20framework-22d3ee" alt="no GUI framework">
 </p>
@@ -32,10 +32,10 @@ pip install -e ".[dev]"        # from the repository root
 python python/rmt_llm_viz/main.py
 ```
 
-Siblings: [JavaFX edition](../java/rmt-llm-viz/README.md) ·
-[Julia edition](../julia/RMTLLMViz/README.md). The core package they
-visualize lives in [`src/rmt_llm/`](../src/rmt_llm/README.md); the
-research lab in [`laboratory/python/`](../laboratory/python/README.md).
+Siblings: [JavaFX edition](../../java/java/rmt-llm-viz/README.md) ·
+[Julia edition](../../julia/julia/RMTLLMViz/README.md). The core package they
+visualize lives in [`src/rmt_llm/`](../../../src/rmt_llm/README.md); the
+research lab in [`laboratory/python/`](../README.md).
 
 ---
 

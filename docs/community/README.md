@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research"></a>
 </p>
 
 # 🤝 Community
@@ -22,9 +22,9 @@ repository root, in a form suitable for the documentation site.
 | [`security.md`](security.md) | how to report security issues responsibly |
 | [`roadmap.md`](roadmap.md) | where the project is heading |
 
-Root-level twins: [`CONTRIBUTING.md`](../../CONTRIBUTING.md),
-[`CODE_OF_CONDUCT.md`](../../CODE_OF_CONDUCT.md),
-[`SECURITY.md`](../../SECURITY.md),
+Root-level twins: [`CONTRIBUTING.md`](https://github.com/wild8highlander/rmt-llm-research/blob/main/CONTRIBUTING.md),
+[`CODE_OF_CONDUCT.md`](https://github.com/wild8highlander/rmt-llm-research/blob/main/CODE_OF_CONDUCT.md),
+[`SECURITY.md`](https://github.com/wild8highlander/rmt-llm-research/blob/main/SECURITY.md),
 [`docs/ROADMAP.md`](../ROADMAP.md).
 
 ---
