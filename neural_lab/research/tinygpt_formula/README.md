@@ -1,6 +1,5 @@
 <p align="center">
-  <a href="../../README.md"><img src="../../../assets/branding/aurora-icon.svg" width="64" alt="RMT × LLM Research"></a><br>
-  <img src="../../../assets/branding/aurora-divider.svg" width="420" alt="">
+  <img src="../../assets/logos/tinygpt_formula.banner.svg" width="760" alt="TinyGPT Formula-Edition — animated logo: Sigma over attention-linked token blocks">
 </p>
 
 # TinyGPT v3 Formula-Edition — LLM Research on Repository Formulas
@@ -10,6 +9,32 @@
 > NumPy-only, ADR-001), train it on the project's formulas, and measure how much
 > it improves. Everything is reproducible: seeds are fixed, the corpus is
 > deterministic, and the scripts are covered by regression tests.
+
+<p align="center">
+  <a href="../../README.md"><img src="https://img.shields.io/badge/program-tinygpt__formula-a78bfa" alt="program"></a>
+  <img src="https://img.shields.io/badge/params-447K-f472b6" alt="447K params">
+  <img src="https://img.shields.io/badge/numpy--only-00ffa3" alt="NumPy only">
+  <img src="https://img.shields.io/badge/CPU%20~20%20min-22d3ee" alt="CPU 20 min">
+</p>
+
+The program is the empirical arm of the repository: where the monographs
+argue theoretically about the Utility Trap and hallucination cliffs, this
+folder *measures* them on a real, fully inspectable transformer whose
+every parameter can be regenerated from a fixed seed. Because the model
+is tiny (447K parameters) and the corpus is derived from the repository's
+own formulas, the whole loop — build corpus, train, evaluate, diagnose,
+scale — is cheap enough to run repeatedly, which turns qualitative
+claims into measurable ones.
+
+At a glance:
+
+| Question this program answers | Where |
+|---|---|
+| How much does the out-of-the-box model gain from the project's formulas? | §4 (×72 perplexity, match 51.57%) |
+| Can it extrapolate arithmetic to unseen parameters? | §5 (format 40.5%, numeric 0% — no) |
+| Does the spectrum separate trained from untrained? | §6 (4/4 layers beyond MP bound) |
+| Do the ROADMAP open questions survive contact with a real model? | §7 (Q1/Q2/Q4 solved, Q3 trajectory-dependent) |
+| Does true formula content reduce confident hallucinations? | §11 (H2 direction confirmed at S, ladder tests scale) |
 
 ## 1. What's inside
 
@@ -43,9 +68,22 @@ with no external dependencies (per the repository's ADR-001):
 | Training | AdamW, cosine LR + warmup, label smoothing 0.1, grad clip 1.0, weight tying |
 
 Why this model: it already ships with the repo, needs no GPU, and trains on CPU
-in ~20 minutes — an ideal test bed for the project's formulas. For larger runs
+in ~20 minutes — an ideal test bed for the project's formulas. Being
+NumPy-only also means every internal state (logits, hidden activations,
+per-layer covariances) is directly observable with the same RMT
+instrumentation the core library provides — there is no framework
+barrier between the model and the diagnostics. For larger runs
 (M/L/XL), the `colab/` folder provides two notebooks with a free server:
 `RMT_TinyGPT_Free_Server.ipynb` and `Scaling_Ladder_Hallucinations.ipynb`.
+
+Two architectural choices matter specifically for this program:
+
+- **RoPE** gives positions without learned embeddings, so the 64-token
+  formula lines are handled with pure relative geometry — one fewer
+  thing to re-learn per rung of the ladder;
+- **GQA (6 query / 2 KV heads)** keeps the KV cache small, which is what
+  makes the 1024-token ladder batches fit in a free Colab T4 without
+  changing the model code between rungs.
 
 ## 3. The formula corpus
 
@@ -61,10 +99,19 @@ in ~20 minutes — an ideal test bed for the project's formulas. For larger runs
    (IEEE 754 microcollapses, the Utility Trap, Caputo subdiffusion, Landauer,
    Hallucination Cliff, N_crit = gamma_1 / theta_b).
 
+The three sources deliberately cover different knowledge types: symbolic
+formulas teach *structure* (how a correct answer is shaped), computational
+pairs teach *content* (which numbers follow from which parameters), and
+the monograph block teaches *vocabulary* (the project's specific concepts
+and notation). That separation is what later allows the evaluation to say
+*which kind* of knowledge the model acquired and which it fakes.
+
 **The canonical corpus files** are `data/formula_corpus_{train,val}.txt`:
 these are exactly what the model in `model/` was trained on. The build script
 reproduces the corpus from the sources deterministically; if versions diverge,
-`data/` takes priority.
+`data/` takes priority. Both corpora are hashed, and the hash is recorded in
+every downstream report — so any trained artifact can always be tied to the
+exact text it saw.
 
 ## 4. Training results (40 epochs, CPU)
 
@@ -75,6 +122,28 @@ reproduces the corpus from the sources deterministically; if versions diverge,
 | val match_rate (exact token) | 1.67% | **51.57%** | +49.9 pp |
 
 The ROADMAP target (match_rate ≥ 25% for TinyGPT v3) is exceeded twofold.
+The training history is stored per-epoch in `model/training_history.json`,
+which is what the web app's Training tab plots — the curves you see in
+the UI are the same numbers that produced the table above, not a redrawn
+version of them. Training is resumable: interrupted runs continue from
+the last completed epoch, which makes it realistic to train on a laptop
+in several sittings.
+
+How to read each metric:
+
+- **val_loss (nats/token)** — the honest optimization signal; it is the
+  quantity the schedule actually minimizes, and the one whose curve
+  shape (fast drop, long tail) the Caputo-Langevin analysis in Q2 fits.
+- **val perplexity** — exp(val_loss); the ×72 improvement is dramatic
+  but mostly reflects learning the *format*, so never quote it without
+  the held-out benchmark below.
+- **val match_rate** — exact next-token match on validation; the ROADMAP
+  pass criterion, deliberately coarse, deliberately conservative.
+
+The train/val split is fixed by the corpus build, so "after" numbers are
+comparable across any future re-training: if the split changed, the
+comparison would be void — which is why the split lives in the committed
+corpus files, not in a script flag.
 
 ## 5. Honest benchmark (held-out, 37 fresh tasks)
 
@@ -91,7 +160,11 @@ Interpretation: the 447K model learned the *grammar of formulas* and
 accurate generation beyond memorized content is out of reach at this size.
 This is a direct empirical illustration of the monograph's theses: the
 **"Utility Trap"** and the **Hallucination Cliff** — the model confidently
-formats an answer where it is unsure about the content.
+formats an answer where it is unsure about the content. The three metrics
+were chosen so that failure is attributable: format-only success with
+zero numeric success is precisely the signature of a model that has
+acquired style without substance, and it is the same signature the
+scaling study tracks as `confident_hallucination_rate`.
 
 ## 6. RMT diagnostics of hidden states
 
@@ -99,7 +172,11 @@ The spectral probe (λ_max of hidden-state covariances vs the MP bound per
 layer): the trained model has **all 4 layers beyond the MP bound**
 (λ_max > MP_up × 1.05), the untrained one has 0 of 4. Training shifts the
 hidden-state spectrum from "pure noise" to a regime with pronounced structure —
-consistent with the separation emerging in Q3 below.
+consistent with the separation emerging in Q3 below. This probe is the same
+measurement the science core uses as a *feature* for error prediction (H1),
+which makes this section the qualitative preview of the quantitative
+spectral analysis: structure appears in the spectrum first, and only then —
+as the ladder shows — becomes predictive.
 
 ## 7. Open questions from docs/ROADMAP.md — empirical answers
 
@@ -111,6 +188,12 @@ consistent with the separation emerging in Q3 below.
 | Q4 | Stochastic Hutchinson trace | **SOLVED** | trace + λ_max without eigvalsh: ×1.9–11 faster on 1024×1024 (BLAS-dependent), trace error 0.05% |
 
 Full data: `model/open_questions_results.json`.
+
+The honest reading of Q3 matters more than its headline: a pairwise AUC of
+0.75 on one trajectory and 0.29 on another is not a "detector", it is a
+*hypothesis about a detector* — which is exactly why the question was
+handed to the science core as H3 and re-tested with proper statistics on
+the M/L/XL cells instead of being declared solved from four samples.
 
 ## 8. How to reproduce (desktop or Termux)
 
@@ -129,14 +212,40 @@ The scripts locate the repository root on their own (or via `RMT_LLM_ROOT` /
 `RMT_LLM_BASE`); training resumes where it stopped (`TRAIN_MAX_MINUTES` — a
 per-run minute limit, `TRAIN_RESUME=0` — start from scratch).
 
+Environment variables cheat-sheet:
+
+| Variable | Effect |
+|---|---|
+| `RMT_LLM_ROOT` | override the auto-detected repository root |
+| `RMT_LLM_BASE` | point the science core / web app at this program's artifacts |
+| `TRAIN_MAX_MINUTES` | stop training after N minutes (resume later) |
+| `TRAIN_RESUME=0` | ignore existing weights and train from scratch |
+| `SMOKE=1` | (science core) reduced end-to-end run, ~1 min |
+
 ## 9. Connection to the web app
 
 The live model runs in the **Neural Lab** app (`neural_lab/` at the repository
 root): the Playground tab calls `scripts/infer.py` through the API, while the
 Training / Benchmark / Questions tabs display the same artifacts stored in
-this folder's `model/`.
+this folder's `model/`. The app never keeps its own copy of the numbers —
+if you retrain the model and reload the page, every tab updates, which
+makes the app a convenient *visual diff* between training runs.
 
-## 10. Scaling and hallucinations (`scaling/`) — can the model be improved further
+## 10. Reproducibility guarantees
+
+| Guarantee | Mechanism |
+|---|---|
+| Same corpus | deterministic build; committed canonical files take priority over rebuilds |
+| Same weights | fixed seeds in `run_config.json`; retraining overwrites with identical results |
+| Same scores | evaluation tasks and tolerances (±15% numeric band) are committed |
+| Traceability | corpus hash + weight hash appear in every downstream report and passport |
+| Interruptibility | every long stage is resumable (epochs for training, chunks for ladder cells) |
+
+These guarantees are what allow this folder's numbers to be quoted in the
+monographs and in the science core without a "trust me" step: every claim
+can be re-derived by replaying the chain on the same inputs.
+
+## 11. Scaling and hallucinations (`scaling/`) — can the model be improved further
 
 **Yes.** The `scaling/` folder contains a ready-made experiment for the next
 step: grow the model (the ladder S 447K → M ~1.1M → L 4.15M → XL ~12M, still
@@ -189,9 +298,69 @@ Up-to-date numbers: `scaling/SCALING_RESULTS.md` + `scaling/scaling_report.json`
 (the single source of truth). Plan, hypotheses, and budget: `scaling/SCALING_PLAN.md`.
 Running on a phone: `scaling/TERMUX_PROOT_UBUNTU.md` (Termux + proot-Ubuntu).
 
+How one ladder cell is produced, end to end:
+
+1. `build_control_corpus.py` derives the control twin (seed 42) from the
+   canonical corpus;
+2. `scaling_experiment.py` instantiates the rung's architecture
+   (width/depth per the ladder spec), trains the `formula` and `control`
+   arms on their corpora, and evaluates both on the two benchmarks;
+3. per-layer hidden states are captured during evaluation and written
+   next to the cell report — this is the H1 measurement payload;
+4. `runs/<cell>/cell_report.json` + `history.json` land in the repo,
+   and the aggregator regenerates `scaling_report.json` and the plot.
+
+## 12. Troubleshooting
+
+| Symptom | Likely cause | Remedy |
+|---|---|---|
+| `infer.py` returns empty output | weights absent or tokenizer mismatch | run `scripts/train_formula_model.py`; check `model/` holds both `.npz` and `_bpe.json` |
+| numeric_score = 0 but format_score high | expected at S-size (see §5) — not a bug | treat as the Utility Trap signature; scale up via `scaling/` |
+| training restarts from epoch 0 | `TRAIN_RESUME=0` exported in the shell | unset it or set `TRAIN_RESUME=1` |
+| corpus rebuild diverges | the core library changed | rebuild artifacts; the report hash chain documents the discontinuity |
+| Colab session died mid-rung | free-tier disconnect | re-run the notebook; resume chunks continue from the last completed one |
+
+## 13. FAQ
+
+**Why not just use PyTorch and a bigger model?**
+The program's purpose is *measurement under full control*, not SOTA
+chasing: a NumPy-only model has zero framework opacity, trains on a phone,
+and its every internal state is one `print` away. Claims about
+hallucination mechanisms are cleaner when nothing is hidden inside a
+framework.
+
+**Is 447K parameters enough to conclude anything?**
+For *grammar vs content* questions — yes (sections 5 and 10 show clean
+separations). For *numeric extrapolation* — no, and that absence is itself
+the finding; the ladder exists to find where capacity stops being the
+limiting factor.
+
+**What if the corpus diverges from what the model saw?**
+The corpus is hashed and the hash is recorded in downstream reports;
+`data/` takes priority over a rebuilt corpus, so old artifacts always
+remain interpretable.
+
+**Where do I report a bug in the core found by this program?**
+The program never patches `src/rmt_llm/`; file an issue — the finding is
+a result, the fix belongs to the core.
+
+**Can I add my own formulas to the corpus?**
+Yes, but do it through the build script sources, not by editing the
+corpus files: an edited corpus breaks the hash chain and makes every
+existing report uninterpretable. Add the source, rebuild, retrain, and
+the new hash marks the new era of artifacts.
+
+**How does this program relate to the science core's H1?**
+The ladder cells trained here are the *measurement substrate* of H1:
+each cell logs per-layer hidden states that the science core turns into
+spectral features. The S/M/L H1 results in
+`../science/results/h1_scaling/REPORT.md` come from exactly these runs —
+one training budget, two research programs.
+
 ---
 
 <p align="center">
+  <img src="../../assets/logos/tinygpt_formula.avatar.svg" width="56" alt="TinyGPT Formula-Edition animated avatar"><br>
   <sub>
     <a href="../../README.md">🏠 repository root</a> · <a href="../../assets/README.md">🎨 branding</a> · <a href="../../assets/charts/README.md">📊 chart gallery</a>
   </sub>

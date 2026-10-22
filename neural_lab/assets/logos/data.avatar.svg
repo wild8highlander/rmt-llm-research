@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="data — animated avatar">
+  <defs>
+    <radialGradient id="avdatabg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avdatamain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"><animate attributeName="stop-color" values="#60a5fa;#22d3ee;#00ffa3;#22d3ee;#a78bfa;#60a5fa" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#22d3ee"><animate attributeName="stop-color" values="#22d3ee;#a78bfa;#60a5fa;#22d3ee" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avdatasweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avdataorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#60a5fa" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#60a5fa" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avdataglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avdatasoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avdatabg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avdataorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avdatamain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avdataglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <g><rect x="-34" y="-40" width="68" height="24" fill="#60a5fa" opacity="0.20"/><line x1="-34" y1="-40" x2="-34" y2="-16" stroke="#60a5fa" stroke-width="2.4"/><line x1="34" y1="-40" x2="34" y2="-16" stroke="#60a5fa" stroke-width="2.4"/><ellipse cx="0" cy="-40" rx="34" ry="10" fill="none" stroke="#60a5fa" stroke-width="2.4"><animate attributeName="stroke" values="#60a5fa;#22d3ee;#a78bfa;#60a5fa" dur="6s" repeatCount="indefinite"/></ellipse><path d="M-34,-16 a34,10 0 0,0 68,0" fill="none" stroke="#60a5fa" stroke-width="2.4"/></g><g><rect x="-34" y="-12" width="68" height="24" fill="#22d3ee" opacity="0.20"/><line x1="-34" y1="-12" x2="-34" y2="12" stroke="#22d3ee" stroke-width="2.4"/><line x1="34" y1="-12" x2="34" y2="12" stroke="#22d3ee" stroke-width="2.4"/><ellipse cx="0" cy="-12" rx="34" ry="10" fill="none" stroke="#22d3ee" stroke-width="2.4"><animate attributeName="stroke" values="#22d3ee;#60a5fa;#a78bfa;#22d3ee" dur="8s" repeatCount="indefinite"/></ellipse><path d="M-34,12 a34,10 0 0,0 68,0" fill="none" stroke="#22d3ee" stroke-width="2.4"/></g><g><rect x="-34" y="16" width="68" height="24" fill="#22d3ee" opacity="0.20"/><line x1="-34" y1="16" x2="-34" y2="40" stroke="#22d3ee" stroke-width="2.4"/><line x1="34" y1="16" x2="34" y2="40" stroke="#22d3ee" stroke-width="2.4"/><ellipse cx="0" cy="16" rx="34" ry="10" fill="none" stroke="#22d3ee" stroke-width="2.4"><animate attributeName="stroke" values="#22d3ee;#22d3ee;#a78bfa;#22d3ee" dur="10s" repeatCount="indefinite"/></ellipse><path d="M-34,40 a34,10 0 0,0 68,0" fill="none" stroke="#22d3ee" stroke-width="2.4"/></g><circle r="2.6" fill="#ffffff"><animate attributeName="cy" values="-44;34" dur="2.2s" begin="0.0s" repeatCount="indefinite"/><animate attributeName="cx" values="-14;2;-10" dur="2.2s" begin="0.0s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="2.2s" begin="0.0s" repeatCount="indefinite"/></circle><circle r="2.6" fill="#ffffff"><animate attributeName="cy" values="-44;34" dur="3.1s" begin="0.7s" repeatCount="indefinite"/><animate attributeName="cx" values="-14;2;-10" dur="3.1s" begin="0.7s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="3.1s" begin="0.7s" repeatCount="indefinite"/></circle><circle r="2.6" fill="#ffffff"><animate attributeName="cy" values="-44;34" dur="4.0s" begin="1.4s" repeatCount="indefinite"/><animate attributeName="cx" values="-14;2;-10" dur="4.0s" begin="1.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="4.0s" begin="1.4s" repeatCount="indefinite"/></circle>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avdatasweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avdatamain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#60a5fa;#22d3ee;#f472b6;#60a5fa;#60a5fa" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

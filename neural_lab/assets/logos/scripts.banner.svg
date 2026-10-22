@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220" role="img" aria-label="scripts — animated logo">
+  <defs>
+    <radialGradient id="scribg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="scrimain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"><animate attributeName="stop-color" values="#22d3ee;#00ffa3;#00ffa3;#22d3ee;#a78bfa;#22d3ee" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#00ffa3"><animate attributeName="stop-color" values="#00ffa3;#a78bfa;#22d3ee;#00ffa3" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="scrisweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="scriorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#22d3ee" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="scriglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="scrisoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="800" height="220" rx="18" fill="url(#scribg)"/>
+  <g filter="url(#scrisoft)">
+    <path d="M-40,158 C144,128 288,189 440,154 C592,121 704,180 840,145 L840,260 L-40,260 Z" fill="#22d3ee" opacity="0.20">
+      <animate attributeName="d" values="M-40,158 C144,128 288,189 440,154 C592,121 704,180 840,145 L840,260 L-40,260 Z;M-40,141 C144,176 288,114 440,172 C592,207 704,128 840,163 L840,260 L-40,260 Z;M-40,158 C144,128 288,189 440,154 C592,121 704,180 840,145 L840,260 L-40,260 Z" dur="14s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.14;0.26;0.14" dur="14s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-40,185 C176,154 336,211 496,180 C640,154 736,202 840,176 L840,260 L-40,260 Z" fill="#00ffa3" opacity="0.16">
+      <animate attributeName="opacity" values="0.10;0.22;0.10" dur="11s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <circle cx="60" cy="34" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="2.2s" begin="0.00s" repeatCount="indefinite"/></circle><circle cx="208" cy="22" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.0s" begin="0.37s" repeatCount="indefinite"/></circle><circle cx="390" cy="30" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.8s" begin="0.74s" repeatCount="indefinite"/></circle><circle cx="565" cy="20" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="4.6s" begin="1.11s" repeatCount="indefinite"/></circle><circle cx="712" cy="42" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="2.2s" begin="1.48s" repeatCount="indefinite"/></circle><circle cx="762" cy="120" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.0s" begin="1.85s" repeatCount="indefinite"/></circle><circle cx="40" cy="150" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.8s" begin="0.22s" repeatCount="indefinite"/></circle><circle cx="300" cy="200" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="4.6s" begin="0.59s" repeatCount="indefinite"/></circle><circle cx="520" cy="186" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="2.2s" begin="0.96s" repeatCount="indefinite"/></circle><circle cx="688" cy="196" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.0s" begin="1.33s" repeatCount="indefinite"/></circle><circle cx="250" cy="120" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.8s" begin="1.70s" repeatCount="indefinite"/></circle><circle cx="470" cy="90" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="4.6s" begin="0.07s" repeatCount="indefinite"/></circle>
+  <g>
+    <circle cx="112" cy="110" r="86" fill="url(#scriorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+    <circle cx="112" cy="110" r="66" fill="none" stroke="url(#scrimain)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="277 145" filter="url(#scriglow)"><animateTransform attributeName="transform" type="rotate" from="0 112 110" to="360 112 110" dur="13.0s" repeatCount="indefinite"/></circle>
+    <circle cx="112" cy="110" r="52" fill="none" stroke="url(#scrimain)" stroke-width="2.0" stroke-linecap="round" stroke-dasharray="218 114" filter="url(#scriglow)"><animateTransform attributeName="transform" type="rotate" from="0 112 110" to="360 112 110" dur="9.0s" repeatCount="indefinite"/></circle>
+    <path d="M128.0,102.0 L127.2,109.5 L117.5,110.6 L115.0,115.5 L120.0,123.9 L114.6,129.1 L106.5,123.7 L101.4,125.9 L99.9,135.5 L92.3,136.0 L89.7,126.6 L84.3,125.0 L77.0,131.4 L70.9,126.9 L74.8,118.1 L71.8,113.4 L62.1,113.6 L60.3,106.3 L69.0,102.0 L69.6,96.5 L62.1,90.4 L65.4,83.6 L74.8,85.9 L78.9,82.1 L77.0,72.6 L83.9,69.5 L89.7,77.4 L95.2,77.0 L99.9,68.5 L107.2,70.7 L106.5,80.3 L111.0,83.7 L120.0,80.1 L124.2,86.5 L117.5,93.4 L118.8,98.9 Z" fill="none" stroke="url(#scrimain)" stroke-width="3" filter="url(#scriglow)"><animateTransform attributeName="transform" type="rotate" from="0 94 102" to="360 94 102" dur="14s" repeatCount="indefinite"/></path><circle cx="94" cy="102" r="8" fill="#22d3ee"><animate attributeName="fill" values="#22d3ee;#00ffa3;#22d3ee;#22d3ee" dur="8s" repeatCount="indefinite"/></circle><path d="M168.0,136.0 L167.1,142.2 L159.5,142.5 L157.1,146.1 L159.7,153.2 L154.3,156.4 L149.3,150.6 L145.1,151.0 L141.1,157.4 L135.2,155.2 L136.6,147.7 L133.7,144.6 L126.2,145.5 L124.3,139.5 L131.0,136.0 L131.6,131.8 L126.2,126.5 L129.7,121.2 L136.6,124.3 L140.4,122.1 L141.1,114.6 L147.4,114.0 L149.3,121.4 L153.3,122.9 L159.7,118.8 L164.0,123.4 L159.5,129.5 L160.8,133.6 Z" fill="none" stroke="#00ffa3" stroke-width="2.5" opacity="0.9"><animateTransform attributeName="transform" type="rotate" from="360 146 136" to="0 146 136" dur="9s" repeatCount="indefinite"/></path><circle cx="146" cy="136" r="5" fill="#00ffa3"/><circle r="3" fill="#ffffff" opacity="0.9"><animateMotion dur="5s" repeatCount="indefinite" path="M170,70 q-30,44 -96,66"/></circle>
+  </g>
+  <text x="222" y="96" font-family="Verdana, 'DejaVu Sans', sans-serif" font-size="37" font-weight="bold" fill="#f4f9ff" letter-spacing="0.5">scripts</text>
+  <text x="224" y="98" font-family="Verdana, 'DejaVu Sans', sans-serif" font-size="37" font-weight="bold" fill="url(#scrimain)" opacity="0.55">scripts</text>
+  <line x1="226" y1="114" x2="470" y2="114" stroke="url(#scrimain)" stroke-width="2.4" stroke-linecap="round">
+    <animate attributeName="x2" values="300;640;300" dur="7s" repeatCount="indefinite"/>
+  </line>
+  <text x="226" y="142" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="15.5" fill="#9fb3d9">corpus → training → evaluation → inference</text>
+  <g font-family="'JetBrains Mono', 'Courier New', monospace" font-size="11.5">
+    <rect x="226" y="162" width="118" height="24" rx="12" fill="none" stroke="#22d3ee" stroke-width="1.4" opacity="0.9">
+      <animate attributeName="stroke" values="#22d3ee;#00ffa3;#a78bfa;#22d3ee" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <text x="285" y="178" text-anchor="middle" fill="#22d3ee">RMT × LLM</text>
+    <rect x="354" y="162" width="130" height="24" rx="12" fill="none" stroke="#00ffa3" stroke-width="1.4" opacity="0.9"/>
+    <text x="419" y="178" text-anchor="middle" fill="#00ffa3">neural_lab</text>
+  </g>
+  <g transform="translate(700,112) scale(1.15)" opacity="0.15">
+    <path d="M16.0,-8.0 L15.2,-0.5 L5.5,0.6 L3.0,5.5 L8.0,13.9 L2.6,19.1 L-5.5,13.7 L-10.6,15.9 L-12.1,25.5 L-19.7,26.0 L-22.3,16.6 L-27.7,15.0 L-35.0,21.4 L-41.1,16.9 L-37.2,8.1 L-40.2,3.4 L-49.9,3.6 L-51.7,-3.7 L-43.0,-8.0 L-42.4,-13.5 L-49.9,-19.6 L-46.6,-26.4 L-37.2,-24.1 L-33.1,-27.9 L-35.0,-37.4 L-28.1,-40.5 L-22.3,-32.6 L-16.8,-33.0 L-12.1,-41.5 L-4.8,-39.3 L-5.5,-29.7 L-1.0,-26.3 L8.0,-29.9 L12.2,-23.5 L5.5,-16.6 L6.8,-11.1 Z" fill="none" stroke="url(#scrimain)" stroke-width="3" filter="url(#scriglow)"><animateTransform attributeName="transform" type="rotate" from="0 -18 -8" to="360 -18 -8" dur="14s" repeatCount="indefinite"/></path><circle cx="-18" cy="-8" r="8" fill="#22d3ee"><animate attributeName="fill" values="#22d3ee;#00ffa3;#22d3ee;#22d3ee" dur="8s" repeatCount="indefinite"/></circle><path d="M56.0,26.0 L55.1,32.2 L47.5,32.5 L45.1,36.1 L47.7,43.2 L42.3,46.4 L37.3,40.6 L33.1,41.0 L29.1,47.4 L23.2,45.2 L24.6,37.7 L21.7,34.6 L14.2,35.5 L12.3,29.5 L19.0,26.0 L19.6,21.8 L14.2,16.5 L17.7,11.2 L24.6,14.3 L28.4,12.1 L29.1,4.6 L35.4,4.0 L37.3,11.4 L41.3,12.9 L47.7,8.8 L52.0,13.4 L47.5,19.5 L48.8,23.6 Z" fill="none" stroke="#00ffa3" stroke-width="2.5" opacity="0.9"><animateTransform attributeName="transform" type="rotate" from="360 34 26" to="0 34 26" dur="9s" repeatCount="indefinite"/></path><circle cx="34" cy="26" r="5" fill="#00ffa3"/><circle r="3" fill="#ffffff" opacity="0.9"><animateMotion dur="5s" repeatCount="indefinite" path="M58,-40 q-30,44 -96,66"/></circle>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="220" fill="url(#scrisweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;920" dur="7.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="798" height="218" rx="17" fill="none" stroke="url(#scrimain)" stroke-width="1.6" opacity="0.75">
+    <animate attributeName="stroke" values="#22d3ee;#00ffa3;#f472b6;#22d3ee;#22d3ee" dur="10s" repeatCount="indefinite"/>
+  </rect>
+</svg>

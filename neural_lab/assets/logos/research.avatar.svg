@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="research — animated avatar">
+  <defs>
+    <radialGradient id="avresebg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avresemain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa"><animate attributeName="stop-color" values="#a78bfa;#f472b6;#00ffa3;#22d3ee;#a78bfa;#a78bfa" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#f472b6"><animate attributeName="stop-color" values="#f472b6;#a78bfa;#a78bfa;#f472b6" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avresesweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avreseorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#a78bfa" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avreseglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avresesoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avresebg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avreseorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avresemain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avreseglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <circle cx="0" cy="0" r="8" fill="url(#avresemain)" filter="url(#avreseglow)"/><circle cx="0" cy="0" r="12" fill="none" stroke="#a78bfa" stroke-width="1.4" opacity="0.7"><animate attributeName="r" values="10;16;10" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.7;0.1;0.7" dur="2.6s" repeatCount="indefinite"/></circle><g transform="rotate(0 0 0)"><ellipse cx="0" cy="0" rx="56" ry="20" fill="none" stroke="#a78bfa" stroke-width="2" opacity="0.75"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="3s" repeatCount="indefinite"/></ellipse><circle r="4" fill="#a78bfa" filter="url(#avreseglow)"><animateMotion dur="4.2s" repeatCount="indefinite" path="M-56,0 a56,20 0 1,0 112,0 a56,20 0 1,0 -112,0"/></circle></g><g transform="rotate(60 0 0)"><ellipse cx="0" cy="0" rx="56" ry="20" fill="none" stroke="#f472b6" stroke-width="2" opacity="0.75"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="4s" repeatCount="indefinite"/></ellipse><circle r="4" fill="#f472b6" filter="url(#avreseglow)"><animateMotion dur="5.5s" repeatCount="indefinite" path="M-56,0 a56,20 0 1,0 112,0 a56,20 0 1,0 -112,0"/></circle></g><g transform="rotate(120 0 0)"><ellipse cx="0" cy="0" rx="56" ry="20" fill="none" stroke="#f472b6" stroke-width="2" opacity="0.75"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="5s" repeatCount="indefinite"/></ellipse><circle r="4" fill="#f472b6" filter="url(#avreseglow)"><animateMotion dur="6.800000000000001s" repeatCount="indefinite" path="M-56,0 a56,20 0 1,0 112,0 a56,20 0 1,0 -112,0"/></circle></g>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avresesweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avresemain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#a78bfa;#f472b6;#f472b6;#a78bfa;#a78bfa" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

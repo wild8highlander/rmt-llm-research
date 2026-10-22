@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="TinyGPT Formula-Edition — animated avatar">
+  <defs>
+    <radialGradient id="avtinybg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avtinymain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6"><animate attributeName="stop-color" values="#f472b6;#a78bfa;#00ffa3;#22d3ee;#a78bfa;#f472b6" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#a78bfa"><animate attributeName="stop-color" values="#a78bfa;#a78bfa;#f472b6;#a78bfa" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avtinysweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avtinyorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#f472b6" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avtinyglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avtinysoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avtinybg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avtinyorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avtinymain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avtinyglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <text x="0" y="18" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="64" font-weight="bold" fill="url(#avtinymain)" filter="url(#avtinyglow)">Σ<animate attributeName="fill" values="#f472b6;#a78bfa;#f472b6;#f472b6" dur="9s" repeatCount="indefinite"/></text><rect x="18" y="-52" width="26" height="9" rx="4.5" fill="#a78bfa" opacity="0.85"><animate attributeName="opacity" values="0.35;0.95;0.35" dur="2.0s" repeatCount="indefinite"/></rect><rect x="18" y="-38" width="26" height="9" rx="4.5" fill="#a78bfa" opacity="0.85"><animate attributeName="opacity" values="0.35;0.95;0.35" dur="2.7s" repeatCount="indefinite"/></rect><rect x="-52" y="34" width="24" height="14" rx="4" fill="none" stroke="#f472b6" stroke-width="1.8"><animate attributeName="stroke" values="#f472b6;#a78bfa;#fb7185;#f472b6" dur="5s" repeatCount="indefinite"/></rect><rect x="-20" y="34" width="24" height="14" rx="4" fill="none" stroke="#f472b6" stroke-width="1.8"><animate attributeName="stroke" values="#f472b6;#a78bfa;#fb7185;#f472b6" dur="6s" repeatCount="indefinite"/></rect><rect x="12" y="34" width="24" height="14" rx="4" fill="none" stroke="#f472b6" stroke-width="1.8"><animate attributeName="stroke" values="#f472b6;#a78bfa;#fb7185;#f472b6" dur="7s" repeatCount="indefinite"/></rect><rect x="44" y="34" width="24" height="14" rx="4" fill="none" stroke="#f472b6" stroke-width="1.8"><animate attributeName="stroke" values="#f472b6;#a78bfa;#fb7185;#f472b6" dur="8s" repeatCount="indefinite"/></rect><path d="M-40,28 Q0,6 40,28" fill="none" stroke="#a78bfa" stroke-width="1.6" stroke-dasharray="4 5"><animate attributeName="stroke-dashoffset" values="0;-36" dur="1.8s" repeatCount="indefinite"/></path>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avtinysweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avtinymain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#f472b6;#a78bfa;#f472b6;#f472b6;#f472b6" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

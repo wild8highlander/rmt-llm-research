@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="scripts — animated avatar">
+  <defs>
+    <radialGradient id="avscribg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avscrimain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"><animate attributeName="stop-color" values="#22d3ee;#00ffa3;#00ffa3;#22d3ee;#a78bfa;#22d3ee" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#00ffa3"><animate attributeName="stop-color" values="#00ffa3;#a78bfa;#22d3ee;#00ffa3" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avscrisweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avscriorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#22d3ee" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avscriglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avscrisoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avscribg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avscriorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avscrimain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avscriglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <path d="M16.0,-8.0 L15.2,-0.5 L5.5,0.6 L3.0,5.5 L8.0,13.9 L2.6,19.1 L-5.5,13.7 L-10.6,15.9 L-12.1,25.5 L-19.7,26.0 L-22.3,16.6 L-27.7,15.0 L-35.0,21.4 L-41.1,16.9 L-37.2,8.1 L-40.2,3.4 L-49.9,3.6 L-51.7,-3.7 L-43.0,-8.0 L-42.4,-13.5 L-49.9,-19.6 L-46.6,-26.4 L-37.2,-24.1 L-33.1,-27.9 L-35.0,-37.4 L-28.1,-40.5 L-22.3,-32.6 L-16.8,-33.0 L-12.1,-41.5 L-4.8,-39.3 L-5.5,-29.7 L-1.0,-26.3 L8.0,-29.9 L12.2,-23.5 L5.5,-16.6 L6.8,-11.1 Z" fill="none" stroke="url(#avscrimain)" stroke-width="3" filter="url(#avscriglow)"><animateTransform attributeName="transform" type="rotate" from="0 -18 -8" to="360 -18 -8" dur="14s" repeatCount="indefinite"/></path><circle cx="-18" cy="-8" r="8" fill="#22d3ee"><animate attributeName="fill" values="#22d3ee;#00ffa3;#22d3ee;#22d3ee" dur="8s" repeatCount="indefinite"/></circle><path d="M56.0,26.0 L55.1,32.2 L47.5,32.5 L45.1,36.1 L47.7,43.2 L42.3,46.4 L37.3,40.6 L33.1,41.0 L29.1,47.4 L23.2,45.2 L24.6,37.7 L21.7,34.6 L14.2,35.5 L12.3,29.5 L19.0,26.0 L19.6,21.8 L14.2,16.5 L17.7,11.2 L24.6,14.3 L28.4,12.1 L29.1,4.6 L35.4,4.0 L37.3,11.4 L41.3,12.9 L47.7,8.8 L52.0,13.4 L47.5,19.5 L48.8,23.6 Z" fill="none" stroke="#00ffa3" stroke-width="2.5" opacity="0.9"><animateTransform attributeName="transform" type="rotate" from="360 34 26" to="0 34 26" dur="9s" repeatCount="indefinite"/></path><circle cx="34" cy="26" r="5" fill="#00ffa3"/><circle r="3" fill="#ffffff" opacity="0.9"><animateMotion dur="5s" repeatCount="indefinite" path="M58,-40 q-30,44 -96,66"/></circle>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avscrisweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avscrimain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#22d3ee;#00ffa3;#f472b6;#22d3ee;#22d3ee" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

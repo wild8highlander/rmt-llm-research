@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="neural_lab — animated avatar">
+  <defs>
+    <radialGradient id="avneurbg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avneurmain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ffa3"><animate attributeName="stop-color" values="#00ffa3;#22d3ee;#00ffa3;#22d3ee;#a78bfa;#00ffa3" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#22d3ee"><animate attributeName="stop-color" values="#22d3ee;#a78bfa;#00ffa3;#22d3ee" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avneursweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avneurorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00ffa3" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#00ffa3" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#00ffa3" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avneurglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avneursoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avneurbg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avneurorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avneurmain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avneurglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <line x1="0" y1="-42" x2="-40" y2="-12" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="3.4s" repeatCount="indefinite"/></line><line x1="0" y1="-42" x2="40" y2="-12" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="4.4s" repeatCount="indefinite"/></line><line x1="-40" y1="-12" x2="-24" y2="30" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="3.4s" repeatCount="indefinite"/></line><line x1="40" y1="-12" x2="24" y2="30" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="2.4s" repeatCount="indefinite"/></line><line x1="-40" y1="-12" x2="0" y2="2" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="2.4s" repeatCount="indefinite"/></line><line x1="40" y1="-12" x2="0" y2="2" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="3.4s" repeatCount="indefinite"/></line><line x1="-24" y1="30" x2="-46" y2="46" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="2.4s" repeatCount="indefinite"/></line><line x1="24" y1="30" x2="46" y2="46" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="4.4s" repeatCount="indefinite"/></line><line x1="-24" y1="30" x2="24" y2="30" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="3.4s" repeatCount="indefinite"/></line><line x1="0" y1="2" x2="-24" y2="30" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="4.4s" repeatCount="indefinite"/></line><line x1="0" y1="2" x2="24" y2="30" stroke="url(#avneurmain)" stroke-width="1.7" opacity="0.55"><animate attributeName="opacity" values="0.25;0.75;0.25" dur="2.4s" repeatCount="indefinite"/></line><circle cx="0" cy="-42" r="5" fill="url(#avneurmain)" filter="url(#avneurglow)"><animate attributeName="r" values="3.4;6.8;3.4" dur="1.80s" repeatCount="indefinite"/></circle><circle cx="-40" cy="-12" r="5" fill="url(#avneurmain)" filter="url(#avneurglow)"><animate attributeName="r" values="3.4;6.8;3.4" dur="2.03s" repeatCount="indefinite"/></circle><circle cx="40" cy="-12" r="5" fill="url(#avneurmain)" filter="url(#avneurglow)"><animate attributeName="r" values="3.4;6.8;3.4" dur="2.26s" repeatCount="indefinite"/></circle><circle cx="-24" cy="30" r="5" fill="url(#avneurmain)" filter="url(#avneurglow)"><animate attributeName="r" values="3.4;6.8;3.4" dur="2.49s" repeatCount="indefinite"/></circle><circle cx="24" cy="30" r="5" fill="url(#avneurmain)" filter="url(#avneurglow)"><animate attributeName="r" values="3.4;6.8;3.4" dur="2.72s" repeatCount="indefinite"/></circle><circle cx="0" cy="2" r="7" fill="url(#avneurmain)" filter="url(#avneurglow)"><animate attributeName="r" values="5.4;8.8;5.4" dur="2.95s" repeatCount="indefinite"/></circle><circle cx="-46" cy="46" r="5" fill="url(#avneurmain)" filter="url(#avneurglow)"><animate attributeName="r" values="3.4;6.8;3.4" dur="3.18s" repeatCount="indefinite"/></circle><circle cx="46" cy="46" r="5" fill="url(#avneurmain)" filter="url(#avneurglow)"><animate attributeName="r" values="3.4;6.8;3.4" dur="3.41s" repeatCount="indefinite"/></circle><circle r="3.4" fill="#ffffff"><animateMotion dur="3.6s" repeatCount="indefinite" path="M0,-42 L-40,-12 L-24,30 L-46,46"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="3.6s" repeatCount="indefinite"/></circle>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avneursweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avneurmain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#00ffa3;#22d3ee;#f472b6;#00ffa3;#00ffa3" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>
