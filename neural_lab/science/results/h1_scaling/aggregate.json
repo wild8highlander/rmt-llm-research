@@ -1,0 +1,305 @@
+{
+ "experiment": "H1 scaling replication (protocol v1.0/v1.1)",
+ "generated": "2026-10-22 16:58:23",
+ "dataset_hash_common": "411eb0e9bb23bc4b",
+ "cells": [
+  {
+   "cell": "S",
+   "params": 447360,
+   "n_layers": 4,
+   "hidden_dim": 96,
+   "model_revision": "30652295516b21429826d3559f9dc8fbab0da08f96084ba99e56b85a3d500d54",
+   "tokenizer_revision": "b0e6cfeffa7e64e19784cf13289c22392f11a2c476d4b165a1550561df219712",
+   "protocol_version": "1.0",
+   "n_features": 33,
+   "dataset_hash": "411eb0e9bb23bc4b",
+   "n_observations": 565,
+   "n_tasks": 113,
+   "n_positives": 14,
+   "base_rate": 0.0248,
+   "train": {
+    "epochs_total": 40,
+    "epochs_planned_ladder": null,
+    "val_loss_final": 1.9538139013143687,
+    "val_match_rate_final": 0.5156695156695157
+   },
+   "primary": {
+    "B_confidence": {
+     "roc_auc": 0.415,
+     "ci95": [
+      0.264,
+      0.561
+     ],
+     "pr_auc": 0.024
+    },
+    "C_internal": {
+     "roc_auc": 0.542,
+     "ci95": [
+      0.394,
+      0.674
+     ],
+     "pr_auc": 0.031
+    },
+    "D_combined": {
+     "roc_auc": 0.621,
+     "ci95": [
+      0.451,
+      0.766
+     ],
+     "pr_auc": 0.038
+    },
+    "E_no_spectral": {
+     "roc_auc": 0.412,
+     "ci95": [
+      0.266,
+      0.552
+     ],
+     "pr_auc": 0.021
+    },
+    "delta_auc_D_minus_B": {
+     "point": 0.206,
+     "ci95": [
+      0.084,
+      0.319
+     ],
+     "permutation_p": 0.097,
+     "n_perm": 2000
+    },
+    "label_permutation_p_D": 1.0
+   },
+   "secondary_format_ok": {
+    "B_confidence": {
+     "roc_auc": 0.794,
+     "ci95": [
+      0.74,
+      0.845
+     ]
+    },
+    "C_internal": {
+     "roc_auc": 0.871,
+     "ci95": [
+      0.833,
+      0.905
+     ]
+    },
+    "D_combined": {
+     "roc_auc": 0.869,
+     "ci95": [
+      0.828,
+      0.907
+     ]
+    },
+    "delta_auc_D_minus_B": {
+     "point": 0.075,
+     "ci95": [
+      0.038,
+      0.115
+     ],
+     "permutation_p": 0.0025
+    }
+   }
+  },
+  {
+   "cell": "M",
+   "params": 1107712,
+   "n_layers": 6,
+   "hidden_dim": 128,
+   "model_revision": "4f5f9916524e405ce1a05e51f5092de2974b1ec03ea5e0e8dc2d78eed76f7fd1",
+   "tokenizer_revision": "dcdad7d0003cd816caa99b18ccba423f15f87d8e8e98c2cef9935c37a903a30c",
+   "protocol_version": "1.1",
+   "n_features": 37,
+   "dataset_hash": "411eb0e9bb23bc4b",
+   "n_observations": 565,
+   "n_tasks": 113,
+   "n_positives": 19,
+   "base_rate": 0.0336,
+   "train": {
+    "epochs_total": 60,
+    "epochs_planned_ladder": null,
+    "val_loss_final": 2.461394942723788,
+    "val_match_rate_final": 0.5234025234025234
+   },
+   "primary": {
+    "B_confidence": {
+     "roc_auc": 0.688,
+     "ci95": [
+      0.544,
+      0.804
+     ],
+     "pr_auc": 0.079
+    },
+    "C_internal": {
+     "roc_auc": 0.661,
+     "ci95": [
+      0.55,
+      0.763
+     ],
+     "pr_auc": 0.067
+    },
+    "D_combined": {
+     "roc_auc": 0.726,
+     "ci95": [
+      0.616,
+      0.812
+     ],
+     "pr_auc": 0.101
+    },
+    "E_no_spectral": {
+     "roc_auc": 0.576,
+     "ci95": [
+      0.434,
+      0.703
+     ],
+     "pr_auc": 0.046
+    },
+    "delta_auc_D_minus_B": {
+     "point": 0.037,
+     "ci95": [
+      -0.042,
+      0.127
+     ],
+     "permutation_p": 0.5307,
+     "n_perm": 2000
+    },
+    "label_permutation_p_D": 0.0299
+   },
+   "secondary_format_ok": {
+    "B_confidence": {
+     "roc_auc": 0.731,
+     "ci95": [
+      0.665,
+      0.799
+     ]
+    },
+    "C_internal": {
+     "roc_auc": 0.757,
+     "ci95": [
+      0.671,
+      0.838
+     ]
+    },
+    "D_combined": {
+     "roc_auc": 0.768,
+     "ci95": [
+      0.687,
+      0.843
+     ]
+    },
+    "delta_auc_D_minus_B": {
+     "point": 0.037,
+     "ci95": [
+      -0.024,
+      0.096
+     ],
+     "permutation_p": 0.3328
+    }
+   }
+  },
+  {
+   "cell": "L",
+   "params": 4055424,
+   "n_layers": 10,
+   "hidden_dim": 192,
+   "model_revision": "51f72ab690c4f0aba3641e415150285f3de0b565b4194bef99c5b49f47248727",
+   "tokenizer_revision": "dcdad7d0003cd816caa99b18ccba423f15f87d8e8e98c2cef9935c37a903a30c",
+   "protocol_version": "1.1",
+   "n_features": 45,
+   "dataset_hash": "411eb0e9bb23bc4b",
+   "n_observations": 565,
+   "n_tasks": 113,
+   "n_positives": 19,
+   "base_rate": 0.0336,
+   "train": {
+    "epochs_total": 40,
+    "epochs_planned_ladder": 150,
+    "val_loss_final": 2.3318873934256725,
+    "val_match_rate_final": 0.5852665852665853
+   },
+   "primary": {
+    "B_confidence": {
+     "roc_auc": 0.478,
+     "ci95": [
+      0.367,
+      0.612
+     ],
+     "pr_auc": 0.033
+    },
+    "C_internal": {
+     "roc_auc": 0.676,
+     "ci95": [
+      0.537,
+      0.819
+     ],
+     "pr_auc": 0.093
+    },
+    "D_combined": {
+     "roc_auc": 0.594,
+     "ci95": [
+      0.456,
+      0.747
+     ],
+     "pr_auc": 0.056
+    },
+    "E_no_spectral": {
+     "roc_auc": 0.547,
+     "ci95": [
+      0.413,
+      0.708
+     ],
+     "pr_auc": 0.044
+    },
+    "delta_auc_D_minus_B": {
+     "point": 0.116,
+     "ci95": [
+      0.012,
+      0.215
+     ],
+     "permutation_p": 0.0695,
+     "n_perm": 2000
+    },
+    "label_permutation_p_D": 0.1058
+   },
+   "secondary_format_ok": {
+    "B_confidence": {
+     "roc_auc": 0.721,
+     "ci95": [
+      0.661,
+      0.779
+     ]
+    },
+    "C_internal": {
+     "roc_auc": 0.846,
+     "ci95": [
+      0.789,
+      0.899
+     ]
+    },
+    "D_combined": {
+     "roc_auc": 0.858,
+     "ci95": [
+      0.806,
+      0.906
+     ]
+    },
+    "delta_auc_D_minus_B": {
+     "point": 0.137,
+     "ci95": [
+      0.08,
+      0.195
+     ],
+     "permutation_p": 0.004
+    }
+   }
+  }
+ ],
+ "xl_status": "XL (19,130,880 params): обучение на 2-CPU невозможно (эпоха ~20 мин, полный курс 150 эпох ~49 ч; лестница предполагает T4 GPU ~4-8 ч). Пайплайн проверен на XL-размерностях smoke-прогоном: 49 признаков (2*12+25), instrumentation/features без ошибок. Ячейка ставится в очередь до GPU-ресурса.",
+ "conclusions": {
+  "direction_replicated": "D > B по первичной цели во всех трёх ячейках (3/3)",
+  "strict_criterion": "ни в одной ячейке перестановочный p < 0.05 (S 0.097, M 0.531, L 0.070); в L бутстреп-CI исключает ноль [+0.012, +0.215]",
+  "confidence_instability": "B_confidence немонотонна по масштабу: 0.415 (S) -> 0.688 (M) -> 0.478 (L); прирост D-B частично определяется дрейфом качества baseline",
+  "internal_stability": "C_internal стабильно выше случая во всех ячейках: 0.542 / 0.661 / 0.676",
+  "spectral_ablation": "E (без спектра) слабее D во всех ячейках: 0.412 / 0.576 / 0.547 — спектральная группа несёт уникальный сигнал на всех масштабах",
+  "secondary_replicates": "format_ok: C_internal > B_confidence во всех ячейках (S 0.871 vs 0.794; M 0.757 vs 0.731; L 0.846 vs 0.721); ΔAUC(D−B) значим в S (+0.075, p=0.0025) и L (+0.137 [+0.080,+0.195], p=0.0040), не значим в M (+0.037, p=0.33) — 2/3 ячейки",
+  "h1_status": "inconclusive (направление 3/3, строгий критерий не достигнут)"
+ }
+}

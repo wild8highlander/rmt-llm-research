@@ -32,6 +32,11 @@ scaling_experiment.py — лестница масштабирования TinyGP
   SCALING_MAX_MINUTES=38             общий бюджет минут на запуск (resume)
   SCALING_EVAL_ONLY=1                пересчитать только метрики готовых ячеек
   SCALING_SMOKE=1                    2 эпохи на ячейку — проверка пайплайна
+  SCALING_SKIP_MID_EVAL=1            не оценивать недообученные ячейки
+                                     (hallucination_eval только для finished)
+  SCALING_EPOCHS_OVERRIDE=40         укороченное, но ЗАВЕРШЁННОЕ косинус-
+                                     расписание для CPU-бюджета (фиксируется
+                                     в cell_report: epochs_override)
 
 Выход:
   scaling/runs/<cell>/               веса, история, cell_report.json ячейки
@@ -80,6 +85,16 @@ REPORT_MD = os.path.join(SCRIPT_DIR, "SCALING_RESULTS.md")
 MAX_MINUTES = float(os.environ.get("SCALING_MAX_MINUTES", "38"))
 SMOKE = os.environ.get("SCALING_SMOKE", "0") == "1"
 EVAL_ONLY = os.environ.get("SCALING_EVAL_ONLY", "0") == "1"
+# Пропускать дорогую финальную оценку (hallucination_eval + teacher_forced) для
+# НЕДООбученных ячеек (прерванных по бюджету). Полезно при чанковом обучении
+# на CPU: без флага каждый resume-запуск теряет минуты на оценку промежуточных
+# весов. Финальная (finished) ячейка оценивается всегда независимо от флага.
+SKIP_MID_EVAL = os.environ.get("SCALING_SKIP_MID_EVAL", "0") == "1"
+# Переопределение числа эпох ячейки (бюджет CPU): полная лестница (150 эпох для
+# L/XL) рассчитана на GPU; на CPU можно обучать ячейку с укороченным, но
+# ЗАВЕРШЁННЫМ косинус-расписанием. Переопределение фиксируется в cell_report
+# (epochs_total) и должно быть одинаковым для сравниваемых ячеек.
+EPOCHS_OVERRIDE = os.environ.get("SCALING_EPOCHS_OVERRIDE", "")
 
 # ---------------------------------------------------------------------------
 # Лестница размеров (TinyGPT v3, NumPy-only). S = baseline 447K,
@@ -118,8 +133,11 @@ def make_config(size: str) -> TinyGPTV3Config:
 
 def make_train_cfg(size: str) -> TrainConfig:
     d = LADDER[size]
+    epochs = d["epochs"]
+    if EPOCHS_OVERRIDE:
+        epochs = int(EPOCHS_OVERRIDE)
     return TrainConfig(
-        epochs=2 if SMOKE else d["epochs"], batch_size=8, grad_accum_steps=2,
+        epochs=2 if SMOKE else epochs, batch_size=8, grad_accum_steps=2,
         max_lr=d["max_lr"], warmup_ratio=0.06, min_lr_ratio=0.05,
         weight_decay=0.01, eval_interval=1, eval_steps=40,
         early_stopping_patience=0, seed=42, verbose=False,
@@ -296,6 +314,9 @@ def make_seqs(ids, seq_len=64):
 
 
 def _print_cell_result(cell, hall):
+    if hall is None:
+        print(f"[{cell}] оценка галлюцинаций пропущена (промежуточные веса)")
+        return
     h, hi = hall["heldout"], hall["indist"]
     print(f"[{cell}] HELD-OUT: numeric={h['numeric_score']:.1%} format={h['format_score']:.1%} "
           f"| уверенные галлюцинации={h['confident_hallucination_rate']:.1%} "
@@ -448,8 +469,13 @@ def run_cell(arm: str, size: str, tok) -> dict:
             break
 
     # --- финальная оценка галлюцинаций (на ИСТИННОМ ground truth) ---
-    hall = hallucination_eval(model, tok)
-    tf, tf_skipped = teacher_forced(model, tok)
+    # для прерванной по бюджету ячейки оценка может быть пропущена
+    # (SCALING_SKIP_MID_EVAL=1) — она всё равно будет повторена после resume
+    if interrupted and SKIP_MID_EVAL:
+        hall, tf, tf_skipped = None, None, 0.0
+    else:
+        hall = hallucination_eval(model, tok)
+        tf, tf_skipped = teacher_forced(model, tok)
     # finished = дошли до конца эпох без прерывания по времени
     finished = not interrupted
     final_val = history["val_losses"][-1] if history["val_losses"] else base_val_loss
@@ -459,8 +485,12 @@ def run_cell(arm: str, size: str, tok) -> dict:
         "params": cfg.params_count,
         "size_note": LADDER[size]["note"],
         "epochs_total": train_cfg.epochs,
+        "epochs_planned_ladder": LADDER[size]["epochs"],
+        "epochs_override": (int(EPOCHS_OVERRIDE) if EPOCHS_OVERRIDE else None),
         "epochs_done": len(history["losses"]),
         "finished": finished,
+        "interrupted_by_budget": interrupted,
+        "skip_mid_eval": bool(interrupted and SKIP_MID_EVAL),
         "train_corpus": os.path.basename(train_tr),
         "val_loss_baseline": base_val_loss,
         "val_loss_final": final_val,

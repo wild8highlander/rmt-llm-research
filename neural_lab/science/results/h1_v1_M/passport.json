@@ -1,0 +1,727 @@
+{
+ "experiment_id": "error_prediction_rmt_v1",
+ "hypothesis_id": "H1",
+ "protocol_version": "1.1",
+ "seed": 42,
+ "model_revision": "4f5f9916524e405ce1a05e51f5092de2974b1ec03ea5e0e8dc2d78eed76f7fd1",
+ "tokenizer_revision": "dcdad7d0003cd816caa99b18ccba423f15f87d8e8e98c2cef9935c37a903a30c",
+ "model_config": {
+  "vocab_size": 512,
+  "hidden_dim": 128,
+  "n_layers": 6,
+  "n_heads": 8,
+  "n_kv_heads": 2,
+  "max_seq_len": 64,
+  "mlp_ratio": 4,
+  "use_layernorm": true,
+  "use_mlp": true,
+  "activation": "gelu",
+  "use_rope": true,
+  "rope_base": 10000.0,
+  "mixed_precision": false,
+  "gradient_checkpointing": false,
+  "weight_tying": true,
+  "label_smoothing": 0.1,
+  "grad_clip_norm": 1.0,
+  "dropout": 0.1,
+  "init_scale": 0.02,
+  "seed": 42
+ },
+ "dataset_hash": "411eb0e9bb23bc4b02d6238e76e3c26cba1e021b3afa96e47c56086e2d65c8f8",
+ "corpus_train_sha256": "d741c491234bbb833967f007650271ae324ad555a5ae56b716f82b13d80be5cf",
+ "split_scheme": "grouped_kfold_v1",
+ "split_params": {
+  "k": 5,
+  "stratify": "family_band",
+  "seed": 42
+ },
+ "feature_groups": {
+  "confidence": [
+   "ce_first",
+   "ce_mean",
+   "ppl_answer",
+   "maxprob_first",
+   "maxprob_mean",
+   "entropy_mean",
+   "margin_first"
+  ],
+  "spectral": [
+   "gap_ratio_L0",
+   "gap_ratio_L1",
+   "gap_ratio_L2",
+   "gap_ratio_L3",
+   "gap_ratio_L4",
+   "gap_ratio_L5",
+   "effrank_L0",
+   "effrank_L1",
+   "effrank_L2",
+   "effrank_L3",
+   "effrank_L4",
+   "effrank_L5",
+   "gap_ratio_mean",
+   "gap_ratio_last",
+   "effrank_mean",
+   "effrank_last",
+   "participation_mean",
+   "ncrit_free_last",
+   "lambda_max_last"
+  ],
+  "temporal": [
+   "lam_traj_slope",
+   "lam_traj_mean",
+   "lam_traj_std",
+   "ent_traj_slope",
+   "ent_traj_delta",
+   "ce_traj_slope",
+   "ce_traj_std"
+  ],
+  "geometry": [
+   "rep_norm_mean",
+   "rep_norm_last",
+   "drift_mean",
+   "drift_last"
+  ],
+  "internal": [
+   "gap_ratio_L0",
+   "gap_ratio_L1",
+   "gap_ratio_L2",
+   "gap_ratio_L3",
+   "gap_ratio_L4",
+   "gap_ratio_L5",
+   "effrank_L0",
+   "effrank_L1",
+   "effrank_L2",
+   "effrank_L3",
+   "effrank_L4",
+   "effrank_L5",
+   "gap_ratio_mean",
+   "gap_ratio_last",
+   "effrank_mean",
+   "effrank_last",
+   "participation_mean",
+   "ncrit_free_last",
+   "lambda_max_last",
+   "lam_traj_slope",
+   "lam_traj_mean",
+   "lam_traj_std",
+   "ent_traj_slope",
+   "ent_traj_delta",
+   "ce_traj_slope",
+   "ce_traj_std",
+   "rep_norm_mean",
+   "rep_norm_last",
+   "drift_mean",
+   "drift_last"
+  ],
+  "combined": [
+   "ce_first",
+   "ce_mean",
+   "ppl_answer",
+   "maxprob_first",
+   "maxprob_mean",
+   "entropy_mean",
+   "margin_first",
+   "gap_ratio_L0",
+   "gap_ratio_L1",
+   "gap_ratio_L2",
+   "gap_ratio_L3",
+   "gap_ratio_L4",
+   "gap_ratio_L5",
+   "effrank_L0",
+   "effrank_L1",
+   "effrank_L2",
+   "effrank_L3",
+   "effrank_L4",
+   "effrank_L5",
+   "gap_ratio_mean",
+   "gap_ratio_last",
+   "effrank_mean",
+   "effrank_last",
+   "participation_mean",
+   "ncrit_free_last",
+   "lambda_max_last",
+   "lam_traj_slope",
+   "lam_traj_mean",
+   "lam_traj_std",
+   "ent_traj_slope",
+   "ent_traj_delta",
+   "ce_traj_slope",
+   "ce_traj_std",
+   "rep_norm_mean",
+   "rep_norm_last",
+   "drift_mean",
+   "drift_last"
+  ]
+ },
+ "predictors": [
+  {
+   "name": "A_constant_rate",
+   "features": null,
+   "l2": 1.0,
+   "class": "ConstantRateBaseline"
+  },
+  {
+   "name": "A2_family_rate",
+   "features": null,
+   "l2": 1.0,
+   "class": "ConstantRateBaseline"
+  },
+  {
+   "name": "B_confidence",
+   "features": [
+    "ce_first",
+    "ce_mean",
+    "ppl_answer",
+    "maxprob_first",
+    "maxprob_mean",
+    "entropy_mean",
+    "margin_first"
+   ],
+   "l2": 1.0,
+   "class": "LogisticRegression"
+  },
+  {
+   "name": "C_internal",
+   "features": [
+    "gap_ratio_L0",
+    "gap_ratio_L1",
+    "gap_ratio_L2",
+    "gap_ratio_L3",
+    "gap_ratio_L4",
+    "gap_ratio_L5",
+    "effrank_L0",
+    "effrank_L1",
+    "effrank_L2",
+    "effrank_L3",
+    "effrank_L4",
+    "effrank_L5",
+    "gap_ratio_mean",
+    "gap_ratio_last",
+    "effrank_mean",
+    "effrank_last",
+    "participation_mean",
+    "ncrit_free_last",
+    "lambda_max_last",
+    "lam_traj_slope",
+    "lam_traj_mean",
+    "lam_traj_std",
+    "ent_traj_slope",
+    "ent_traj_delta",
+    "ce_traj_slope",
+    "ce_traj_std",
+    "rep_norm_mean",
+    "rep_norm_last",
+    "drift_mean",
+    "drift_last"
+   ],
+   "l2": 1.0,
+   "class": "LogisticRegression"
+  },
+  {
+   "name": "D_combined",
+   "features": [
+    "ce_first",
+    "ce_mean",
+    "ppl_answer",
+    "maxprob_first",
+    "maxprob_mean",
+    "entropy_mean",
+    "margin_first",
+    "gap_ratio_L0",
+    "gap_ratio_L1",
+    "gap_ratio_L2",
+    "gap_ratio_L3",
+    "gap_ratio_L4",
+    "gap_ratio_L5",
+    "effrank_L0",
+    "effrank_L1",
+    "effrank_L2",
+    "effrank_L3",
+    "effrank_L4",
+    "effrank_L5",
+    "gap_ratio_mean",
+    "gap_ratio_last",
+    "effrank_mean",
+    "effrank_last",
+    "participation_mean",
+    "ncrit_free_last",
+    "lambda_max_last",
+    "lam_traj_slope",
+    "lam_traj_mean",
+    "lam_traj_std",
+    "ent_traj_slope",
+    "ent_traj_delta",
+    "ce_traj_slope",
+    "ce_traj_std",
+    "rep_norm_mean",
+    "rep_norm_last",
+    "drift_mean",
+    "drift_last"
+   ],
+   "l2": 1.0,
+   "class": "LogisticRegression"
+  },
+  {
+   "name": "E_combined_minus_spectral",
+   "features": [
+    "ce_first",
+    "ce_mean",
+    "ppl_answer",
+    "maxprob_first",
+    "maxprob_mean",
+    "entropy_mean",
+    "margin_first",
+    "lam_traj_slope",
+    "lam_traj_mean",
+    "lam_traj_std",
+    "ent_traj_slope",
+    "ent_traj_delta",
+    "ce_traj_slope",
+    "ce_traj_std",
+    "rep_norm_mean",
+    "rep_norm_last",
+    "drift_mean",
+    "drift_last"
+   ],
+   "l2": 1.0,
+   "class": "LogisticRegression"
+  }
+ ],
+ "primary_metric": "roc_auc",
+ "tolerance_grid": [
+  0.15,
+  0.25,
+  0.4
+ ],
+ "generation": {
+  "temperature": 0.8,
+  "n_tempered": 4,
+  "n_greedy": 1,
+  "max_new_tokens": 28
+ },
+ "environment": {
+  "python": "3.12.15",
+  "numpy": "2.1.3",
+  "platform": "Linux-5.10.134-013.15.kangaroo.al8.x86_64-x86_64-with-glibc2.41",
+  "machine": "x86_64"
+ },
+ "exclusions": [
+  {
+   "prompt": "ks_n_crit_correction(n=1024)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_corrected_gamma(n=100)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=2.0, T=300.0, S=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_fluctuation_scaling(N=1000, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_fluctuation_scaling(N=500, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "autoregressive_irreversibility(n_tokens=64)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "cognitive_mode(f=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_signal_separation(theta=0.7, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_gue_mean_spacing(n=10)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=2.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=1.0, gamma=1.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=-1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_order_from_separation(separation=0.01)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_gue_mean_spacing(n=20)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=200.0, S=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=2.0, gamma=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "rg_fixed_point(initial_lambda=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "cognitive_mode(f=-1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "cognitive_mode(f=0.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.5, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=300.0, S=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_sensitivity(epsilon=1e-10, order=8)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=3.0, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_relative_correction(n=256)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_rounding_sensitivity(n=4, float64)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "stieltjes_transform(MP-eigvals, z=3.0+0.5i)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=2.0, T=200.0, S=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=1.0, gamma=0.2)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=-2.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=0.5, gamma=1.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=2.0, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_signal_separation(theta=0.5, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_correction_series(n=64, max_order=3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=2.0, T=300.0, S=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=2.0, gamma=0.3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "cognitive_mode(f=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.3, beta=0.5, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.2, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_corrected_gamma(n=200)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.2, q=0.25)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=2.0, gamma=0.7)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=1.0, gamma=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_quadratic_acceleration(mu_eff=0.4)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "rg_flow_lambda(initial_lambda=1.0, layer=5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_relative_correction(n=64)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=1.5, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "rg_flow_lambda(initial_lambda=1.0, layer=12)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.4, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_derivative(f=const 1.0, t=[0.500000..5.000000], beta=0.7)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_corrected_gamma(n=50)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.3, beta=0.6, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=0.5, gamma=0.3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_corrected_gamma(n=20)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_order_from_separation(separation=0.001)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_critical_theta(q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_signal_separation(theta=0.3, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=3.0, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_derivative(f=const 1.0, t=[0.500000..5.000000], beta=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.5, q=0.25)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=0.5, gamma=0.2)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.2, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=1.0, gamma=0.7)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_convolution_multiplicative(MP-sample, itself)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_order_from_separation(separation=0.1)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=2.0, T=200.0, S=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=1.0, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=0.5, gamma=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "attention_phase_spectrum(16x16 attn)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_derivative(f=const 1.0, t=[0.500000..5.000000], beta=0.4)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_sensitivity(epsilon=1e-10, order=2)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_r_transform(z=0.5+0.1i, q=0.6)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "autoregressive_irreversibility(n_tokens=512)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.5, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "rg_flow_lambda(initial_lambda=0.5, layer=12)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_skewness()",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=0.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_r_transform(z=0.5+0.1i, q=0.4)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=200.0, S=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_rounding_sensitivity(n=8, float64)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "spectral_entropy(eigvals=[0.1, 1.0, 10.0])",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_critical_theta(q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=1.0, gamma=0.3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=300.0, S=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=2.0, gamma=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=1.0, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "spectral_entropy(eigvals=[1.0, 1.0, 1.0])",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=1.5, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "landauer_cost(n_bits=1, T=300)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=-3.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_quadratic_acceleration(mu_eff=0.2)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=2.0, gamma=2.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_n_crit_correction(n=256)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=300.0, S=2.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.5, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "r_transform_series(Catalan moments, n_terms=4)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.6, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "spectral_entropy(eigvals=[0.5, 1.0, 2.0])",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_critical_theta(q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_relative_correction(n=1024)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "landauer_cost(n_bits=100, T=300)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=0.5, gamma=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_correction_series(n=256, max_order=3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_mean()",
+   "reason": "duplicate_prompt_across_bands",
+   "dropped_band": "far"
+  }
+ ]
+}

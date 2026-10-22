@@ -1,0 +1,1874 @@
+{
+ "tasks": [
+  {
+   "task_id": "indist_000",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.2, sigma2=2.0)",
+   "ground_truth": " => lambda_minus = 0.611146, lambda_plus = 4.188854",
+   "params": {
+    "q": 0.2,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_001",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.5, sigma2=0.5)",
+   "ground_truth": " => lambda_minus = 0.042893, lambda_plus = 1.457107",
+   "params": {
+    "q": 0.5,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_002",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.3, sigma2=0.5)",
+   "ground_truth": " => lambda_minus = 0.102277, lambda_plus = 1.197723",
+   "params": {
+    "q": 0.3,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_003",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.2, q=0.25, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 3.380000",
+   "params": {
+    "theta": 1.2,
+    "q": 0.25,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_004",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.2, beta=0.6, c=1.0)",
+   "ground_truth": " => <T_crit> = 14.620089",
+   "params": {
+    "mu_eff": 0.2,
+    "beta": 0.6,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_005",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.5, q=0.9, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 3.500000",
+   "params": {
+    "theta": 1.5,
+    "q": 0.9,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_006",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.0, q=0.5, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 6.000000",
+   "params": {
+    "theta": 1.0,
+    "q": 0.5,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_007",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.2, q=0.9, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 1.898683",
+   "params": {
+    "theta": 0.2,
+    "q": 0.9,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_008",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.2, q=0.5, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 2.914214",
+   "params": {
+    "theta": 0.2,
+    "q": 0.5,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_009",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.8, q=0.25, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 7.120000",
+   "params": {
+    "theta": 0.8,
+    "q": 0.25,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_010",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.8, q=0.9, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 3.797367",
+   "params": {
+    "theta": 0.8,
+    "q": 0.9,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_011",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.5, q=0.5, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 11.000000",
+   "params": {
+    "theta": 1.5,
+    "q": 0.5,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_012",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.6, q=0.5, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 1.457107",
+   "params": {
+    "theta": 0.6,
+    "q": 0.5,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_013",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.2, beta=0.4, c=1.0)",
+   "ground_truth": " => <T_crit> = 55.901699",
+   "params": {
+    "mu_eff": 0.2,
+    "beta": 0.4,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_014",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.0, q=0.25, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 10.000000",
+   "params": {
+    "theta": 1.0,
+    "q": 0.25,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_015",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.8, q=0.9, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 7.594733",
+   "params": {
+    "theta": 0.8,
+    "q": 0.9,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_016",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.2, q=0.25, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 2.250000",
+   "params": {
+    "theta": 0.2,
+    "q": 0.25,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_017",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.4, q=0.9, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 7.594733",
+   "params": {
+    "theta": 0.4,
+    "q": 0.9,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_018",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.0, q=0.5, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 3.000000",
+   "params": {
+    "theta": 1.0,
+    "q": 0.5,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_019",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.1, sigma2=1.0)",
+   "ground_truth": " => lambda_minus = 0.467544, lambda_plus = 1.732456",
+   "params": {
+    "q": 0.1,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_020",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.2, sigma2=1.0)",
+   "ground_truth": " => lambda_minus = 0.305573, lambda_plus = 2.094427",
+   "params": {
+    "q": 0.2,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_021",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.6, q=0.5, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 2.914214",
+   "params": {
+    "theta": 0.6,
+    "q": 0.5,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_022",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.5, q=0.9, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 1.750000",
+   "params": {
+    "theta": 1.5,
+    "q": 0.9,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_023",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.2, q=0.9, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 3.797367",
+   "params": {
+    "theta": 0.2,
+    "q": 0.9,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_024",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.5, q=0.9, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 7.000000",
+   "params": {
+    "theta": 1.5,
+    "q": 0.9,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_025",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.5, q=0.25, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 20.000000",
+   "params": {
+    "theta": 1.5,
+    "q": 0.25,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_026",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.6, q=0.9, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 7.594733",
+   "params": {
+    "theta": 0.6,
+    "q": 0.9,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_027",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.4, q=0.9, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 3.797367",
+   "params": {
+    "theta": 0.4,
+    "q": 0.9,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_028",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.2, q=0.9, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 1.300000",
+   "params": {
+    "theta": 1.2,
+    "q": 0.9,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_029",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.5, sigma2=1.0)",
+   "ground_truth": " => lambda_minus = 0.085786, lambda_plus = 2.914214",
+   "params": {
+    "q": 0.5,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_030",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.8, q=0.25, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 3.560000",
+   "params": {
+    "theta": 0.8,
+    "q": 0.25,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_031",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.3, sigma2=1.0)",
+   "ground_truth": " => lambda_minus = 0.204555, lambda_plus = 2.395445",
+   "params": {
+    "q": 0.3,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_032",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.2, q=0.25, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 4.500000",
+   "params": {
+    "theta": 0.2,
+    "q": 0.25,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_033",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.8, q=0.5, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 4.560000",
+   "params": {
+    "theta": 0.8,
+    "q": 0.5,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_034",
+   "family": "tracy_widom_mean",
+   "band": "indist",
+   "prompt": "tracy_widom_mean()",
+   "ground_truth": " => E[F2] = -1.771100",
+   "params": {},
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_035",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.5, q=0.25, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 10.000000",
+   "params": {
+    "theta": 1.5,
+    "q": 0.25,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_036",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=1.0, sigma2=1.0)",
+   "ground_truth": " => lambda_minus = 0.000000, lambda_plus = 4.000000",
+   "params": {
+    "q": 1.0,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_037",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.8, q=0.9, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 1.898683",
+   "params": {
+    "theta": 0.8,
+    "q": 0.9,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_038",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.0, q=0.25, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 5.000000",
+   "params": {
+    "theta": 1.0,
+    "q": 0.25,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_039",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.1, beta=0.6, c=1.0)",
+   "ground_truth": " => <T_crit> = 46.415888",
+   "params": {
+    "mu_eff": 0.1,
+    "beta": 0.6,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_040",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.2, beta=0.5, c=1.0)",
+   "ground_truth": " => <T_crit> = 25.000000",
+   "params": {
+    "mu_eff": 0.2,
+    "beta": 0.5,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_041",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.05, beta=0.3, c=1.0)",
+   "ground_truth": " => <T_crit> = 21715.340933",
+   "params": {
+    "mu_eff": 0.05,
+    "beta": 0.3,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_042",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.1, sigma2=0.5)",
+   "ground_truth": " => lambda_minus = 0.233772, lambda_plus = 0.866228",
+   "params": {
+    "q": 0.1,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_043",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.1, beta=0.3, c=1.0)",
+   "ground_truth": " => <T_crit> = 2154.434690",
+   "params": {
+    "mu_eff": 0.1,
+    "beta": 0.3,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_044",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.2, beta=0.7, c=1.0)",
+   "ground_truth": " => <T_crit> = 9.966177",
+   "params": {
+    "mu_eff": 0.2,
+    "beta": 0.7,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_045",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.1, sigma2=2.0)",
+   "ground_truth": " => lambda_minus = 0.935089, lambda_plus = 3.464911",
+   "params": {
+    "q": 0.1,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_046",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.6, q=0.25, sigma2=2.0)",
+   "ground_truth": " => lambda_max = 4.880000",
+   "params": {
+    "theta": 0.6,
+    "q": 0.25,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_047",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.5, q=0.25, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 5.000000",
+   "params": {
+    "theta": 1.5,
+    "q": 0.25,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_048",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.05, beta=0.4, c=1.0)",
+   "ground_truth": " => <T_crit> = 1788.854382",
+   "params": {
+    "mu_eff": 0.05,
+    "beta": 0.4,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_049",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.6, q=0.25, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 2.440000",
+   "params": {
+    "theta": 0.6,
+    "q": 0.25,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_050",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.05, beta=0.7, c=1.0)",
+   "ground_truth": " => <T_crit> = 72.212816",
+   "params": {
+    "mu_eff": 0.05,
+    "beta": 0.7,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_051",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.4, q=0.25, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 2.250000",
+   "params": {
+    "theta": 0.4,
+    "q": 0.25,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_052",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.5, q=0.5, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 5.500000",
+   "params": {
+    "theta": 1.5,
+    "q": 0.5,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_053",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.0, q=0.25, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 2.500000",
+   "params": {
+    "theta": 1.0,
+    "q": 0.25,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_054",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.3, sigma2=2.0)",
+   "ground_truth": " => lambda_minus = 0.409110, lambda_plus = 4.790890",
+   "params": {
+    "q": 0.3,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_055",
+   "family": "mp_bounds",
+   "band": "indist",
+   "prompt": "mp_bounds(q=0.7, sigma2=2.0)",
+   "ground_truth": " => lambda_minus = 0.053360, lambda_plus = 6.746640",
+   "params": {
+    "q": 0.7,
+    "sigma2": 2.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_056",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=1.0, q=0.5, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 1.500000",
+   "params": {
+    "theta": 1.0,
+    "q": 0.5,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_057",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.4, q=0.5, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 1.457107",
+   "params": {
+    "theta": 0.4,
+    "q": 0.5,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_058",
+   "family": "caputo_mean_collapse_time",
+   "band": "indist",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.1, beta=0.5, c=1.0)",
+   "ground_truth": " => <T_crit> = 100.000000",
+   "params": {
+    "mu_eff": 0.1,
+    "beta": 0.5,
+    "c": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_059",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.6, q=0.9, sigma2=1.0)",
+   "ground_truth": " => lambda_max = 3.797367",
+   "params": {
+    "theta": 0.6,
+    "q": 0.9,
+    "sigma2": 1.0
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "indist_060",
+   "family": "bbp_lambda_max",
+   "band": "indist",
+   "prompt": "bbp_lambda_max(theta=0.6, q=0.25, sigma2=0.5)",
+   "ground_truth": " => lambda_max = 1.220000",
+   "params": {
+    "theta": 0.6,
+    "q": 0.25,
+    "sigma2": 0.5
+   },
+   "in_dist": true
+  },
+  {
+   "task_id": "near_000",
+   "family": "bbp_lambda_max",
+   "band": "near",
+   "prompt": "bbp_lambda_max(theta=0.624000, q=0.260000, sigma2=0.520000)",
+   "ground_truth": " => lambda_max = 1.298752",
+   "params": {
+    "theta": 0.624,
+    "q": 0.26,
+    "sigma2": 0.52
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_001",
+   "family": "bbp_lambda_max",
+   "band": "near",
+   "prompt": "bbp_lambda_max(theta=1.440000, q=0.864000, sigma2=1.920000)",
+   "ground_truth": " => lambda_max = 6.528000",
+   "params": {
+    "theta": 1.44,
+    "q": 0.864,
+    "sigma2": 1.92
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_002",
+   "family": "mp_bounds",
+   "band": "near",
+   "prompt": "mp_bounds(q=0.535000, sigma2=0.535000)",
+   "ground_truth": " => lambda_minus = 0.038587, lambda_plus = 1.603863",
+   "params": {
+    "q": 0.535,
+    "sigma2": 0.535
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_003",
+   "family": "bbp_lambda_max",
+   "band": "near",
+   "prompt": "bbp_lambda_max(theta=1.040000, q=0.260000, sigma2=1.040000)",
+   "ground_truth": " => lambda_max = 5.366400",
+   "params": {
+    "theta": 1.04,
+    "q": 0.26,
+    "sigma2": 1.04
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_004",
+   "family": "bbp_lambda_max",
+   "band": "near",
+   "prompt": "bbp_lambda_max(theta=0.576000, q=0.864000, sigma2=1.920000)",
+   "ground_truth": " => lambda_max = 7.148221",
+   "params": {
+    "theta": 0.576,
+    "q": 0.864,
+    "sigma2": 1.92
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_005",
+   "family": "bbp_lambda_max",
+   "band": "near",
+   "prompt": "bbp_lambda_max(theta=1.605000, q=0.963000, sigma2=1.070000)",
+   "ground_truth": " => lambda_max = 3.932250",
+   "params": {
+    "theta": 1.605,
+    "q": 0.963,
+    "sigma2": 1.07
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_006",
+   "family": "mp_bounds",
+   "band": "near",
+   "prompt": "mp_bounds(q=0.104000, sigma2=0.520000)",
+   "ground_truth": " => lambda_minus = 0.238690, lambda_plus = 0.909470",
+   "params": {
+    "q": 0.104,
+    "sigma2": 0.52
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_007",
+   "family": "bbp_lambda_max",
+   "band": "near",
+   "prompt": "bbp_lambda_max(theta=0.960000, q=0.240000, sigma2=1.920000)",
+   "ground_truth": " => lambda_max = 9.292800",
+   "params": {
+    "theta": 0.96,
+    "q": 0.24,
+    "sigma2": 1.92
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_008",
+   "family": "mp_bounds",
+   "band": "near",
+   "prompt": "mp_bounds(q=0.749000, sigma2=2.140000)",
+   "ground_truth": " => lambda_minus = 0.038743, lambda_plus = 7.446977",
+   "params": {
+    "q": 0.749,
+    "sigma2": 2.14
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_009",
+   "family": "caputo_mean_collapse_time",
+   "band": "near",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.052000, beta=0.416000, c=1.040000)",
+   "ground_truth": " => <T_crit> = 1269.298490",
+   "params": {
+    "mu_eff": 0.052,
+    "beta": 0.416,
+    "c": 1.04
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_010",
+   "family": "bbp_lambda_max",
+   "band": "near",
+   "prompt": "bbp_lambda_max(theta=0.576000, q=0.480000, sigma2=0.480000)",
+   "ground_truth": " => lambda_max = 1.375508",
+   "params": {
+    "theta": 0.576,
+    "q": 0.48,
+    "sigma2": 0.48
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_011",
+   "family": "bbp_lambda_max",
+   "band": "near",
+   "prompt": "bbp_lambda_max(theta=0.642000, q=0.963000, sigma2=1.070000)",
+   "ground_truth": " => lambda_max = 4.200447",
+   "params": {
+    "theta": 0.642,
+    "q": 0.963,
+    "sigma2": 1.07
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_012",
+   "family": "bbp_lambda_max",
+   "band": "near",
+   "prompt": "bbp_lambda_max(theta=0.624000, q=0.260000, sigma2=1.040000)",
+   "ground_truth": " => lambda_max = 2.597504",
+   "params": {
+    "theta": 0.624,
+    "q": 0.26,
+    "sigma2": 1.04
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_013",
+   "family": "mp_bounds",
+   "band": "near",
+   "prompt": "mp_bounds(q=0.288000, sigma2=0.480000)",
+   "ground_truth": " => lambda_minus = 0.103050, lambda_plus = 1.133430",
+   "params": {
+    "q": 0.288,
+    "sigma2": 0.48
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_014",
+   "family": "mp_bounds",
+   "band": "near",
+   "prompt": "mp_bounds(q=0.107000, sigma2=2.140000)",
+   "ground_truth": " => lambda_minus = 0.968955, lambda_plus = 3.769005",
+   "params": {
+    "q": 0.107,
+    "sigma2": 2.14
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "near_015",
+   "family": "caputo_mean_collapse_time",
+   "band": "near",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.208000, beta=0.416000, c=1.040000)",
+   "ground_truth": " => <T_crit> = 45.321489",
+   "params": {
+    "mu_eff": 0.208,
+    "beta": 0.416,
+    "c": 1.04
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_000",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.15, sigma2=0.75)",
+   "ground_truth": " => lambda_minus = 0.281552, lambda_plus = 1.443448",
+   "params": {
+    "q": 0.15,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_001",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.15, sigma2=1.5)",
+   "ground_truth": " => lambda_minus = 0.563105, lambda_plus = 2.886895",
+   "params": {
+    "q": 0.15,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_002",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.35, sigma2=0.75)",
+   "ground_truth": " => lambda_minus = 0.125088, lambda_plus = 1.899912",
+   "params": {
+    "q": 0.35,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_003",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.35, sigma2=1.5)",
+   "ground_truth": " => lambda_minus = 0.250176, lambda_plus = 3.799824",
+   "params": {
+    "q": 0.35,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_004",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.55, sigma2=0.75)",
+   "ground_truth": " => lambda_minus = 0.050070, lambda_plus = 2.274930",
+   "params": {
+    "q": 0.55,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_005",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.55, sigma2=1.5)",
+   "ground_truth": " => lambda_minus = 0.100140, lambda_plus = 4.549860",
+   "params": {
+    "q": 0.55,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_006",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.65, sigma2=0.75)",
+   "ground_truth": " => lambda_minus = 0.028161, lambda_plus = 2.446839",
+   "params": {
+    "q": 0.65,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_007",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.65, sigma2=1.5)",
+   "ground_truth": " => lambda_minus = 0.056323, lambda_plus = 4.893677",
+   "params": {
+    "q": 0.65,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_008",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.85, sigma2=0.75)",
+   "ground_truth": " => lambda_minus = 0.004568, lambda_plus = 2.770432",
+   "params": {
+    "q": 0.85,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_009",
+   "family": "mp_bounds",
+   "band": "far",
+   "prompt": "mp_bounds(q=0.85, sigma2=1.5)",
+   "ground_truth": " => lambda_minus = 0.009137, lambda_plus = 5.540863",
+   "params": {
+    "q": 0.85,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_010",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.3, q=0.35, sigma2=0.75)",
+   "ground_truth": " => lambda_max = 1.899912",
+   "params": {
+    "theta": 0.3,
+    "q": 0.35,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_011",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.3, q=0.35, sigma2=1.5)",
+   "ground_truth": " => lambda_max = 3.799824",
+   "params": {
+    "theta": 0.3,
+    "q": 0.35,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_012",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.3, q=0.55, sigma2=0.75)",
+   "ground_truth": " => lambda_max = 2.274930",
+   "params": {
+    "theta": 0.3,
+    "q": 0.55,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_013",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.3, q=0.55, sigma2=1.5)",
+   "ground_truth": " => lambda_max = 4.549860",
+   "params": {
+    "theta": 0.3,
+    "q": 0.55,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_014",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.5, q=0.35, sigma2=0.75)",
+   "ground_truth": " => lambda_max = 1.899912",
+   "params": {
+    "theta": 0.5,
+    "q": 0.35,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_015",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.5, q=0.35, sigma2=1.5)",
+   "ground_truth": " => lambda_max = 3.799824",
+   "params": {
+    "theta": 0.5,
+    "q": 0.35,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_016",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.5, q=0.55, sigma2=0.75)",
+   "ground_truth": " => lambda_max = 2.274930",
+   "params": {
+    "theta": 0.5,
+    "q": 0.55,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_017",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.5, q=0.55, sigma2=1.5)",
+   "ground_truth": " => lambda_max = 4.549860",
+   "params": {
+    "theta": 0.5,
+    "q": 0.55,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_018",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.9, q=0.35, sigma2=0.75)",
+   "ground_truth": " => lambda_max = 2.485714",
+   "params": {
+    "theta": 0.9,
+    "q": 0.35,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_019",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.9, q=0.35, sigma2=1.5)",
+   "ground_truth": " => lambda_max = 4.971429",
+   "params": {
+    "theta": 0.9,
+    "q": 0.35,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_020",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.9, q=0.55, sigma2=0.75)",
+   "ground_truth": " => lambda_max = 1.854545",
+   "params": {
+    "theta": 0.9,
+    "q": 0.55,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_021",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=0.9, q=0.55, sigma2=1.5)",
+   "ground_truth": " => lambda_max = 3.709091",
+   "params": {
+    "theta": 0.9,
+    "q": 0.55,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_022",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=1.1, q=0.35, sigma2=0.75)",
+   "ground_truth": " => lambda_max = 3.342857",
+   "params": {
+    "theta": 1.1,
+    "q": 0.35,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_023",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=1.1, q=0.35, sigma2=1.5)",
+   "ground_truth": " => lambda_max = 6.685714",
+   "params": {
+    "theta": 1.1,
+    "q": 0.35,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_024",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=1.1, q=0.55, sigma2=0.75)",
+   "ground_truth": " => lambda_max = 2.400000",
+   "params": {
+    "theta": 1.1,
+    "q": 0.55,
+    "sigma2": 0.75
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_025",
+   "family": "bbp_lambda_max",
+   "band": "far",
+   "prompt": "bbp_lambda_max(theta=1.1, q=0.55, sigma2=1.5)",
+   "ground_truth": " => lambda_max = 4.800000",
+   "params": {
+    "theta": 1.1,
+    "q": 0.55,
+    "sigma2": 1.5
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_026",
+   "family": "caputo_mean_collapse_time",
+   "band": "far",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.07, beta=0.35, c=1.0)",
+   "ground_truth": " => <T_crit> = 1993.975812",
+   "params": {
+    "mu_eff": 0.07,
+    "beta": 0.35,
+    "c": 1.0
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_027",
+   "family": "caputo_mean_collapse_time",
+   "band": "far",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.07, beta=0.45, c=1.0)",
+   "ground_truth": " => <T_crit> = 368.509595",
+   "params": {
+    "mu_eff": 0.07,
+    "beta": 0.45,
+    "c": 1.0
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_028",
+   "family": "caputo_mean_collapse_time",
+   "band": "far",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.07, beta=0.65, c=1.0)",
+   "ground_truth": " => <T_crit> = 59.809786",
+   "params": {
+    "mu_eff": 0.07,
+    "beta": 0.65,
+    "c": 1.0
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_029",
+   "family": "caputo_mean_collapse_time",
+   "band": "far",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.13, beta=0.35, c=1.0)",
+   "ground_truth": " => <T_crit> = 340.087306",
+   "params": {
+    "mu_eff": 0.13,
+    "beta": 0.35,
+    "c": 1.0
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_030",
+   "family": "caputo_mean_collapse_time",
+   "band": "far",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.13, beta=0.45, c=1.0)",
+   "ground_truth": " => <T_crit> = 93.113955",
+   "params": {
+    "mu_eff": 0.13,
+    "beta": 0.45,
+    "c": 1.0
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_031",
+   "family": "caputo_mean_collapse_time",
+   "band": "far",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.13, beta=0.65, c=1.0)",
+   "ground_truth": " => <T_crit> = 23.076188",
+   "params": {
+    "mu_eff": 0.13,
+    "beta": 0.65,
+    "c": 1.0
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_032",
+   "family": "caputo_mean_collapse_time",
+   "band": "far",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.25, beta=0.35, c=1.0)",
+   "ground_truth": " => <T_crit> = 52.501463",
+   "params": {
+    "mu_eff": 0.25,
+    "beta": 0.35,
+    "c": 1.0
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_033",
+   "family": "caputo_mean_collapse_time",
+   "band": "far",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.25, beta=0.45, c=1.0)",
+   "ground_truth": " => <T_crit> = 21.772640",
+   "params": {
+    "mu_eff": 0.25,
+    "beta": 0.45,
+    "c": 1.0
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_034",
+   "family": "caputo_mean_collapse_time",
+   "band": "far",
+   "prompt": "caputo_mean_collapse_time(mu_eff=0.25, beta=0.65, c=1.0)",
+   "ground_truth": " => <T_crit> = 8.438129",
+   "params": {
+    "mu_eff": 0.25,
+    "beta": 0.65,
+    "c": 1.0
+   },
+   "in_dist": false
+  },
+  {
+   "task_id": "far_035",
+   "family": "tracy_widom_variance",
+   "band": "far",
+   "prompt": "tracy_widom_variance()",
+   "ground_truth": " => Var[F2] = 0.813200",
+   "params": {},
+   "in_dist": false
+  }
+ ],
+ "stats": {
+  "indist_candidates": 61,
+  "indist_rhs_mismatch": 0,
+  "n_tasks": 113,
+  "by_band": {
+   "indist": 61,
+   "near": 16,
+   "far": 36
+  },
+  "by_family": {
+   "mp_bounds": 27,
+   "bbp_lambda_max": 63,
+   "caputo_mean_collapse_time": 21,
+   "tracy_widom_mean": 1,
+   "tracy_widom_variance": 1
+  }
+ },
+ "exclusions": [
+  {
+   "prompt": "ks_n_crit_correction(n=1024)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_corrected_gamma(n=100)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=2.0, T=300.0, S=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_fluctuation_scaling(N=1000, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_fluctuation_scaling(N=500, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "autoregressive_irreversibility(n_tokens=64)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "cognitive_mode(f=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_signal_separation(theta=0.7, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_gue_mean_spacing(n=10)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=2.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=1.0, gamma=1.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=-1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_order_from_separation(separation=0.01)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_gue_mean_spacing(n=20)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=200.0, S=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=2.0, gamma=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "rg_fixed_point(initial_lambda=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "cognitive_mode(f=-1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "cognitive_mode(f=0.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.5, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=300.0, S=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_sensitivity(epsilon=1e-10, order=8)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=3.0, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_relative_correction(n=256)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_rounding_sensitivity(n=4, float64)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "stieltjes_transform(MP-eigvals, z=3.0+0.5i)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=2.0, T=200.0, S=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=1.0, gamma=0.2)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=-2.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=0.5, gamma=1.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=2.0, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_signal_separation(theta=0.5, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_correction_series(n=64, max_order=3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=2.0, T=300.0, S=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=2.0, gamma=0.3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "cognitive_mode(f=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.3, beta=0.5, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.2, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_corrected_gamma(n=200)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.2, q=0.25)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=2.0, gamma=0.7)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=1.0, gamma=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_quadratic_acceleration(mu_eff=0.4)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "rg_flow_lambda(initial_lambda=1.0, layer=5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_relative_correction(n=64)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=1.5, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "rg_flow_lambda(initial_lambda=1.0, layer=12)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.4, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_derivative(f=const 1.0, t=[0.500000..5.000000], beta=0.7)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_corrected_gamma(n=50)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.3, beta=0.6, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=0.5, gamma=0.3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_corrected_gamma(n=20)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_order_from_separation(separation=0.001)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_critical_theta(q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_signal_separation(theta=0.3, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=3.0, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_derivative(f=const 1.0, t=[0.500000..5.000000], beta=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.5, q=0.25)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=0.5, gamma=0.2)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.2, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=1.0, gamma=0.7)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_convolution_multiplicative(MP-sample, itself)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_order_from_separation(separation=0.1)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=2.0, T=200.0, S=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=1.0, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=0.5, gamma=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "attention_phase_spectrum(16x16 attn)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_derivative(f=const 1.0, t=[0.500000..5.000000], beta=0.4)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_sensitivity(epsilon=1e-10, order=2)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_r_transform(z=0.5+0.1i, q=0.6)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "autoregressive_irreversibility(n_tokens=512)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=0.5, q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "rg_flow_lambda(initial_lambda=0.5, layer=12)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_skewness()",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=0.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_r_transform(z=0.5+0.1i, q=0.4)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=200.0, S=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ep_rounding_sensitivity(n=8, float64)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "spectral_entropy(eigvals=[0.1, 1.0, 10.0])",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_critical_theta(q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_imag_collapse(n_ratio=1.0, gamma=0.3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=300.0, S=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=2.0, gamma=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=1.0, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "spectral_entropy(eigvals=[1.0, 1.0, 1.0])",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "mp_density(lambda=1.5, q=0.75)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "landauer_cost(n_bits=1, T=300)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_cdf(s=-3.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_quadratic_acceleration(mu_eff=0.2)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=2.0, gamma=2.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_n_crit_correction(n=256)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "free_energy(U=1.0, T=300.0, S=2.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.5, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "r_transform_series(Catalan moments, n_terms=4)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.6, t=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "spectral_entropy(eigvals=[0.5, 1.0, 2.0])",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "bbp_critical_theta(q=0.5)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_relative_correction(n=1024)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "landauer_cost(n_bits=100, T=300)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "nhse_winding_number(n_ratio=0.5, gamma=1.0)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "ks_correction_series(n=256, max_order=3)",
+   "reason": "family_without_verifier"
+  },
+  {
+   "prompt": "tracy_widom_mean()",
+   "reason": "duplicate_prompt_across_bands",
+   "dropped_band": "far"
+  }
+ ]
+}

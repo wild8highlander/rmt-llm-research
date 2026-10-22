@@ -1,0 +1,103 @@
+{
+ "cell": "M_formula",
+ "arm": "formula",
+ "size": "M",
+ "params": 1107712,
+ "size_note": "CPU \u043d\u043e\u0447\u044c / Colab ~30-60 \u043c\u0438\u043d",
+ "epochs_total": 60,
+ "epochs_done": 60,
+ "finished": true,
+ "interrupted_by_budget": false,
+ "skip_mid_eval": false,
+ "train_corpus": "formula_corpus_train.txt",
+ "val_loss_baseline": 6.243492456582876,
+ "val_loss_final": 2.461394942723788,
+ "val_match_rate_final": 0.5234025234025234,
+ "hallucination": {
+  "heldout": {
+   "n_tasks": 37,
+   "format_score": 0.13513513513513514,
+   "numeric_score": 0.02702702702702703,
+   "confident_hallucination_rate": 0.8,
+   "gross_hallucination_rate": 0.972972972972973,
+   "n_confident_hallucinations": 4,
+   "n_formatted": 5,
+   "n_numeric_ok": 1,
+   "samples": [
+    {
+     "prompt": "mp_bounds(q=0.15, sigma2=0.75)",
+     "ground_truth": " => lambda_minus = 0.281552, lambda_plus = 1.443448",
+     "generated": " = 0.222273, lambda_plus = 1.77772, 428585628385627272\nbbp_critical_",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "mp_bounds(q=0.15, sigma2=1.5)",
+     "ground_truth": " => lambda_minus = 0.563105, lambda_plus = 2.886895",
+     "generated": " = 0.202\nbbp_lambda_max(theta=0.8, q=0.5, sigma2=1.0) => lambda_max = 3.597367\nnhse_windin",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "mp_bounds(q=0.35, sigma2=0.75)",
+     "ground_truth": " => lambda_minus = 0.125088, lambda_plus = 1.899912",
+     "generated": " = 0.222273, 15, 2.222222) => ; nhse_skin_strength = 0.00\nks_n_crit_correction(n, gamma",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "mp_bounds(q=0.35, sigma2=1.5)",
+     "ground_truth": " => lambda_minus = 0.250176, lambda_plus = 3.799824",
+     "generated": " = 0.20283, lambda_plus = 1.827777\nbbp_fluctuation_scaling(N=500, q=0.5) => TW-scale = 0.",
+     "format_ok": false,
+     "numeric_ok": false
+    }
+   ]
+  },
+  "indist": {
+   "n_tasks": 60,
+   "format_score": 0.16666666666666666,
+   "numeric_score": 0.06666666666666667,
+   "confident_hallucination_rate": 0.6,
+   "gross_hallucination_rate": 0.9333333333333333,
+   "n_confident_hallucinations": 6,
+   "n_formatted": 10,
+   "n_numeric_ok": 4,
+   "samples": [
+    {
+     "prompt": "mp_bounds(q=0.3, sigma2=0.5)",
+     "ground_truth": " => lambda_minus = 0.102277, lambda_plus = 1.197723",
+     "generated": " = 0.20222\nnhse_imag_collapse(n_ratio=2.0, gamma=0.3) => Im-collapse = 0.00; point_gap = 0",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "bbp_lambda_max(theta=1.2, q=0.25, sigma2=0.5)",
+     "ground_truth": " => lambda_max = 3.380000",
+     "generated": " = 0.253882583800\nks_relative_correction(n=256200\nep_distribution(n=s = 200.22",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "autoregressive_irreversibility(n_tokens=64)",
+     "ground_truth": " => E = 0.000000 J",
+     "generated": "(lambda)^(1, beta)\n\ncode: lam = ks_macti(n, dtype, rng)\nRep_ordere eigenvalues liko",
+     "format_ok": false,
+     "numeric_ok": false
+    },
+    {
+     "prompt": "caputo_mean_collapse_time(mu_eff=0.2, beta=0.6, c=1.0)",
+     "ground_truth": " => <T_crit> = 14.620089",
+     "generated": ": float\n  Trray =114.\n\nReturns\n--\ndelta_lambda : float\n  Roacce T35) => Imode = 0.214935\nm",
+     "format_ok": false,
+     "numeric_ok": false
+    }
+   ]
+  }
+ },
+ "untrained_hallucination_same_cell": null,
+ "teacher_forced": 0.3729166666666667,
+ "teacher_forced_skipped": 0,
+ "minutes": 4.6,
+ "smoke": false
+}

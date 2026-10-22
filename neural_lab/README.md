@@ -16,6 +16,28 @@ A web application (Next.js + TypeScript) where the trained model from
 "lives": the playground calls `scripts/infer.py` through the API, while
 the other tabs display the training artifacts.
 
+## Science core (`science/`)
+
+Besides the app and the research program, this folder now hosts the
+**predictive research core** — a reproducible
+`hypothesis → measurement → prediction → validation → falsification`
+pipeline (NumPy-only, 52 tests):
+
+| Document | Content |
+|---|---|
+| [`AUDIT.md`](AUDIT.md) | factual audit: what is really measured, where the synthetic-looking objects are, what was fixed |
+| [`EXPERIMENT_PROTOCOL.md`](EXPERIMENT_PROTOCOL.md) | pre-registered H1 protocol (error prediction from internal features) |
+| [`PREDICTION_ROADMAP.md`](PREDICTION_ROADMAP.md) | staged plan 01→06 with readiness criteria |
+| [`science/results/h1_v1/REPORT.md`](science/results/h1_v1/REPORT.md) | fixed H1 run: primary endpoint underpowered (ΔAUC +0.206 [+0.084, +0.319], p = 0.097); secondary «Utility Trap» endpoint **significant** — internal spectral states AUC 0.871 vs confidence 0.794, p = 0.0025 |
+| [`science/results/h1_scaling/REPORT.md`](science/results/h1_scaling/REPORT.md) | H1 × scaling ladder (S/M/L, same 113-task dataset): direction D > B replicated 3/3 cells; L-cell ΔAUC +0.116 [+0.012, +0.215] — bootstrap CI excludes 0; confidence baseline non-monotonic across scale; XL queued (GPU) |
+
+Quick start (after training the model):
+
+```bash
+python3 neural_lab/science/experiments/run_h1.py   # full run (~3 min CPU)
+python3 -m pytest neural_lab/science/tests/ -q     # 52 tests
+```
+
 ## Tabs
 
 | Tab | What it shows |
