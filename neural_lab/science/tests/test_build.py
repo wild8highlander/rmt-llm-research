@@ -1,4 +1,4 @@
-"""Тесты сборщика признаков: замороженный состав групп и контроль качества."""
+"""Feature-builder tests: the frozen group composition and quality control."""
 
 import numpy as np
 import pytest
@@ -28,7 +28,7 @@ def test_feature_vector_frozen_composition():
     assert len(FEATURE_GROUPS["temporal"]) == 7
     assert len(FEATURE_GROUPS["geometry"]) == 4
     assert len(FEATURE_GROUPS["combined"]) == 33
-    # нет пересечений групп
+    # no group intersections
     for g1 in ("confidence", "spectral", "temporal", "geometry"):
         for g2 in ("confidence", "spectral", "temporal", "geometry"):
             if g1 < g2:
@@ -37,35 +37,35 @@ def test_feature_vector_frozen_composition():
 
 
 def test_layer_depth_generalization_v1_1():
-    """Протокол v1.1: пер-слоевые признаки следуют за глубиной модели."""
+    """Protocol v1.1: per-layer features follow the model depth."""
     from science.features import feature_groups
 
-    # v1.0 = частный случай v1.1 для 4 слоёв (байт-в-байт те же списки)
+    # v1.0 = the v1.1 special case for 4 layers (byte-identical lists)
     assert feature_groups(4) == FEATURE_GROUPS
-    # 3 слоя теперь валидны: 2*3+25 = 31 признак
+    # 3 layers are now valid: 2*3+25 = 31 features
     vec3 = build_feature_vector(_fake_observation(n_layers=3))
     assert len(vec3) == 31
     assert "gap_ratio_L2" in vec3
     assert "gap_ratio_L3" not in vec3
-    # 6 слоёв (M-ячейка): 37 признаков, имена L0..L5
+    # 6 layers (M-cell): 37 features, names L0..L5
     g6 = feature_groups(6)
     vec6 = build_feature_vector(_fake_observation(n_layers=6))
     assert len(vec6) == 37
     assert set(vec6) == set(g6["combined"])
     assert "gap_ratio_L5" in vec6
     assert "effrank_L5" in vec6
-    # 10 слоёв (L-ячейка): 45 признаков
+    # 10 layers (L-cell): 45 features
     vec10 = build_feature_vector(_fake_observation(n_layers=10))
     assert len(vec10) == 45
     assert "gap_ratio_L9" in vec10
-    # остальные группы инвариантны к глубине
+    # the other groups are depth-invariant
     for g in ("confidence", "temporal", "geometry"):
         assert g6[g] == FEATURE_GROUPS[g]
 
 
 def test_single_layer_rejected():
-    # v1.1: >= 2 слоёв валидно (см. test_layer_depth_generalization_v1_1);
-    # отклоняется только вырожденный случай без пары слоёв
+    # v1.1: >= 2 layers is valid (see test_layer_depth_generalization_v1_1);
+    # only the degenerate case without a layer pair is rejected
     with pytest.raises(ValueError, match="layers"):
         build_feature_vector(_fake_observation(n_layers=1))
 

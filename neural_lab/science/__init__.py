@@ -1,21 +1,25 @@
 """
-neural_lab/science — предсказательное научное ядро лаборатории.
+neural_lab/science — the predictive research core of the laboratory.
 
-Разделяет три слоя (см. EXPERIMENT_PROTOCOL.md и PREDICTION_ROADMAP.md):
+Three layers are separated (see EXPERIMENT_PROTOCOL.md and
+PREDICTION_ROADMAP.md):
 
-  instrumentation  — что реально наблюдается в модели (логиты, активации);
-  features         — что математически вычисляется из наблюдений;
-  predictors       — какой исход прогнозируется по признакам.
+  instrumentation  — what is actually observed in the model (logits,
+  activations);
+  features         — what is mathematically computed from observations;
+  predictors       — what outcome is predicted from the features.
 
-Плюс сквозные контуры:
-  data             — задачи с независимой верификацией ответов и разбиения;
-  evaluation       — метрики, доверительные интервалы, проверки утечек;
-  storage          — машиночитаемые паспорта и артефакты запусков;
-  experiments      — воспроизводимые прогоны (run_h1.py);
-  results          — зафиксированные результаты (обязательны к коммиту).
+Plus the cross-cutting loops:
+  data             — tasks with independent answer verification and the
+  splits;
+  evaluation       — metrics, confidence intervals, leakage checks;
+  storage          — machine-readable passports and run artifacts;
+  experiments      — reproducible runs (run_h1.py);
+  results          — frozen results (required to be committed).
 
-Принцип: прогноз сохраняется ДО того, как лаборатория узнает правильный
-ответ; финальная метрика сравнивается с baseline и перестановочным нулём.
+Principle: the prediction is saved BEFORE the laboratory learns the
+right answer; the final metric is compared against a baseline and the
+permutation null.
 """
 
 __version__ = "0.1.0"

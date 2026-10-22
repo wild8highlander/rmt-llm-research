@@ -1,4 +1,4 @@
-"""data — задачи с независимой верификацией и разбиения без утечек."""
+"""data — tasks with independent verification and leakage-free splits."""
 
 from .splits import (  # noqa: F401
     check_no_task_overlap,

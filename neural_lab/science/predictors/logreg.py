@@ -1,9 +1,9 @@
 """
-predictors.logreg — логистическая регрессия на чистом NumPy (ADR-001).
+predictors.logreg — logistic regression on pure NumPy (ADR-001).
 
-IRLS/Ньютон с L2-регуляризацией; стандартизация признаков по статистикам
-ОБУЧАЮЩЕГО фолда (параметры стандартизации — часть модели, чтобы не было
-утечки статистик теста в препроцессинг).
+IRLS/Newton with L2 regularization; features are standardized with the
+statistics of the TRAINING fold (the standardization parameters are part
+of the model, so no test statistics leak into preprocessing).
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ import numpy as np
 
 
 class LogisticRegression:
-    """L2-регуляризованная логистическая регрессия (Ньютон, full-batch)."""
+    """L2-regularized logistic regression (Newton, full-batch)."""
 
     def __init__(self, l2: float = 1.0, max_iter: int = 50, tol: float = 1e-8):
         self.l2 = float(l2)
@@ -22,7 +22,7 @@ class LogisticRegression:
         self.mu_: np.ndarray | None = None
         self.sd_: np.ndarray | None = None
 
-    # -- внутреннее -----------------------------------------------------
+    # -- internal -------------------------------------------------------
     @staticmethod
     def _sigmoid(z):
         out = np.empty_like(z)
@@ -46,12 +46,12 @@ class LogisticRegression:
             raise ValueError("need both classes in training fold")
         self.mu_ = X.mean(axis=0)
         self.sd_ = X.std(axis=0)
-        self.sd_[self.sd_ < 1e-12] = 1.0  # константные столбцы не делятся на 0
+        self.sd_[self.sd_ < 1e-12] = 1.0  # constant columns are not divided by 0
         A = self._design(X)
         d = A.shape[1]
         beta = np.zeros(d)
         reg = np.eye(d) * self.l2
-        reg[0, 0] = 0.0  # свободный член не регуляризуем
+        reg[0, 0] = 0.0  # the intercept is not regularized
         for _ in range(self.max_iter):
             p = self._sigmoid(A @ beta)
             W = np.clip(p * (1 - p), 1e-10, None)
@@ -71,6 +71,6 @@ class LogisticRegression:
         return self._sigmoid(self._design(X) @ self.beta_)
 
     def fit_predict_oof(self, X, y, test_idx: np.ndarray, train_idx: np.ndarray) -> np.ndarray:
-        """Честный out-of-fold: фит на train_idx, предсказание test_idx."""
+        """Honest out-of-fold: fit on train_idx, predict test_idx."""
         self.fit(X[train_idx], y[train_idx])
         return self.predict_proba(X[test_idx])

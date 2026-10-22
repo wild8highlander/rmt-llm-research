@@ -1,4 +1,4 @@
-"""Тесты задач: разбор вызовов, независимая верификация, метки."""
+"""Tests of tasks: call parsing, independent verification, labels."""
 
 import numpy as np
 import pytest
@@ -44,7 +44,7 @@ def test_relative_error():
 
 
 def test_verify_truth_mp_bounds():
-    """Независимый проверяющий: пересчёт библиотекой совпадает с корпусной формой."""
+    """Independent checker: the library recomputation matches the corpus shape."""
     truth = verify_truth("mp_bounds(q=0.5, sigma2=1.0)")
     assert truth is not None
     assert "lambda_minus" in truth
@@ -63,7 +63,7 @@ def test_verify_truth_unknown_family():
 
 def test_label_observation_grid():
     gt = " => lambda_max = 2.0"
-    gen = " => lambda_max = 2.4"  # 20% ошибка
+    gen = " => lambda_max = 2.4"  # 20% error
     lab = label_observation(gen, gt, [0.15, 0.25, 0.40])
     assert lab["numeric_ok_015"] == 0
     assert lab["numeric_ok_025"] == 1
@@ -73,7 +73,7 @@ def test_label_observation_grid():
 
 
 def test_build_task_set_end_to_end(tmp_path):
-    """Мини-корпус -> задачи с верификацией; мисматч RHS исключается."""
+    """Mini-corpus -> tasks with verification; an RHS mismatch is excluded."""
     import marchenko_pastur as mp
 
     lm, lp = mp.mp_bounds(0.5, 1.0)
@@ -94,7 +94,7 @@ def test_build_task_set_end_to_end(tmp_path):
     indist = [t for t in tasks if t.band == "indist"]
     assert len(indist) == 1
     assert indist[0].family == "mp_bounds"
-    # near-задачи создаются и верифицируются
+    # near-tasks are created and verified
     assert all(t.ground_truth.startswith(" =>") for t in tasks)
     far = [t for t in tasks if t.band == "far"]
-    assert len(far) == 37  # каноническая held-out сетка
+    assert len(far) == 37  # the canonical held-out grid

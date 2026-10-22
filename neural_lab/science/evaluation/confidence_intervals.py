@@ -1,9 +1,11 @@
 """
-evaluation.confidence_intervals — неопределённость метрик С УЧЁТОМ группировки.
+evaluation.confidence_intervals — metric uncertainty WITH grouping taken
+into account.
 
-Наблюдения внутри одной задачи коррелированы (повторные генерации), поэтому
-и бутстреп, и перестановки делаются на уровне КЛАСТЕРОВ (задач), а не
-отдельных примеров — иначе интервалы будут систематически занижены.
+Observations within one task are correlated (repeated generations), so
+both bootstrap and permutations operate at the CLUSTER (task) level, not
+on individual examples — otherwise the intervals are systematically
+too narrow.
 """
 
 from __future__ import annotations
@@ -21,11 +23,11 @@ def _clusters(task_ids: np.ndarray) -> list[np.ndarray]:
 def bootstrap_metric_ci(
     y, p, task_ids, stat_fn, n_boot: int = 2000, seed: int = 42, alpha: float = 0.05
 ) -> dict:
-    """Кластерный бутстреп произвольной метрики: точечная оценка + CI.
+    """Cluster bootstrap of an arbitrary metric: point estimate + CI.
 
-    Вырожденные выборки (например, один класс) дают stat_fn=None в части
-    бутстреп-реплик; если точечная оценка не определена, возвращается
-    point=None (вырождение фиксируется, а не прячется).
+    Degenerate samples (e.g. a single class) yield stat_fn=None for part
+    of the bootstrap replicates; if the point estimate is undefined, the
+    result carries point=None (the degeneracy is recorded, not hidden).
     """
     y = np.asarray(y)
     p = np.asarray(p)
@@ -67,8 +69,9 @@ def bootstrap_metric_ci(
 def cluster_bootstrap_delta(
     y, p_a, p_b, task_ids, metric_fn=roc_auc, n_boot: int = 2000, seed: int = 42
 ) -> dict:
-    """CI для парной разницы метрик (модель D минус модель B) на одних и тех
-    же бутстреп-выборках — корректная парная корреляция различий."""
+    """CI for the paired difference of two metrics (model D minus model B)
+    on the same bootstrap resamples — correct paired correlation of the
+    differences."""
     delta_fn = lambda yy, pp: metric_fn(yy, pp[:, 0]) - metric_fn(yy, pp[:, 1])
     return bootstrap_metric_ci(
         y, np.column_stack([p_a, p_b]), task_ids, delta_fn, n_boot=n_boot, seed=seed
@@ -78,10 +81,10 @@ def cluster_bootstrap_delta(
 def cluster_permutation_paired(
     y, p_a, p_b, task_ids, metric_fn=roc_auc, n_perm: int = 2000, seed: int = 42
 ) -> dict:
-    """Кластерный парный перестановочный тест: при нулевой гипотезе
-    «предсказания A и B обменяемы», целиком ЗАДАЧА (все её повторные
-    генерации) случайно меняется местами между A и B. Возвращает
-    двусторонний p-value для разницы метрик."""
+    """Cluster paired permutation test: under the null "predictions of A
+    and B are exchangeable", an entire TASK (all of its repeated
+    generations) is swapped between A and B at random. Returns the
+    two-sided p-value for the metric difference."""
     y = np.asarray(y)
     p_a = np.asarray(p_a)
     p_b = np.asarray(p_b)
@@ -97,7 +100,7 @@ def cluster_permutation_paired(
             if rng.random() < 0.5:
                 pa_parts.append(p_a[c])
                 pb_parts.append(p_b[c])
-            else:  # обмен целой задачей между моделями A и B
+            else:  # swap the whole task between models A and B
                 pa_parts.append(p_b[c])
                 pb_parts.append(p_a[c])
         pa = np.concatenate(pa_parts)
@@ -118,11 +121,12 @@ def cluster_permutation_paired(
 
 
 def label_permutation_auc_p(y, p, task_ids, strata, n_perm: int = 500, seed: int = 42) -> dict:
-    """Перестановочный тест AUC против нуля «признаки не связаны с меткой».
+    """Permutation test of AUC against the null "features are unrelated to
+    the label".
 
-    Метки перемешиваются на уровне ЗАДАЧ (все повторные генерации задачи
-    получают одинаковую (перевёрнутую) метку) внутри страт
-    (band, family) — сохраняет структуру классов и кластеров.
+    Labels are permuted at the TASK level (all repeated generations of a
+    task receive the same (flipped) label) within strata (band, family) —
+    preserving both class and cluster structure.
     """
     y = np.asarray(y)
     p = np.asarray(p)
@@ -132,8 +136,8 @@ def label_permutation_auc_p(y, p, task_ids, strata, n_perm: int = 500, seed: int
     uniq_tasks = np.unique(task_ids)
     task_stratum = {t: strata[np.where(task_ids == t)[0][0]] for t in uniq_tasks}
     task_label = {t: int(y[np.where(task_ids == t)[0][0]]) for t in uniq_tasks}
-    # диагностика пространства рандомизации: сколько страт вообще можно
-    # перемешать (в страте должны быть оба класса)
+    # randomization-space diagnostics: how many strata are permutable
+    # at all (a stratum must contain both classes)
     strata_classes = {}
     for s in np.unique(strata):
         labs_s = {task_label[t] for t in uniq_tasks if task_stratum[t] == s}
@@ -150,9 +154,9 @@ def label_permutation_auc_p(y, p, task_ids, strata, n_perm: int = 500, seed: int
             flip = rng.random() < 0.5
             perm = rng.permutation(labs) if not flip else 1 - rng.permutation(labs)
             if set(np.unique(perm)) != {0, 1}:
-                # страта с одним классом неперемешиваема — сохраняем метки
-                # (стандартная практика: рандомизация только внутри
-                # переставимых страт)
+                # a single-class stratum is not permutable — keep its labels
+                # (standard practice: randomize only within permutable
+                # strata)
                 for t, v in zip(tasks_s, labs):
                     y_perm_tasks[t] = int(v)
                 continue
@@ -176,8 +180,8 @@ def label_permutation_auc_p(y, p, task_ids, strata, n_perm: int = 500, seed: int
         "n_strata_total": n_strata_total,
         "n_strata_permutable": n_strata_permutable,
         "note": (
-            "weak randomization space: большинство страт "
-            "одноклассовы — p-value близок к 1 и неинтерпретируем"
+            "weak randomization space: most strata are single-class — "
+            "the p-value is close to 1 and not interpretable"
             if n_strata_permutable < max(2, n_strata_total // 2)
             else "ok"
         ),

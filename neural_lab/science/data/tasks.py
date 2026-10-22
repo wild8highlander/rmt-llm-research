@@ -1,19 +1,19 @@
 """
-data.tasks — набор задач с независимо верифицируемыми ответами.
+data.tasks — a task set with independently verifiable answers.
 
-Истинность ответа устанавливается НЕ строкой из корпуса, а повторным
-вычислением той же формулы библиотекой `src/rmt_llm` (независимый
-проверяющий по построению). Пары корпуса, чья правая часть расходится с
-пересчётом, исключаются с записью причины в журнал исключений.
+Truth is established NOT by a corpus string but by recomputing the same
+formula with the `src/rmt_llm` library (an independent checker by
+construction). Corpus pairs whose right-hand side disagrees with the
+recomputation are excluded, with the reason written to the exclusion log.
 
-Происхождение каждой задачи промаркировано (band):
-  indist — пара присутствовала в обучающем корпусе (модель «знает» ответ);
-  near   — параметры возмущены на 4–8 % относительно корпусных;
-  far    — свежие параметры, которых нет в корпусе (held-out).
+Every task carries a provenance band:
+  indist — the pair was present in the training corpus (the model "knows" the answer);
+  near   — parameters perturbed by 4-8 % relative to the corpus values;
+  far    — fresh parameters absent from the corpus (held-out).
 
-Целевая переменная H1: label_numeric_ok — все числовые поля ответа в
-допуске tol от истины. Первичный допуск 0.25; сетка чувствительности
-[0.15, 0.25, 0.40] зафиксирована в протоколе ДО запуска.
+H1 target variable: label_numeric_ok — every numeric field of the answer
+within tolerance tol of truth. Primary tolerance 0.25; the sensitivity
+grid [0.15, 0.25, 0.40] was frozen in the protocol BEFORE the run.
 """
 
 from __future__ import annotations
@@ -24,8 +24,9 @@ from collections.abc import Callable
 from ..storage.schemas import Task
 
 
-# --- единая реализация меток ответа (канон для H1; дубликаты в
-# research/*/scripts остаются как есть — см. AUDIT.md, дублирование) ---
+# --- single implementation of answer labelling (canonical for H1; the
+# duplicates in research/*/scripts stay as they are — see AUDIT.md,
+# duplication) ---
 
 _NUM_RE = re.compile(r"-?\d+\.\d+")
 
@@ -35,16 +36,17 @@ def numeric_fields(text: str) -> list[float]:
 
 
 def _answer_part(gen: str) -> str:
-    """Сегмент ответа: текст после ПОСЛЕДНЕГО '=>' (модель часто
-    продолжает строку и эхом повторяет хвост промпта — числовые поля
-    эха не должны попадать в сравнение с эталоном)."""
+    """Answer segment: the text after the LAST '=>' (the model often
+    keeps typing and echoes the prompt tail — numeric fields from the
+    echo must not participate in the comparison with ground truth)."""
     if "=>" in gen:
         return gen.rsplit("=>", 1)[1]
     return gen
 
 
 def format_ok(gen: str, gt: str) -> bool:
-    """Структурная корректность: есть '=>' и все поля эталона — в сегменте ответа."""
+    """Structural correctness: '=>' present and every ground-truth field
+    name appears in the answer segment."""
     if "=>" not in gen:
         return False
     keys = [k.strip() for k in gt.split("=>")[1].split(",")]
@@ -54,7 +56,7 @@ def format_ok(gen: str, gt: str) -> bool:
 
 
 def numeric_ok(gen: str, gt: str, tol: float = 0.25) -> bool:
-    """Все числовые поля СЕГМЕНТА ОТВЕТА в пределах допуска tol."""
+    """All numeric fields of the ANSWER SEGMENT within tolerance tol."""
     gt_nums = numeric_fields(gt)
     gen_nums = numeric_fields(_answer_part(gen))
     if not gt_nums or not gen_nums:
@@ -64,7 +66,7 @@ def numeric_ok(gen: str, gt: str, tol: float = 0.25) -> bool:
 
 
 def relative_error(gen: str, gt: str) -> float:
-    """Средняя относительная ошибка первых k чисел сегмента ответа."""
+    """Mean relative error over the first k numbers of the answer segment."""
     gt_nums = numeric_fields(gt)
     gen_nums = numeric_fields(_answer_part(gen))
     if not gt_nums or not gen_nums:
@@ -74,7 +76,7 @@ def relative_error(gen: str, gt: str) -> float:
     return float(sum(errs) / len(errs))
 
 
-# --- разбор вызовов формул и независимая верификация ---
+# --- formula-call parsing and independent verification ---
 
 _CALL_RE = re.compile(r"^\s*([a-z_][a-z0-9_]*)\((.*)\)\s*$")
 
@@ -108,9 +110,9 @@ def _fmt(x: float) -> str:
 
 
 def verify_truth(prompt: str) -> str | None:
-    """Пересчитывает формулу библиотекой и возвращает эталонное
-    продолжение (той же формы, что и корпусные пары). None — семейство
-    без верификатора или аргументы не разобрались."""
+    """Recompute the formula with the library and return the reference
+    continuation (same shape as the corpus pairs). None — family without
+    a verifier, or the arguments failed to parse."""
     parsed = parse_call_args(prompt)
     if parsed is None:
         return None
@@ -143,7 +145,7 @@ def verify_truth(prompt: str) -> str | None:
     return None
 
 
-# --- извлечение in-dist пар из корпуса ---
+# --- extraction of in-dist pairs from the corpus ---
 
 _PAIR_RE = re.compile(r"^([a-z_][a-z0-9_]*\(.*\))\s*=>\s*(.*)$")
 
@@ -163,10 +165,10 @@ def extract_indist_prompts(
     n_max: int = 48,
     seed: int = 42,
 ) -> tuple[list[tuple[str, str, str]], list[dict]]:
-    """Извлекает уникальные пары из корпуса для верифицируемых семейств.
+    """Extract unique corpus pairs for the verifiable families.
 
-    Возвращает (пары, журнал исключений). Пара — (prompt, corpus_rhs,
-    family). Промпт должен помещаться в половину окна контекста.
+    Returns (pairs, exclusion log). A pair is (prompt, corpus_rhs,
+    family). The prompt must fit in half of the context window.
     """
     import numpy as np
 
@@ -194,7 +196,7 @@ def extract_indist_prompts(
             continue
         pairs.append((prompt, rhs, family))
 
-    # детерминированная подвыборка
+    # deterministic subsampling
     if len(pairs) > n_max:
         rng = np.random.default_rng(seed)
         idx = np.sort(rng.choice(len(pairs), size=n_max, replace=False))
@@ -211,10 +213,11 @@ def near_band_tasks(
     jitter_grid: tuple[float, ...] = (0.04, -0.04, 0.07),
     seed: int = 42,
 ) -> tuple[list[tuple[str, str, str]], list[dict]]:
-    """Возмущённые задачи (band 'near'): параметры корпуса x (1 ± 4–7 %).
+    """Perturbed tasks (band 'near'): corpus parameters x (1 ± 4-7 %).
 
-    Истина пересчитывается библиотекой; пара принимается, только если
-    возмущённые параметры отличаются от корпусных и формула вычисляется.
+    Truth is recomputed with the library; a pair is accepted only if the
+    perturbed parameters differ from the corpus ones and the formula
+    evaluates.
     """
     import numpy as np
 
@@ -232,7 +235,7 @@ def near_band_tasks(
             continue
         name, args = parsed
         if name == "tracy_widom_mean" or name == "tracy_widom_variance":
-            continue  # нет параметров — возмущать нечего
+            continue  # no parameters — nothing to perturb
         jitter = jitter_grid[ji % len(jitter_grid)]
         ji += 1
         new_args = {k: v * (1.0 + jitter) for k, v in args.items()}
@@ -246,8 +249,9 @@ def near_band_tasks(
 
 
 def far_band_tasks() -> list[tuple[str, str, str]]:
-    """HELD-OUT (band 'far'): фиксированная сетка свежих параметров —
-    перенос эталонного gt_pairs() из research-скриптов (детерминизм)."""
+    """HELD-OUT (band 'far'): a fixed grid of fresh parameters —
+    a port of the reference gt_pairs() from the research scripts
+    (determinism)."""
     import bbp_transition as bbp
     import caputo_fractional as cap
     import marchenko_pastur as mp
@@ -305,11 +309,11 @@ def build_task_set(
     n_indist: int = 48,
     n_near: int = 16,
 ) -> tuple[list[Task], list[dict], dict]:
-    """Собирает полный набор задач всех трёх полос с верификацией.
+    """Assemble the full task set across all three bands, with verification.
 
-    Проверка независимости: правая часть корпуса сверяется с пересчётом
-    библиотеки; расхождение -> исключение с причиной (обнаружение дрейфа
-    корпуса). Возвращает (задачи, исключения, статистика).
+    Independence check: the corpus right-hand side is compared against
+    the library recomputation; a mismatch -> exclusion with a reason
+    (corpus-drift detection). Returns (tasks, exclusions, stats).
     """
     exclusions: list[dict] = []
     tasks: list[Task] = []
@@ -323,7 +327,7 @@ def build_task_set(
         if truth is None:
             exclusions.append({"prompt": prompt[:80], "reason": "verification_failed"})
             continue
-        # проверка независимого проверяющего против корпуса
+        # independent-checker-vs-corpus verification
         a, b = numeric_fields(truth), numeric_fields(rhs)
         if (
             not a
@@ -374,10 +378,10 @@ def build_task_set(
             )
         )
 
-    # дедупликация промптов по ВСЕМ полосам (проверка утечек требует
-    # уникальных промптов между частями разбиения): приоритет indist >
-    # near > far — «известная» версия задачи остаётся, дубликат в старшей
-    # полосе исключается с записью причины
+    # deduplicate prompts across ALL bands (the leakage checks require
+    # unique prompts between split parts): priority indist > near > far —
+    # the "known" version of a task stays, the duplicate in the higher
+    # band is excluded with the reason recorded
     seen_prompts: set[str] = set()
     deduped: list[Task] = []
     priority = {"indist": 0, "near": 1, "far": 2}
@@ -393,7 +397,7 @@ def build_task_set(
             continue
         seen_prompts.add(t.prompt)
         deduped.append(t)
-    # восстановим детерминированный порядок: band, затем исходный task_id
+    # restore deterministic order: band, then the original task_id
     tasks = sorted(deduped, key=lambda t: (priority[t.band], t.task_id))
     for band, pref in (("indist", "indist"), ("near", "near"), ("far", "far")):
         for i, t in enumerate(x for x in tasks if x.band == band):
@@ -408,17 +412,18 @@ def build_task_set(
 
 
 def label_observation(generated: str, ground_truth: str, tolerance_grid: list[float]) -> dict:
-    """Метки одного наблюдения по сетке допусков + вспомогательные метки.
+    """Labels for one observation across the tolerance grid + aux labels.
 
-    Первичная цель H1 — label_numeric_ok при tol=0.25 (первичный элемент
-    протокола); остальные допуски — заранее объявленный sensitivity.
+    The primary H1 target is label_numeric_ok at tol=0.25 (the primary
+    protocol element); the remaining tolerances are the pre-declared
+    sensitivity analysis.
     """
     labels: dict[str, float | int | bool] = {
         "format_ok": bool(format_ok(generated, ground_truth)),
         "rel_error": relative_error(generated, ground_truth),
     }
     for tol in tolerance_grid:
-        # канонический ключ: numeric_ok_015 / 025 / 040 (независимо от repr float)
+        # canonical key: numeric_ok_015 / 025 / 040 (independent of float repr)
         key = f"numeric_ok_{round(tol * 100):03d}"
         labels[key] = int(numeric_ok(generated, ground_truth, tol=tol))
     return labels

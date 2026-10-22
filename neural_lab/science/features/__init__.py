@@ -1,4 +1,4 @@
-"""features — что математически вычисляется из сырых наблюдений."""
+"""features — what is mathematically computed from raw observations."""
 
 from .build import (  # noqa: F401
     FEATURE_GROUPS,

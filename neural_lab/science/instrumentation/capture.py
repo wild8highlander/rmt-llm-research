@@ -1,17 +1,17 @@
 """
-instrumentation.capture — захват наблюдений из реальной модели.
+instrumentation.capture — capturing observations from the real model.
 
-Наблюдение = одна генерация ответа на задачу. Сохраняются ТОЛЬКО
-непосредственно измеренные величины (сырые наблюдения):
+An observation = a single answer generation for a task. Only DIRECTLY
+measured quantities (raw observations) are stored:
 
-  per_step_logits  — логиты последней позиции на каждом шаге генерации;
-  final_hidden     — скрытые состояния последнего шага по слоям (T, H);
-  step_hidden_last — вектор последней позиции по слоям на каждом шаге
-                     (для временной динамики; компактно);
+  per_step_logits  — last-position logits at every generation step;
+  final_hidden     — last-step hidden states per layer (T, H);
+  step_hidden_last — the last-position vector across layers at every
+                     step (for temporal dynamics; compact);
 
-Ничего синтетического: ни reasoning trace, ни искусственных метрик —
-см. AUDIT.md (раздел «синтетические объекты»). Сырые наблюдения
-отделяются от производных признаков (features/) и от меток (data/).
+Nothing synthetic: no reasoning trace, no artificial metrics — see
+AUDIT.md (the "synthetic objects" section). Raw observations are kept
+separate from derived features (features/) and from labels (data/).
 """
 
 from __future__ import annotations
@@ -29,11 +29,11 @@ def capture_observation(
     temperature: float = 0.8,
     seed: int | None = None,
 ) -> dict:
-    """Генерирует ответ и возвращает сырые измерения (без признаков и меток).
+    """Generate the answer and return the raw measurements (no features, no labels).
 
-    temperature=0 — жадная генерация (детерминированная), temperature>0 —
-    сэмплирование с заданным seed (повторные генерации одной задачи дают
-    разброс, который сам по себе является признаком).
+    temperature=0 — greedy (deterministic) generation, temperature>0 —
+    sampling with the given seed (repeated generations of one task give
+    a spread that is itself a feature).
     """
     tok = tokenizer
     ids = tok.encode(prompt)[: model.config.max_seq_len // 2]

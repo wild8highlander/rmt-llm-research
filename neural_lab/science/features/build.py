@@ -1,21 +1,21 @@
 """
-features.build — сборка замороженного вектора признаков наблюдения.
+features.build — assembling the frozen feature vector of an observation.
 
-Вектор признаков и разбивка по группам ЗАФИКСИРОВАНЫ в протоколе H1
-(EXPERIMENT_PROTOCOL.md, registry.yaml). Состав групп:
+The feature vector and its group breakdown are FROZEN in the H1 protocol
+(EXPERIMENT_PROTOCOL.md, registry.yaml). Group composition:
 
-  confidence (7) — стандартные показатели уверенности (baseline-группа B);
-  spectral  (15) — спектр ковариаций скрытых состояний (MP-гэп, ранги);
-  temporal   (7) — динамика состояний/энтропии/self-CE по шагам;
-  geometry   (4) — геометрия представлений между слоями.
+  confidence (7) — standard confidence indicators (baseline group B);
+  spectral  (15) — covariance spectrum of hidden states (MP gap, ranks);
+  temporal   (7) — state/entropy/self-CE dynamics across steps;
+  geometry   (4) — representation geometry across layers.
 
-Внутренняя группа internal = spectral + temporal + geometry (26 при 4 слоях) —
-«признаки, требующие доступа к внутренним состояниям». Комбинированная
-модель D = confidence + internal (33 при 4 слоях).
+The internal group internal = spectral + temporal + geometry (26 at 4
+layers) — "features requiring access to internal states". The combined
+model D = confidence + internal (33 at 4 layers).
 
-Протокол v1.1: пер-слоевые спектральные признаки обобщаются на любую
-глубину модели — имена L0..L{n-1} строятся из фактического числа слоёв
-(схема v1.0 = частный случай n_layers=4). Размер вектора: 2*n_layers+25.
+Protocol v1.1: per-layer spectral features generalize to any model depth
+— the names L0..L{n-1} are built from the actual number of layers (the
+v1.0 scheme is the special case n_layers=4). Vector size: 2*n_layers+25.
 """
 
 from __future__ import annotations
@@ -41,11 +41,11 @@ LAYER_KEYS = (
 
 
 def feature_groups(n_layers: int) -> dict[str, list[str]]:
-    """Группы признаков для модели глубиной n_layers (протокол v1.1).
+    """Feature groups for a model of depth n_layers (protocol v1.1).
 
-    Для n_layers=4 возвращает ровно замороженную схему v1.0 (тот же порядок
-    имен — порядок столбцов as_matrix фиксируется списком). Пер-слоевые
-    имена L0..L{n-1}; остальные группы инвариантны к глубине.
+    For n_layers=4 this returns exactly the frozen v1.0 scheme (same name
+    order — the as_matrix column order is pinned by the list). Per-layer
+    names are L0..L{n-1}; the other groups are depth-invariant.
     """
     if n_layers < 2:
         raise ValueError(f"need >= 2 hidden layers, got {n_layers}")
@@ -93,17 +93,17 @@ def feature_groups(n_layers: int) -> dict[str, list[str]]:
     return groups
 
 
-# Замороженная схема протокола v1.0 (TinyGPT v3 S-ячейка, 4 слоя).
-# Для другой глубины используйте feature_groups(n_layers).
+# Frozen scheme of protocol v1.0 (TinyGPT v3 S-cell, 4 layers).
+# For a different depth use feature_groups(n_layers).
 FEATURE_GROUPS: dict[str, list[str]] = feature_groups(4)
 
 
 def build_feature_vector(observation: dict) -> dict[str, float]:
-    """Полный вектор признаков одного наблюдения (все группы сразу).
+    """Full feature vector of one observation (all groups at once).
 
-    observation — сырые измерения из instrumentation.capture. Возвращает
-    плоский словарь имя->float; любой нечисловой/не-конечный признак
-    вызывает ValueError (наблюдение исключается с записью причины).
+    observation — raw measurements from instrumentation.capture. Returns
+    a flat name->float dict; any non-numeric / non-finite feature raises
+    ValueError (the observation is excluded with the reason recorded).
     """
     conf = confidence_features(observation["per_step_logits"], observation["output_ids"])
     spec = snapshot_features(observation["final_hidden"])
@@ -139,5 +139,5 @@ def feature_names(group: str) -> list[str]:
 
 
 def as_matrix(vectors: list[dict[str, float]], names: list[str]) -> np.ndarray:
-    """Список словарей -> матрица (n, d) в ЗАФИКСИРОВАННОМ порядке столбцов."""
+    """List of dicts -> matrix (n, d) in the FROZEN column order."""
     return np.array([[v[n] for n in names] for v in vectors], dtype=np.float64)

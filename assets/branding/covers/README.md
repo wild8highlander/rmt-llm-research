@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../assets/logos/branding_covers.banner.svg" width="760" alt="branding covers — animated logo: book stack with sliding bookmark">
+  <img src="../../../assets/logos/branding_covers.banner.svg" width="760" alt="branding covers — animated logo: book stack with sliding bookmark">
 </p>
 
 # 🎨 assets/branding/covers — Web-Optimized Cover Copies
@@ -41,7 +41,7 @@ RU), same naming scheme as the source set. The branding identity proper
 ---
 
 <p align="center">
-  <img src="../../assets/logos/branding_covers.avatar.svg" width="56" alt="branding covers animated avatar"><br>
+  <img src="../../../assets/logos/branding_covers.avatar.svg" width="56" alt="branding covers animated avatar"><br>
   <sub>
     <a href="../README.md">← branding</a> · <a href="../../README.md">🏠 repository root</a> · <a href="../../monographs/README.md">📚 monographs →</a>
   </sub>

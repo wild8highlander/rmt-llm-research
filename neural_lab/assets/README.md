@@ -36,7 +36,7 @@ The gallery with inline previews is [`logos/README.md`](logos/README.md).
 ## Usage rules
 
 ```markdown
-<img src="assets/logos/neural_lab.banner.svg" width="760" alt="...">
+<img src="logos/neural_lab.banner.svg" width="760" alt="...">
 ```
 
 - Banners go at the very top of a README (`width="760"`), avatars in the

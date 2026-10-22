@@ -1,4 +1,4 @@
-"""evaluation — метрики, интервалы, утечки."""
+"""evaluation — metrics, confidence intervals, leakage checks."""
 
 from .confidence_intervals import (  # noqa: F401
     bootstrap_metric_ci,

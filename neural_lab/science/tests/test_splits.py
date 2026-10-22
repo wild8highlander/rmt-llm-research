@@ -1,4 +1,4 @@
-"""Тесты разбиений и проверок утечек."""
+"""Tests of the splits and the leakage checks."""
 
 import numpy as np
 import pytest
@@ -23,7 +23,7 @@ def _task_pool(n=40):
 def test_grouped_kfold_disjoint_and_full_cover():
     ids, keys = _task_pool()
     folds = grouped_kfold(ids, keys, k=5, seed=42)
-    check_no_task_overlap(folds)  # не бросает
+    check_no_task_overlap(folds)  # does not raise
     all_ids = sorted(t for v in folds.values() for t in v)
     assert all_ids == sorted(ids)
     assert all(len(v) > 0 for v in folds.values())
@@ -39,13 +39,13 @@ def test_grouped_kfold_deterministic():
 
 
 def test_grouped_kfold_family_balance():
-    """Стратификация: каждое семейство присутствует в >= k-1 фолдах."""
+    """Stratification: every family is present in >= k-1 folds."""
     ids, keys = _task_pool(80)
     folds = grouped_kfold(ids, keys, k=5, seed=42)
     rep = family_overlap_report(folds, {t: k[0] for t, k in zip(ids, keys)})
     for fam in ("f1", "f2", "f3", "f4"):
         present = sum(1 for fl in rep.values() if fam in fl)
-        assert present >= 4  # из 5 фолдов
+        assert present >= 4  # out of 5 folds
 
 
 def test_kfold_raises_on_overlap():
@@ -65,9 +65,9 @@ def test_lofo_partitions():
 
 
 def test_leakage_helpers():
-    assert_no_task_overlap(["a", "b"], ["c"])  # ок
+    assert_no_task_overlap(["a", "b"], ["c"])  # ok
     with pytest.raises(LeakageError):
         assert_no_task_overlap(["a"], ["a"], tag="x")
-    duplicate_prompt_check(["p1", "p2"], ["p3"])  # ок
+    duplicate_prompt_check(["p1", "p2"], ["p3"])  # ok
     with pytest.raises(LeakageError):
         duplicate_prompt_check(["p1"], ["p1", "p4"], tag="y")

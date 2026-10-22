@@ -1,16 +1,16 @@
 """
-features.spectral — спектральные признаки ковариаций скрытых состояний.
+features.spectral — spectral features of hidden-state covariances.
 
-Для каждого слоя строится ковариация представлений по позициям (T, H) ->
-собственные значения -> сравнение с границей Марченко–Пастура:
+For each layer, a covariance of representations across positions (T, H)
+is built -> eigenvalues -> comparison against the Marchenko–Pastur edge:
 
-  q_ratio    = H / T                    (форма ковариации)
-  mp_upper   = sigma2 * (1 + sqrt(q))^2 (верхняя граница bulk)
-  gap_ratio  = lambda_max / mp_upper    (>1.05 — «BBP-выброс» за bulk)
+  q_ratio    = H / T                    (covariance shape)
+  mp_upper   = sigma2 * (1 + sqrt(q))^2 (upper edge of the bulk)
+  gap_ratio  = lambda_max / mp_upper    (>1.05 — a "BBP outlier" beyond the bulk)
 
-Дополнительно: эффективный ранг (экспонента энтропии спектра),
-participation ratio и free-оценка N_crit (kappa2/kappa1^2).
-Только документированные тензоры, без синтетики.
+Additionally: the effective rank (entropy exponent of the spectrum),
+the participation ratio, and a free estimate of N_crit (kappa2/kappa1^2).
+Only documented tensors, no synthetic data.
 """
 
 from __future__ import annotations
@@ -19,14 +19,14 @@ import numpy as np
 
 
 def covariance_spectral_features(h: np.ndarray, layer: int) -> dict | None:
-    """Спектральные признаки одного слоя; None если позиций < 4.
+    """Spectral features of one layer; None if there are fewer than 4 positions.
 
-    Конвенция для rank-дефицитных ковариаций (T < H — обычный случай
-    скрытых состояний): sigma2 = trace(cov)/H — ПОЛНАЯ дисперсия данных,
-    включая нулевые направления; собственные значения фильтруются только
-    для статистик bulk (эффективный ранг и т.п.). Проверено
-    контрольными нулями: у белого шума gap_ratio ∈ [0.85, 1.15]
-    (см. tests/test_spectral.py).
+    Convention for rank-deficient covariances (T < H — the usual case for
+    hidden states): sigma2 = trace(cov)/H — the TOTAL data variance,
+    including the null directions; eigenvalues are filtered only for bulk
+    statistics (effective rank and similar). Validated against control
+    nulls: for white noise gap_ratio ∈ [0.85, 1.15]
+    (see tests/test_spectral.py).
     """
     if h is None or h.ndim != 2 or h.shape[0] < 4 or h.shape[1] < 2:
         return None
@@ -64,10 +64,11 @@ def covariance_spectral_features(h: np.ndarray, layer: int) -> dict | None:
 
 
 def snapshot_features(final_hidden: list[np.ndarray]) -> dict:
-    """Агрегат по слоям последнего шага генерации.
+    """Per-layer aggregate of the final generation step.
 
-    Возвращает словарь gap_ratio_L{i}, effrank_L{i} для каждого слоя и
-    сводные mean/last величины. Число слоёв выводится из данных.
+    Returns a dict with gap_ratio_L{i}, effrank_L{i} for every layer plus
+    the summary mean/last quantities. The number of layers is inferred
+    from the data.
     """
     per_layer = []
     for li, h in enumerate(final_hidden):

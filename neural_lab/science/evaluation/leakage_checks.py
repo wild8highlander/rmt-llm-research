@@ -1,13 +1,13 @@
 """
-evaluation.leakage_checks — формальные проверки отсутствия утечек.
+evaluation.leakage_checks — formal leakage-absence checks.
 
-Утечки — главный источник самообмана в предсказательных лабораториях.
-Проверки запускаются на каждом разбиении ДО обучения:
+Leakage is the main source of self-deception in predictive laboratories.
+The checks run on every split BEFORE fitting:
 
-  1. ни одна задача (task_id) не входит одновременно в train и test;
-  2. одинаковые промпты не встречаются в разных частях;
-  3. отчёт о пересечении СЕМЕЙСТВ (в primary-схеме допустимо по дизайну,
-     строгий контроль обобщения даёт leave_one_family_out).
+  1. no task (task_id) appears in both train and test;
+  2. identical prompts never appear in different parts;
+  3. a FAMILY-overlap report (allowed by design in the primary scheme;
+     strict generalization control is provided by leave_one_family_out).
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ def assert_no_task_overlap(train_ids: list[str], test_ids: list[str], tag: str =
 def duplicate_prompt_check(
     train_prompts: list[str], test_prompts: list[str], tag: str = ""
 ) -> dict:
-    """Точное совпадение промптов в разных частях — скрытая утечка."""
+    """Exact prompt matches across parts — a hidden leak."""
     seen = set(train_prompts)
     leaked = sorted({p for p in test_prompts if p in seen})
     if leaked:

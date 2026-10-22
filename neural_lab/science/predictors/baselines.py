@@ -1,13 +1,13 @@
 """
-predictors.baselines — обязательные простые baseline'ы.
+predictors.baselines — mandatory simple baselines.
 
-Спектральный признак полезен только тогда, когда улучшает прогноз
-относительно простых альтернатив:
+A spectral feature is only useful when it improves the prediction over
+simple alternatives:
 
-  ConstantRateBaseline — всегда предсказывает базовую частоту ошибки
-                         на обучающем фолде (нижняя граница осмысленности);
-  FamilyRateBaseline   — базовая частота по семейству задач (семейство
-                         известно на тесте; сильный «наивный» baseline).
+  ConstantRateBaseline — always predicts the base error rate of the
+                         training fold (the lower bound of meaningfulness);
+  FamilyRateBaseline   — the base rate per task family (the family is
+                         known at test time; a strong "naive" baseline).
 """
 
 from __future__ import annotations
@@ -16,11 +16,11 @@ import numpy as np
 
 
 class ConstantRateBaseline:
-    """p = базовая частота положительного класса в train.
+    """p = the positive-class base rate in train.
 
-    Вырожденный train (один класс) не запрещён: предсказывается константа,
-    а вырождение честно фиксируется метриками (ROC-AUC на одноклассовом
-    тесте не определён -> None в отчёте).
+    A degenerate train (one class) is not forbidden: a constant is
+    predicted, and the degeneracy is honestly recorded by the metrics
+    (ROC-AUC on a single-class test is undefined -> None in the report).
     """
 
     def __init__(self):
@@ -38,11 +38,11 @@ class ConstantRateBaseline:
 
 
 class FamilyRateBaseline:
-    """p = сглаженная частота положительного класса по семейству задачи.
+    """p = the smoothed positive-class rate for the task's family.
 
-    Требует передачи семейств при fit/predict (отдельным аргументом —
-    семьи считаются «метаданными задачи», доступными на тесте).
-    Сглаживание Лапласа защищает от нулевых частот на малых семействах.
+    Requires passing the families at fit/predict (as a separate argument —
+    families count as "task metadata" available at test time). Laplace
+    smoothing protects against zero rates on small families.
     """
 
     def __init__(self, smoothing: float = 1.0):

@@ -1,18 +1,19 @@
 """
-features.temporal — динамика признаков в ходе генерации.
+features.temporal — feature dynamics during generation.
 
-Предсказательные сигналы могут сидеть не в статике, а в том, КАК меняется
-внутреннее состояние по мере порождения ответа:
+Predictive signals may live not in the statics but in HOW the internal
+state changes as the answer is being produced:
 
-  lam_traj_*  — траектория lambda_max ковариаций ПОТОКА состояний
-                последнего слоя: на каждом шаге s берётся ковариация
-                векторов последней позиции за скользящее окно из w
-                последних шагов генерации (определена с шага w-1;
-                первые шаги заполняются первым валидным значением);
-  ent_traj_*  — траектория энтропии выходных распределений;
-  ce_traj_*   — траектория self-CE выбранных токенов.
+  lam_traj_*  — the lambda_max trajectory of the covariances of the
+                last-layer STATE STREAM: at each step s, the covariance
+                is taken over last-position vectors within a sliding
+                window of the last w generation steps (defined from step
+                w-1 on; early steps are filled with the first valid
+                value);
+  ent_traj_*  — the entropy trajectory of the output distributions;
+  ce_traj_*   — the self-CE trajectory of the chosen tokens.
 
-Наклон оценивается МНК по нормированному времени t in [0, 1].
+The slope is estimated by OLS on normalized time t in [0, 1].
 """
 
 from __future__ import annotations
@@ -20,7 +21,7 @@ from __future__ import annotations
 import numpy as np
 
 
-_WINDOW = 8  # окно потока состояний (шагов генерации)
+_WINDOW = 8  # state-stream window (generation steps)
 
 
 def _slope(y: np.ndarray) -> float:
@@ -36,18 +37,19 @@ def _slope(y: np.ndarray) -> float:
 
 
 def state_lambda_trajectory(step_hidden_last: np.ndarray, window: int = _WINDOW) -> np.ndarray:
-    """lambda_max ковариаций потока состояний последнего слоя по шагам.
+    """lambda_max of last-layer state-stream covariances across steps.
 
-    step_hidden_last: (steps, layers, H). На шаге s ковариация строится
-    по векторам последней позиции за окно из min(window, s+1) шагов;
-    значения для первых шагов (окно < 4) заполняются первым валидным.
+    step_hidden_last: (steps, layers, H). At step s the covariance is
+    built over last-position vectors within a window of min(window, s+1)
+    steps; values for early steps (window < 4) are filled with the first
+    valid one.
     """
     if step_hidden_last.ndim != 3:
         raise ValueError("step_hidden_last must be (steps, layers, H)")
     steps, _layers, H = step_hidden_last.shape
     if H < 2:
         raise ValueError("hidden dim too small for covariance")
-    stream = step_hidden_last[:, -1, :]  # (steps, H) — последний слой
+    stream = step_hidden_last[:, -1, :]  # (steps, H) — last layer
     lam = np.full(steps, np.nan)
     for s in range(steps):
         lo = max(0, s - window + 1)
@@ -69,7 +71,7 @@ def temporal_features(
     ce_traj: np.ndarray,
     entropy_traj: np.ndarray,
 ) -> dict:
-    """Временные признаки наблюдения (см. модульный докстринг)."""
+    """Temporal features of an observation (see the module docstring)."""
     if step_hidden_last is None or step_hidden_last.ndim != 3:
         raise ValueError("step_hidden_last must be (steps, layers, H)")
     if len(ce_traj) < 2 or len(entropy_traj) < 2:

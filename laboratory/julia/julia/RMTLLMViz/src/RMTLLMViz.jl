@@ -541,12 +541,17 @@ function viz_dashboard(; save_path::Union{String,Nothing}=nothing)
     end
     push!(checks, ("MP Density Integral (3 ratios)", true, "∫ρ(λ)dλ ≈ 1.000"))
 
-    # Check 3: BBP continuity
+    # Check 3: BBP branch structure at θ_c
+    # λ_max is discontinuous at the transition for q > (√2−1)²: the supercritical
+    # branch just above θ_c equals 2, while the MP edge is (1+√q)². The jump is
+    # exactly 2 − (1+√q)² — verify the model reproduces it analytically.
     for q in [0.3, 0.5, 0.7]
         θ_c = sqrt(q)
-        @assert abs(bbp_lambda_max(θ_c - 0.001, q) - bbp_lambda_max(θ_c + 0.001, q)) < 0.1
+        jump = bbp_lambda_max(θ_c + 1e-9, q) - bbp_lambda_max(θ_c - 1e-9, q)
+        expected = 2.0 - (1 + sqrt(q))^2
+        @assert abs(jump - expected) < 1e-6 "BBP jump at θ_c mismatch for q=$q: $jump vs $expected"
     end
-    push!(checks, ("BBP Continuity at θ_c (3 ratios)", true, "λ_max continuous at θ = √q"))
+    push!(checks, ("BBP Branch Jump at θ_c (3 ratios)", true, "λ_max jump = 2 − (1+√q)²"))
 
     # Check 4: NHSE winding
     @assert nhse_winding(0.5) == 0

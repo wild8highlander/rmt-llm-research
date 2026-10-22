@@ -1,4 +1,4 @@
-"""Тесты предсказателей: логрегрессия, baseline'ы, калибровка."""
+"""Tests of the predictors: logistic regression, baselines, calibration."""
 
 import numpy as np
 import pytest
@@ -31,7 +31,7 @@ def test_logreg_separable_high_auc():
 
 
 def test_logrec_oof_no_leak_stats():
-    """Стандартизация хранит статистики train; predict на новых данных работает."""
+    """Standardization keeps train statistics; predict on new data works."""
     X, y = _separable(n=120, seed=1)
     Xtr, Xte, ytr = X[:80], X[80:], y[:80]
     m = LogisticRegression(l2=1.0).fit(Xtr, ytr)
@@ -52,7 +52,7 @@ def test_constant_rate_baseline():
     m = ConstantRateBaseline().fit(None, y)
     p = m.predict_proba(np.zeros((3, 1)))
     assert np.allclose(p, 3 / 8)
-    # вырожденный train не запрещён: предсказывается константа класса
+    # a degenerate train is not forbidden: the class constant is predicted
     m2 = ConstantRateBaseline().fit(None, np.ones(4))
     assert np.allclose(m2.predict_proba(np.zeros((2, 1))), 1.0)
 
@@ -62,8 +62,8 @@ def test_family_rate_baseline_smoothing():
     fam = np.array(["a", "a", "a", "b", "b", "b", "b", "b"])
     m = FamilyRateBaseline(smoothing=1.0).fit(None, y, families=fam)
     p = m.predict_proba(np.zeros((2, 1)), families=np.array(["a", "unknown"]))
-    assert p[0] == pytest.approx((3 + 1) / (3 + 2))  # сглаженное 3/3
-    assert p[1] == pytest.approx(3 / 8)  # неизвестное семейство -> глобальная
+    assert p[0] == pytest.approx((3 + 1) / (3 + 2))  # smoothed 3/3
+    assert p[1] == pytest.approx(3 / 8)  # unknown family -> global rate
 
 
 def test_platt_recovers_well_calibrated():
@@ -72,7 +72,7 @@ def test_platt_recovers_well_calibrated():
     y = (rng.random(4000) < p_true).astype(float)
     a, b = platt_fit(p_true, y)
     pc = platt_apply(p_true, a, b)
-    # на идеально откалиброванных данных Platt должен вернуть ~identity
+    # on perfectly calibrated data Platt must return ~identity
     assert abs(a - 1.0) < 0.15
     assert abs(b) < 0.1
     assert ece(y, pc, n_bins=10) < 0.03
@@ -81,7 +81,7 @@ def test_platt_recovers_well_calibrated():
 def test_ece_detects_miscalibration():
     rng = np.random.default_rng(4)
     y = (rng.random(3000) < 0.5).astype(float)
-    overconfident = np.full(3000, 0.95)  # всегда почти уверен при base rate 0.5
+    overconfident = np.full(3000, 0.95)  # always almost certain at base rate 0.5
     calibrated = np.full(3000, 0.5)
     assert ece(y, overconfident) > 0.3
     assert ece(y, calibrated) < 0.05

@@ -1,4 +1,4 @@
-"""storage — артефакты запусков, паспорта, provenance."""
+"""storage — run artifacts, passports, provenance."""
 
 from .artifacts import (  # noqa: F401
     canonical_json,

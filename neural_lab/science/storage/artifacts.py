@@ -1,9 +1,9 @@
 """
-storage.artifacts — детерминированные артефакты и provenance.
+storage.artifacts — deterministic artifacts and provenance.
 
-Каждый запуск обязан сохранять: конфигурацию, seed, версии зависимостей,
-контрольные суммы датасетов и весов. Отчёт генерируется из сохранённых
-данных, а не из ручных итогов.
+Every run must store: configuration, seed, dependency versions, dataset
+and weight checksums. The report is generated from the stored data, not
+from hand-written summaries.
 """
 
 from __future__ import annotations
@@ -18,8 +18,8 @@ import tempfile
 import numpy as np
 
 
-# Канонический JSON для хэширования: стабильный порядок ключей и плотные
-# разделители — одинаковые данные дают одинаковый sha256 на любой машине.
+# Canonical JSON for hashing: stable key order and dense separators —
+# identical data yields an identical sha256 on any machine.
 _CANON = {"sort_keys": True, "separators": (",", ":"), "ensure_ascii": True}
 
 
@@ -39,17 +39,17 @@ def sha256_file(path: str, chunk: int = 1 << 20) -> str:
 
 
 def canonical_json(obj) -> str:
-    """Каноническое представление для хэширования (не для чтения человеком)."""
+    """Canonical representation for hashing (not for human reading)."""
     return json.dumps(obj, **_CANON)
 
 
 def data_hash(obj) -> str:
-    """sha256 канонического JSON любой JSON-сериализуемой структуры."""
+    """sha256 of the canonical JSON of any JSON-serializable structure."""
     return sha256_bytes(canonical_json(obj).encode("utf-8"))
 
 
 def save_json(obj, path: str) -> str:
-    """Атомарная запись JSON (tmp + rename), возвращает sha256 файла."""
+    """Atomic JSON write (tmp + rename); returns the file's sha256."""
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     fd, tmp = tempfile.mkstemp(dir=os.path.dirname(os.path.abspath(path)), suffix=".tmp")
     with os.fdopen(fd, "w", encoding="utf-8") as f:
@@ -66,7 +66,7 @@ def load_json(path: str):
 
 
 def save_jsonl(records, path: str) -> int:
-    """Атомарная запись JSONL; возвращает число записей."""
+    """Atomic JSONL write; returns the number of records."""
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     fd, tmp = tempfile.mkstemp(dir=os.path.dirname(os.path.abspath(path)), suffix=".tmp")
     n = 0
@@ -91,7 +91,7 @@ def load_jsonl(path: str):
 
 
 def environment_fingerprint() -> dict:
-    """Версии кода, библиотек и платформы — обязательная часть паспорта."""
+    """Versions of code, libraries and platform — a mandatory passport part."""
     return {
         "python": sys.version.split()[0],
         "numpy": np.__version__,

@@ -1,4 +1,4 @@
-"""Тесты метрик и кластерной неопределённости."""
+"""Tests of the metrics and cluster-level uncertainty."""
 
 import numpy as np
 import pytest
@@ -17,13 +17,13 @@ def test_roc_auc_perfect_and_ties():
     y = np.array([0, 0, 1, 1])
     assert roc_auc(y, np.array([0.1, 0.2, 0.8, 0.9])) == 1.0
     assert roc_auc(y, np.array([0.9, 0.8, 0.2, 0.1])) == 0.0
-    assert roc_auc(y, np.array([0.5, 0.5, 0.5, 0.5])) == 0.5  # все связи
+    assert roc_auc(y, np.array([0.5, 0.5, 0.5, 0.5])) == 0.5  # all ties
 
 
 def test_roc_auc_known_value_with_ties():
     y = np.array([0, 1, 0, 1])
     p = np.array([0.4, 0.4, 0.2, 0.6])
-    # пары (pos, neg): (0.4,0.4)tie=0.5, (0.4,0.2)win, (0.6,0.4)win, (0.6,0.2)win
+    # pairs (pos, neg): (0.4,0.4)tie=0.5, (0.4,0.2)win, (0.6,0.4)win, (0.6,0.2)win
     assert roc_auc(y, p) == pytest.approx((0.5 + 1 + 1 + 1) / 4)
 
 
@@ -35,7 +35,7 @@ def test_roc_auc_single_class_raises():
 def test_average_precision_known():
     y = np.array([1, 0, 1, 0])
     p = np.array([0.9, 0.8, 0.7, 0.1])
-    # precision на шагах: 1/1, 1/2, 2/3 -> AP = 1*1/2 + (2/3)*1/2 = 5/6
+    # precision at the steps: 1/1, 1/2, 2/3 -> AP = 1*1/2 + (2/3)*1/2 = 5/6
     assert average_precision(y, p) == pytest.approx(5 / 6)
 
 
@@ -47,8 +47,8 @@ def test_brier_logloss():
 
 
 def _clustered(n_tasks=60, per_task=4, seed=0, effect=0.0):
-    """Синтетика с кластерной структурой: у задачи свой скрытый сдвиг.
-    effect=0 — слабый сигнал (AUC ~0.6–0.7); effect=1 — сильный (AUC ~1)."""
+    """Synthetic data with cluster structure: each task has its own hidden shift.
+    effect=0 — a weak signal (AUC ~0.6-0.7); effect=1 — a strong one (AUC ~1)."""
     rng = np.random.default_rng(seed)
     strength = 0.8 + 8.0 * effect
     y, p, tids = [], [], []
@@ -73,10 +73,10 @@ def test_bootstrap_ci_contains_point():
 
 def test_cluster_permutation_paired_null_and_signal():
     y, p, tids = _clustered(seed=3)
-    # одинаковые предсказания -> разница 0 -> p = 1
+    # identical predictions -> difference 0 -> p = 1
     res = cluster_permutation_paired(y, p, p, tids, n_perm=200, seed=4)
     assert res["p_value"] == 1.0
-    # усиливаем разделение классов -> ΔAUC большой, p маленький
+    # amplify the class separation -> ΔAUC large, p small
     _, p_strong, _ = _clustered(seed=3, effect=1.0)
     res2 = cluster_permutation_paired(y, p_strong, p, tids, n_perm=500, seed=5)
     assert res2["observed_delta"] > 0.3
@@ -89,6 +89,6 @@ def test_label_permutation_noise_not_significant():
     y = (rng.random(n) < 0.4).astype(float)
     tids = np.array([f"t{i // 4:03d}" for i in range(n)])
     strata = np.array(["s"] * n)
-    p = rng.random(n)  # шум, не связанный с меткой
+    p = rng.random(n)  # noise, unrelated to the label
     res = label_permutation_auc_p(y, p, tids, strata, n_perm=300, seed=7)
-    assert res["p_value"] > 0.05  # шум не должен давать значимый AUC
+    assert res["p_value"] > 0.05  # noise must not produce a significant AUC

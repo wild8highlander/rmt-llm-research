@@ -1,9 +1,9 @@
 """
-features.geometry — геометрия представлений между слоями.
+features.geometry — representation geometry across layers.
 
-Минимальный набор: норма представлений по слоям и дрейф между соседними
-слоями (косинусная близость средних векторов последней позиции).
-Дополняет спектральную группу, не смешиваясь с доверительными признаками.
+A minimal set: representation norms per layer and drift between adjacent
+layers (cosine similarity of last-position mean vectors). Complements the
+spectral group without mixing in confidence features.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ def _cos(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def geometry_features(final_hidden: list[np.ndarray]) -> dict:
-    """final_hidden: list[layer] (T, H) — скрытые состояния последнего шага."""
+    """final_hidden: list[layer] (T, H) — hidden states of the final step."""
     if not final_hidden or len(final_hidden) < 2:
         raise ValueError("geometry features need at least 2 layers")
     last_pos = np.stack([h[-1] for h in final_hidden])  # (layers, H)

@@ -1,17 +1,17 @@
 """
-features.confidence — стандартные показатели уверенности (baseline-группа).
+features.confidence — standard confidence indicators (baseline group).
 
-Вычисляются из per_step_logits (логиты последней позиции каждого шага
-генерации) и фактически выбранных токенов:
+Computed from per_step_logits (the logits of the last position of each
+generation step) and the actually chosen tokens:
 
-  ce_first / ce_mean   — cross-entropy первого / средней по шагам token'а;
+  ce_first / ce_mean   — cross-entropy of the first / step-averaged token;
   ppl_answer           — exp(ce_mean);
-  maxprob_first / mean — максимум вероятности распределения;
-  entropy_mean         — средняя энтропия распределений;
-  margin_first         — разрыв p1 - p2 первого шага.
+  maxprob_first / mean — the max probability of the distribution;
+  entropy_mean         — the mean entropy of the distributions;
+  margin_first         — the p1 - p2 gap at the first step.
 
-Это признаки «доступные до эталонного ответа» — базовая группа для
-проверки того, что спектральные признаки ДОБАВЛЯЮТ информацию.
+These are the "features available before the reference answer" — the
+base group for checking that spectral features ADD information.
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ def _log_softmax(logits: np.ndarray) -> np.ndarray:
 
 
 def confidence_features(per_step_logits: np.ndarray, output_ids: list[int]) -> dict:
-    """per_step_logits: (steps, vocab); output_ids: выбранные токены."""
+    """per_step_logits: (steps, vocab); output_ids: the chosen tokens."""
     if per_step_logits.ndim != 2 or per_step_logits.shape[0] == 0:
         raise ValueError("per_step_logits must be (steps, vocab) with steps >= 1")
     steps = min(per_step_logits.shape[0], len(output_ids))
@@ -52,7 +52,7 @@ def confidence_features(per_step_logits: np.ndarray, output_ids: list[int]) -> d
         "maxprob_mean": float(maxprob.mean()),
         "entropy_mean": float(entropy.mean()),
         "margin_first": float(margin[0]),
-        # пер-шаговые траектории нужны temporal-признакам; отдаём отдельно
+        # per-step trajectories are needed by the temporal features; returned separately
         "_ce_traj": ce_per_step,
         "_entropy_traj": entropy,
     }

@@ -308,7 +308,6 @@ select = [
   "B", # flake8-bugbear
   "C4", # flake8-comprehensions
   "C90", # mccabe complexity
-  "DOC", # pydocstyle
   "E", # pycodestyle errors
   "F", # Pyflakes
   "I", # isort

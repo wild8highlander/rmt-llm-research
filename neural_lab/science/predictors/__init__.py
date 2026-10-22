@@ -1,4 +1,4 @@
-"""predictors — предсказательные модели и baseline'ы."""
+"""predictors — predictive models and baselines."""
 
 from .baselines import ConstantRateBaseline, FamilyRateBaseline  # noqa: F401
 from .calibration import ece, platt_apply, platt_fit, reliability_bins  # noqa: F401

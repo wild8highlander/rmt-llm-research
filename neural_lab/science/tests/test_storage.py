@@ -1,4 +1,4 @@
-"""Тесты storage: хэши, канонический JSON, атомарность."""
+"""Tests of storage: hashes, canonical JSON, atomicity."""
 
 import numpy as np
 from science.storage import (
@@ -28,7 +28,7 @@ def test_canonical_json_order_independent():
 
 
 def test_canonical_json_unicode_stable():
-    # ensure_ascii=True — одинаковые байты независимо от локали
+    # ensure_ascii=True — identical bytes regardless of locale
     s = canonical_json({"t": "лямбда"})
     assert "лямбда" not in s
     assert "\\u" in s

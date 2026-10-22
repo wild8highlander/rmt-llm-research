@@ -1,13 +1,13 @@
 """
-predictors.calibration — калибровка вероятностей и её измерение.
+predictors.calibration — probability calibration and its measurement.
 
-Высокий ROC-AUC ещё не означает, что «вероятность ошибки 80 %»
-соответствует ~80 % ошибок в сопоставимой группе случаев. Здесь:
+A high ROC-AUC does not yet mean that "an 80 % error probability"
+corresponds to ~80 % errors in a comparable group of cases. Here:
 
-  platt_fit/apply  — Платт-масштабирование логитов на OOF-предсказаниях
-                     (калибровка настраивается ТОЛЬКО на train-данных);
-  ece              — expected calibration error (равно-массовые бины);
-  reliability_bins — данные для кривой калибровки в отчёте.
+  platt_fit/apply  — Platt scaling of logits on OOF predictions
+                     (calibration is tuned on TRAIN data only);
+  ece              — expected calibration error (equal-mass bins);
+  reliability_bins — the data for the calibration curve in the report.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ def _logit(p: np.ndarray) -> np.ndarray:
 
 
 def _sigmoid_stable(z: np.ndarray) -> np.ndarray:
-    """Численно устойчивый сигмоид (без overflow на больших |z|)."""
+    """Numerically stable sigmoid (no overflow at large |z|)."""
     z = np.asarray(z, dtype=np.float64)
     out = np.empty_like(z)
     pos = z >= 0
@@ -35,7 +35,7 @@ def _sigmoid_stable(z: np.ndarray) -> np.ndarray:
 
 
 def platt_fit(p: np.ndarray, y: np.ndarray, max_iter: int = 100) -> tuple[float, float]:
-    """Платт-калибровка: sigmoid(a * logit(p) + b); возвращает (a, b)."""
+    """Platt calibration: sigmoid(a * logit(p) + b); returns (a, b)."""
     z = _logit(np.asarray(p, dtype=np.float64))
     y = np.asarray(y, dtype=np.float64)
     a, b = 1.0, 0.0
@@ -62,7 +62,7 @@ def platt_apply(p: np.ndarray, a: float, b: float) -> np.ndarray:
 
 
 def reliability_bins(y: np.ndarray, p: np.ndarray, n_bins: int = 10):
-    """Равно-массовые бины: (границы, среднее p, частота y, размер)."""
+    """Equal-mass bins: (boundaries, mean p, frequency of y, size)."""
     y = np.asarray(y, dtype=np.float64)
     p = np.asarray(p, dtype=np.float64)
     order = np.argsort(p)
@@ -82,7 +82,7 @@ def reliability_bins(y: np.ndarray, p: np.ndarray, n_bins: int = 10):
 
 
 def ece(y: np.ndarray, p: np.ndarray, n_bins: int = 10) -> float:
-    """Expected calibration error на равно-массовых бинах."""
+    """Expected calibration error over equal-mass bins."""
     rows = reliability_bins(y, p, n_bins)
     n = sum(r["n"] for r in rows)
     return float(sum(r["n"] * abs(r["p_mean"] - r["freq"]) for r in rows) / max(n, 1))

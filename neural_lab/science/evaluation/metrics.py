@@ -1,8 +1,8 @@
 """
-evaluation.metrics — метрики предсказания ошибок (чистый NumPy).
+evaluation.metrics — error-prediction metrics (pure NumPy).
 
-Совместно оцениваются: ранжирование (ROC-AUC, PR-AUC), точность
-вероятностей (Brier, log loss) и калибровка (ECE — в predictors).
+Evaluated jointly: ranking (ROC-AUC, PR-AUC), probability accuracy
+(Brier, log loss) and calibration (ECE — in predictors).
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ def _check(y: np.ndarray, p: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 
 def roc_auc(y, p) -> float:
-    """Rank-based AUC с корректной обработкой связей (Mann–Whitney)."""
+    """Rank-based AUC with correct tie handling (Mann–Whitney)."""
     y, p = _check(y, p)
     n_pos, n_neg = float((y == 1).sum()), float((y == 0).sum())
     if n_pos == 0 or n_neg == 0:
@@ -37,14 +37,14 @@ def roc_auc(y, p) -> float:
         j = i
         while j + 1 < len(sp) and sp[j + 1] == sp[i]:
             j += 1
-        ranks[order[i : j + 1]] = (i + j) / 2.0 + 1.0  # средний ранг связки
+        ranks[order[i : j + 1]] = (i + j) / 2.0 + 1.0  # average rank of the tie group
         i = j + 1
     r_pos = ranks[y == 1].sum()
     return float((r_pos - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg))
 
 
 def average_precision(y, p) -> float:
-    """PR-AUC = average precision (шаги по порогам при убывании p)."""
+    """PR-AUC = average precision (threshold steps as p decreases)."""
     y, p = _check(y, p)
     n_pos = float((y == 1).sum())
     if n_pos == 0:
@@ -55,7 +55,7 @@ def average_precision(y, p) -> float:
     fp = np.cumsum(1 - ys)
     precision = tp / np.maximum(tp + fp, _EPS)
     recall = tp / n_pos
-    # AP = сумма precision * dR (учитывая связки: берем precision в конце связки)
+    # AP = sum of precision * dR (ties accounted for: precision at the end of the tie group)
     ap, prev_recall = 0.0, 0.0
     i = 0
     while i < len(ys):

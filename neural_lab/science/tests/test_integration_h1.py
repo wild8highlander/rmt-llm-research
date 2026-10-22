@@ -1,10 +1,11 @@
 """
-Интеграционный тест: весь конвейер H1 на ФЕЙКОВОЙ модели.
+Integration test: the whole H1 pipeline on a FAKE model.
 
-Проверяет сцепку слоёв (наблюдение -> признаки -> разбиение -> фит ->
-предсказания -> раскрытие -> отчёт) без реальных весов TinyGPT.
-Фейковая модель детерминированно «угадывает» ответ в ~60 % задач и имеет
-запланированный сигнал в скрытых состояниях (общий фактор у угадавших).
+Checks the coupling of the layers (observation -> features -> split ->
+fit -> predictions -> unblinding -> report) without real TinyGPT
+weights. The fake model deterministically "guesses" the answer on ~60 %
+of tasks and carries a planted signal in the hidden states (a common
+factor for the guessing ones).
 """
 
 import os
@@ -47,10 +48,10 @@ class FakeModel:
 
         rng = np.random.default_rng(seed if seed is not None else 0)
         prompt = "".join(chr(int(i) % 256) for i in prompt_ids)
-        # «правильность» детерминирована задачей; у температурных сэмплов шум
+        # "correctness" is determined by the task; temperature samples carry noise
         guess = (zlib.crc32(prompt.encode()) % 10) < 6
         if guess:
-            # «знающая» модель выдаёт числа, близкие к истине (±25% метка = 1)
+            # a "knowing" model emits numbers close to truth (the ±25 % label = 1)
             m = re.search(r"q=([\d.]+), sigma2=([\d.]+)", prompt)
             q, s2 = (float(m.group(1)), float(m.group(2))) if m else (0.5, 1.0)
             lm, lp = mp.mp_bounds(q, s2)
@@ -65,7 +66,7 @@ class FakeModel:
         logits = [rng.normal(0, 1, 512) for _ in range(n)]
         for step_lg in logits:
             if guess:
-                step_lg[7] += 8.0  # уверенный первый токен у «знающих»
+                step_lg[7] += 8.0  # a confident first token for the "knowing" ones
         hidden = []
         T = min(32, 8 + n)
         for _ in range(n):
@@ -73,7 +74,7 @@ class FakeModel:
             for _li in range(4):
                 h = rng.normal(0, 0.4, (T, 24))
                 if guess:
-                    h += 2.0 * rng.normal(0, 1, (1, 24))  # общий фактор -> spike
+                    h += 2.0 * rng.normal(0, 1, (1, 24))  # common factor -> spike
                 layers.append(h)
             hidden.append(layers)
         return {
@@ -87,7 +88,7 @@ class FakeModel:
 @pytest.fixture(scope="module")
 def pipeline(tmp_path_factory):
     out = str(tmp_path_factory.mktemp("h1_it"))
-    # --- задачи из мини-корпуса (реальная верификация библиотекой) ---
+    # --- tasks from the mini-corpus (real verification by the library) ---
     import marchenko_pastur as mp
 
     lines = []
@@ -106,7 +107,7 @@ def pipeline(tmp_path_factory):
     assert len(tasks) >= 10
     ctx = {"model": FakeModel(), "tokenizer": tok}
 
-    # --- наблюдения + признаки (FakeModel: 1 «токен» = 1 символ) ---
+    # --- observations + features (FakeModel: 1 "token" = 1 char) ---
     observations, labels = [], []
     for task in tasks:
         for i, temp in enumerate([0.8, 0.8, 0.0]):
@@ -148,13 +149,13 @@ def pipeline(tmp_path_factory):
 
 def test_full_pipeline(pipeline):
     out, observations, labels, tasks = pipeline
-    models = build_models(4)  # FakeModel: 4 слоя скрытых состояний
+    models = build_models(4)  # FakeModel: 4 layers of hidden states
     records, fold_report = fit_predict(observations, labels, tasks, out, models)
     assert len(records) == len([o for o in observations if not o.get("excluded")])
     assert all(r["fold"] >= 0 for r in records)
     for name in models:
         assert all(name in r for r in records)
-    # фолды попарно не пересекаются по задачам
+    # folds are pairwise disjoint across tasks
     by_fold = {}
     for r in records:
         by_fold.setdefault(r["fold"], set()).add(r["task_id"])
@@ -175,8 +176,8 @@ def test_full_pipeline(pipeline):
     auc = report["metrics"]["D_combined"]["roc_auc"]
     assert np.isfinite(auc["point"])
     assert auc["ci_low"] <= auc["point"] <= auc["ci_high"]
-    # фейковая модель имеет запланированный сигнал -> комбинированная модель
-    # должна быть осмысленно лучше случайного ранжирования
+    # the fake model carries a planted signal -> the combined model must be
+    # meaningfully better than random ranking
     assert report["metrics"]["D_combined"]["roc_auc"]["point"] > 0.6
     from science.experiments.run_h1 import render_report_md
 

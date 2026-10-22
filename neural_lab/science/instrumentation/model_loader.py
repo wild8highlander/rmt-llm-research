@@ -1,10 +1,10 @@
 """
-instrumentation.model_loader — единая точка загрузки модели.
+instrumentation.model_loader — the single model-loading entry point.
 
-Загружает TinyGPT v3 (NumPy-only, ADR-001) и BPE-токенизатор из
-<base>/model/, фиксирует sha256 весов и токенизатора (model_revision —
-обязательное поле паспорта) и переводит модель в режим инференса
-(dropout выключен — детерминированный forward).
+Loads TinyGPT v3 (NumPy-only, ADR-001) and the BPE tokenizer from
+<base>/model/, records the sha256 of weights and tokenizer (model_revision
+— a mandatory passport field) and puts the model into inference mode
+(dropout off — deterministic forward).
 """
 
 from __future__ import annotations
@@ -21,13 +21,13 @@ DEFAULT_BASE = os.path.join(
 
 
 def resolve_base(base: str | None = None) -> str:
-    """Каталог research-программы (env RMT_LLM_BASE > аргумент > default)."""
+    """The research-program directory (env RMT_LLM_BASE > argument > default)."""
     cand = base or os.environ.get("RMT_LLM_BASE") or DEFAULT_BASE
     return os.path.abspath(cand)
 
 
 def _ensure_repo_paths() -> str:
-    """Находит корень репозитория и подключает lab_en + src/rmt_llm в sys.path."""
+    """Finds the repository root and adds lab_en + src/rmt_llm to sys.path."""
     root = os.environ.get("RMT_LLM_ROOT")
     if not root:
         cand = os.path.dirname(os.path.abspath(__file__))
@@ -46,9 +46,9 @@ def _ensure_repo_paths() -> str:
 
 
 def load_model(base: str | None = None) -> dict:
-    """Возвращает {model, tokenizer, base, weights_sha256, bpe_sha256, config}.
+    """Returns {model, tokenizer, base, weights_sha256, bpe_sha256, config}.
 
-    Модель переводится в eval-режим (model.training = False).
+    The model is put into eval mode (model.training = False).
     """
     _ensure_repo_paths()
     from tiny_gpt_trainer import BPETokenizer
