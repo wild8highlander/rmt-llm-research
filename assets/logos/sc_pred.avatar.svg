@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="science/predictors — animated avatar">
+  <defs>
+    <radialGradient id="avsc_pbg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avsc_pmain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6"><animate attributeName="stop-color" values="#f472b6;#a78bfa;#00ffa3;#22d3ee;#a78bfa;#f472b6" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#a78bfa"><animate attributeName="stop-color" values="#a78bfa;#a78bfa;#f472b6;#a78bfa" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avsc_psweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avsc_porb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#f472b6" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avsc_pglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avsc_psoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avsc_pbg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avsc_porb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avsc_pmain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avsc_pglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <circle cx="0" cy="0" r="40" fill="none" stroke="#f472b6" stroke-width="3" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.4s" repeatCount="indefinite"/></circle><circle cx="0" cy="0" r="28" fill="none" stroke="#a78bfa" stroke-width="3" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="3.0s" repeatCount="indefinite"/></circle><circle cx="0" cy="0" r="16" fill="none" stroke="#f472b6" stroke-width="3" opacity="0.9"><animate attributeName="opacity" values="0.5;1;0.5" dur="3.5999999999999996s" repeatCount="indefinite"/></circle><circle cx="0" cy="0" r="5" fill="#f472b6" filter="url(#avsc_pglow)"><animate attributeName="r" values="4;6.5;4" dur="2s" repeatCount="indefinite"/></circle><line x1="-52" y1="-52" x2="-8" y2="-8" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"><animate attributeName="x2" values="-52;-8;-52" dur="3s" repeatCount="indefinite"/><animate attributeName="y2" values="-52;-8;-52" dur="3s" repeatCount="indefinite"/></line><path d="M-4,-14 L-4,-2 L-16,-6 Z" fill="#a78bfa" opacity="0"><animate attributeName="opacity" values="0;0;1;0" keyTimes="0;0.8;0.9;1" dur="3s" repeatCount="indefinite"/></path>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avsc_psweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avsc_pmain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#f472b6;#a78bfa;#f472b6;#f472b6;#f472b6" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

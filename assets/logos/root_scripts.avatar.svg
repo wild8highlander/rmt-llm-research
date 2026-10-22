@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="scripts — animated avatar">
+  <defs>
+    <radialGradient id="avrootbg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avrootmain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"><animate attributeName="stop-color" values="#22d3ee;#a78bfa;#00ffa3;#22d3ee;#a78bfa;#22d3ee" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#a78bfa"><animate attributeName="stop-color" values="#a78bfa;#a78bfa;#22d3ee;#a78bfa" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avrootsweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avrootorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#22d3ee" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avrootglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avrootsoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avrootbg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avrootorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avrootmain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avrootglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <rect x="-44" y="-32" width="88" height="64" rx="8" fill="#05060f" stroke="url(#avrootmain)" stroke-width="2.5" filter="url(#avrootglow)"/><circle cx="-34" cy="-22" r="3" fill="#00ffa3"/><circle cx="-24" cy="-22" r="3" fill="#a78bfa"/><circle cx="-14" cy="-22" r="3" fill="#f472b6"/><text x="-34" y="14" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="26" font-weight="bold" fill="#22d3ee">&gt;_</text><rect x="2" y="-2" width="10" height="20" fill="#a78bfa"><animate attributeName="opacity" values="1;0;1" dur="1.2s" repeatCount="indefinite"/></rect><rect x="-10" y="42" width="8" height="8" rx="2" fill="#a78bfa" opacity="0.7"><animate attributeName="y" values="42;34;42" dur="1.8s" repeatCount="indefinite"/></rect><rect x="6" y="42" width="8" height="8" rx="2" fill="#a78bfa" opacity="0.7"><animate attributeName="y" values="42;34;42" dur="2.3s" repeatCount="indefinite"/></rect>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avrootsweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avrootmain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#22d3ee;#a78bfa;#f472b6;#22d3ee;#22d3ee" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

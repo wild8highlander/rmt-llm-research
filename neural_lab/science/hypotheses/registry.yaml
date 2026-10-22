@@ -1,136 +1,139 @@
 # =============================================================================
-# Реестр гипотез neural_lab/science
+# Hypothesis registry of neural_lab/science
 # =============================================================================
-# Каждая гипотеза имеет: формулировку, область применимости, предсказание,
-# критерий фальсификации и статус. Статусы:
-#   registered        — зарегистрирована, эксперимент не запущен;
-#   testing           — эксперимент в рамках зафиксированного протокола
-#                       выполняется/выполнен, вывод см. в results/;
-#   supported         — получила поддержку в указанных условиях;
-#   not_supported     — НЕ получила поддержки (отрицательный результат —
-#                       тоже результат);
-#   inconclusive      — статистика недостаточна или эффект траекторно-зависим.
+# Each hypothesis carries: a formulation, an applicability scope, a
+# prediction, a falsification criterion, and a status. Statuses:
+#   registered        — recorded, the experiment has not been run;
+#   testing           — the experiment under a frozen protocol
+#                       has been/is being executed; see results/;
+#   supported         — got support under the stated conditions;
+#   not_supported     — did NOT get support (a negative result is
+#                       still a result);
+#   inconclusive      — the statistics are insufficient, or the effect
+#                       is trajectory-dependent.
 #
-# Правило: формулировка и критерии фиксируются ДО запуска эксперимента.
-# Изменения после просмотра результатов оформляются новой версией
-# протокола (H*_v2) с явной пометкой, а не тихой правкой этой записи.
+# Rule: the formulation and the criteria are fixed BEFORE the experiment
+# runs. Post-hoc changes are issued as a new protocol version (H*_v2)
+# with an explicit note — never as a quiet edit of this record.
 # =============================================================================
 
 hypotheses:
 
   - id: H1
     title: >
-      Спектральные характеристики внутренних активаций содержат информацию
-      об ошибках модели сверх той, которую дают стандартные показатели
-      уверенности.
-    target: label_numeric_ok (первичный допуск 0.25, сетка 0.15/0.25/0.40)
-    protocol: EXPERIMENT_PROTOCOL.md (версия 1.0)
+      The spectral characteristics of internal activations contain
+      information about the model's errors beyond what standard
+      confidence signals provide.
+    target: label_numeric_ok (primary tolerance 0.25, grid 0.15/0.25/0.40)
+    protocol: EXPERIMENT_PROTOCOL.md (version 1.0)
     experiment: experiments/run_h1.py (error_prediction_rmt_v1)
     pre_registered_models:
-      - A_constant_rate   # базовая частота
-      - A2_family_rate    # базовая частота по семейству
-      - B_confidence      # 7 стандартных признаков уверенности
-      - C_internal        # 26 признака внутренних состояний (спектр+время+геометрия)
+      - A_constant_rate   # base rate
+      - A2_family_rate    # per-family base rate
+      - B_confidence      # 7 standard confidence features
+      - C_internal        # 26 internal-state features (spectral+temporal+geometry)
       - D_combined        # B + C
-      - E_combined_minus_spectral  # абляция: D без спектральной группы
+      - E_combined_minus_spectral  # ablation: D without the spectral group
     success_criterion: >
-      delta_auc(D - B) > 0 с 95% кластерным бутстреп-CI, не накрывающим 0,
-      И кластерный перестановочный p < 0.05; устойчивость проверяется
+      delta_auc(D - B) > 0 with a 95% clustered bootstrap CI excluding 0,
+      AND a clustered permutation p < 0.05; robustness is checked by
       leave-one-family-out.
     falsification: >
-      CI включает 0 (или AUC не воспроизводится при LOFO) -> гипотеза не
-      поддержана на данной модели/задачах; результат публикуется как есть.
+      The CI includes 0 (or the AUC does not reproduce under LOFO) -> the
+      hypothesis is not supported on this model/tasks; the result is
+      published as it is.
     power_note: >
-      447K-параметров модель с численной точностью около нуля даёт мало
-      положительных меток; ожидается слабая мощность по первичной цели.
-      Вторичная цель format_ok (Ловушка Полезности) заявлена заранее как
-      статистически более мощная.
+      A 447K-parameter model with near-zero numeric accuracy yields few
+      positive labels; weak power on the primary endpoint is expected.
+      The secondary endpoint format_ok (the Utility Trap) is declared in
+      advance as statistically more powerful.
     status: inconclusive
     results: results/h1_v1/REPORT.md
     outcome_v1: |
-      Прогон v1.0.1 (565 наблюдений, 113 задач, 14 позитивов по первичной цели):
-      - Первичная цель (numeric_ok@±25%) UNDERPOWERED: ΔAUC(D−B) = +0.206
-        [+0.084, +0.319] — CI не накрывает 0, но перестановочный p = 0.097 ≥ 0.05
-        → по строгому критерию протокола НЕ ПОДТВЕРЖДЕНА; направление положительное.
-      - Абляция: без спектральной группы D падает с 0.621 до 0.412 (уровень B) —
-        весь прирост комбинированной модели обеспечен спектральными признаками.
-      - Чувствительность: при допуске ±40% (31 позитив) D = 0.718 vs B = 0.526.
-      - Вторичная цель (format_ok, «Ловушка Полезности»): C_internal AUC 0.871
+      Run v1.0.1 (565 observations, 113 tasks, 14 positives on the primary endpoint):
+      - Primary endpoint (numeric_ok@±25%) UNDERPOWERED: ΔAUC(D−B) = +0.206
+        [+0.084, +0.319] — the CI excludes 0, but the permutation p = 0.097 ≥ 0.05
+        -> under the protocol's strict criterion NOT SUPPORTED; the direction is positive.
+      - Ablation: without the spectral group D falls from 0.621 to 0.412 (the B level) —
+        the entire gain of the combined model is provided by the spectral features.
+      - Sensitivity: at the ±40% tolerance (31 positives) D = 0.718 vs B = 0.526.
+      - Secondary endpoint (format_ok, the "Utility Trap"): C_internal AUC 0.871
         [0.833, 0.905] vs B_confidence 0.794 [0.740, 0.845]; ΔAUC(D−B) = +0.075
-        [+0.038, +0.115], перестановочный p = 0.0025 — ВНУТРЕННИЕ СПЕКТРАЛЬНЫЕ
-        СОСТОЯНИЯ ЗНАЧИМО ЛУЧШЕ предсказывают производство оформленного ответа,
-        чем стандартная уверенность. Это главный содержательный результат прогона.
-      - Следующий шаг: перенос на M/L/XL лестницу и/или расширение задачи
-        (больше позитивов) для повышения мощности первичной цели.
+        [+0.038, +0.115], permutation p = 0.0025 — INTERNAL SPECTRAL STATES ARE
+        SIGNIFICANTLY BETTER at predicting the production of a formatted answer
+        than standard confidence. This is the run's main substantive result.
+      - Next step: transfer to the M/L/XL ladder and/or task expansion
+        (more positives) to raise the primary endpoint's power.
     scaling_replication_v1_1: |
-      Репликация по лестнице (science/results/h1_scaling/REPORT.md; тот же
-      датасет 411eb0e9…, 113 задач, 565 наблюдений, seed 42, протокол v1.1):
-      - S (447K, 14 поз.): ΔAUC(D−B) = +0.206 [+0.084, +0.319], perm p = 0.097
-      - M (1.1M, 19 поз.): +0.037 [−0.042, +0.127], perm p = 0.531
-      - L (4.1M, 19 поз.): +0.116 [+0.012, +0.215], perm p = 0.070 —
-        бутстреп-CI впервые исключает 0
-      Направление D > B — 3/3 ячейки; строгий критерий (p < 0.05) не достигнут.
-      Новая находка: B_confidence НЕМОНОТОННА по масштабу (0.415 → 0.688 →
-      0.478) — динамика прироста D−B частично определяется дрейфом baseline,
-      а не спектра. C_internal стабильно выше случая (0.542/0.661/0.676);
-      E-абляция подтверждает уникальный вклад спектра во всех ячейках.
-      Вторичная цель format_ok: значима в S (+0.075, p=0.0025) и L
-      (+0.137 [+0.080, +0.195], p=0.0040), не значима в M (+0.037, p=0.33).
-      XL (19.1M): обучение требует GPU (эпоха ~20 мин на 2-CPU); пайплайн
-      проверен smoke-прогоном на 12L/384h — 49 признаков, без ошибок.
-    next: расширение выборки до ≥ 40 позитивов на ячейку (near-band, новые
-      семейства задач), повтор на независимом семействе (этап 05), XL на GPU
-      (Colab T4 / Kaggle; команды в scaling/README).
+      Ladder replication (science/results/h1_scaling/REPORT.md; the same
+      dataset 411eb0e9…, 113 tasks, 565 observations, seed 42, protocol v1.1):
+      - S (447K, 14 pos.): ΔAUC(D−B) = +0.206 [+0.084, +0.319], perm p = 0.097
+      - M (1.1M, 19 pos.): +0.037 [−0.042, +0.127], perm p = 0.531
+      - L (4.1M, 19 pos.): +0.116 [+0.012, +0.215], perm p = 0.070 —
+        the bootstrap CI excludes 0 for the first time
+      The direction D > B holds in 3/3 cells; the strict criterion (p < 0.05) is not met.
+      New finding: B_confidence is NON-MONOTONIC across scale (0.415 → 0.688 →
+      0.478) — the D−B gain dynamics is partly determined by baseline drift,
+      not by the spectrum. C_internal is stably above chance (0.542/0.661/0.676);
+      the E ablation confirms the spectrum's unique contribution in every cell.
+      The secondary endpoint format_ok: significant in S (+0.075, p=0.0025) and L
+      (+0.137 [+0.080, +0.195], p=0.0040), not significant in M (+0.037, p=0.33).
+      XL (19.1M): training requires a GPU (an epoch is ~20 min on 2 CPUs); the
+      pipeline is smoke-verified at 12L/384h — 49 features, no errors.
+    next: expanding the sample to ≥ 40 positives per cell (a near-band, new
+      task families), a replication on an independent family (stage 05), XL on
+      a GPU (Colab T4 / Kaggle; commands in scaling/README).
 
   - id: H2
     title: >
-      Обучение на ПРАВИЛЬНЫХ формулах снижает частоту уверенных
-      галлюцинаций там, где у модели есть знание (in-distribution),
-      по сравнению с контрольным корпусом той же формы, но с ложной
-      арифметикой.
-    target: confident_hallucination_rate (доля оформленных ответов с
-      неверными числами)
+      Training on CORRECT formulas reduces the rate of confident
+      hallucinations where the model has knowledge (in-distribution),
+      compared with a control corpus of the same shape but with false
+      arithmetic.
+    target: confident_hallucination_rate (the share of formatted answers with
+      wrong numbers)
     protocol: research/tinygpt_formula/scaling/SCALING_PLAN.md
     experiment: research/tinygpt_formula/scaling/scaling_experiment.py
     current_evidence:
-      - "точка S (447K): in-dist numeric 8.3% (formula) vs 3.3% (control);"
-      - "in-dist hallucination 66.7% vs 81.8% (-15 п.п.);"
-      - "выборки малы — направление совпадает с гипотезой, значимость
-         не установлена."
-    next: лестница M/L/XL на бесплатных GPU (Colab T4 / Kaggle)
+      - "point S (447K): in-dist numeric 8.3% (formula) vs 3.3% (control);"
+      - "in-dist hallucination 66.7% vs 81.8% (−15 pp);"
+      - "the samples are small — the direction matches the hypothesis;
+         significance is not established."
+    next: the M/L/XL ladder on free GPUs (Colab T4 / Kaggle)
     status: inconclusive
     results: ../research/tinygpt_formula/scaling/scaling_report.json
 
   - id: H3
     title: >
-      BBP-выброс (lambda_max скрытых состояний за MP-границей) разделяет
-      промпты с «известными» ответами и фабрикациями.
+      A BBP emission (lambda_max of hidden states beyond the MP bound)
+      separates prompts with "known" answers from fabrications.
     target: pairwise AUC(lambda_max; known vs fabricated)
     protocol: research/tinygpt_formula/scripts/open_questions.py (Q3)
     current_evidence:
-      - "на одной траектории обучения AUC = 0.75;"
-      - "на предыдущей траектории AUC = 0.29 (инверсия!);"
-      - "4x4 статистика — эффект траекторно-зависим."
+      - "on one training trajectory AUC = 0.75;"
+      - "on a previous trajectory AUC = 0.29 (an inversion!);"
+      - "4x4 statistics — the effect is trajectory-dependent."
     warning: >
-      Интерпретация спектрального сдвига как «лжи/обмана/намерения»
-      НЕ допускается без независимых операциональных определений;
-      регистрируется только статистическое разделение.
-    next: повтор на зафиксированных весах и на лестнице масштабирования;
-      минимально необходимая статистика — десятки задач на класс.
+      Interpreting a spectral shift as "lies / deceit / intent" is NOT
+      permitted without independent operational definitions; only the
+      statistical separation is recorded.
+    next: a rerun on fixed weights and on the scaling ladder;
+      the minimally required statistics are dozens of tasks per class.
     status: inconclusive
     results: ../research/tinygpt_formula/model/open_questions_results.json
 
   - id: H4
     title: >
-      N_crit (критическая ёмкость/токен-бюджет) как спектральный порог
-      воспроизводим на независимых моделях и задачах.
-    target: положение порога в семействе определений (число токенов /
-      размер выборки / размерность матрицы — ДОЛЖНО быть зафиксировано
-      явно; подмена определения делает результат бессодержательным)
-    protocol: не зарегистрирован; предварительная регистрация требуется
-      до любых заявлений о подтверждении
+      N_crit (the critical capacity per token budget) as a spectral
+      threshold reproduces on independent models and tasks.
+    target: the threshold's position across the family of definitions (the number of
+      tokens / the sample size / the matrix dimension — MUST be fixed
+      explicitly; substituting the definition renders the result meaningless)
+    protocol: not registered; pre-registration is required
+      before any confirmation claims
     status: registered
     warning: >
-      Определение N в N_crit обязательно фиксируется в протоколе
-      (токены / примеры / размерность / слой). До этого любые совпадения
-      порогов считаются совпадением метрик, а не подтверждением теории.
+      The definition of N in N_crit must be fixed in the protocol
+      (tokens / examples / dimension / layer). Until then, any agreement of
+      thresholds counts as a coincidence of metrics, not a confirmation of
+      the theory.

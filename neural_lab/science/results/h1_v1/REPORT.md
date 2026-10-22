@@ -1,12 +1,12 @@
-# H1 — результат запуска (error_prediction_rmt_v1)
+# H1 — run result (error_prediction_rmt_v1)
 
-Протокол v1.0 · модель `30652295516b…` · датасет `411eb0e9bb23…` · seed 42
+Protocol v1.0 · model `30652295516b…` · dataset `411eb0e9bb23…` · seed 42
 
-Наблюдений: **565** (задач 113), положительных: **14** (базовая частота 2.5%). Первичная цель: `numeric_ok_025`, метрика: `roc_auc`, CI — кластерный бутстреп по задачам.
+Observations: **565** (tasks 113), positives: **14** (base rate 2.5%). Primary endpoint: `numeric_ok_025`, metric: `roc_auc`, CI — task-clustered bootstrap.
 
-## Основная таблица (out-of-fold)
+## Main table (out-of-fold)
 
-| Модель | ROC-AUC [95% CI] | PR-AUC | Brier | ECE raw→Platt |
+| Model | ROC-AUC [95% CI] | PR-AUC | Brier | ECE raw→Platt |
 |---|---|---|---|---|
 | A_constant_rate | 0.320 [0.196, 0.460] | 0.019 | 0.024 | 0.022 → 0.022 |
 | A2_family_rate | 0.579 [0.467, 0.691] | 0.029 | 0.024 | 0.018 → 0.018 |
@@ -15,22 +15,22 @@
 | D_combined | 0.621 [0.451, 0.766] | 0.038 | 0.026 | 0.020 → 0.036 |
 | E_combined_minus_spectral | 0.412 [0.266, 0.552] | 0.021 | 0.026 | 0.025 → 0.067 |
 
-## Ключевые сравнения (ΔAUC, кластерные тесты)
+## Key comparisons (ΔAUC, clustered tests)
 
-- **D_combined_minus_B_confidence**: +0.206 [+0.084, +0.319], перестановочный p = 0.0970
-- **D_combined_minus_C_internal**: +0.079 [+0.002, +0.166], перестановочный p = 0.0800
-- **C_internal_minus_B_confidence**: +0.127 [-0.060, +0.279], перестановочный p = 0.3878
+- **D_combined_minus_B_confidence**: +0.206 [+0.084, +0.319], permutation p = 0.0970
+- **D_combined_minus_C_internal**: +0.079 [+0.002, +0.166], permutation p = 0.0800
+- **C_internal_minus_B_confidence**: +0.127 [-0.060, +0.279], permutation p = 0.3878
 
-## Перестановка меток (нулевая гипотеза)
+## Label permutation (null hypothesis)
 
-- D_combined: наблюдаемый AUC 0.621, p = 1.0000 (переставляемых страт 0/11)
-  - внимание: weak randomization space: большинство страт одноклассовы — p-value близок к 1 и неинтерпретируем
-- B_confidence: наблюдаемый AUC 0.415, p = 1.0000 (переставляемых страт 0/11)
-  - внимание: weak randomization space: большинство страт одноклассовы — p-value близок к 1 и неинтерпретируем
+- D_combined: observed AUC 0.621, p = 1.0000 (permutable strata 0/11)
+  - warning: weak randomization space: most strata are single-class — the p-value is close to 1 and uninterpretable
+- B_confidence: observed AUC 0.415, p = 1.0000 (permutable strata 0/11)
+  - warning: weak randomization space: most strata are single-class — the p-value is close to 1 and uninterpretable
 
-## Вторичная цель: format_ok — «Ловушка Полезности» (отдельный фит, out-of-fold)
+## Secondary endpoint: format_ok — the “Utility Trap” (separate fit, out-of-fold)
 
-| Модель | ROC-AUC [95% CI] | Brier | ECE raw→Platt |
+| Model | ROC-AUC [95% CI] | Brier | ECE raw→Platt |
 |---|---|---|---|
 | A_constant_rate | 0.467 [0.407, 0.523] | 0.159 | 0.029 → 0.029 |
 | A2_family_rate | 0.598 [0.538, 0.652] | 0.154 | 0.042 → 0.042 |
@@ -38,19 +38,19 @@
 | C_internal | 0.871 [0.833, 0.905] | 0.103 | 0.028 → 0.040 |
 | D_combined | 0.869 [0.828, 0.907] | 0.102 | 0.036 → 0.037 |
 
-**delta_D_minus_B**: +0.075 [+0.038, +0.115], перестановочный p = 0.0025
+**delta_D_minus_B**: +0.075 [+0.038, +0.115], permutation p = 0.0025
 
-## Чувствительность к допуску (каждая цель фитована отдельно)
+## Tolerance sensitivity (each target fitted separately)
 
-| Допуск | base rate | B | C | D |
+| Tolerance | base rate | B | C | D |
 |---|---|---|---|---|
 | numeric_ok_015 | 0.012 (7+) | 0.4286 | 0.5732 | 0.5466 |
 | numeric_ok_025 | 0.025 (14+) | 0.4153 | 0.542 | 0.6212 |
 | numeric_ok_040 | 0.055 (31+) | 0.526 | 0.6925 | 0.7181 |
 
-## Leave-one-family-out (обобщение на незнакомое семейство)
+## Leave-one-family-out (generalization to an unseen family)
 
-| Семейство | n_test | n_pos | A | B | C | D |
+| Family | n_test | n_pos | A | B | C | D |
 |---|---|---|---|---|---|---|
 | bbp_lambda_max | 315 | 12 | 0.500 | 0.366 | 0.327 | 0.307 |
 | caputo_mean_collapse_time | 105 | 0 | — | — | — | — |
@@ -58,17 +58,17 @@
 | tracy_widom_mean | 5 | 0 | — | — | — | — |
 | tracy_widom_variance | 5 | 0 | — | — | — | — |
 
-## Вердикт по критерию успеха (автоматически из протокола)
+## Verdict on the success criterion (automatically from the protocol)
 
-Первичная цель UNDERPOWERED: позитивов 14 (< 20) — любые p-value по первичной цели следует читать с осторожностью.
-ΔAUC(D−B) = +0.206 [+0.084, +0.319], p = 0.0970 → **H1 НЕ ПОДТВЕРЖДЕНА строго (CI не накрывает 0, но перестановочный p = 0.097 >= 0.05): направление положительное, мощность недостаточна — требуются данные большего объёма / модель большего размера.**
+Primary endpoint UNDERPOWERED: 14 (< 20) — any p-values on the primary endpoint should be read with caution.
+ΔAUC(D−B) = +0.206 [+0.084, +0.319], p = 0.0970 → **H1 NOT STRICTLY SUPPORTED (the CI excludes 0, but the permutation p = 0.097 >= 0.05): the direction is positive, power is insufficient — more data / a larger model is required.**
 
 
-## Честные ограничения
+## Honest limitations
 
-- один запуск одного seeded-прогона обучения; веса не коммитятся (см. воспроизведение в EXPERIMENT_PROTOCOL.md);
-- повторные генерации одной задачи коррелированы — все CI и тесты кластеризованы по задачам;
-- A_constant_rate ниже 0.5 — артефакт межфолдовой вариации базовой частоты при константном предсказании; смотреть совместно с A2;
-- малое число положительных меток ограничивает мощность; отрицательный или неубедительный результат — тоже результат и фиксируется как есть.
+- a single run of a single seeded training; the weights are not committed (see reproduction in EXPERIMENT_PROTOCOL.md);
+- repeated generations of one task are correlated — all CIs and tests are clustered by task;
+- A_constant_rate below 0.5 is an artifact of between-fold variation of the base rate under a constant prediction; read jointly with A2;
+- the small number of positive labels limits power; a negative or inconclusive outcome is still a result and is recorded as it is.
 
-Артефакты: passport.json · tasks.json · observations.jsonl · labels.jsonl · predictions.jsonl · report.json · REPORT.md
+Artifacts: passport.json · tasks.json · observations.jsonl · labels.jsonl · predictions.jsonl · report.json · REPORT.md

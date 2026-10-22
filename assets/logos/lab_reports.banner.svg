@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220" role="img" aria-label="laboratory reports — animated logo">
+  <defs>
+    <radialGradient id="lab_bg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="lab_main" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"><animate attributeName="stop-color" values="#fb923c;#22d3ee;#00ffa3;#22d3ee;#a78bfa;#fb923c" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#22d3ee"><animate attributeName="stop-color" values="#22d3ee;#a78bfa;#fb923c;#22d3ee" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="lab_sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="lab_orb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fb923c" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#fb923c" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#fb923c" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="lab_glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="lab_soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="800" height="220" rx="18" fill="url(#lab_bg)"/>
+  <g filter="url(#lab_soft)">
+    <path d="M-40,158 C144,128 288,189 440,154 C592,121 704,180 840,145 L840,260 L-40,260 Z" fill="#fb923c" opacity="0.20">
+      <animate attributeName="d" values="M-40,158 C144,128 288,189 440,154 C592,121 704,180 840,145 L840,260 L-40,260 Z;M-40,141 C144,176 288,114 440,172 C592,207 704,128 840,163 L840,260 L-40,260 Z;M-40,158 C144,128 288,189 440,154 C592,121 704,180 840,145 L840,260 L-40,260 Z" dur="14s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.14;0.26;0.14" dur="14s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-40,185 C176,154 336,211 496,180 C640,154 736,202 840,176 L840,260 L-40,260 Z" fill="#22d3ee" opacity="0.16">
+      <animate attributeName="opacity" values="0.10;0.22;0.10" dur="11s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <circle cx="60" cy="34" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="2.2s" begin="0.00s" repeatCount="indefinite"/></circle><circle cx="208" cy="22" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.0s" begin="0.37s" repeatCount="indefinite"/></circle><circle cx="390" cy="30" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.8s" begin="0.74s" repeatCount="indefinite"/></circle><circle cx="565" cy="20" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="4.6s" begin="1.11s" repeatCount="indefinite"/></circle><circle cx="712" cy="42" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="2.2s" begin="1.48s" repeatCount="indefinite"/></circle><circle cx="762" cy="120" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.0s" begin="1.85s" repeatCount="indefinite"/></circle><circle cx="40" cy="150" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.8s" begin="0.22s" repeatCount="indefinite"/></circle><circle cx="300" cy="200" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="4.6s" begin="0.59s" repeatCount="indefinite"/></circle><circle cx="520" cy="186" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="2.2s" begin="0.96s" repeatCount="indefinite"/></circle><circle cx="688" cy="196" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.0s" begin="1.33s" repeatCount="indefinite"/></circle><circle cx="250" cy="120" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.8s" begin="1.70s" repeatCount="indefinite"/></circle><circle cx="470" cy="90" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="4.6s" begin="0.07s" repeatCount="indefinite"/></circle>
+  <g>
+    <circle cx="112" cy="110" r="86" fill="url(#lab_orb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+    <circle cx="112" cy="110" r="66" fill="none" stroke="url(#lab_main)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="277 145" filter="url(#lab_glow)"><animateTransform attributeName="transform" type="rotate" from="0 112 110" to="360 112 110" dur="13.0s" repeatCount="indefinite"/></circle>
+    <circle cx="112" cy="110" r="52" fill="none" stroke="url(#lab_main)" stroke-width="2.0" stroke-linecap="round" stroke-dasharray="218 114" filter="url(#lab_glow)"><animateTransform attributeName="transform" type="rotate" from="0 112 110" to="360 112 110" dur="9.0s" repeatCount="indefinite"/></circle>
+    <g><rect x="76" y="94" width="60" height="42" rx="4" fill="#05060f" stroke="#22d3ee" stroke-width="2.2"/><path d="M118,94 l18,0 0,12 Z" fill="none" stroke="#22d3ee" stroke-width="2"/><line x1="84" y1="108" x2="122" y2="108" stroke="#22d3ee" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.4s" repeatCount="indefinite"/></line><line x1="84" y1="117" x2="117" y2="117" stroke="#22d3ee" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.8s" repeatCount="indefinite"/></line><line x1="84" y1="126" x2="112" y2="126" stroke="#22d3ee" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.2s" repeatCount="indefinite"/></line></g><g><rect x="88" y="82" width="60" height="42" rx="4" fill="#05060f" stroke="#a78bfa" stroke-width="2.2"/><path d="M130,82 l18,0 0,12 Z" fill="none" stroke="#a78bfa" stroke-width="2"/><line x1="96" y1="96" x2="134" y2="96" stroke="#a78bfa" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.2s" repeatCount="indefinite"/></line><line x1="96" y1="105" x2="129" y2="105" stroke="#a78bfa" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.6s" repeatCount="indefinite"/></line><line x1="96" y1="114" x2="124" y2="114" stroke="#a78bfa" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="4.0s" repeatCount="indefinite"/></line></g><g><rect x="82" y="70" width="60" height="42" rx="4" fill="#05060f" stroke="#fb923c" stroke-width="2.2"/><path d="M124,70 l18,0 0,12 Z" fill="none" stroke="#fb923c" stroke-width="2"/><line x1="90" y1="84" x2="128" y2="84" stroke="#fb923c" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="4.0s" repeatCount="indefinite"/></line><line x1="90" y1="93" x2="123" y2="93" stroke="#fb923c" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="4.4s" repeatCount="indefinite"/></line><line x1="90" y1="102" x2="118" y2="102" stroke="#fb923c" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="4.8s" repeatCount="indefinite"/></line></g><rect x="82" y="58" width="60" height="14" rx="4" fill="#fb923c" opacity="0.85"><animate attributeName="y" values="58;66;58" dur="3s" repeatCount="indefinite"/></rect>
+  </g>
+  <text x="222" y="96" font-family="Verdana, 'DejaVu Sans', sans-serif" font-size="37" font-weight="bold" fill="#f4f9ff" letter-spacing="0.5">laboratory reports</text>
+  <text x="224" y="98" font-family="Verdana, 'DejaVu Sans', sans-serif" font-size="37" font-weight="bold" fill="url(#lab_main)" opacity="0.55">laboratory reports</text>
+  <line x1="226" y1="114" x2="470" y2="114" stroke="url(#lab_main)" stroke-width="2.4" stroke-linecap="round">
+    <animate attributeName="x2" values="300;640;300" dur="7s" repeatCount="indefinite"/>
+  </line>
+  <text x="226" y="142" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="15.5" fill="#9fb3d9">experiment reports (yaml + md)</text>
+  <g font-family="'JetBrains Mono', 'Courier New', monospace" font-size="11.5">
+    <rect x="226" y="162" width="118" height="24" rx="12" fill="none" stroke="#fb923c" stroke-width="1.4" opacity="0.9">
+      <animate attributeName="stroke" values="#fb923c;#22d3ee;#a78bfa;#fb923c" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <text x="285" y="178" text-anchor="middle" fill="#fb923c">RMT × LLM</text>
+    <rect x="354" y="162" width="130" height="24" rx="12" fill="none" stroke="#22d3ee" stroke-width="1.4" opacity="0.9"/>
+    <text x="419" y="178" text-anchor="middle" fill="#22d3ee">neural_lab</text>
+  </g>
+  <g transform="translate(700,112) scale(1.15)" opacity="0.15">
+    <g><rect x="-36" y="-16" width="60" height="42" rx="4" fill="#05060f" stroke="#22d3ee" stroke-width="2.2"/><path d="M6,-16 l18,0 0,12 Z" fill="none" stroke="#22d3ee" stroke-width="2"/><line x1="-28" y1="-2" x2="10" y2="-2" stroke="#22d3ee" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.4s" repeatCount="indefinite"/></line><line x1="-28" y1="7" x2="5" y2="7" stroke="#22d3ee" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.8s" repeatCount="indefinite"/></line><line x1="-28" y1="16" x2="0" y2="16" stroke="#22d3ee" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.2s" repeatCount="indefinite"/></line></g><g><rect x="-24" y="-28" width="60" height="42" rx="4" fill="#05060f" stroke="#a78bfa" stroke-width="2.2"/><path d="M18,-28 l18,0 0,12 Z" fill="none" stroke="#a78bfa" stroke-width="2"/><line x1="-16" y1="-14" x2="22" y2="-14" stroke="#a78bfa" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.2s" repeatCount="indefinite"/></line><line x1="-16" y1="-5" x2="17" y2="-5" stroke="#a78bfa" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.6s" repeatCount="indefinite"/></line><line x1="-16" y1="4" x2="12" y2="4" stroke="#a78bfa" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="4.0s" repeatCount="indefinite"/></line></g><g><rect x="-30" y="-40" width="60" height="42" rx="4" fill="#05060f" stroke="#fb923c" stroke-width="2.2"/><path d="M12,-40 l18,0 0,12 Z" fill="none" stroke="#fb923c" stroke-width="2"/><line x1="-22" y1="-26" x2="16" y2="-26" stroke="#fb923c" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="4.0s" repeatCount="indefinite"/></line><line x1="-22" y1="-17" x2="11" y2="-17" stroke="#fb923c" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="4.4s" repeatCount="indefinite"/></line><line x1="-22" y1="-8" x2="6" y2="-8" stroke="#fb923c" stroke-width="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="4.8s" repeatCount="indefinite"/></line></g><rect x="-30" y="-52" width="60" height="14" rx="4" fill="#fb923c" opacity="0.85"><animate attributeName="y" values="-52;-44;-52" dur="3s" repeatCount="indefinite"/></rect>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="220" fill="url(#lab_sweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;920" dur="7.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="798" height="218" rx="17" fill="none" stroke="url(#lab_main)" stroke-width="1.6" opacity="0.75">
+    <animate attributeName="stroke" values="#fb923c;#22d3ee;#f472b6;#fb923c;#fb923c" dur="10s" repeatCount="indefinite"/>
+  </rect>
+</svg>

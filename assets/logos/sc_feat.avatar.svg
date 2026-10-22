@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="science/features — animated avatar">
+  <defs>
+    <radialGradient id="avsc_fbg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avsc_fmain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa"><animate attributeName="stop-color" values="#a78bfa;#22d3ee;#00ffa3;#22d3ee;#a78bfa;#a78bfa" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#22d3ee"><animate attributeName="stop-color" values="#22d3ee;#a78bfa;#a78bfa;#22d3ee" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avsc_fsweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avsc_forb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#a78bfa" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avsc_fglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avsc_fsoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avsc_fbg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avsc_forb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avsc_fmain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avsc_fglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <rect x="-50" y="8" width="13" height="26" rx="4" fill="#00ffa3" opacity="0.9"><animate attributeName="height" values="16;26;16" dur="1.6s" repeatCount="indefinite"/><animate attributeName="y" values="18;8;18" dur="1.6s" repeatCount="indefinite"/></rect><rect x="-28" y="-10" width="13" height="44" rx="4" fill="#22d3ee" opacity="0.9"><animate attributeName="height" values="34;44;34" dur="2.0s" repeatCount="indefinite"/><animate attributeName="y" values="0;-10;0" dur="2.0s" repeatCount="indefinite"/></rect><rect x="-6" y="-28" width="13" height="62" rx="4" fill="#a78bfa" opacity="0.9"><animate attributeName="height" values="52;62;52" dur="2.4000000000000004s" repeatCount="indefinite"/><animate attributeName="y" values="-18;-28;-18" dur="2.4000000000000004s" repeatCount="indefinite"/></rect><rect x="16" y="-10" width="13" height="44" rx="4" fill="#a78bfa" opacity="0.9"><animate attributeName="height" values="34;44;34" dur="2.8000000000000003s" repeatCount="indefinite"/><animate attributeName="y" values="0;-10;0" dur="2.8000000000000003s" repeatCount="indefinite"/></rect><rect x="38" y="8" width="13" height="26" rx="4" fill="#22d3ee" opacity="0.9"><animate attributeName="height" values="16;26;16" dur="3.2s" repeatCount="indefinite"/><animate attributeName="y" values="18;8;18" dur="3.2s" repeatCount="indefinite"/></rect><path d="M-52,-38 q13,-16 26,0 t26,0 t26,0 t26,0" fill="none" stroke="url(#avsc_fmain)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="10 8"><animate attributeName="stroke-dashoffset" values="0;-72" dur="2.4s" repeatCount="indefinite"/></path>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avsc_fsweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avsc_fmain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#a78bfa;#22d3ee;#f472b6;#a78bfa;#a78bfa" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

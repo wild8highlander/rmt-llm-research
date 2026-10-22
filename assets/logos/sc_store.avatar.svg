@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="science/storage — animated avatar">
+  <defs>
+    <radialGradient id="avsc_sbg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avsc_smain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"><animate attributeName="stop-color" values="#60a5fa;#a78bfa;#00ffa3;#22d3ee;#a78bfa;#60a5fa" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#a78bfa"><animate attributeName="stop-color" values="#a78bfa;#a78bfa;#60a5fa;#a78bfa" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avsc_ssweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avsc_sorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#60a5fa" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#60a5fa" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avsc_sglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avsc_ssoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avsc_sbg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avsc_sorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avsc_smain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avsc_sglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <polygon points="0,-40 34,-24 0,-8 -34,-24" fill="#60a5fa" fill-opacity="0.3" stroke="url(#avsc_smain)" stroke-width="2.4" filter="url(#avsc_sglow)"/><polygon points="-34,-24 0,-8 0,34 -34,18" fill="#a78bfa" fill-opacity="0.18" stroke="#a78bfa" stroke-width="2.4"/><polygon points="34,-24 0,-8 0,34 34,18" fill="#60a5fa" fill-opacity="0.14" stroke="#60a5fa" stroke-width="2.4"/><line x1="-34" y1="-24" x2="34" y2="-24" stroke="#a78bfa" stroke-width="1.6" opacity="0.6"/><circle r="2.6" fill="#ffffff"><animate attributeName="cy" values="-56;-22" dur="2.0s" begin="0.0s" repeatCount="indefinite"/><animate attributeName="cx" values="-6;4;-2" dur="2.0s" begin="0.0s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="2.0s" begin="0.0s" repeatCount="indefinite"/></circle><circle r="2.6" fill="#ffffff"><animate attributeName="cy" values="-56;-22" dur="2.7s" begin="0.6s" repeatCount="indefinite"/><animate attributeName="cx" values="-6;4;-2" dur="2.7s" begin="0.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="2.7s" begin="0.6s" repeatCount="indefinite"/></circle><circle r="2.6" fill="#ffffff"><animate attributeName="cy" values="-56;-22" dur="3.4s" begin="1.2s" repeatCount="indefinite"/><animate attributeName="cx" values="-6;4;-2" dur="3.4s" begin="1.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="3.4s" begin="1.2s" repeatCount="indefinite"/></circle>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avsc_ssweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avsc_smain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#60a5fa;#a78bfa;#f472b6;#60a5fa;#60a5fa" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

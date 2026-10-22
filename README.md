@@ -18,9 +18,9 @@
 [![Codecov](https://codecov.io/gh/wild8highlander/rmt-llm-research/branch/main/graph/badge.svg)](https://codecov.io/gh/wild8highlander/rmt-llm-research)
 [![Tests](https://img.shields.io/badge/tests-171+-green.svg)](./src/rmt_llm/tests/)
 [![TinyGPT](https://img.shields.io/badge/TinyGPT-modern-blueviolet.svg)](./laboratory/python/lab_en/tiny_gpt.py)
-[![Julia](https://img.shields.io/badge/Julia-RMTLLMVerify-9558B2.svg)](./julia/RMTLLMVerify/)
-[![Java](https://img.shields.io/badge/Java-RMTLLMViz-ED8B00.svg)](./java/rmt-llm-viz/)
-[![Python Viz](https://img.shields.io/badge/Python-RMTLLMViz-3776AB.svg)](./python/rmt_llm_viz/)
+[![Julia](https://img.shields.io/badge/Julia-RMTLLMVerify-9558B2.svg)](./laboratory/julia/julia/RMTLLMVerify/)
+[![Java](https://img.shields.io/badge/Java-RMTLLMViz-ED8B00.svg)](./laboratory/java/java/rmt-llm-viz/)
+[![Python Viz](https://img.shields.io/badge/Python-RMTLLMViz-3776AB.svg)](./laboratory/python/python/rmt_llm_viz/)
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg?logo=docker&logoColor=white)](./Dockerfile)
 [![pre-commit](https://img.shields.io/badge/code%20style-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg)](#-contributors)
@@ -187,6 +187,11 @@ graph TD
     A --> P[python/rmt_llm_viz/]
     A --> J[julia/RMTLLMViz/]
     A --> K[java/rmt-llm-viz/]
+    A --> N[neural_lab/]
+
+    N --> N1[web app — Next.js playground]
+    N --> N2[research/tinygpt_formula/ — TinyGPT v3 training + scaling]
+    N --> N3[science/ — predictive core: H1 protocol, runs, registry]
 
     B --> B1[en/ — 6 English DOCX]
     B --> B2[ru/ — 6 Russian DOCX]
@@ -229,7 +234,7 @@ graph TD
 
 ## 🔬 Verification Package
 
-The `src/rmt_llm/` Python package and `julia/RMTLLMVerify/` Julia package provide comprehensive numerical verification of all mathematical objects in the theory:
+The `src/rmt_llm/` Python package and `laboratory/julia/julia/RMTLLMVerify/` Julia package provide comprehensive numerical verification of all mathematical objects in the theory:
 
 | Module | Content | Tests |
 |--------|---------|-------|
@@ -254,7 +259,7 @@ pytest --cov=rmt_llm --cov-report=term-missing   # with coverage
 **Julia tests:**
 
 ```bash
-cd julia/RMTLLMVerify
+cd laboratory/julia/julia/RMTLLMVerify
 julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 ```
 
@@ -269,7 +274,7 @@ Three full-featured interactive implementations with menus, 3D visualizations, a
 Interactive CLI with 8 visualizations + consistency dashboard:
 
 ```bash
-cd python/rmt_llm_viz
+cd laboratory/python/python/rmt_llm_viz
 python main.py               # Interactive menu
 python main.py --viz 1       # MP 3D surface directly
 python main.py --viz 9       # Run all
@@ -302,7 +307,7 @@ julia --project=. -e 'using RMTLLMViz; rmt_llm_viz_menu()'
 JavaFX GUI with tabbed interface, interactive sliders, and real-time parameter exploration:
 
 ```bash
-cd java/rmt-llm-viz
+cd laboratory/java/java/rmt-llm-viz
 ./gradlew run                    # Launch JavaFX GUI
 ./gradlew verify                 # Headless verification (14 checks)
 ```
@@ -334,12 +339,12 @@ cd java/rmt-llm-viz
 
 | File | Description |
 |------|-------------|
-| [`monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis_RU.docx`](./monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis_RU.docx) | Полная монография — СМТ и спектральный анализ активаций БЯМ |
-| [`monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx`](./monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx) | Комплексно-аналитическая модель неизбежных галлюцинаций |
-| [`monographs/M05_llm_analysis_merged/LLM_Analysis_Merged_RU.docx`](./monographs/M05_llm_analysis_merged/LLM_Analysis_Merged_RU.docx) | RLHF-ловушка, принцип Ландауэра, термодинамика лжи |
-| [`monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint_RU.docx`](./monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint_RU.docx) | Препринт arXiv — спектральная статистика матриц активаций БЯМ |
-| [`monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1_RU.docx`](./monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1_RU.docx) | BlackGold-препринт v1 — подход на основе ТСМ к обнаружению когнитивного режима |
-| [`monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2_RU.docx`](./monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2_RU.docx) | BlackGold-препринт v2 — расширенный анализ с переходом BBP |
+| [`monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis_RU.docx`](./monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis_RU.docx) | Full monograph — RMT and spectral analysis of RNN activations (in Russian) |
+| [`monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx`](./monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx) | A complex-analytical model of inevitable hallucinations (in Russian) |
+| [`monographs/M05_llm_analysis_merged/LLM_Analysis_Merged_RU.docx`](./monographs/M05_llm_analysis_merged/LLM_Analysis_Merged_RU.docx) | The RLHF trap, the Landauer principle, the thermodynamics of lies (in Russian) |
+| [`monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint_RU.docx`](./monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint_RU.docx) | arXiv preprint — spectral statistics of RNN activation matrices (in Russian) |
+| [`monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1_RU.docx`](./monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1_RU.docx) | BlackGold preprint v1 — an RMT-based approach to cognitive-regime detection (in Russian) |
+| [`monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2_RU.docx`](./monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2_RU.docx) | BlackGold preprint v2 — extended analysis with the BBP transition (in Russian) |
 
 ---
 
@@ -381,7 +386,7 @@ pip install -e ".[test]"
 pytest -v
 
 # Julia tests
-cd julia/RMTLLMVerify
+cd laboratory/julia/julia/RMTLLMVerify
 julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 
 # Jupyter notebook
@@ -392,17 +397,17 @@ jupyter notebook notebooks/rmt_llm_verification.ipynb
 
 ```bash
 # Python interactive 3D suite
-cd python/rmt_llm_viz && python main.py
+cd laboratory/python/python/rmt_llm_viz && python main.py
 
 # Julia interactive 3D suite
 cd julia/RMTLLMViz
 julia --project=. -e 'using RMTLLMViz; rmt_llm_viz_menu()'
 
 # Java JavaFX GUI
-cd java/rmt-llm-viz && ./gradlew run
+cd laboratory/java/java/rmt-llm-viz && ./gradlew run
 
 # Java headless verification
-cd java/rmt-llm-viz && ./gradlew verify
+cd laboratory/java/java/rmt-llm-viz && ./gradlew verify
 ```
 
 ---
@@ -425,12 +430,7 @@ This repo follows best practices from the best-maintained open-source projects o
 | [`.github/workflows/zenodo.yml`](./.github/workflows/zenodo.yml) | Archive releases to Zenodo (DOI minting)                                       |
 | [`.github/workflows/deploy-docs.yml`](./.github/workflows/deploy-docs.yml) | GitHub Pages deployment                                                        |
 | [`.github/workflows/benchmark.yml`](./.github/workflows/benchmark.yml)  | pytest-benchmark + hypothesis property tests, nightly trend tracking           |
-| [`.github/workflows/links.yml`](./.github/workflows/links.yml)          | Relative-link and path validation for every markdown file                      |
-| [`.github/workflows/schema.yml`](./.github/workflows/schema.yml)        | Syntax + required-field validation of all laboratory results JSON              |
-| [`.github/workflows/stale.yml`](./.github/workflows/stale.yml)          | Auto-close inactive issues/PRs after 60 days                                   |
-| [`.github/workflows/labels.yml`](./.github/workflows/labels.yml)        | Sync the 30 standardized labels from `.github/labels.yml`                      |
-| [`.github/workflows/greetings.yml`](./.github/workflows/greetings.yml)  | Welcome message for first-time issues and PRs                                  |
-| [`.github/workflows/dependency-review.yml`](./.github/workflows/dependency-review.yml) | Dependency review on every pull request                        |
+| [`.github/labels.yml`](./.github/labels.yml)                            | 30 standardized issue/PR labels (synced by hand or bots)                       |
 | [`.pre-commit-config.yaml`](./.pre-commit-config.yaml)    | 30+ hooks: ruff, ruff-format, mypy, codespell, shellcheck, hadolint, gitleaks  |
 
 ### Community & governance
@@ -441,7 +441,6 @@ This repo follows best practices from the best-maintained open-source projects o
 | [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) | PR template with checklist + breaking-change section     |
 | [`.github/CODEOWNERS`](./.github/CODEOWNERS)                           | Automatic review requests by directory                   |
 | [`.github/dependabot.yml`](./.github/dependabot.yml)                   | 9 ecosystems: pip, actions, julia, npm, cargo, gradle, gomod, docker |
-| [`.github/workflows/stale.yml`](./.github/workflows/stale.yml)          | Auto-close inactive issues/PRs (configured in the workflow itself)             |
 | [`.github/labels.yml`](./.github/labels.yml)                            | 30 standardized issue/PR labels with colors                                    |
 | [`.github/FUNDING.yml`](./.github/FUNDING.yml)                         | Sponsor buttons                                          |
 | [`.github/SUPPORT.md`](./.github/SUPPORT.md)                           | "Getting help" guide                                     |

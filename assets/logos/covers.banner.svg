@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220" role="img" aria-label="assets/covers — animated logo">
+  <defs>
+    <radialGradient id="covebg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="covemain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"><animate attributeName="stop-color" values="#fbbf24;#f472b6;#00ffa3;#22d3ee;#a78bfa;#fbbf24" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#f472b6"><animate attributeName="stop-color" values="#f472b6;#a78bfa;#fbbf24;#f472b6" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="covesweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="coveorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#fbbf24" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="coveglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="covesoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="800" height="220" rx="18" fill="url(#covebg)"/>
+  <g filter="url(#covesoft)">
+    <path d="M-40,158 C144,128 288,189 440,154 C592,121 704,180 840,145 L840,260 L-40,260 Z" fill="#fbbf24" opacity="0.20">
+      <animate attributeName="d" values="M-40,158 C144,128 288,189 440,154 C592,121 704,180 840,145 L840,260 L-40,260 Z;M-40,141 C144,176 288,114 440,172 C592,207 704,128 840,163 L840,260 L-40,260 Z;M-40,158 C144,128 288,189 440,154 C592,121 704,180 840,145 L840,260 L-40,260 Z" dur="14s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.14;0.26;0.14" dur="14s" repeatCount="indefinite"/>
+    </path>
+    <path d="M-40,185 C176,154 336,211 496,180 C640,154 736,202 840,176 L840,260 L-40,260 Z" fill="#f472b6" opacity="0.16">
+      <animate attributeName="opacity" values="0.10;0.22;0.10" dur="11s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <circle cx="60" cy="34" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="2.2s" begin="0.00s" repeatCount="indefinite"/></circle><circle cx="208" cy="22" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.0s" begin="0.37s" repeatCount="indefinite"/></circle><circle cx="390" cy="30" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.8s" begin="0.74s" repeatCount="indefinite"/></circle><circle cx="565" cy="20" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="4.6s" begin="1.11s" repeatCount="indefinite"/></circle><circle cx="712" cy="42" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="2.2s" begin="1.48s" repeatCount="indefinite"/></circle><circle cx="762" cy="120" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.0s" begin="1.85s" repeatCount="indefinite"/></circle><circle cx="40" cy="150" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.8s" begin="0.22s" repeatCount="indefinite"/></circle><circle cx="300" cy="200" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="4.6s" begin="0.59s" repeatCount="indefinite"/></circle><circle cx="520" cy="186" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="2.2s" begin="0.96s" repeatCount="indefinite"/></circle><circle cx="688" cy="196" r="1.2" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.0s" begin="1.33s" repeatCount="indefinite"/></circle><circle cx="250" cy="120" r="1.6" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="3.8s" begin="1.70s" repeatCount="indefinite"/></circle><circle cx="470" cy="90" r="2.1" fill="#dff6ff" opacity="0.5"><animate attributeName="opacity" values="0.15;0.8;0.15" dur="4.6s" begin="0.07s" repeatCount="indefinite"/></circle>
+  <g>
+    <circle cx="112" cy="110" r="86" fill="url(#coveorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+    <circle cx="112" cy="110" r="66" fill="none" stroke="url(#covemain)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="277 145" filter="url(#coveglow)"><animateTransform attributeName="transform" type="rotate" from="0 112 110" to="360 112 110" dur="13.0s" repeatCount="indefinite"/></circle>
+    <circle cx="112" cy="110" r="52" fill="none" stroke="url(#covemain)" stroke-width="2.0" stroke-linecap="round" stroke-dasharray="218 114" filter="url(#coveglow)"><animateTransform attributeName="transform" type="rotate" from="0 112 110" to="360 112 110" dur="9.0s" repeatCount="indefinite"/></circle>
+    <g><rect x="69.0" y="86" width="76" height="18" rx="3" fill="#fbbf24" opacity="0.85"><animate attributeName="opacity" values="0.6;0.95;0.6" dur="3s" repeatCount="indefinite"/></rect><rect x="69.0" y="86" width="7" height="18" rx="3" fill="#05060f" opacity="0.5"/></g><g><rect x="83.0" y="108" width="68" height="18" rx="3" fill="#a78bfa" opacity="0.85"><animate attributeName="opacity" values="0.6;0.95;0.6" dur="4s" repeatCount="indefinite"/></rect><rect x="83.0" y="108" width="7" height="18" rx="3" fill="#05060f" opacity="0.5"/></g><g><rect x="82.0" y="132" width="60" height="18" rx="3" fill="#f472b6" opacity="0.85"><animate attributeName="opacity" values="0.6;0.95;0.6" dur="5s" repeatCount="indefinite"/></rect><rect x="82.0" y="132" width="7" height="18" rx="3" fill="#05060f" opacity="0.5"/></g><rect x="128" y="70" width="10" height="16" rx="2" fill="#f472b6"><animate attributeName="y" values="70;82;70" dur="3.4s" repeatCount="indefinite"/></rect><rect x="74" y="66" width="76" height="14" rx="4" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.8"/>
+  </g>
+  <text x="222" y="96" font-family="Verdana, 'DejaVu Sans', sans-serif" font-size="37" font-weight="bold" fill="#f4f9ff" letter-spacing="0.5">assets/covers</text>
+  <text x="224" y="98" font-family="Verdana, 'DejaVu Sans', sans-serif" font-size="37" font-weight="bold" fill="url(#covemain)" opacity="0.55">assets/covers</text>
+  <line x1="226" y1="114" x2="470" y2="114" stroke="url(#covemain)" stroke-width="2.4" stroke-linecap="round">
+    <animate attributeName="x2" values="300;640;300" dur="7s" repeatCount="indefinite"/>
+  </line>
+  <text x="226" y="142" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="15.5" fill="#9fb3d9">monograph cover art (EN / RU)</text>
+  <g font-family="'JetBrains Mono', 'Courier New', monospace" font-size="11.5">
+    <rect x="226" y="162" width="118" height="24" rx="12" fill="none" stroke="#fbbf24" stroke-width="1.4" opacity="0.9">
+      <animate attributeName="stroke" values="#fbbf24;#f472b6;#a78bfa;#fbbf24" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <text x="285" y="178" text-anchor="middle" fill="#fbbf24">RMT × LLM</text>
+    <rect x="354" y="162" width="130" height="24" rx="12" fill="none" stroke="#f472b6" stroke-width="1.4" opacity="0.9"/>
+    <text x="419" y="178" text-anchor="middle" fill="#f472b6">neural_lab</text>
+  </g>
+  <g transform="translate(700,112) scale(1.15)" opacity="0.15">
+    <g><rect x="-43.0" y="-24" width="76" height="18" rx="3" fill="#fbbf24" opacity="0.85"><animate attributeName="opacity" values="0.6;0.95;0.6" dur="3s" repeatCount="indefinite"/></rect><rect x="-43.0" y="-24" width="7" height="18" rx="3" fill="#05060f" opacity="0.5"/></g><g><rect x="-29.0" y="-2" width="68" height="18" rx="3" fill="#a78bfa" opacity="0.85"><animate attributeName="opacity" values="0.6;0.95;0.6" dur="4s" repeatCount="indefinite"/></rect><rect x="-29.0" y="-2" width="7" height="18" rx="3" fill="#05060f" opacity="0.5"/></g><g><rect x="-30.0" y="22" width="60" height="18" rx="3" fill="#f472b6" opacity="0.85"><animate attributeName="opacity" values="0.6;0.95;0.6" dur="5s" repeatCount="indefinite"/></rect><rect x="-30.0" y="22" width="7" height="18" rx="3" fill="#05060f" opacity="0.5"/></g><rect x="16" y="-40" width="10" height="16" rx="2" fill="#f472b6"><animate attributeName="y" values="-40;-28;-40" dur="3.4s" repeatCount="indefinite"/></rect><rect x="-38" y="-44" width="76" height="14" rx="4" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.8"/>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="220" fill="url(#covesweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;920" dur="7.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="798" height="218" rx="17" fill="none" stroke="url(#covemain)" stroke-width="1.6" opacity="0.75">
+    <animate attributeName="stroke" values="#fbbf24;#f472b6;#f472b6;#fbbf24;#fbbf24" dur="10s" repeatCount="indefinite"/>
+  </rect>
+</svg>

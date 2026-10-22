@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="science/tests — animated avatar">
+  <defs>
+    <radialGradient id="avsc_tbg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avsc_tmain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ffa3"><animate attributeName="stop-color" values="#00ffa3;#a78bfa;#00ffa3;#22d3ee;#a78bfa;#00ffa3" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#a78bfa"><animate attributeName="stop-color" values="#a78bfa;#a78bfa;#00ffa3;#a78bfa" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avsc_tsweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avsc_torb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00ffa3" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#00ffa3" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#00ffa3" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avsc_tglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avsc_tsoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avsc_tbg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avsc_torb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avsc_tmain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avsc_tglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <rect x="-38" y="-39" width="18" height="18" rx="4" fill="none" stroke="#00ffa3" stroke-width="2.4"/><path d="M-34,-30 l4,5 8,-10" fill="none" stroke="#00ffa3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="24"><animate attributeName="stroke-dashoffset" values="24;0;0;24" dur="2.6s" begin="0.0s" repeatCount="indefinite"/></path><rect x="-12" y="-35" width="52" height="4.5" rx="2.25" fill="#a78bfa" opacity="0.75"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.2s" repeatCount="indefinite"/></rect><rect x="-38" y="-15" width="18" height="18" rx="4" fill="none" stroke="#00ffa3" stroke-width="2.4"/><path d="M-34,-6 l4,5 8,-10" fill="none" stroke="#00ffa3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="24"><animate attributeName="stroke-dashoffset" values="24;0;0;24" dur="2.6s" begin="0.5s" repeatCount="indefinite"/></path><rect x="-12" y="-11" width="44" height="4.5" rx="2.25" fill="#a78bfa" opacity="0.75"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.6s" repeatCount="indefinite"/></rect><rect x="-38" y="9" width="18" height="18" rx="4" fill="none" stroke="#00ffa3" stroke-width="2.4"/><path d="M-34,18 l4,5 8,-10" fill="none" stroke="#00ffa3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="24"><animate attributeName="stroke-dashoffset" values="24;0;0;24" dur="2.6s" begin="1.0s" repeatCount="indefinite"/></path><rect x="-12" y="13" width="36" height="4.5" rx="2.25" fill="#a78bfa" opacity="0.75"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.0s" repeatCount="indefinite"/></rect>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avsc_tsweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avsc_tmain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#00ffa3;#a78bfa;#f472b6;#00ffa3;#00ffa3" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

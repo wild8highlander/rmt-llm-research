@@ -1,34 +1,34 @@
 """
-experiments.run_h1 — Эксперимент № 1: предсказание ошибки LLM по внутренним
-признакам (H1), воспроизводимый конвейер.
+experiments.run_h1 — Experiment No. 1: predicting LLM errors from internal
+features (H1), a reproducible pipeline.
 
-ГИПОТЕЗА H1: спектральные характеристики внутренних активаций содержат
-информацию об ошибках модели СВЕРХ той, которую дают стандартные
-показатели уверенности.
+HYPOTHESIS H1: the spectral characteristics of internal activations contain
+information about the model's errors BEYOND what standard confidence
+signals provide.
 
-Протокол зафиксирован ДО запуска (EXPERIMENT_PROTOCOL.md, версия 1.0):
+The protocol was fixed BEFORE the run (EXPERIMENT_PROTOCOL.md, version 1.0):
 
-  1. LOAD/SETUP    — модель, токенизатор, sha256 весов и корпуса;
-  2. TASKS         — три полосы сложности (indist/near/far), истина
-                     пересчитывается библиотекой независимо;
-  3. PASSPORT      — машиночитаемый паспорт запуска (заморозка протокола);
-  4. OBSERVE       — 4 сэмплированных (T=0.8) + 1 жадная генерация на
-                     задачу; сырые наблюдения БЕЗ меток;
-  5. LABEL         — независимая разметка по сетке допусков;
-  6. SPLIT         — 5 фолдов по задачам (стратификация family x band) +
-                     leave-one-family-out; формальные проверки утечек;
-  7. FIT/PREDICT   — A, A2, B, C, D, E с out-of-fold предсказаниями и
-                     честной Платт-калибровкой на внутреннем отложенном
-                     подмножестве train;
-  8. UNBLIND       — метрики с кластерными CI, парные разницы, кластерные
-                     перестановочные тесты, перестановка меток;
-  9. REPORT        — report.json + REPORT.md, сгенерированный из данных.
+  1. LOAD/SETUP    — model, tokenizer, sha256 of weights and corpus;
+  2. TASKS         — three difficulty bands (indist/near/far), the truth is
+                     recomputed by the library independently;
+  3. PASSPORT      — machine-readable run passport (protocol freeze);
+  4. OBSERVE       — 4 sampled (T=0.8) + 1 greedy generation per task;
+                     raw observations WITHOUT labels;
+  5. LABEL         — independent labeling on the tolerance grid;
+  6. SPLIT         — 5 task-grouped folds (family x band stratification) +
+                     leave-one-family-out; formal leakage checks;
+  7. FIT/PREDICT   — A, A2, B, C, D, E with out-of-fold predictions and
+                     honest Platt calibration on an internal held-out
+                     subset of train;
+  8. UNBLIND       — metrics with clustered CIs, paired differences, clustered
+                     permutation tests, label permutation;
+  9. REPORT        — report.json + REPORT.md, generated from the data.
 
-Запуск:
+Run:
   python3 neural_lab/science/experiments/run_h1.py \
       [--base DIR] [--out DIR] [--n-boot 2000] [--n-perm 2000]
 
-Быстрый smoke-прогон:  SMOKE=1 python3 ... (уменьшенные объёмы).
+Quick smoke run:  SMOKE=1 python3 ... (reduced volumes).
 """
 
 from __future__ import annotations
@@ -89,7 +89,7 @@ from science.storage import (  # noqa: E402
 )
 
 
-TOLERANCE_GRID = [0.15, 0.25, 0.40]  # первичный допуск: 0.25
+TOLERANCE_GRID = [0.15, 0.25, 0.40]  # primary tolerance: 0.25
 PRIMARY_TOL_KEY = "numeric_ok_025"
 PRIMARY_METRIC = "roc_auc"
 N_FOLDS = 5
@@ -99,25 +99,24 @@ N_GREEDY = 1
 MAX_NEW_TOKENS = 28
 L2 = 1.0
 SEED = 42
-N_INDIST = 96  # пилот (SMOKE-прогон) показал редкие позитивы — расширяем
-N_NEAR = 16  # выбор зафиксирован в протоколе ДО полного прогона
+N_INDIST = 96  # the pilot (SMOKE run) showed rare positives — expanding
+N_NEAR = 16  # the choice was fixed in the protocol BEFORE the full run
+
 
 def build_models(n_layers: int) -> dict[str, list[str] | None]:
-    """Предикторы прогона: имя -> список признаков (None — частотные baseline).
+    """Run predictors: name -> feature list (None — frequency baselines).
 
-    Протокол v1.1: группы признаков строятся под фактическую глубину модели
-    (для 4 слоёв идентично замороженной схеме v1.0).
+    Protocol v1.1: feature groups are built for the model's actual depth
+    (for 4 layers identical to the frozen v1.0 scheme).
     """
     groups = feature_groups(n_layers)
     return {
-        "A_constant_rate": None,  # базовая частота (простейший baseline)
-        "A2_family_rate": None,  # базовая частота по семейству
+        "A_constant_rate": None,  # base rate (the simplest baseline)
+        "A2_family_rate": None,  # per-family base rate
         "B_confidence": groups["confidence"],
         "C_internal": groups["internal"],
         "D_combined": groups["combined"],
-        "E_combined_minus_spectral": [
-            n for n in groups["combined"] if n not in groups["spectral"]
-        ],
+        "E_combined_minus_spectral": [n for n in groups["combined"] if n not in groups["spectral"]],
     }
 
 
@@ -126,17 +125,17 @@ def _task_seed(task_id: str, sample_idx: int) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Фазы 1-3: загрузка, задачи, паспорт
+# Phases 1-3: loading, tasks, passport
 # ---------------------------------------------------------------------------
 def setup(args) -> dict:
-    ctx = load_model(args.base)  # подключает src/rmt_llm и lab_en в sys.path
+    ctx = load_model(args.base)  # puts src/rmt_llm and lab_en on sys.path
     base = ctx["base"]
     corpus = os.path.join(base, "data", "formula_corpus_train.txt")
     if not os.path.exists(corpus):
         raise FileNotFoundError(corpus)
     tok = ctx["tokenizer"]
     n_layers = int(ctx["model"].config.n_layers)
-    models = build_models(n_layers)  # per-run группы под глубину модели
+    models = build_models(n_layers)  # per-run groups for the model depth
 
     tasks, exclusions, stats = build_task_set(
         corpus_path=corpus,
@@ -199,7 +198,7 @@ def setup(args) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Фазы 4-5: наблюдения и разметка
+# Phases 4-5: observation and labeling
 # ---------------------------------------------------------------------------
 def observe_and_label(ctx, tasks, _out_dir, smoke: bool) -> tuple[list[dict], list[dict]]:
     model, tok = ctx["model"], ctx["tokenizer"]
@@ -213,9 +212,9 @@ def observe_and_label(ctx, tasks, _out_dir, smoke: bool) -> tuple[list[dict], li
     t0 = time.time()
     n_planned = len(tasks) * len(sample_plan)
     done = 0
-    # --- resume: инкрементальный чекпоинт наблюдений (RMT_H1_OBS_RESUME=1).
-    # Вычислительно идентично однократному прогону: задачи/порядок/сиды
-    # детерминированы, наблюдения (task_id, sample_id) воспроизводимы.
+    # --- resume: incremental observation checkpoints (RMT_H1_OBS_RESUME=1).
+    # Computationally identical to a single-shot run: tasks/order/seeds
+    # are deterministic; observations (task_id, sample_id) are reproducible.
     obs_path = os.path.join(_out_dir, "observations.jsonl") if _out_dir else None
     if obs_path and os.environ.get("RMT_H1_OBS_RESUME") == "1" and os.path.exists(obs_path):
         from science.storage import load_jsonl
@@ -225,7 +224,7 @@ def observe_and_label(ctx, tasks, _out_dir, smoke: bool) -> tuple[list[dict], li
         observations = [o for o in prev if o.get("task_id") in valid_prev_tasks]
         done_pairs = {(o["task_id"], o["sample_id"]) for o in observations}
         done = len(done_pairs)
-        print(f"[observe] resume: {done}/{n_planned} готово, продолжаю", flush=True)
+        print(f"[observe] resume: {done}/{n_planned} done, continuing", flush=True)
     else:
         done_pairs = set()
 
@@ -296,19 +295,19 @@ def observe_and_label(ctx, tasks, _out_dir, smoke: bool) -> tuple[list[dict], li
         f"[observe] done {len(valid)}/{n_planned} observations "
         f"({len(observations) - len(valid)} excluded) in {time.time() - t0:.0f}s"
     )
-    _checkpoint()  # финальный дамп (в т.ч. для resume)
+    _checkpoint()  # final dump (also for resume)
     return observations, labels
 
 
 # ---------------------------------------------------------------------------
-# Фазы 6-7: разбиения, фит, out-of-fold предсказания
+# Phases 6-7: splits, fitting, out-of-fold predictions
 # ---------------------------------------------------------------------------
 def _fit_predict_fold(model_name, X_tr, y_tr, X_te, tasks_tr, _tasks_te, fam_tr=None, fam_te=None):
-    """Возвращает (p_raw, p_cal) для тестовой части фолда.
+    """Returns (p_raw, p_cal) for the fold's test part.
 
-    Платт-калибровка честная: внутри train-фолда задачи делятся на фит-
-    и калибровочную части (групповая доля 80/20 по задачам). Для
-    A2_family_rate передаются отдельные метки семейств fam_*.
+    Platt calibration is honest: within a train fold the tasks are split into fit-
+    and calibration parts (an 80/20 task-grouped share). For
+    A2_family_rate, separate family labels fam_* are passed.
     """
     if model_name == "A_constant_rate":
         m = ConstantRateBaseline().fit(X_tr, y_tr)
@@ -327,8 +326,8 @@ def _fit_predict_fold(model_name, X_tr, y_tr, X_te, tasks_tr, _tasks_te, fam_tr=
     is_cal = np.array([t in cal_tasks for t in tasks_tr])
     fit_idx, cal_idx = np.where(~is_cal)[0], np.where(is_cal)[0]
 
-    # вырожденный train (один класс): логрегрессия неопределима — честный
-    # fallback с константным предсказанием базовой частоты
+    # degenerate train (one class): logistic regression is undefined — honest
+    # fallback with a constant base-rate prediction
     if len(np.unique(y_tr[fit_idx])) < 2:
         const = float(y_tr.mean())
         return (np.full(len(X_te), const), np.full(len(X_te), const))
@@ -351,7 +350,7 @@ def fit_predict(observations, labels, tasks, _out_dir, models) -> tuple[list[dic
 
     task_family = {t: task_map[t].family for t in task_ids}
 
-    # формальные проверки утечек на всей схеме разбиения
+    # formal leakage checks over the whole split scheme
     for f, test_ids in folds.items():
         train_ids = [t for t in task_ids if t not in set(test_ids)]
         assert_no_task_overlap(train_ids, test_ids, tag=f"fold{f}")
@@ -371,23 +370,23 @@ def fit_predict(observations, labels, tasks, _out_dir, models) -> tuple[list[dic
     for i, t in enumerate(obs_task):
         obs_fold[i] = fold_of_task[t]
 
-    # Цели фита: первичная (numeric_ok_025) + заранее объявленные
-    # вторичная (format_ok) и сетка чувствительности (015/040). Каждая
-    # цель фитируется ОТДЕЛЬНО — предсказания одной цели запрещено
-    # переиспользовать для другой.
+    # Fit targets: the primary (numeric_ok_025) + the pre-declared
+    # secondary (format_ok) and the sensitivity grid (015/040). Each
+    # target is fitted SEPARATELY — reusing one target's predictions
+    # for another target is forbidden.
     def _target(key: str) -> np.ndarray:
         return np.array(
             [lab_map[(o["task_id"], o["sample_id"])][key] for o in valid], dtype=np.float64
         )
 
     targets = {
-        "": y,  # первичная цель
-        "_fmt": _target("format_ok"),  # вторичная цель
+        "": y,  # primary target
+        "_fmt": _target("format_ok"),  # secondary target
         "_015": _target("numeric_ok_015"),  # sensitivity
         "_040": _target("numeric_ok_040"),  # sensitivity
     }
 
-    # индекс записей предсказаний (task_id, sample_id) -> dict
+    # prediction record index (task_id, sample_id) -> dict
     rec_index: dict[tuple[str, str], dict] = {}
     for pos, o in enumerate(valid):
         rec_index[(o["task_id"], o["sample_id"])] = {
@@ -396,7 +395,7 @@ def fit_predict(observations, labels, tasks, _out_dir, models) -> tuple[list[dic
             "band": o["band"],
             "family": o["family"],
             "fold": -1,
-            "y_true": int(y[pos]),  # первичная цель
+            "y_true": int(y[pos]),  # primary target
         }
 
     X_cache = {
@@ -447,8 +446,8 @@ def fit_predict(observations, labels, tasks, _out_dir, models) -> tuple[list[dic
 
 
 def lofo_predictions(observations, labels, tasks, models) -> dict:
-    """leave-one-family-out: точечные AUC каждой модели на отложенном
-    семействе (жёсткая проверка обобщения; малые n — только точки)."""
+    """leave-one-family-out: point AUCs of each model on the held-out
+    family (a strict generalization check; small n — points only)."""
     valid = [o for o in observations if not o.get("excluded")]
     lab_map = {(l["task_id"], l["sample_id"]): l for l in labels}
     task_map = {t.task_id: t for t in tasks}
@@ -489,7 +488,7 @@ def lofo_predictions(observations, labels, tasks, models) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Фаза 8: раскрытие — метрики и тесты
+# Phase 8: unblinding — metrics and tests
 # ---------------------------------------------------------------------------
 def unblind(records, fold_report, lofo, out_dir, n_boot, n_perm, models) -> dict:
     y = np.array([r["y_true"] for r in records], dtype=np.float64)
@@ -554,7 +553,7 @@ def unblind(records, fold_report, lofo, out_dir, n_boot, n_perm, models) -> dict
     else:
         label_perm = {}
 
-    # secondary endpoint: format_ok — отдельный фит (суффикс _fmt)
+    # secondary endpoint: format_ok — a separate fit (the _fmt suffix)
     lab_map = {
         (l["task_id"], l["sample_id"]): l for l in load_jsonl(os.path.join(out_dir, "labels.jsonl"))
     }
@@ -599,7 +598,7 @@ def unblind(records, fold_report, lofo, out_dir, n_boot, n_perm, models) -> dict
         )
         secondary["delta_D_minus_B"] = {"delta_auc": d_fb, "permutation": pm_fb}
 
-    # sensitivity по допускам — предсказания, фитированные НА КАЖДУЮ цель
+    # tolerance sensitivity — predictions fitted FOR EACH target
     sensitivity = {}
     for tol in TOLERANCE_GRID:
         key = f"numeric_ok_{round(tol * 100):03d}"
@@ -636,7 +635,7 @@ def unblind(records, fold_report, lofo, out_dir, n_boot, n_perm, models) -> dict
 
 
 # ---------------------------------------------------------------------------
-# Фаза 9: отчёт (генерируется ИЗ данных)
+# Phase 9: the report (generated FROM the data)
 # ---------------------------------------------------------------------------
 def _fmt3(v) -> str:
     return "—" if v is None else f"{v:.3f}"
@@ -645,19 +644,19 @@ def _fmt3(v) -> str:
 def render_report_md(report: dict, passport: dict) -> str:  # noqa: C901
     m = report["metrics"]
     lines = [
-        "# H1 — результат запуска (error_prediction_rmt_v1)",
+        "# H1 — run result (error_prediction_rmt_v1)",
         "",
-        f"Протокол v{passport['protocol_version']} · модель `{passport['model_revision'][:12]}…` · "
-        f"датасет `{passport['dataset_hash'][:12]}…` · seed {passport['seed']}",
+        f"Protocol v{passport['protocol_version']} · model `{passport['model_revision'][:12]}…` · "
+        f"dataset `{passport['dataset_hash'][:12]}…` · seed {passport['seed']}",
         "",
-        f"Наблюдений: **{report['n_observations']}** (задач {report['n_tasks']}), "
-        f"положительных: **{report['n_positives']}** (базовая частота "
-        f"{report['base_rate']:.1%}). Первичная цель: `{PRIMARY_TOL_KEY}`, "
-        f"метрика: `{PRIMARY_METRIC}`, CI — кластерный бутстреп по задачам.",
+        f"Observations: **{report['n_observations']}** (tasks {report['n_tasks']}), "
+        f"positives: **{report['n_positives']}** (base rate "
+        f"{report['base_rate']:.1%}). Primary endpoint: `{PRIMARY_TOL_KEY}`, "
+        f"metric: `{PRIMARY_METRIC}`, CI — task-clustered bootstrap.",
         "",
-        "## Основная таблица (out-of-fold)",
+        "## Main table (out-of-fold)",
         "",
-        "| Модель | ROC-AUC [95% CI] | PR-AUC | Brier | ECE raw→Platt |",
+        "| Model | ROC-AUC [95% CI] | PR-AUC | Brier | ECE raw→Platt |",
         "|---|---|---|---|---|",
     ]
     for name, mm in m.items():
@@ -667,30 +666,30 @@ def render_report_md(report: dict, passport: dict) -> str:  # noqa: C901
             f"| {_fmt3(mm['average_precision']['point'])} | {mm['brier']:.3f} "
             f"| {mm['ece_raw']:.3f} → {mm['ece_platt']:.3f} |"
         )
-    lines += ["", "## Ключевые сравнения (ΔAUC, кластерные тесты)", ""]
+    lines += ["", "## Key comparisons (ΔAUC, clustered tests)", ""]
     for key, c in report["comparisons"].items():
         d, pm = c["delta_auc"], c["permutation"]
         lines.append(
             f"- **{key}**: {d['point']:+.3f} [{d['ci_low']:+.3f}, {d['ci_high']:+.3f}], "
-            f"перестановочный p = {pm['p_value']:.4f}"
+            f"permutation p = {pm['p_value']:.4f}"
         )
     if report.get("label_permutation"):
-        lines += ["", "## Перестановка меток (нулевая гипотеза)", ""]
+        lines += ["", "## Label permutation (null hypothesis)", ""]
         for name, lp in report["label_permutation"].items():
             lines.append(
-                f"- {name}: наблюдаемый AUC {lp['observed_auc']:.3f}, "
+                f"- {name}: observed AUC {lp['observed_auc']:.3f}, "
                 f"p = {lp['p_value']:.4f} "
-                f"(переставляемых страт {lp.get('n_strata_permutable', '?')}/"
+                f"(permutable strata {lp.get('n_strata_permutable', '?')}/"
                 f"{lp.get('n_strata_total', '?')})"
             )
             if lp.get("note") != "ok":
-                lines.append(f"  - внимание: {lp['note']}")
+                lines.append(f"  - warning: {lp['note']}")
     if report.get("secondary_format_ok"):
         lines += [
             "",
-            "## Вторичная цель: format_ok — «Ловушка Полезности» (отдельный фит, out-of-fold)",
+            "## Secondary endpoint: format_ok — the “Utility Trap” (separate fit, out-of-fold)",
             "",
-            "| Модель | ROC-AUC [95% CI] | Brier | ECE raw→Platt |",
+            "| Model | ROC-AUC [95% CI] | Brier | ECE raw→Platt |",
             "|---|---|---|---|",
         ]
         for name, v in report["secondary_format_ok"].items():
@@ -699,7 +698,7 @@ def render_report_md(report: dict, passport: dict) -> str:  # noqa: C901
                 lines.append("")
                 lines.append(
                     f"**{name}**: {d['point']:+.3f} [{d['ci_low']:+.3f}, {d['ci_high']:+.3f}], "
-                    f"перестановочный p = {pm['p_value']:.4f}"
+                    f"permutation p = {pm['p_value']:.4f}"
                 )
             else:
                 r = v["roc_auc"]
@@ -709,14 +708,14 @@ def render_report_md(report: dict, passport: dict) -> str:  # noqa: C901
                 )
     lines += [
         "",
-        "## Чувствительность к допуску (каждая цель фитована отдельно)",
+        "## Tolerance sensitivity (each target fitted separately)",
         "",
-        "| Допуск | base rate | B | C | D |",
+        "| Tolerance | base rate | B | C | D |",
         "|---|---|---|---|---|",
     ]
     for key, row in report["tolerance_sensitivity"].items():
         if "B_confidence" not in row:
-            lines.append(f"| {key} | {row['base_rate']:.3f} | — вырожденный класс — | | |")
+            lines.append(f"| {key} | {row['base_rate']:.3f} | — degenerate class — | | |")
         else:
             lines.append(
                 f"| {key} | {row['base_rate']:.3f} ({row.get('n_pos', '?')}+) "
@@ -725,9 +724,9 @@ def render_report_md(report: dict, passport: dict) -> str:  # noqa: C901
             )
     lines += [
         "",
-        "## Leave-one-family-out (обобщение на незнакомое семейство)",
+        "## Leave-one-family-out (generalization to an unseen family)",
         "",
-        "| Семейство | n_test | n_pos | A | B | C | D |",
+        "| Family | n_test | n_pos | A | B | C | D |",
         "|---|---|---|---|---|---|---|",
     ]
     for fam, row in report["lofo"].items():
@@ -737,12 +736,12 @@ def render_report_md(report: dict, passport: dict) -> str:  # noqa: C901
             f"| {fmt(row.get('A_constant_rate'))} | {fmt(row.get('B_confidence'))} "
             f"| {fmt(row.get('C_internal'))} | {fmt(row.get('D_combined'))} |"
         )
-    lines += ["", "## Вердикт по критерию успеха (автоматически из протокола)", ""]
+    lines += ["", "## Verdict on the success criterion (automatically from the protocol)", ""]
     n_pos = report["n_positives"]
     if n_pos < 20:
         lines.append(
-            f"Первичная цель UNDERPOWERED: позитивов {n_pos} (< 20) — "
-            "любые p-value по первичной цели следует читать с осторожностью."
+            f"Primary endpoint UNDERPOWERED: {n_pos} positives (< 20) — "
+            "any p-values on the primary endpoint should be read with caution."
         )
     comp = report["comparisons"].get("D_combined_minus_B_confidence")
     if comp:
@@ -750,16 +749,16 @@ def render_report_md(report: dict, passport: dict) -> str:  # noqa: C901
         ci_excl0 = d["ci_low"] > 0
         psig = pm["p_value"] < 0.05
         if ci_excl0 and psig:
-            verdict = "H1 ПОДДЕРЖАНА по критерию протокола (CI > 0 и p < 0.05)."
+            verdict = "H1 SUPPORTED by the protocol's criterion (CI > 0 and p < 0.05)."
         elif ci_excl0 and not psig:
             verdict = (
-                "H1 НЕ ПОДТВЕРЖДЕНА строго (CI не накрывает 0, но "
-                f"перестановочный p = {pm['p_value']:.3f} >= 0.05): "
-                "направление положительное, мощность недостаточна — "
-                "требуются данные большего объёма / модель большего размера."
+                "H1 NOT STRICTLY SUPPORTED (the CI excludes 0, but "
+                f"the permutation p = {pm['p_value']:.3f} >= 0.05): "
+                "the direction is positive, power is insufficient — "
+                "more data / a larger model is required."
             )
         else:
-            verdict = "H1 НЕ ПОДДЕРЖАНА: CI накрывает 0."
+            verdict = "H1 NOT SUPPORTED: the CI includes 0."
         lines.append(
             f"ΔAUC(D−B) = {d['point']:+.3f} [{d['ci_low']:+.3f}, {d['ci_high']:+.3f}], "
             f"p = {pm['p_value']:.4f} → **{verdict}**"
@@ -768,18 +767,18 @@ def render_report_md(report: dict, passport: dict) -> str:  # noqa: C901
 
     lines += [
         "",
-        "## Честные ограничения",
+        "## Honest limitations",
         "",
-        "- один запуск одного seeded-прогона обучения; веса не коммитятся "
-        "(см. воспроизведение в EXPERIMENT_PROTOCOL.md);",
-        "- повторные генерации одной задачи коррелированы — все CI и тесты "
-        "кластеризованы по задачам;",
-        "- A_constant_rate ниже 0.5 — артефакт межфолдовой вариации базовой "
-        "частоты при константном предсказании; смотреть совместно с A2;",
-        "- малое число положительных меток ограничивает мощность; отрицательный "
-        "или неубедительный результат — тоже результат и фиксируется как есть.",
+        "- a single run of a single seeded training; the weights are not committed "
+        "(see reproduction in EXPERIMENT_PROTOCOL.md);",
+        "- repeated generations of one task are correlated — all CIs and tests "
+        "are clustered by task;",
+        "- A_constant_rate below 0.5 is an artifact of between-fold variation of the base "
+        "rate under a constant prediction; read jointly with A2;",
+        "- the small number of positive labels limits power; a negative "
+        "or inconclusive outcome is still a result and is recorded as it is.",
         "",
-        "Артефакты: passport.json · tasks.json · observations.jsonl · "
+        "Artifacts: passport.json · tasks.json · observations.jsonl · "
         "labels.jsonl · predictions.jsonl · report.json · REPORT.md",
     ]
     return "\n".join(lines) + "\n"
@@ -820,21 +819,21 @@ def main() -> None:
 
         reasons = Counter(o.get("reason", "?")[:120] for o in observations)
         raise RuntimeError(
-            "0 валидных наблюдений — проверьте совместимость instrumentation с "
-            f"конфигурацией модели. Топ причин исключений: {dict(reasons.most_common(3))}"
+            "0 valid observations — check the instrumentation's compatibility with "
+            f"the model configuration. Top exclusion reasons: {dict(reasons.most_common(3))}"
         )
     if n_valid < 0.5 * len(observations):
         from collections import Counter
 
         reasons = Counter(o.get("reason", "?")[:80] for o in observations if o.get("excluded"))
-        print(f"[warn] исключено {len(observations) - n_valid}/{len(observations)} наблюдений; "
-              f"топ причин: {dict(reasons.most_common(3))}")
+        print(
+            f"[warn] excluded {len(observations) - n_valid}/{len(observations)} observations; "
+            f"top reasons: {dict(reasons.most_common(3))}"
+        )
     save_jsonl(observations, os.path.join(args.out, "observations.jsonl"))
     save_jsonl(labels, os.path.join(args.out, "labels.jsonl"))
 
-    records, fold_report = fit_predict(
-        observations, labels, tasks, args.out, setup_ctx["models"]
-    )
+    records, fold_report = fit_predict(observations, labels, tasks, args.out, setup_ctx["models"])
     save_jsonl(records, os.path.join(args.out, "predictions.jsonl"))
 
     lofo = lofo_predictions(observations, labels, tasks, setup_ctx["models"])

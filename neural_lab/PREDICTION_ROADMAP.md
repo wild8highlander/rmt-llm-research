@@ -1,153 +1,157 @@
-# PREDICTION ROADMAP — от исследовательского стенда к предсказательной лаборатории
+# PREDICTION ROADMAP — from a research bench to a predictive laboratory
 
-> Целевая архитектура: `hypothesis → measurement → prediction →
-> validation → falsification`. Принцип порядка: сначала доказать, что
-> измерения корректны, затем — что они что-то предсказывают, и только
-> после этого масштабировать. Текущее состояние: **этапы 01–03 выполнены
-> в первой рабочей версии** (см. чек-листы), этапы 04–06 — ближайшие.
+> The target architecture: `hypothesis → measurement → prediction →
+> validation → falsification`. The ordering principle: first prove the
+> measurements are correct, then prove they predict something, and only
+> then scale. Current state: **stages 01–03 are complete in their first
+> working version** (see the checklists); stages 04–06 are next.
 
-Ключевое различение, на котором стоит вся дорожная карта:
+The key distinction the whole roadmap stands on:
 
-| Слой | Вопрос | Где в репозитории |
+| Layer | Question | Where in the repository |
 |---|---|---|
-| Исследовательский стенд | что мы видим? | `research/tinygpt_formula/` |
-| Предсказательная модель | что будет до того, как мы узнаем ответ? | `science/` (instrumentation → features → predictors) |
-| Научно проверенная теория | воспроизводится ли на независимых данных с фальсификацией? | `science/experiments/` + `science/results/` + реестр гипотез |
+| Research bench | what do we see? | `research/tinygpt_formula/` |
+| Predictive model | what will happen before we know the answer? | `science/` (instrumentation → features → predictors) |
+| Scientifically verified theory | does it reproduce on independent data, with falsification? | `science/experiments/` + `science/results/` + the hypothesis registry |
 
-Третье не возникает автоматически из первых двух — поэтому каждый этап
-ниже имеет критерий готовности, а не список файлов.
+The third does not arise automatically from the first two — that is why
+every stage below has a readiness criterion, not a list of files.
 
 ---
 
-## Этап 01 — Инвентаризация и аудит ✅ (выполнено)
+## Stage 01 — Inventory and audit ✅ (done)
 
-- [x] Прослежен путь «запуск → результат» по фактическому коду
-- [x] Найдена и исправлена синтетико-подобная вводящая формулировка
-      (reasoning_trace) — синтетических метрик в коде нет
-- [x] Проверена математика RMT-расчётов: найден и исправлен дефект
-      конвенции σ² на rank-дефицитных ковариациях
-- [x] Составлена карта дублирования (gt_pairs/format_ok/numeric_ok/quick_eval)
-- [x] Модули размечены «готово / частично / гипотеза» (см. AUDIT.md § 7)
+- [x] The run → result path traced through the actual code
+- [x] The synthetic-looking misleading wording found and fixed
+      (reasoning_trace) — there are no synthetic metrics in the code
+- [x] The RMT math verified: the σ² convention defect on rank-deficient
+      covariances found and fixed
+- [x] The duplication map compiled (gt_pairs/format_ok/numeric_ok/quick_eval)
+- [x] Modules labeled "done / partial / hypothesis" (see AUDIT.md §7)
 
-Результат: `AUDIT.md`, приоритетный backlog, канонизация в `science/`.
+Outcome: `AUDIT.md`, the prioritized backlog, canonicalization into
+`science/`.
 
-## Этап 02 — Научно достоверный измерительный контур ✅ (выполнено)
+## Stage 02 — A scientifically sound measurement loop ✅ (done)
 
-- [x] Единый интерфейс загрузки реальной модели с provenance
-      (`science/instrumentation/model_loader.py`: sha256 весов/токенизатора,
-      eval-режим)
-- [x] Захват сырых наблюдений отделён от производных признаков
-      (`instrumentation/capture.py` → `features/`); синтетика запрещена
-- [x] Независимая оценка правильности: истина пересчитывается библиотекой
-      `src/rmt_llm`, а не берётся из корпуса; расхождения → исключение
-- [x] Сырые данные (`observations.jsonl`), признаки и метрики хранятся
-      раздельно; каждый артефакт можно восстановить из предыдущего
-- [x] 52 юнит/интеграционных теста, включая контрольные нули RMT
+- [x] A single interface for loading the real model with provenance
+      (`science/instrumentation/model_loader.py`: sha256 of
+      weights/tokenizer, eval mode)
+- [x] Raw observation capture separated from derived features
+      (`instrumentation/capture.py` → `features/`); synthetic data forbidden
+- [x] Independent correctness: the truth is recomputed by the
+      `src/rmt_llm` library, not taken from the corpus; divergences → exclusion
+- [x] Raw data (`observations.jsonl`), features, and metrics stored
+      separately; every artifact can be rebuilt from the previous one
+- [x] 52 unit/integration tests, including RMT control zeros
 
-**Критерий готовности** (выполнен): каждый график/вывод H1 восстанавливается
-из `observations.jsonl` + зафиксированных конвенций.
+**Readiness criterion** (met): every H1 chart/conclusion is
+reconstructible from `observations.jsonl` + the fixed conventions.
 
-## Этап 03 — Первый настоящий предиктор ✅ (выполнен, прогон зафиксирован)
+## Stage 03 — The first real predictor ✅ (done, run fixed)
 
-- [x] Baseline'ы: A (базовая частота), A2 (частота по семейству) — обязательное
-      сравнение, а не украшение
-- [x] B — только стандартная уверенность; C — только внутренние состояния;
-      D — комбинированная; E — абляция без спектра
-- [x] Групповые разбиения (по задачам, стратификация family×band) +
-      leave-one-family-out + формальные проверки утечек
-- [x] Кластерный бутстреп CI, парные кластерные перестановки, перестановка
-      меток с диагностикой пространства рандомизации
-- [x] Платт-калибровка на train-данных, ECE до/после
-- [x] Прогноз сохраняется до раскрытия: predictions.jsonl → report.json
+- [x] Baselines: A (base rate), A2 (per-family rate) — a mandatory
+      comparison, not a decoration
+- [x] B — standard confidence only; C — internal states only;
+      D — combined; E — the no-spectral ablation
+- [x] Grouped splits (by task, family×band stratification) +
+      leave-one-family-out + formal leakage checks
+- [x] Clustered bootstrap CI, paired clustered permutations, label
+      permutation with randomization-space diagnostics
+- [x] Platt calibration on train data, ECE before/after
+- [x] Predictions saved before disclosure: predictions.jsonl → report.json
 
-**Результат прогона v1.0.1** (`science/results/h1_v1/REPORT.md`):
-первичная цель (ошибка числа, 14 позитивов) — UNDERPOWERED: ΔAUC(D−B) =
-+0.206 [+0.084, +0.319], p = 0.097 — направление положительное, строгий
-критерий не достигнут; абляция показывает, что весь прирост даёт спектр
-(D без спектра = 0.412 ≈ B). Вторичная цель (format_ok, «Ловушка
-Полезности») — **значимый результат**: внутренние состояния 0.871 vs
-уверенность 0.794, ΔAUC = +0.075 [+0.038, +0.115], p = 0.0025.
+**The v1.0.1 run's outcome** (`science/results/h1_v1/REPORT.md`):
+the primary endpoint (numeric error, 14 positives) — UNDERPOWERED:
+ΔAUC(D−B) = +0.206 [+0.084, +0.319], p = 0.097 — the direction is
+positive, the strict criterion was not met; the ablation shows the
+entire gain comes from the spectrum (D minus spectral = 0.412 ≈ B).
+The secondary endpoint (format_ok, the "Utility Trap") — a
+**significant result**: internal states 0.871 vs confidence 0.794,
+ΔAUC = +0.075 [+0.038, +0.115], p = 0.0025.
 
-**Критерий готовности** (выполнен): прогностическая ценность каждой
-группы признаков измерена численно, с CI и фальсификационными тестами;
-отрицательный/неубедительный исход зафиксирован как есть.
+**Readiness criterion** (met): the predictive value of every feature
+group measured numerically, with CIs and falsification tests; a
+negative/inconclusive outcome recorded as it is.
 
-## Этап 04 — Проверка RMT-гипотез ⏳ (частично)
+## Stage 04 — Testing the RMT hypotheses ⏳ (partial)
 
-- [x] Контрольные нули для спектральных конвенций (белый шум, planted spike)
-- [x] Реестр гипотез с предсказанием/контролем/фальсификацией
+- [x] Control zeros for the spectral conventions (white noise, planted spike)
+- [x] The hypothesis registry with prediction/control/falsification
       (`science/hypotheses/registry.yaml`: H1–H4)
-- [x] Проверка устойчивости: полосы сложности indist/near/far + LOFO
-- [ ] Фиксация определения N в N_crit (токены/выборка/размерность/слой) —
-      блокирует любые заявления о подтверждении (H4: `registered`)
-- [ ] Перенос Q3 («детектор лжи») в предзарегистрированный протокол с
-      десятками задач на класс
-- [ ] Сравнение с альтернативными объяснениями (например, gap_ratio как
-      прокси нормы/длины контекста, а не «знания»)
+- [x] Robustness checks: the indist/near/far difficulty bands + LOFO
+- [ ] Fixing the definition of N in N_crit (tokens/sample/dimension/layer) —
+      blocks any confirmation claims (H4: `registered`)
+- [ ] Moving Q3 (the "lie detector") into a pre-registered protocol with
+      dozens of tasks per class
+- [ ] Comparison against alternative explanations (e.g. gap_ratio as a
+      proxy for norm/context length rather than "knowledge")
 
-**Критерий готовности:** таблица «подтверждено / не подтверждено /
-ограничено» в реестре, каждый пункт — со ссылкой на зафиксированный прогон.
+**Readiness criterion:** a "supported / not supported / bounded" table in
+the registry, each line linked to a fixed run.
 
-## Этап 05 — Перенос во времени и на новые модели ⏳
+## Stage 05 — Transfer across time and models ⏳
 
-- [x] Полосы near/far как мини-проверка обобщения; LOFO по семействам
-- [x] Прогон H1-конвейера на M/L ячейках scaling-лестницы
-      (`science/results/h1_scaling/REPORT.md`): тот же датасет/сид;
-      позитивы 14 → 19 → 19 (не «сотни» — базовая частота ~3.4% сохраняется);
-      направление D > B реплицировано 3/3, в L бутстреп-CI исключает 0
-      (+0.116 [+0.012, +0.215]); открыта нестабильность confidence-baseline
-      по масштабу. XL — в очереди до GPU (эпоха ~20 мин на 2-CPU).
-- [ ] Фиксация версий моделей и протоколов между прогонами (паспорт уже
-      хранит sha256; нужна таблица прогонов со временем)
-- [ ] Перенос на незнакомый класс задач (новые семейства формул с
-      верификаторами: keating_snaith, thermodynamics, circular_ensembles)
-- [ ] Последовательные (sequential) эксперименты с заранее
-      зарегистрированными прогнозами
+- [x] The near/far bands as a mini generalization check; LOFO across families
+- [x] The H1 pipeline run on the M/L cells of the scaling ladder
+      (`science/results/h1_scaling/REPORT.md`): the same dataset/seed;
+      positives 14 → 19 → 19 (not "hundreds" — the ~3.4% base rate
+      persists); the direction D > B replicated 3/3, and the L bootstrap
+      CI excludes 0 (+0.116 [+0.012, +0.215]); the instability of the
+      confidence baseline across scale discovered. XL — queued until a
+      GPU is available (an epoch is ~20 min on 2 CPUs).
+- [x] Protocol versioning between runs (the passport already stores
+      sha256; protocol v1.1 documents the per-layer generalization)
+- [ ] Transfer to an unfamiliar task class (new formula families with
+      verifiers: keating_snaith, thermodynamics, circular_ensembles)
+- [ ] Sequential experiments with pre-registered predictions
 
-**Критерий готовности:** указано, на каких новых моделях/задачах прогноз
-сохраняется, а где ломается — с CI.
+**Readiness criterion:** it is stated on which new models/tasks the
+prediction survives and where it breaks — with CIs.
 
-## Этап 06 — Автоматизированная исследовательская система ⏳
+## Stage 06 — An automated research system ⏳
 
-- [x] Реестр гипотез (registry.yaml) и паспорт запуска (passport.json)
-- [x] Воспроизводимые конфигурации: один CLI (`experiments/run_h1.py`)
-      со смок-режимом; неудачные/вырожденные исходы фиксируются в отчёте
-- [x] Автоматическое сравнение с baseline во всех таблицах
-- [ ] Реестр датасетов и запусков (results/index.md, генерируется)
-- [ ] Вкладка «Science» в веб-приложении из report.json (+ правка статусов
-      Q1–Q4 на «эмпирика/одна траектория»)
-- [ ] Дашборд «прогноз → факт» по истории прогонов
+- [x] The hypothesis registry (registry.yaml) and the run passport (passport.json)
+- [x] Reproducible configurations: one CLI (`experiments/run_h1.py`)
+      with a smoke mode; failed/degenerate outcomes are recorded in the report
+- [x] Automatic baseline comparison in every table
+- [ ] The dataset and run registry (results/index.md, generated)
+- [ ] A "Science" tab in the web app from report.json (+ relabeling the
+      Q1–Q4 statuses to "empirical / single trajectory")
+- [ ] A "prediction → fact" dashboard over the run history
 
-**Критерий готовности:** новая гипотеза проходит путь от записи в
-реестре до отчёта с CI без ручных шагов вне CLI.
+**Readiness criterion:** a new hypothesis travels from a registry entry
+to a CI-bearing report with no manual steps outside the CLI.
 
 ---
 
-## Как оценивать прогресс (критерии готовности)
+## How progress is judged (readiness criteria)
 
-| Направление | Критерий | Статус |
+| Direction | Criterion | Status |
 |---|---|---|
-| Измерения | признаки воспроизводятся из сохранённых сырых данных | ✅ (H1 артефакты) |
-| Математика | численные тесты/контрольные нули подтверждают формулы | ✅ (52 теста) |
-| Предсказания | сравнение с простыми и сильными baseline | ✅ (A/A2/B/C/D/E) |
-| Независимость | финальные метрики без подгонки по тесту | ✅ (OOF + LOFO + перестановки) |
-| Калибровка | вероятности проверены на независимых исходах | ✅ (Платт на train, ECE) |
-| Обобщение | указано, где прогноз сохраняется | ⏳ (LOFO есть, масштаба нет) |
-| Воспроизводимость | повторный запуск по протоколу даёт те же артефакты | ✅ (детерминизм + паспорт) |
-| Научная честность | отрицательные результаты публикуются | ✅ (underpowered-исход в REPORT.md) |
+| Measurements | features reproducible from the saved raw data | ✅ (H1 artifacts) |
+| Math | numerical tests/control zeros confirm the formulas | ✅ (52 tests) |
+| Predictions | comparison against simple and strong baselines | ✅ (A/A2/B/C/D/E) |
+| Independence | final metrics without test-set fitting | ✅ (OOF + LOFO + permutations) |
+| Calibration | probabilities checked on independent outcomes | ✅ (Platt on train, ECE) |
+| Generalization | it is stated where the prediction survives | ⏳ (LOFO yes, scale pending) |
+| Reproducibility | re-running per the protocol yields the same artifacts | ✅ (determinism + passport) |
+| Scientific honesty | negative results are published | ✅ (the underpowered outcome in REPORT.md) |
 
-Универсальный порог (типа «AUC > 0.9») заранее не устанавливается:
-приемлемый уровень зависит от базовой частоты ошибок и стоимости
-ложных срабатываний. Важнее заранее выбранная метрика и заранее
-объявленный прирост, имеющий практическую ценность (протокол v1.0).
+A universal threshold (like "AUC > 0.9") is deliberately not set in
+advance: an acceptable level depends on the base error rate and the cost
+of false positives. What matters more is a metric chosen in advance and
+a pre-declared gain of practical value (protocol v1.0).
 
-## Что делать прямо сейчас (порядок)
+## What to do right now (in order)
 
-1. **Мощность**: запустить H1 на M-ячейке scaling-лестницы (~1.1M
-   параметров, Colab T4) — ожидание: позитивов ×10, строгий критерий
-   ΔAUC(D−B) получит реальную мощность.
-2. **H3 по протоколу**: known/fabricated наборы по 30+ задач, предзаголовок
-   в реестре, один прогон — закрыть вопрос «BBP-детектор» честно.
-3. **Веб-вкладка Science**: report.json → таблица в приложении,
-   маркировка статусов Q1–Q4.
-4. **Канонизация**: research-скрипты → импорт из `science/`.
+1. **Power**: run H1 on the M cell of the scaling ladder (~1.1M
+   parameters, Colab T4) — expectation: ×10 positives, giving the strict
+   ΔAUC(D−B) criterion real power. *(Status: M and L are done — see
+   `science/results/h1_scaling/REPORT.md`; power now hinges on task-set
+   expansion to ≥ 40 positives per cell, and XL awaits a GPU.)*
+2. **H3 per protocol**: known/fabricated sets of 30+ tasks, a registry
+   pre-header, one run — settle the "BBP detector" question honestly.
+3. **The Science web tab**: report.json → a table in the app, with the
+   Q1–Q4 status labels.
+4. **Canonicalization**: the research scripts → import from `science/`.

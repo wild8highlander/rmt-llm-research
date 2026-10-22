@@ -1,165 +1,172 @@
-# AUDIT — neural_lab: фактическое состояние (октябрь 2025)
+# AUDIT — neural_lab: factual state (October 2025)
 
-> Архитектурно-научный аудит реального содержимого `neural_lab/`,
-> выполненный по коду (не по документации). Отвечает на вопросы плана
-> развития: что действительно вычисляется, что только заявлено, где
-> синтетика, где дубли, какие дефекты критичны. Итоговые рекомендации —
-> в `PREDICTION_ROADMAP.md`; первый исправленный эксперимент — в
+> An architectural and scientific audit of what `neural_lab/` actually
+> contains, performed against the code (not the documentation). It
+> answers the development plan's questions: what is really computed,
+> what is merely claimed, where the synthetic parts are, where the
+> duplicates are, and which defects are critical. Final recommendations
+> are in `PREDICTION_ROADMAP.md`; the first repaired experiment is in
 > `EXPERIMENT_PROTOCOL.md` + `science/`.
 
 ---
 
-## 1. Что такое neural_lab фактически
+## 1. What neural_lab actually is
 
-`neural_lab/` состоит из двух независимых частей:
+`neural_lab/` consists of two independent parts:
 
-| Часть | Технологии | Роль |
+| Part | Technology | Role |
 |---|---|---|
-| Веб-приложение (`src/`, Next.js 15 + TS + Tailwind + shadcn/ui) | 6 табов: Overview, Playground, Training, Benchmark, Questions, Deployment | витрина обученной модели; Playground вызывает `research/tinygpt_formula/scripts/infer.py` через API-роут |
-| Исследовательская программа (`research/tinygpt_formula/`) | чистый Python 3.10+ / NumPy | 5-стадийный пайплайн: корпус → обучение → оценка → инференс → открытые вопросы; плюс `scaling/` (лестница S→XL + A/B «формулы vs галлюцинации») |
+| Web app (`src/`, Next.js 15 + TS + Tailwind + shadcn/ui) | 6 tabs: Overview, Playground, Training, Benchmark, Questions, Deployment | a showcase for the trained model; the Playground calls `research/tinygpt_formula/scripts/infer.py` through an API route |
+| Research program (`research/tinygpt_formula/`) | pure Python 3.10+ / NumPy | a 5-stage pipeline: corpus → training → evaluation → inference → open questions; plus `scaling/` (the S→XL ladder + the A/B "formulas vs hallucinations" study) |
 
-Разделение корректное и здоровое: research-папка самодостаточна (удаляется
-без ущерба), веб-приложение только читает артефакты (`fs/promises` в API-роутах).
-Слой БД (`src/lib/db.ts`, Prisma) — шаблонный код генератора, лабораторными
-табами не используется и без `prisma/schema` не работоспособен; это мусор,
-не дефект науки (рекомендация: удалить или явно пометить как неиспользуемый).
+The separation is sound and healthy: the research folder is
+self-contained (it can be deleted without damage), and the web app only
+reads artifacts (`fs/promises` in the API routes). The DB layer
+(`src/lib/db.ts`, Prisma) is template code from the generator — it is
+not used by the lab tabs and does not work without `prisma/schema`; it
+is junk, not a defect of the science (recommendation: delete it or
+explicitly mark it as unused).
 
-Артефакты в `research/tinygpt_formula/model/` — коммитятся (JSON); веса
-`*.npz` сознательно в gitignore (2 МБ — за порогом смысла, но воспроизводство
-задокументировано и детерминировано: seed 42, ~17 мин CPU, val_loss 1.954
-воспроизводится на другой машине с точностью ~1e-3).
+The artifacts in `research/tinygpt_formula/model/` are committed (JSON);
+the `*.npz` weights are deliberately gitignored (2 MB — below the
+threshold of usefulness), but their reproduction is documented and
+deterministic: seed 42, ~17 min CPU, val_loss 1.954 reproduces on another
+machine to within ~1e-3.
 
-## 2. Путь «запуск → результат» (прослежен)
+## 2. The run → result path (traced)
 
-`build_corpus.py` (277 пар от 10+ функций ядра + монографные формулы) →
-`train_formula_model.py` (TinyGPT v3, история каждую эпоху, resume) →
-`evaluate_model.py` (held-out бенчмарк 37 задач + прирост + спектральный
-проб) → `open_questions.py` (Q1–Q4) → `infer.py` (веб).
+`build_corpus.py` (277 pairs from 10+ core functions + monograph
+formulas) → `train_formula_model.py` (TinyGPT v3, per-epoch history,
+resume) → `evaluate_model.py` (held-out benchmark of 37 tasks + gains +
+spectral probe) → `open_questions.py` (Q1–Q4) → `infer.py` (web).
 
-Проверено: графики и таблицы веб-приложения восстанавливаются из
-сохранённых JSON (training_history.json, evaluation_report.json,
-open_questions_results.json, scaling_report.json) — ручных итогов нет.
-Это соответствует требованию «отчёт из данных, а не из рук».
+Verified: the web app's charts and tables are reconstructed from the
+saved JSON files (training_history.json, evaluation_report.json,
+open_questions_results.json, scaling_report.json) — there are no
+hand-written summaries. This satisfies the "reports from data, not from
+hands" requirement.
 
-## 3. Синтетические объекты и заглушки — фактический статус
+## 3. Synthetic objects and stubs — actual status
 
-| Объект | Статус | Вердикт |
+| Object | Status | Verdict |
 |---|---|---|
-| `reasoning_trace` в докстринге `generate()` (lab_en/tiny_gpt_v3.py) | **заявлен, но не возвращается** — синтетического трейса в коде НЕТ, только вводящий в заблуждение докстринг | ✅ исправлено в этом аудите (докстринг приведён к факту) |
-| «Спектральный проб» λ_max vs MP-граница | считается на реальных скрытых состояниях (capture_hidden) | реальное измерение |
-| «Свободная вероятность» (Q1, R-кумулянты) | κ1/κ2 на реальных ковариациях; «free-оценка N_crit» = κ2/κ1² — эвристика, а не свободная вероятность в строгом смысле | реальное измерение, интерпретация преувеличена формулировкой «SOLVED» |
-| Q2 Caputo-SFT | μ_SFT оценивается из кривой лосса; RLHF-ветка — только аналитика, эксперимента нет | частично подтверждено, статус «SOLVED» завышен |
-| Q3 «детектор лжи» | реальные λ_max known vs unseen, но 4×4 задачи; AUC 0.75 на одной траектории и 0.29 на другой | измерение честное, статистика ничтожна (в README это признаётся) |
-| Confidence/proxy-perplexity в infer.py | CE собственных токенов модели | реальное измерение |
+| `reasoning_trace` in the docstring of `generate()` (lab_en/tiny_gpt_v3.py) | **claimed but never returned** — there is no synthetic trace in the code, only a misleading docstring | ✅ fixed in this audit (docstring aligned with the facts) |
+| "Spectral probe" λ_max vs the MP bound | computed on real hidden states (capture_hidden) | a real measurement |
+| "Free probability" (Q1, R-cumulants) | κ1/κ2 on real covariances; the "free estimate of N_crit" = κ2/κ1² is a heuristic, not free probability in the strict sense | a real measurement; the interpretation is inflated by the "SOLVED" wording |
+| Q2 Caputo-SFT | μ_SFT is estimated from the loss curve; the RLHF branch is analytics only — no experiment | partially confirmed; the "SOLVED" status is overstated |
+| Q3 "lie detector" | real λ_max for known vs unseen, but 4×4 tasks; AUC 0.75 on one trajectory and 0.29 on another | the measurement is honest, the statistics are negligible (acknowledged in the README) |
+| Confidence/proxy-perplexity in infer.py | cross-entropy of the model's own tokens | a real measurement |
 
-Главный вывод: **грубой синтетики нет** — все метрики считаются из
-документированных тензоров. Проблемы — в (а) вводившем в заблуждение
-докстринге, (б) завышенных статусах «SOLVED» при слабой статистике,
-(в) одном математическом дефекте (п. 4).
+Main conclusion: **there is no crude synthetic data** — every metric is
+computed from documented tensors. The problems are in (a) the misleading
+docstring, (b) inflated "SOLVED" statuses under weak statistics, and
+(c) one mathematical defect (§4).
 
-## 4. Математическая корректность RMT-расчётов
+## 4. Mathematical correctness of the RMT calculations
 
-Найден один систематический дефект конвенции (воспроизводится в
+One systematic convention defect was found (reproduced in
 `evaluate_model.py`, `open_questions.py`, `spectral_analysis()`):
 
-**Rank-дефицитные ковариации.** Скрытые состояния имеют T позиций ≪ H=96,
-ковариация (H×H) имеет ранг ≤ T−1; `sigma2` считалась как среднее
-**ненулевых** собственных значений после фильтрации — это завышает
-σ² в H/(T−1) раз и, соответственно, MP-границу, занижая gap_ratio.
-При T=64, H=96 смещение ≈ 1.5×: чистый шум получает gap_ratio ≈ 0.6
-вместо ≈ 1.
+**Rank-deficient covariances.** Hidden states have T positions ≪ H=96,
+so the (H×H) covariance has rank ≤ T−1; `sigma2` was computed as the
+mean of the **non-zero** eigenvalues after filtering — this inflates σ²
+by a factor of H/(T−1) and, with it, the MP bound, deflating the
+gap_ratio. At T=64, H=96 the bias is ≈ 1.5×: pure noise receives a
+gap_ratio ≈ 0.6 instead of ≈ 1.
 
-Исправление (внедрено в `science/features/spectral.py`, проверено
-контрольными нулями): σ² = trace(cov)/H — полная дисперсия; при этой
-конвенции белый шум даёт gap_ratio ∈ [0.85, 1.15], planted spike
-обнаруживается. **Research-скрипты оставлены как есть** (исторические
-отчёты должны соответствовать коду на момент прогона); все новые
-расчёты — через `science/`. Для старых отчётов: выводы о «спайках
-после обучения» сохраняются (спайк ≫ смещения), но абсолютные значения
-gap_ratio в старых артефактах занижены.
+The fix (implemented in `science/features/spectral.py`, verified with
+control zeros): σ² = trace(cov)/H — the full variance; under this
+convention white noise gives gap_ratio ∈ [0.85, 1.15] and a planted
+spike is detected. **The research scripts were left as they are**
+(historical reports must correspond to the code as it was at run time);
+all new computations go through `science/`. For the old reports: the
+conclusions about "spikes after training" survive (the spike ≫ the
+bias), but the absolute gap_ratio values in the old artifacts are
+deflated.
 
-Дополнительно проверено: `mp_bounds`, `bbp_lambda_max`, `caputo_*`,
-`tracy_widom_*` — численно согласованы между собой и используются как
-независимый «проверяющий» для разметки задач H1 (сверка правых частей
-корпуса с пересчётом: расхождений не обнаружено).
+Additionally verified: `mp_bounds`, `bbp_lambda_max`, `caputo_*`,
+`tracy_widom_*` are numerically consistent with one another and are used
+as an independent "verifier" for H1 task labeling (corpus right-hand
+sides cross-checked against recomputation: no discrepancies found).
 
-## 5. Пороги и подгонка: что с N_crit = 114 и «γ₁/θ_b»
+## 5. Thresholds and fitting: what about N_crit = 114 and "γ₁/θ_b"
 
-Значения вида `ncrit_threshold` в интерфейсах лабораторий — эвристические
-дескрипторы, не выводимые из зафиксированной модели данных; определения
-N (токены / выборка / размерность) нигде не зафиксированы. В реестре
-гипотез (`science/hypotheses/registry.yaml`, H4) это оформлено явно:
-до предварительной регистрации определения любые совпадения порогов
-считаются совпадением метрик. Прямое следствие для веб-приложения:
-вкладка Questions должна маркировать статусы Q1–Q4 как «эмпирика на
-одной траектории», а не «SOLVED» (правка интерфейса — в roadmap, этап 06).
+Values like `ncrit_threshold` in the laboratory interfaces are heuristic
+descriptors not derivable from a fixed data model; the definitions of N
+(tokens / sample / dimension) are nowhere fixed. In the hypothesis
+registry (`science/hypotheses/registry.yaml`, H4) this is made explicit:
+until the definitions are pre-registered, any agreement of thresholds
+counts as a coincidence of metrics. A direct consequence for the web
+app: the Questions tab must label the Q1–Q4 statuses as "empirical on a
+single trajectory" rather than "SOLVED" (interface fix — in the roadmap,
+stage 06).
 
-## 6. Карта зависимостей и дублирование
+## 6. Dependency map and duplication
 
 ```
 tiny_gpt_v3.py (lab_en) ←─ train/evaluate/open_questions/infer/scaling
-src/rmt_llm/* (mp, bbp, cap, tw, ...) ←─ те же + science/data (верификация)
+src/rmt_llm/* (mp, bbp, cap, tw, ...) ←─ the same + science/data (verification)
 ```
 
-Дублирования (канон теперь — `science/`):
+Duplications (the canon is now `science/`):
 
-| Функция | evaluate_model.py | scaling_experiment.py | science/ (канон) |
+| Function | evaluate_model.py | scaling_experiment.py | science/ (canon) |
 |---|---|---|---|
-| gt_pairs() | ✔ | ✔ (копия) | `data/tasks.py::far_band_tasks` |
-| format_ok/numeric_ok | ✔ | ✔ (с подчёркиванием) | `data/tasks.py` (+фикс эхо-сегмента) |
-| quick_eval | ✔ | ✔ (своя копия) | не нужен (метрики — evaluation/) |
-| spectral probe | ✔ | ✘ | `features/spectral.py` (исправленная конвенция) |
+| gt_pairs() | ✔ | ✔ (copy) | `data/tasks.py::far_band_tasks` |
+| format_ok/numeric_ok | ✔ | ✔ (with underscores) | `data/tasks.py` (+ echo-segment fix) |
+| quick_eval | ✔ | ✔ (its own copy) | not needed (metrics live in evaluation/) |
+| spectral probe | ✔ | ✘ | `features/spectral.py` (the corrected convention) |
 
-Риск дублирования реализовался уже в этом аудите: копия `numeric_ok`
-в research-скриптах сравнивает числа по всей сгенерированной строке,
-включая эхо хвоста промпта — завышает негативы (см. EXPERIMENT_PROTOCOL.md,
-журнал v1.0.1). Канонизацию в `science/` рекомендовано продолжить.
+The duplication risk materialized during this very audit: the research
+scripts' copy of `numeric_ok` compares numbers across the entire
+generated string, including the echo of the prompt tail — this inflates
+negatives (see EXPERIMENT_PROTOCOL.md, the v1.0.1 changelog).
+Canonicalization into `science/` is recommended to continue.
 
-## 7. Разделение «готово / частично / гипотеза»
+## 7. The "done / partial / hypothesis" separation
 
-| Модуль | Статус | Основание |
+| Module | Status | Basis |
 |---|---|---|
-| Корпус + BPE + обучение (research) | ✅ готово | детерминизм, resume, история, воспроизведено |
-| Held-out бенчмарк (research) | ✅ готово | воспроизводится, честные допуски |
-| Спектральный проб (research) | ⚠️ частично | конвенция σ² смещена (п. 4), одна модель |
-| Q1–Q4 (research) | ⚠️ частично | измерения реальны, статусы «SOLVED» завышены, статистика 4×4 |
-| Scaling ladder | ⚠️ точка S только | M/L/XL не запускались |
-| Веб-приложение | ✅ работает | читает артефакты; Prisma — мусор |
-| **science/ (новое)** | ✅ готово | 52 теста; полный прогон H1 зафиксирован в `science/results/h1_v1/` |
+| Corpus + BPE + training (research) | ✅ done | determinism, resume, history, reproduced |
+| Held-out benchmark (research) | ✅ done | reproducible, honest tolerances |
+| Spectral probe (research) | ⚠️ partial | the σ² convention is biased (§4), single model |
+| Q1–Q4 (research) | ⚠️ partial | the measurements are real, the "SOLVED" statuses are inflated, the statistics are 4×4 |
+| Scaling ladder | ⚠️ point S only | M/L/XL had not been run |
+| Web app | ✅ works | reads artifacts; Prisma is junk |
+| **science/ (new)** | ✅ done | 52 tests; a full H1 run is fixed in `science/results/h1_v1/` |
 
-## 8. Критические дефекты, найденные и устранённые
+## 8. Critical defects found and eliminated
 
-1. **Конвенция σ² для rank-дефицитных ковариаций** (п. 4) — исправлена
-   в `science/features/spectral.py`, покрыта тестом-нулём.
-2. **Эхо промпта в числовой разметке** — ответ сегментируется по
-   последнему `=>` (`science/data/tasks.py`); в research-копиях осталось
-   как есть (исторические отчёты).
-3. **Переиспользование предсказаний одной цели для другой** (вторичная
-   цель format_ok получала константы от вырожденного первичного фита) —
-   исправлено: каждая цель фитуется отдельно.
-4. **Утечка между полосами задач**: `tracy_widom_mean()` был и в
-   indist, и в far — проверка утечек поймала при первом прогоне;
-   добавлена дедупликация промптов между полосами.
-5. **Докстринг reasoning_trace** — исправлен (п. 3).
-6. **Перестановочный тест меток** при одноклассовых стратах возвращал
-   p≈1 без предупреждения — добавлена диагностика пространства
-   рандомизации.
+1. **The σ² convention for rank-deficient covariances** (§4) — fixed in
+   `science/features/spectral.py`, covered by a control-zero test.
+2. **Prompt echo in numeric labeling** — the answer is segmented at the
+   last `=>` (`science/data/tasks.py`); the research copies keep the old
+   behavior (historical reports).
+3. **Reusing one target's predictions for another** (the secondary
+   format_ok target received constants from a degenerate primary fit) —
+   fixed: each target is fitted separately.
+4. **A leak between task bands**: `tracy_widom_mean()` was in both
+   indist and far — the leakage check caught it on the first run;
+   prompt deduplication across bands was added.
+5. **The reasoning_trace docstring** — fixed (§3).
+6. **The label permutation test** returned p≈1 silently under
+   single-class strata — randomization-space diagnostics added.
 
-## 9. Приоритетный backlog
+## 9. Prioritized backlog
 
-1. (высокий, частично выполнено) Прогон H1 на M/L из scaling-лестницы —
-   выполнено (см. `science/results/h1_scaling/REPORT.md`): позитивы
-   14 → 19 (+36%, не «на порядок» — цель остаётся редкой при base rate
-   ~3.4%); направление эффекта реплицировано 3/3, в L CI исключает 0.
-   Остаток: XL требует GPU; рост мощности теперь связывается прежде всего
-   с расширением задач (≥ 40 позитивов), а не только с размером модели.
-2. (высокий) Свести Q3 к протоколу H1-стиля: предзарегистрировать
-   known/fabricated наборы (десятки задач на класс), зафиксировать веса.
-3. (средний) Канонизация: research-скрипты импортируют
-   `science.data.tasks` вместо своих копий (после фиксации исторических
-   отчётов тегом).
-4. (средний) Веб-приложение: вкладка «Science» из `results/h1_v1/report.json`;
-   удалить/задизейблить Prisma-слой; маркировка Q1–Q4 статусов.
-5. (низкий) CI: отдельный job `science` (`pytest neural_lab/science/tests`),
-   интеграционный тест с реальными весами — только при наличии артефакта
-   (сейчас: skip, веса не в git).
+1. (high, partially done) Run H1 on the M/L cells of the scaling
+   ladder — done (see `science/results/h1_scaling/REPORT.md`): positives
+   14 → 19 (+36%, not "an order of magnitude" — the target remains rare
+   at a ~3.4% base rate); the effect direction replicated 3/3, and the L
+   CI excludes 0. Remaining: XL requires a GPU; power growth is now tied
+   primarily to task-set expansion (≥ 40 positives), not just model size.
+2. (high) Reduce Q3 to an H1-style protocol: pre-register
+   known/fabricated sets (dozens of tasks per class), fix the weights.
+3. (medium) Canonicalization: the research scripts should import
+   `science.data.tasks` instead of their copies (after the historical
+   reports are pinned with a tag).
+4. (medium) Web app: a "Science" tab from `results/h1_v1/report.json`;
+   delete/disable the Prisma layer; label the Q1–Q4 statuses.
+5. (low) CI: a dedicated `science` job (`pytest neural_lab/science/tests`);
+   an integration test with real weights only when the artifact is
+   present (currently: skip — weights are not in git).

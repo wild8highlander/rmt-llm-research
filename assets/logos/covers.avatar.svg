@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="assets/covers — animated avatar">
+  <defs>
+    <radialGradient id="avcovebg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="avcovemain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"><animate attributeName="stop-color" values="#fbbf24;#f472b6;#00ffa3;#22d3ee;#a78bfa;#fbbf24" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#f472b6"><animate attributeName="stop-color" values="#f472b6;#a78bfa;#fbbf24;#f472b6" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="avcovesweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="avcoveorb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.55"/>
+      <stop offset="70%" stop-color="#fbbf24" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="avcoveglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="avcovesoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#avcovebg)"/>
+  <circle cx="64" cy="64" r="52" fill="url(#avcoveorb)"><animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#avcovemain)" stroke-width="3.0" stroke-linecap="round" stroke-dasharray="193 101" filter="url(#avcoveglow)"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="11.0s" repeatCount="indefinite"/></circle>
+  <g transform="translate(64,64) scale(0.62)">
+    <g><rect x="-43.0" y="-24" width="76" height="18" rx="3" fill="#fbbf24" opacity="0.85"><animate attributeName="opacity" values="0.6;0.95;0.6" dur="3s" repeatCount="indefinite"/></rect><rect x="-43.0" y="-24" width="7" height="18" rx="3" fill="#05060f" opacity="0.5"/></g><g><rect x="-29.0" y="-2" width="68" height="18" rx="3" fill="#a78bfa" opacity="0.85"><animate attributeName="opacity" values="0.6;0.95;0.6" dur="4s" repeatCount="indefinite"/></rect><rect x="-29.0" y="-2" width="7" height="18" rx="3" fill="#05060f" opacity="0.5"/></g><g><rect x="-30.0" y="22" width="60" height="18" rx="3" fill="#f472b6" opacity="0.85"><animate attributeName="opacity" values="0.6;0.95;0.6" dur="5s" repeatCount="indefinite"/></rect><rect x="-30.0" y="22" width="7" height="18" rx="3" fill="#05060f" opacity="0.5"/></g><rect x="16" y="-40" width="10" height="16" rx="2" fill="#f472b6"><animate attributeName="y" values="-40;-28;-40" dur="3.4s" repeatCount="indefinite"/></rect><rect x="-38" y="-44" width="76" height="14" rx="4" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.8"/>
+  </g>
+  <g clip-path="none"><rect x="-260" y="0" width="200" height="128" fill="url(#avcovesweep)" transform="skewX(-18)"><animate attributeName="x" values="-260;248" dur="6.0s" begin="0s" repeatCount="indefinite"/></rect></g>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="url(#avcovemain)" stroke-width="1.6">
+    <animate attributeName="stroke" values="#fbbf24;#f472b6;#f472b6;#fbbf24;#fbbf24" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>
