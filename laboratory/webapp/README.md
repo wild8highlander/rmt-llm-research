@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="64" alt="RMT × LLM Research — Black Aurora"></a><br>
+  <img src="../../assets/branding/aurora-divider.svg" width="420" alt="">
+</p>
+
 # RMT-LLM Laboratory — Web App (CRA + Socket.io equivalent)
 
 Real-time visualization dashboard for the RMT-LLM Laboratory. Built with **Vite + React 18 + Socket.io** (modern alternative to CRA + Socket.io, fully compatible).
@@ -81,3 +86,11 @@ webapp/
 ## License
 
 Proprietary — All rights reserved. Iskhak Hamzatovich Isaev, 2026.
+
+---
+
+<p align="center">
+  <sub>
+    <a href="../../README.md">🏠 repository root</a> · <a href="../../assets/README.md">🎨 branding</a> · <a href="../../assets/charts/README.md">📊 chart gallery</a>
+  </sub>
+</p>

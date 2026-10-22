@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-label="RMT x LLM Research - social preview - Black Aurora">
+  <defs>
+    <radialGradient id="sbg" cx="30%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#101030"/><stop offset="45%" stop-color="#08081a"/><stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="saE" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ffa3" stop-opacity="0"/><stop offset="40%" stop-color="#00ffa3" stop-opacity="0.8"/><stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="saC" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0"/><stop offset="45%" stop-color="#38bdf8" stop-opacity="0.65"/><stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="saP" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0"/><stop offset="50%" stop-color="#a78bfa" stop-opacity="0.6"/><stop offset="100%" stop-color="#f472b6" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="saM" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0"/><stop offset="50%" stop-color="#f472b6" stop-opacity="0.5"/><stop offset="100%" stop-color="#fb7185" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ffa3"><animate attributeName="stop-color" values="#00ffa3;#22d3ee;#a78bfa;#f472b6;#00ffa3" dur="9s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#f472b6"><animate attributeName="stop-color" values="#f472b6;#00ffa3;#22d3ee;#a78bfa;#f472b6" dur="9s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <filter id="sblur" x="-40%" y="-200%" width="180%" height="500%"><feGaussianBlur stdDeviation="26"/></filter>
+    <filter id="sglow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#sbg)"/>
+
+  <g fill="#dff6ff">
+    <circle cx="80" cy="70" r="1.8" class="tw a1"/><circle cx="210" cy="130" r="1.2" class="tw a2"/>
+    <circle cx="330" cy="56" r="1.9" class="tw a3"/><circle cx="470" cy="110" r="1.2" class="tw a4"/>
+    <circle cx="600" cy="40" r="1.7" class="tw a1"/><circle cx="740" cy="90" r="1.3" class="tw a2"/>
+    <circle cx="880" cy="50" r="1.8" class="tw a3"/><circle cx="1020" cy="120" r="1.2" class="tw a4"/>
+    <circle cx="1150" cy="60" r="1.9" class="tw a1"/><circle cx="1230" cy="140" r="1.3" class="tw a2"/>
+    <circle cx="140" cy="560" r="1.5" class="tw a3"/><circle cx="1180" cy="580" r="1.6" class="tw a4"/>
+    <circle cx="560" cy="600" r="1.3" class="tw a1"/><circle cx="940" cy="610" r="1.4" class="tw a2"/>
+  </g>
+
+  <g class="dA"><path d="M-40,430 C220,340 430,500 680,410 C930,330 1090,480 1320,400 L1320,290 C1120,370 960,240 680,310 C400,385 240,270 -40,330 Z" fill="url(#saE)" filter="url(#sblur)" opacity="0.75">
+    <animate attributeName="opacity" values="0.55;0.9;0.55" dur="12s" repeatCount="indefinite"/></path></g>
+  <g class="dB"><path d="M-40,520 C260,440 480,580 740,500 C980,430 1140,560 1320,490 L1320,400 C1140,470 980,350 740,410 C480,475 260,370 -40,430 Z" fill="url(#saC)" filter="url(#sblur)" opacity="0.7">
+    <animate attributeName="opacity" values="0.45;0.8;0.45" dur="14s" repeatCount="indefinite"/></path></g>
+  <g class="dC"><path d="M-40,600 C300,540 520,660 780,590 C1020,530 1180,650 1320,590 L1320,510 C1160,570 1020,460 780,510 C520,565 300,470 -40,520 Z" fill="url(#saP)" filter="url(#sblur)" opacity="0.6">
+    <animate attributeName="opacity" values="0.4;0.7;0.4" dur="16s" repeatCount="indefinite"/></path></g>
+  <g class="dD"><path d="M-40,660 C320,620 560,700 820,650 C1060,605 1200,700 1320,660 L1320,615 C1180,660 1060,570 820,605 C560,645 320,565 -40,610 Z" fill="url(#saM)" filter="url(#sblur)" opacity="0.5">
+    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="10s" repeatCount="indefinite"/></path></g>
+
+  <!-- left: text -->
+  <text x="80" y="196" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="30" font-weight="600" letter-spacing="8" fill="#7dffce">RANDOM MATRIX THEORY × LLM</text>
+  <text x="80" y="286" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="74" font-weight="800" letter-spacing="1" fill="url(#stg)" filter="url(#sglow)">RMT &amp; LLM RESEARCH</text>
+  <rect x="84" y="312" width="430" height="4" rx="2" fill="url(#stg)" opacity="0.9"/>
+  <text x="82" y="368" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="24" fill="#b7c4d6">Spectral analysis of LLM activations</text>
+  <text x="82" y="404" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="24" fill="#b7c4d6">Hallucination detection · Cognitive modes · Collapse theory</text>
+
+  <g font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="16" font-weight="600" letter-spacing="1.5">
+    <rect x="82" y="440" width="176" height="38" rx="19" fill="#0b1f1a" stroke="#00ffa3" stroke-opacity="0.6"/>
+    <text x="170" y="464" text-anchor="middle" fill="#7dffce">240+ TESTS</text>
+    <rect x="270" y="440" width="150" height="38" rx="19" fill="#0b1622" stroke="#22d3ee" stroke-opacity="0.6"/>
+    <text x="345" y="464" text-anchor="middle" fill="#8ce7ff">8 LANGS</text>
+    <rect x="432" y="440" width="150" height="38" rx="19" fill="#140f26" stroke="#a78bfa" stroke-opacity="0.6"/>
+    <text x="507" y="464" text-anchor="middle" fill="#cdb8ff">12 DOCS</text>
+    <rect x="594" y="440" width="140" height="38" rx="19" fill="#1d0f1d" stroke="#f472b6" stroke-opacity="0.6"/>
+    <text x="664" y="464" text-anchor="middle" fill="#ffb3dd">DOI · ZENODO</text>
+  </g>
+  <text x="82" y="540" font-family="ui-monospace,'Cascadia Code',Menlo,monospace" font-size="19" fill="#5d7290">github.com/wild8highlander/rmt-llm-research</text>
+
+  <!-- right: eigenvalue scatter motif -->
+  <g transform="translate(985,300)" filter="url(#sglow)">
+    <circle r="185" fill="none" stroke="#22d3ee" stroke-opacity="0.2" stroke-width="1.2"/>
+    <circle r="130" fill="none" stroke="#a78bfa" stroke-opacity="0.2" stroke-width="1"/>
+    <ellipse rx="185" ry="120" fill="none" stroke="#00ffa3" stroke-opacity="0.25" stroke-width="1.2" transform="rotate(-18)">
+      <animateTransform attributeName="transform" type="rotate" values="-18;-10;-18" dur="12s" repeatCount="indefinite"/>
+    </ellipse>
+    <g class="dots">
+      <circle cx="120" cy="52" r="4" fill="#00ffa3"><animate attributeName="opacity" values="0.9;0.3;0.9" dur="3.1s" repeatCount="indefinite"/></circle>
+      <circle cx="-140" cy="30" r="3.4" fill="#22d3ee"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.9s" repeatCount="indefinite"/></circle>
+      <circle cx="62" cy="-96" r="4.4" fill="#a78bfa"><animate attributeName="opacity" values="0.85;0.25;0.85" dur="2.8s" repeatCount="indefinite"/></circle>
+      <circle cx="-70" cy="-110" r="3.2" fill="#f472b6"><animate attributeName="opacity" values="0.3;0.85;0.3" dur="4.4s" repeatCount="indefinite"/></circle>
+      <circle cx="158" cy="-28" r="3.6" fill="#22d3ee"><animate attributeName="opacity" values="0.8;0.2;0.8" dur="3.5s" repeatCount="indefinite"/></circle>
+      <circle cx="-30" cy="140" r="3.8" fill="#00ffa3"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="4.7s" repeatCount="indefinite"/></circle>
+      <circle cx="96" cy="118" r="3" fill="#f472b6"><animate attributeName="opacity" values="0.9;0.3;0.9" dur="3.3s" repeatCount="indefinite"/></circle>
+      <circle cx="-160" cy="-60" r="3.4" fill="#a78bfa"><animate attributeName="opacity" values="0.3;0.85;0.3" dur="4.1s" repeatCount="indefinite"/></circle>
+      <circle cx="20" cy="-160" r="3.6" fill="#22d3ee"><animate attributeName="opacity" values="0.85;0.2;0.85" dur="2.9s" repeatCount="indefinite"/></circle>
+      <circle cx="-96" cy="86" r="2.8" fill="#e8fff8"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="3.7s" repeatCount="indefinite"/></circle>
+    </g>
+    <circle r="6" fill="url(#stg)"><animate attributeName="r" values="5;7;5" dur="4s" repeatCount="indefinite"/></circle>
+    <text x="0" y="236" text-anchor="middle" font-family="Georgia,serif" font-size="42" font-style="italic" fill="url(#stg)">λ(A) → MP(γ)</text>
+  </g>
+
+  <style>
+    .tw{animation:tw 3.4s ease-in-out infinite}
+    .a1{animation-delay:0s}.a2{animation-delay:-.85s}.a3{animation-delay:-1.7s}.a4{animation-delay:-2.55s}
+    @keyframes tw{0%,100%{opacity:.2}50%{opacity:1}}
+    .dA{animation:dA 18s ease-in-out infinite}
+    @keyframes dA{0%,100%{transform:translate(0,0)}50%{transform:translate(26px,-14px)}}
+    .dB{animation:dB 22s ease-in-out infinite}
+    @keyframes dB{0%,100%{transform:translate(0,0)}50%{transform:translate(-24px,12px)}}
+    .dC{animation:dC 26s ease-in-out infinite}
+    @keyframes dC{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,10px)}}
+    .dD{animation:dD 20s ease-in-out infinite}
+    @keyframes dD{0%,100%{transform:translate(0,0)}50%{transform:translate(-18px,-8px)}}
+  </style>
+</svg>

@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="64" alt="RMT × LLM Research — Black Aurora"></a><br>
+  <img src="../assets/branding/aurora-divider.svg" width="420" alt="">
+</p>
+
 # Scripts — Developer Utilities
 
 Helper scripts for the TinyGPT v2 training pipeline and cross-language
@@ -47,3 +52,11 @@ The chunked trainer writes to:
 
 - All paths are resolved relative to the repository root via `__file__`. No hardcoded `/home/...` paths — the scripts work on any machine after `git clone`.
 - The chunked trainer uses deterministic seeding, so resuming from a checkpoint produces identical results to a single uninterrupted run.
+
+---
+
+<p align="center">
+  <sub>
+    <a href="../README.md">🏠 repository root</a> · <a href="../assets/README.md">🎨 branding</a> · <a href="../assets/charts/README.md">📊 chart gallery</a>
+  </sub>
+</p>

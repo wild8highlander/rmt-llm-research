@@ -1,8 +1,20 @@
-# RMT-LLM Neural Lab
+<p align="center">
+  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+</p>
+
+# 🌐 neural_lab — Web App
+
+<p align="center">
+  <em>A Next.js playground where the trained formula model lives</em><br><br>
+  <img src="../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <a href="../README.md"><img src="https://img.shields.io/badge/folder-neural--lab-00ffa3" alt="repository root"></a>
+  <img src="https://img.shields.io/badge/next.js-000000" alt="Next.js"><img src="https://img.shields.io/badge/typescript-3178C6" alt="TypeScript">
+</p>
 
 A web application (Next.js + TypeScript) where the trained model from
-`research/tinygpt_formula/` "lives": the playground calls `scripts/infer.py`
-through the API, while the other tabs display the training artifacts.
+[`research/tinygpt_formula/`](../research/tinygpt_formula/README.md)
+"lives": the playground calls `scripts/infer.py` through the API, while
+the other tabs display the training artifacts.
 
 ## Tabs
 
@@ -23,8 +35,10 @@ npm install        # or bun install
 npm run dev        # http://localhost:3000
 ```
 
-Requirements: Node.js 20+; for the Playground tab, Python 3.10+ and NumPy
-must be available on the system (inference runs as a subprocess:
-`research/tinygpt_formula/scripts/infer.py`).
-API endpoints: `/api/infer`, `/api/metrics`, `/api/evaluation`,
-`/api/open-questions`, `/api` (health — checks for the model files).
+---
+
+<p align="center">
+  <sub>
+    <a href="../README.md">← root</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../README.md">🏠 repository root</a> · <a href="../research/tinygpt_formula/README.md">the model →</a>
+  </sub>
+</p>

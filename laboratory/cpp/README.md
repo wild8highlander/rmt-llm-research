@@ -1,15 +1,41 @@
-# C++ Laboratory
+<p align="center">
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+</p>
 
-C++17 port of the lab pipeline (`lab_en/` English, `lab_ru/` Russian).
-Header-only research engine (`research_3d.hpp`) plus a console front-end,
-optionally using Eigen when available.
+# ⚙️ C++ Laboratory
+
+<p align="center">
+  <em>C++ twins of the laboratory — header-only pipeline, make-driven</em><br><br>
+  <img src="../../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <a href="../README.md"><img src="https://img.shields.io/badge/folder-laboratory-1C2340" alt="laboratory/"></a>
+  <img src="https://img.shields.io/badge/c%2B%2B--c%2B%2B-00599C" alt="C++">
+</p>
+
+Two language variants of the C++ research laboratory — the same
+scenarios, artifacts and export formats as every other twin in
+[`laboratory/`](../README.md). Pick `cpp` if it is the toolchain you
+already have installed; the experiment is identical everywhere.
+
+| Folder | Content |
+|---|---|
+| [`lab_en/`](lab_en/README.md) | English variant — menu-driven lab |
+| [`lab_ru/`](lab_ru/README.md) | Russian variant — same code, translated UI |
+
+`research_3d.hpp` carries the MP / BBP / NHSE mathematics; `Makefile` exposes `all` · `run` · `clean`.
 
 ```bash
 cd laboratory/cpp/lab_en
-make                     # or: g++ -std=c++17 -O2 main.cpp -o lab
-./lab                    # interactive menu
+make
+make run
 ```
 
-The implementation is kept numerically consistent with the Python reference
-(`mp_bounds`, BBP thresholds, Tracy-Widom constants) — the same values that
-the CI cross-implementation job asserts.
+Results land in each lab's `results/` folder and are mirrored in
+[`laboratory/results/`](../results/README.md).
+
+---
+
+<p align="center">
+  <sub>
+    <a href="../README.md">← laboratory</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../README.md">🏠 repository root</a> · <a href="lab_en/README.md">lab_en →</a>
+  </sub>
+</p>

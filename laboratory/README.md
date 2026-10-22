@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="64" alt="RMT × LLM Research — Black Aurora"></a><br>
+  <img src="../assets/branding/aurora-divider.svg" width="420" alt="">
+</p>
+
 # 🧪 RMT-LLM Laboratory
 
 A complete multi-language research laboratory for verifying the RMT-LLM theory and the news claims about hidden reasoning chains in LLMs. Built as an extension to the `rmt-llm-research` repository.
@@ -366,3 +371,11 @@ All laboratory code is licensed under the **Proprietary All-Rights-Reserved Lice
 ---
 
 *Built to verify: "models lie, hallucinate, and store PII — and we voluntarily gave them all our data."*
+
+---
+
+<p align="center">
+  <sub>
+    <a href="../README.md">🏠 repository root</a> · <a href="../assets/README.md">🎨 branding</a> · <a href="../assets/charts/README.md">📊 chart gallery</a>
+  </sub>
+</p>

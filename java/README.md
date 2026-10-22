@@ -1,27 +1,40 @@
-# RMT-LLM Visualization Suite (Java / JavaFX)
+<p align="center">
+  <a href="../README.md"><img src="../assets/branding/aurora-icon.svg" width="72" alt="RMT × LLM Research — Black Aurora"></a>
+</p>
 
-A JavaFX desktop application that renders the RMT-LLM mathematics in
-interactive 3D: Marchenko-Pastur surfaces, BBP transition landscapes,
-NHSE eigenvalue collapse, and per-layer free-energy scenes.
+# ☕ java — Java Suite
 
-## Build and run
+<p align="center">
+  <em>The JavaFX visualization twin and the Java laboratory</em><br><br>
+  <img src="../assets/branding/aurora-divider.svg" width="420" alt=""><br><br>
+  <a href="../README.md"><img src="https://img.shields.io/badge/folder-java-ED8B00" alt="repository root"></a>
+  <img src="https://img.shields.io/badge/java%2017%2B-ED8B00" alt="Java 17+"><img src="https://img.shields.io/badge/javafx-8ca3c7" alt="JavaFX">
+</p>
 
-Requires JDK 17+ (OpenJFX is pulled in by the Gradle plugin):
+The Java corner of the polyglot experiment. Two residents:
+
+| Path | Content |
+|---|---|
+| [`rmt-llm-viz/`](rmt-llm-viz/README.md) | **JavaFX desktop app** — Marchenko–Pastur surfaces, BBP landscapes, NHSE collapse and per-layer free-energy scenes as interactive 3D |
+| (laboratory twin) | the Java research lab lives at [`laboratory/java/`](../laboratory/java/README.md) — menu-driven experiments, chart and report export |
+
+## Quick taste
 
 ```bash
 cd java/rmt-llm-viz
-./gradlew run          # or: gradle run
+./gradlew run          # JDK 17+; OpenJFX pulled in by the Gradle plugin
 ```
 
-Project layout (`src/main/java/com/rmt/llm/viz/`):
+The math constants mirror `src/rmt_llm/constants.py` one-to-one
+(`RMTConstants.java`), and `RMTVerifier.java` re-runs the
+cross-implementation consistency checks from inside the GUI — the same
+contract the [Julia verifier](../julia/RMTLLMVerify/README.md) enforces
+on the numbers side.
 
-| File | Role |
-|---|---|
-| `RMTLLMVizApp.java` | JavaFX application entry point |
-| `RMTMath.java` | the RMT formulas (MP, BBP, Tracy-Widom, NHSE) |
-| `RMTVerifier.java` | cross-implementation consistency checks |
-| `RMTConstants.java` | shared constants mirroring `src/rmt_llm/constants.py` |
-| `Complex.java` | minimal complex-number arithmetic |
+---
 
-The module mirrors the Python package `python/rmt_llm_viz/` — the CI
-cross-implementation job keeps their reference values aligned.
+<p align="center">
+  <sub>
+    <a href="../README.md">← root</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../README.md">🏠 repository root</a> · <a href="rmt-llm-viz/README.md">the viz app →</a>
+  </sub>
+</p>

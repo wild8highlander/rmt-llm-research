@@ -64,7 +64,11 @@
         "code",
         "p",
         "a",
-        "sub"
+        "sub",
+        "div",
+        "span",
+        "picture",
+        "source"
       ]
     },
     "MD034": false,

@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="64" alt="RMT × LLM Research — Black Aurora"></a><br>
+  <img src="../../assets/branding/aurora-divider.svg" width="420" alt="">
+</p>
+
 # rmt_llm — Core Verification Package
 
 Pure-NumPy implementation of the mathematical framework applying Random
@@ -43,3 +48,11 @@ rmt-llm-verify              # run the verification CLI
 Requires Python 3.10+ and NumPy only — no heavy scientific stack.
 
 Author: Iskhak Hamzatovich Isaev · ORCID 0009-0003-7299-0701
+
+---
+
+<p align="center">
+  <sub>
+    <a href="../../README.md">🏠 repository root</a> · <a href="../../assets/README.md">🎨 branding</a> · <a href="../../assets/charts/README.md">📊 chart gallery</a>
+  </sub>
+</p>

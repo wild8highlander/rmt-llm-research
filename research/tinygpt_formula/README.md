@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="../../README.md"><img src="../../assets/branding/aurora-icon.svg" width="64" alt="RMT × LLM Research — Black Aurora"></a><br>
+  <img src="../../assets/branding/aurora-divider.svg" width="420" alt="">
+</p>
+
 # TinyGPT v3 Formula-Edition — LLM Research on Repository Formulas
 
 > **A standalone research folder** (it does not affect the `src/rmt_llm/` core).
@@ -183,3 +188,11 @@ Reading:
 Up-to-date numbers: `scaling/SCALING_RESULTS.md` + `scaling/scaling_report.json`
 (the single source of truth). Plan, hypotheses, and budget: `scaling/SCALING_PLAN.md`.
 Running on a phone: `scaling/TERMUX_PROOT_UBUNTU.md` (Termux + proot-Ubuntu).
+
+---
+
+<p align="center">
+  <sub>
+    <a href="../../README.md">🏠 repository root</a> · <a href="../../assets/README.md">🎨 branding</a> · <a href="../../assets/charts/README.md">📊 chart gallery</a>
+  </sub>
+</p>

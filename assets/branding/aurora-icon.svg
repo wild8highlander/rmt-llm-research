@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="RMT x LLM Research icon - Black Aurora">
+  <defs>
+    <radialGradient id="ibg" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#0e0e26"/><stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="ig" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ffa3"><animate attributeName="stop-color" values="#00ffa3;#22d3ee;#a78bfa;#f472b6;#00ffa3" dur="7s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#a78bfa"><animate attributeName="stop-color" values="#a78bfa;#f472b6;#00ffa3;#22d3ee;#a78bfa" dur="7s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <filter id="iblur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="iglow" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="ipart"><stop offset="0%" stop-color="#7dffce"/><stop offset="45%" stop-color="#7dffce" stop-opacity="0.55"/><stop offset="100%" stop-color="#7dffce" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#ibg)"/>
+  <g class="w1"><path d="M-8,150 C40,120 80,180 128,145 C176,115 216,175 264,140 L264,105 C216,140 176,80 128,112 C80,145 40,90 -8,120 Z" fill="url(#ig)" filter="url(#iblur)" opacity="0.6">
+    <animate attributeName="opacity" values="0.4;0.75;0.4" dur="8s" repeatCount="indefinite"/></path></g>
+  <g class="w2"><path d="M-8,200 C48,172 92,225 140,192 C188,162 220,210 264,180 L264,150 C220,180 188,132 140,160 C92,188 48,140 -8,168 Z" fill="url(#ig)" filter="url(#iblur)" opacity="0.45">
+    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="10s" repeatCount="indefinite"/></path></g>
+  <g fill="#dff6ff">
+    <circle cx="42" cy="44" r="1.6" class="tw a1"/><circle cx="128" cy="28" r="1.9" class="tw a2"/>
+    <circle cx="214" cy="50" r="1.5" class="tw a3"/><circle cx="230" cy="130" r="1.3" class="tw a4"/>
+    <circle cx="26" cy="120" r="1.4" class="tw a2"/><circle cx="60" cy="232" r="1.3" class="tw a1"/>
+    <circle cx="200" cy="228" r="1.6" class="tw a3"/>
+  </g>
+  <g transform="translate(128,112)">
+    <circle r="62" fill="none" stroke="url(#ig)" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="250 140" filter="url(#iglow)">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="11s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="-62" r="8" fill="url(#ipart)"/>
+    <circle cx="0" cy="-62" r="3.4" fill="#eafff6">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="11s" repeatCount="indefinite"/>
+    </circle>
+    <text x="0" y="18" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="66" font-style="italic" font-weight="700" fill="url(#ig)" filter="url(#iglow)">λ</text>
+  </g>
+  <style>
+    .tw{animation:tw 3s ease-in-out infinite}
+    .a1{animation-delay:0s}.a2{animation-delay:-.75s}.a3{animation-delay:-1.5s}.a4{animation-delay:-2.2s}
+    @keyframes tw{0%,100%{opacity:.2}50%{opacity:1}}
+    .w1{animation:w1 14s ease-in-out infinite}
+    @keyframes w1{0%,100%{transform:translate(0,0)}50%{transform:translate(10px,-6px)}}
+    .w2{animation:w2 18s ease-in-out infinite}
+    @keyframes w2{0%,100%{transform:translate(0,0)}50%{transform:translate(-10px,5px)}}
+  </style>
+</svg>

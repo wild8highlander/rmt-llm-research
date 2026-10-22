@@ -1,5 +1,9 @@
 # 🧠 RMT & LLM Research: Random Matrix Theory Meets Large Language Models
 
+<p align="center">
+  <img src="assets/branding/aurora-banner.svg" width="100%" alt="RMT × LLM Research — Black Aurora animated banner: aurora waves over a starfield, glowing title, λ emblem">
+</p>
+
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary-lightgrey.svg)](./LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB.svg)](https://www.python.org/)
 [![CI](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/ci.yml)
@@ -56,6 +60,32 @@
 
 ---
 
+## 🎨 Visual Identity — Black Aurora
+
+The project ships its own **Black Aurora** visual identity: a deep
+near-black space and the full northern-lights spectrum — emerald →
+cyan → violet → pink — flowing over it. The logos are **animated SVGs**
+(they play right here on GitHub — no JavaScript), and every folder
+README wears the same icon-and-divider frame.
+
+| Asset | Where it appears |
+|---|---|
+| [aurora-banner.svg](assets/branding/aurora-banner.svg) | the animated hero above |
+| [aurora-avatar](assets/branding/aurora-avatar-1024.png) / [icon](assets/branding/aurora-icon-512.png) | GitHub avatar & social preview (`1280×640` ready) |
+| [aurora-divider.svg](assets/branding/aurora-divider.svg) | section divider in every folder README |
+| [assets/charts/](assets/charts/README.md) | publication-grade **600 dpi** figures: Marchenko–Pastur, BBP, Tracy–Widom, Dyson BM, spectral entropy, detector ROC, repo metrics |
+
+<p align="center">
+  <a href="assets/charts/README.md"><img src="assets/charts/marchenko_pastur.png" width="46%" alt="Marchenko–Pastur density chart"></a>
+  <a href="assets/charts/README.md"><img src="assets/charts/bbp_transition.png" width="46%" alt="BBP phase transition chart"></a>
+</p>
+
+Regenerate everything with `python scripts/render_branding.py` and
+`python scripts/gen_charts.py` — or read the
+[branding guide](assets/branding/README.md).
+
+---
+
 ## ⚡ Quick Start (60 seconds)
 
 ```bash
@@ -108,6 +138,7 @@ in the docs.
 - [Key Results](#-key-results)
 - [TinyGPT vs. Alternatives](#-tinygpt-vs-alternatives)
 - [Getting Started](#-getting-started)
+- [Visual Identity](#-visual-identity)
 - [Professional Engineering](#-professional-engineering)
 - [FAQ](#-faq)
 - [Roadmap](#-roadmap)
@@ -426,7 +457,7 @@ This repo follows best practices from the best-maintained open-source projects o
 | [`docker-compose.yml`](./docker-compose.yml) | Services: `lab`, `webapp`, `tests`, `tinygpt-train`, `docs`, `jupyter`, `shell` |
 | [`.dockerignore`](./.dockerignore) | Excludes 30+ patterns from Docker build context                                |
 | [`.editorconfig`](./.editorconfig) | Per-language editor settings for 15+ file types (Python, Julia, Java, Rust, Go, C++, R, JS, …) |
-| [`.markdownlint.json`](./.markdownlint.json) | markdownlint config with project-specific proper-names dictionary             |
+| [`.markdownlint.json`](.markdownlint-cli2.jsonc) | markdownlint config with project-specific proper-names dictionary             |
 | [`.markdown-link-check.json`](./.markdown-link-check.json) | Link-checker config with retry + ignore patterns                              |
 | [`.gitignore`](./.gitignore)   | Python + Julia + Java + Rust + Go + Node.js + LaTeX + OS files                       |
 

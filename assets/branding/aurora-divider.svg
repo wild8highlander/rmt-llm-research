@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="36" viewBox="0 0 1000 36" role="img" aria-label="aurora divider">
+  <defs>
+    <linearGradient id="dv" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="#00ffa3" stop-opacity="0"/>
+      <stop offset="25%" stop-color="#22d3ee"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="75%" stop-color="#f472b6"/>
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="0"/>
+      <animate attributeName="x1" values="-100%;0%" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="0%;100%" dur="5s" repeatCount="indefinite"/>
+    </linearGradient>
+    <filter id="dvg" x="-20%" y="-300%" width="140%" height="700%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect x="40" y="16" width="920" height="3.5" rx="1.75" fill="url(#dv)" filter="url(#dvg)"/>
+  <g fill="#dff6ff">
+    <circle cx="120" cy="18" r="1.2" class="tw a1"/><circle cx="360" cy="18" r="1.1" class="tw a2"/>
+    <circle cx="620" cy="18" r="1.2" class="tw a3"/><circle cx="860" cy="18" r="1.1" class="tw a4"/>
+  </g>
+  <style>
+    .tw{animation:tw 2.8s ease-in-out infinite}
+    .a1{animation-delay:0s}.a2{animation-delay:-.7s}.a3{animation-delay:-1.4s}.a4{animation-delay:-2.1s}
+    @keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
+  </style>
+</svg>
