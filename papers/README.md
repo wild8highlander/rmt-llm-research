@@ -25,8 +25,9 @@ The monograph is the theoretical backbone of this repository:
   pipelines in [`research/tinygpt_formula/`](../research/tinygpt_formula/README.md)
   test directly.
 
-Word editions (English and Russian) live in
-[`docs/en/`](../docs/en/README.md) and [`docs/ru/`](../docs/ru/README.md).
+The per-monograph Word editions (English and Russian, with the Aurora
+supplements) live in [`monographs/`](../monographs/README.md) — M05 is the
+DOCX twin of this PDF.
 Cite via the repository `CITATION.cff` (Zenodo DOI
 10.5281/zenodo.21825389) or see the *Citation* section of the main README.
 
@@ -34,6 +35,6 @@ Cite via the repository `CITATION.cff` (Zenodo DOI
 
 <p align="center">
   <sub>
-    <a href="../README.md">← root</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../README.md">🏠 repository root</a> · <a href="../docs/en/README.md">word editions →</a>
+    <a href="../README.md">← root</a> · <a href="README.md">top</a> · <a href="../README.md">↑ parent</a> · <a href="../README.md">🏠 repository root</a> · <a href="../monographs/README.md">monographs →</a>
   </sub>
 </p>
