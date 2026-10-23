@@ -83,18 +83,18 @@ venv:  ## Create a fresh virtual environment in .venv/
 # ─── Linting & formatting ───────────────────────────────────────────────────
 .PHONY: lint lint-fix format typecheck
 lint:  ## Run all linters (ruff, mypy, codespell, markdownlint)
-	$(RUFF) check src/ laboratory/python/ python/ scripts/
-	$(RUFF) format --check src/ laboratory/python/ python/ scripts/
+	$(RUFF) check src/ laboratory/python/ scripts/
+	$(RUFF) format --check src/ laboratory/python/ scripts/
 	$(MYPY) src/ --ignore-missing-imports || true
 	@echo "$(GREEN)✓ Lint passed$(RESET)"
 
 lint-fix:  ## Auto-fix lint issues (ruff --fix + format)
-	$(RUFF) check --fix src/ laboratory/python/ python/ scripts/
-	$(RUFF) format src/ laboratory/python/ python/ scripts/
+	$(RUFF) check --fix src/ laboratory/python/ scripts/
+	$(RUFF) format src/ laboratory/python/ scripts/
 	@echo "$(GREEN)✓ Auto-fixes applied$(RESET)"
 
 format:  ## Format all Python code with ruff
-	$(RUFF) format src/ laboratory/python/ python/ scripts/
+	$(RUFF) format src/ laboratory/python/ scripts/
 	@echo "$(GREEN)✓ Formatted$(RESET)"
 
 typecheck:  ## Run mypy type checker
@@ -128,7 +128,7 @@ test-bench-compare:  ## Compare benchmarks to last saved baseline
 	--benchmark-columns=mean,stddev,ops,rounds
 
 test-julia:  ## Run Julia verification tests
-	cd julia/RMTLLMVerify && $(JULIA) --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
+	cd laboratory/julia/julia/RMTLLMVerify && $(JULIA) --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 
 test-rust:  ## Run Rust laboratory tests (EN + RU)
 	cd laboratory/rust/lab_en && $(CARGO) test
@@ -232,13 +232,13 @@ tinygpt-generate:  ## Generate text from trained TinyGPT weights
 # ─── Visualization ──────────────────────────────────────────────────────────
 .PHONY: viz-python viz-julia viz-java
 viz-python:  ## Launch Python interactive 3D visualization suite
-	cd python/rmt_llm_viz && $(PYTHON) main.py
+	cd laboratory/python/python/rmt_llm_viz && $(PYTHON) main.py
 
 viz-julia:  ## Launch Julia interactive visualization REPL
-	cd julia/RMTLLMViz && $(JULIA) --project=. -e 'using RMTLLMViz; rmt_llm_viz_menu()'
+	cd laboratory/julia/julia/RMTLLMViz && $(JULIA) --project=. -e 'using RMTLLMViz; rmt_llm_viz_menu()'
 
 viz-java:  ## Launch Java JavaFX visualization GUI
-	cd java/rmt-llm-viz && $(GRADLE) run
+	cd laboratory/java/java/rmt-llm-viz && $(GRADLE) run
 
 # ─── Web dashboard ──────────────────────────────────────────────────────────
 .PHONY: webapp webapp-install webapp-build
