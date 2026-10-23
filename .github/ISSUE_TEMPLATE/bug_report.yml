@@ -29,10 +29,10 @@ body:
         - laboratory/cpp — C++ lab
         - laboratory/r — R lab
         - laboratory/webapp — React + Socket.io dashboard
-        - julia/RMTLLMVerify — Julia verification package
-        - julia/RMTLLMViz — Julia visualization
-        - java/rmt-llm-viz — Java JavaFX visualization
-        - python/rmt_llm_viz — Python interactive 3D
+        - laboratory/julia/julia/RMTLLMVerify — Julia verification package
+        - laboratory/julia/julia/RMTLLMViz — Julia visualization
+        - laboratory/java/java/rmt-llm-viz — Java JavaFX visualization
+        - laboratory/python/python/rmt_llm_viz — Python interactive 3D
         - docs / README / CHANGELOG
         - CI/CD (GitHub Actions, pre-commit)
         - Build / packaging (pyproject, Dockerfile)

@@ -6,7 +6,7 @@ name: "RMT-LLM CodeQL Python analysis"
 paths:
   - src
   - laboratory/python
-  - python/rmt_llm_viz
+  - laboratory/scripts
   - scripts
 
 paths-ignore:

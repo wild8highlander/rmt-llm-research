@@ -28,9 +28,9 @@
 /laboratory/webapp/              @wild8highlander
 
 # ─── Visualization suites ─────────────────────────────────────────────────
-/python/rmt_llm_viz/             @wild8highlander
-/julia/RMTLLMViz/                @wild8highlander
-/java/rmt-llm-viz/               @wild8highlander
+/laboratory/python/python/rmt_llm_viz/             @wild8highlander
+/laboratory/julia/julia/RMTLLMViz/                @wild8highlander
+/laboratory/java/java/rmt-llm-viz/               @wild8highlander
 
 # ─── Documentation ─────────────────────────────────────────────────────────
 /README.md                       @wild8highlander
