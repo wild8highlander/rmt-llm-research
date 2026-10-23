@@ -103,7 +103,7 @@ stage 06).
 
 ## 6. Dependency map and duplication
 
-```
+```text
 tiny_gpt_v3.py (lab_en) ←─ train/evaluate/open_questions/infer/scaling
 src/rmt_llm/* (mp, bbp, cap, tw, ...) ←─ the same + science/data (verification)
 ```

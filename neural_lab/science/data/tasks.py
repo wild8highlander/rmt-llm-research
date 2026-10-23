@@ -51,8 +51,8 @@ def format_ok(gen: str, gt: str) -> bool:
         return False
     keys = [k.strip() for k in gt.split("=>")[1].split(",")]
     names = [k.split("=")[0].strip() for k in keys]
-    ans = _answer_part(gen)
-    return all(n in ans for n in names)
+    answer = _answer_part(gen)
+    return all(n in answer for n in names)
 
 
 def numeric_ok(gen: str, gt: str, tol: float = 0.25) -> bool:
