@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="formal_proof — animated avatar: a spike leaving the spectral bulk">
+  <defs>
+    <radialGradient id="fpavbg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="fpavmain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ffa3"><animate attributeName="stop-color" values="#00ffa3;#22d3ee;#a78bfa;#f472b6;#00ffa3" dur="9s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#f472b6"><animate attributeName="stop-color" values="#f472b6;#a78bfa;#00ffa3;#f472b6" dur="12s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <filter id="fpavglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="128" height="128" rx="30" fill="url(#fpavbg)"/>
+
+  <!-- bulk arc -->
+  <path d="M 22 96 C 38 92, 46 84, 54 72 C 62 60, 68 56, 76 56 C 84 56, 90 62, 96 74 C 99 80, 102 88, 104 96"
+        fill="none" stroke="#00ffa3" stroke-width="3" opacity="0.9" filter="url(#fpavglow)">
+    <animate attributeName="stroke" values="#00ffa3;#22d3ee;#a78bfa;#00ffa3" dur="7s" repeatCount="indefinite"/>
+  </path>
+  <!-- threshold -->
+  <line x1="100" y1="30" x2="100" y2="96" stroke="#22d3ee" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.85">
+    <animate attributeName="opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite"/>
+  </line>
+  <!-- detaching spike -->
+  <line x1="88" y1="96" x2="88" y2="44" stroke="#f472b6" stroke-width="3.4" stroke-linecap="round" filter="url(#fpavglow)">
+    <animate attributeName="y2" values="76;34;76" dur="3.8s" repeatCount="indefinite"/>
+  </line>
+  <circle cx="88" r="3.6" cy="44" fill="#fbbf24" filter="url(#fpavglow)">
+    <animate attributeName="cy" values="76;34;76" dur="3.8s" repeatCount="indefinite"/>
+  </circle>
+  <!-- sigma emblem -->
+  <text x="34" y="40" font-family="DejaVu Sans, monospace" font-weight="bold" font-size="26" fill="url(#fpavmain)" filter="url(#fpavglow)">&#931;</text>
+</svg>

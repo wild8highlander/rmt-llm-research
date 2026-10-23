@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220" role="img" aria-label="formal_proof — animated banner: a spectral spike detaching from the Marchenko-Pastur bulk">
+  <defs>
+    <radialGradient id="fpbg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#141433"/>
+      <stop offset="55%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#04040c"/>
+    </radialGradient>
+    <linearGradient id="fpmain" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ffa3"><animate attributeName="stop-color" values="#00ffa3;#22d3ee;#a78bfa;#f472b6;#00ffa3" dur="9s" repeatCount="indefinite"/></stop>
+      <stop offset="50%" stop-color="#22d3ee"><animate attributeName="stop-color" values="#22d3ee;#a78bfa;#f472b6;#00ffa3;#22d3ee" dur="11s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#f472b6"><animate attributeName="stop-color" values="#f472b6;#00ffa3;#22d3ee;#a78bfa;#f472b6" dur="13s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="fpspike" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="1">
+        <animate attributeName="stop-color" values="#f472b6;#fbbf24;#f472b6" dur="5s" repeatCount="indefinite"/>
+      </stop>
+    </linearGradient>
+    <filter id="fpglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="fpsoft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+  </defs>
+
+  <rect width="800" height="220" rx="18" fill="url(#fpbg)"/>
+
+  <!-- faint aurora wash -->
+  <ellipse cx="140" cy="180" rx="300" ry="90" fill="#00ffa3" opacity="0.06" filter="url(#fpsoft)">
+    <animate attributeName="opacity" values="0.06;0.12;0.06" dur="7s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="660" cy="40" rx="280" ry="80" fill="#a78bfa" opacity="0.08" filter="url(#fpsoft)">
+    <animate attributeName="opacity" values="0.08;0.14;0.08" dur="9s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- grid + threshold -->
+  <g stroke="#1c2340" stroke-width="1" opacity="0.55">
+    <line x1="60" y1="180" x2="740" y2="180"/>
+    <line x1="60" y1="140" x2="740" y2="140" stroke-dasharray="2 6"/>
+    <line x1="60" y1="100" x2="740" y2="100" stroke-dasharray="2 6"/>
+  </g>
+  <line x1="522" y1="52" x2="522" y2="180" stroke="#22d3ee" stroke-width="1.4" stroke-dasharray="4 4" opacity="0.8">
+    <animate attributeName="opacity" values="0.4;0.95;0.4" dur="3.6s" repeatCount="indefinite"/>
+  </line>
+  <text x="522" y="196" text-anchor="middle" font-family="DejaVu Sans, monospace" font-size="10" fill="#22d3ee" opacity="0.9">lambda_+ = sigma^2(1+sqrt(q))^2</text>
+
+  <!-- Marchenko-Pastur bulk silhouette -->
+  <path d="M 70 178 C 150 176, 200 168, 260 140 C 320 112, 360 104, 400 104 C 440 104, 470 118, 505 152 C 515 162, 520 172, 522 178 Z"
+        fill="#00ffa3" opacity="0.14"/>
+  <path d="M 70 178 C 150 176, 200 168, 260 140 C 320 112, 360 104, 400 104 C 440 104, 470 118, 505 152 C 515 162, 520 172, 522 178"
+        fill="none" stroke="#00ffa3" stroke-width="2" opacity="0.85" filter="url(#fpglow)">
+    <animate attributeName="stroke" values="#00ffa3;#22d3ee;#00ffa3" dur="6s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- the detaching spike -->
+  <g>
+    <line x1="600" y1="178" x2="600" y2="96" stroke="url(#fpspike)" stroke-width="5" stroke-linecap="round" filter="url(#fpglow)">
+      <animate attributeName="y2" values="150;70;150" dur="4.2s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="600" r="5" cy="96" fill="#fbbf24" filter="url(#fpglow)">
+      <animate attributeName="cy" values="150;70;150" dur="4.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.75;1;0.75" dur="4.2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="600" y="196" text-anchor="middle" font-family="DejaVu Sans, monospace" font-size="10" fill="#f472b6" opacity="0.95">mu &gt; mu_c = sigma^2 sqrt(q)</text>
+  </g>
+
+  <!-- title -->
+  <text x="60" y="64" font-family="DejaVu Sans, monospace" font-weight="bold" font-size="34" fill="url(#fpmain)" filter="url(#fpglow)">formal_proof</text>
+  <text x="60" y="92" font-family="DejaVu Sans, monospace" font-size="12.5" fill="#8ca3c7">deriving the spectral laws of LLM activations from first principles</text>
+  <text x="60" y="112" font-family="DejaVu Sans, monospace" font-size="11" fill="#e6f1ff" opacity="0.85">MP bulk &#183; Silverstein &#183; BBP &#183; overlaps &#183; Tracy-Widom F1/F2 &#183; optimal shrinkage</text>
+</svg>
