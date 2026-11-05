@@ -101,7 +101,7 @@ typecheck:  ## Run mypy type checker
 	$(MYPY) src/ --ignore-missing-imports
 
 # ─── Testing ────────────────────────────────────────────────────────────────
-.PHONY: test test-fast test-stages test-slow test-tiny-gpt test-julia test-rust test-go test-cpp test-all test-coverage test-hypothesis test-bench
+.PHONY: test test-fast test-stages test-stages-slow smoke smoke-fast validate-results index-results compare-reports test-slow test-tiny-gpt test-julia test-rust test-go test-cpp test-all test-coverage test-hypothesis test-bench
 test:  ## Run all Python tests (src/rmt_llm/ + laboratory/python/lab_en/)
 	$(PYTEST) src/ laboratory/python/lab_en/tests/ -v
 
@@ -110,6 +110,34 @@ test-fast:  ## Run only fast tests (skip slow ones)
 
 test-stages:  ## Run neural_lab stages 2-5 tests (offline, tiny random models)
 	$(PYTEST) neural_lab/stages/tests/ -v
+
+test-stages-slow:  ## Stage performance guards + slow tests (pythia-70m NOT needed)
+	$(PYTEST) neural_lab/stages/tests/ -v -m slow
+
+SMOKE_MODEL ?= EleutherAI/pythia-70m
+SMOKE_DIR ?= neural_lab/stages/results/smoke_pythia70m
+
+smoke:  ## Regenerate the committed pythia-70m smoke results (stage2/3/4)
+	python3 neural_lab/stages/stage2_detector/run_stage2.py --model $(SMOKE_MODEL) \
+	    --benchmarks truthfulqa halueval selfcheckgpt --n-items 2 --n-samples 2 \
+	    --max-new-tokens 12 --seed 0 --out $(SMOKE_DIR)/stage2
+	python3 neural_lab/stages/stage3_ncrit/run_stage3.py --model $(SMOKE_MODEL) \
+	    --n-tasks 24 --max-new-tokens 16 --n-boot 200 --seed 0 --out $(SMOKE_DIR)/stage3
+	python3 neural_lab/stages/stage4_interpretability/run_stage4.py --model $(SMOKE_MODEL) \
+	    --seed 0 --out $(SMOKE_DIR)/stage4
+
+smoke-fast:  ## Tiny-model smoke (no downloads): stage3+stage4 through the StageRunner
+	python3 neural_lab/stages/stage3_ncrit/run_stage3.py --n-tasks 4 --max-new-tokens 8 \
+	    --n-boot 50 --out $(SMOKE_DIR)/stage3 --config /dev/null --model $(SMOKE_MODEL)
+
+validate-results:  ## Validate committed artifacts against results_schema/v1
+	python3 -m stages.common.schemas $(SMOKE_DIR)
+
+index-results:  ## (Re)build the sqlite index of results/
+	python3 -m stages.common.index --rebuild results/
+
+compare-reports:  ## Diff two run reports: make compare-reports A=path1 B=path2
+	python3 neural_lab/stages/compare_reports.py $(A) $(B)
 
 test-slow:  ## Run only slow tests
 	$(PYTEST) src/ laboratory/python/lab_en/tests/ -v -m "slow"

@@ -23,7 +23,6 @@ Run:
 
 from __future__ import annotations
 
-import argparse
 import os
 import sys
 
@@ -34,7 +33,10 @@ _NEURAL_LAB = os.path.dirname(os.path.dirname(_HERE))  # .../neural_lab
 if _NEURAL_LAB not in sys.path:
     sys.path.insert(0, _NEURAL_LAB)
 
+from science.hypotheses.check import criterion_section  # noqa: E402
+from stages.common.cli import StageRunner  # noqa: E402
 from stages.common.reporting import save_json, write_report  # noqa: E402
+from stages.common.schemas import validate_fit, validate_record  # noqa: E402
 from stages.stage5_rlhf.compare_pairs import evaluate_pair  # noqa: E402
 
 REGISTRY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "model_pairs.yaml")
@@ -135,60 +137,74 @@ def pair_report(record: dict) -> list[dict]:
     ]
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser(description="Stage 5: base vs tuned pair comparison")
-    ap.add_argument("--pair", default=None, help="pair id from model_pairs.yaml")
-    ap.add_argument("--all-open", action="store_true", help="run every 'open' pair")
-    ap.add_argument("--list", action="store_true")
-    ap.add_argument("--n-tasks", type=int, default=40)
-    ap.add_argument("--max-new-tokens", type=int, default=20)
-    ap.add_argument("--n-shot", type=int, default=3)
-    ap.add_argument("--kl-positions", type=int, default=8)
-    ap.add_argument("--n-boot", type=int, default=300)
-    ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--dtype", default="float32")
-    ap.add_argument("--device", default="cpu")
-    ap.add_argument("--out", default=None, required=False)
-    ap.add_argument("--fast", action="store_true", default=True)
-    args = ap.parse_args()
+class Stage5Runner(StageRunner):
+    name = "stage5"
+    title = "Stage 5 — base vs tuned pair comparison"
+    experiment_id = "stage5_pair_v1"
+    hypothesis_id = "S5"
+    requires_out = False  # --list works without --out
 
-    pairs = load_registry()
-    if args.list:
-        for p in pairs:
-            print(f"{p['id']:24s} {p['base']:45s} vs {p['tuned']:45s} [{p['access']}] {p['method']}")
-        return
-    if not args.out:
-        ap.error("--out is required for a run")
+    def add_args(self, parser) -> None:
+        parser.add_argument("--pair", default=None, help="pair id from model_pairs.yaml")
+        parser.add_argument("--all-open", action="store_true", help="run every 'open' pair")
+        parser.add_argument("--list", action="store_true")
+        parser.add_argument("--n-tasks", type=int, default=40)
+        parser.add_argument("--max-new-tokens", type=int, default=20)
+        parser.add_argument("--n-shot", type=int, default=3)
+        parser.add_argument("--kl-positions", type=int, default=8)
+        parser.add_argument("--n-boot", type=int, default=300)
+        parser.add_argument("--fast", action="store_true", default=True)
 
-    if args.all_open:
-        chosen = [p for p in pairs if p["access"] == "open" and p["method"] != "checkpoint-ablation"]
-    elif args.pair:
-        chosen = [p for p in pairs if p["id"] == args.pair]
-        if not chosen:
-            ap.error(f"unknown pair {args.pair!r}; see --list")
-    else:
-        ap.error("--pair or --all-open or --list required")
+    def default_config(self) -> dict:
+        return {"n_tasks": 40, "max_new_tokens": 20, "n_shot": 3,
+                "kl_positions": 8, "n_boot": 300, "fast": True}
 
-    for pair in chosen:
-        cfg = {
-            "n_tasks": args.n_tasks, "max_new_tokens": args.max_new_tokens,
-            "n_shot": args.n_shot, "kl_positions": args.kl_positions,
-            "n_boot": args.n_boot, "seed": args.seed, "dtype": args.dtype,
-            "device": args.device, "fast": args.fast,
-        }
-        record = evaluate_pair(pair, cfg)
-        out = os.path.join(args.out, pair["id"])
-        save_json(os.path.join(out, "record.json"), record)
-        fit_rec = pair_fit_record(record)
-        if fit_rec is not None:
-            # stage-3-compatible sidecar: run_stage3 --scaling-in consumes it
-            # directly (same field names as stage-3's own fit.json)
-            save_json(os.path.join(out, "fit.json"), fit_rec)
+    def needs_model(self, cfg: dict) -> bool:
+        return False  # the runner loads BOTH models per pair itself
+
+    def run(self, cfg, model, tok, passport):
+        pairs = load_registry()
+        if cfg.get("list"):
+            for p in pairs:
+                print(f"{p['id']:24s} {p['base']:45s} vs {p['tuned']:45s} "
+                      f"[{p['access']}] {p['method']}")
+            return None
+        if not cfg.get("out"):
+            raise SystemExit("--out is required for a run")
+        if cfg.get("all_open"):
+            chosen = [p for p in pairs if p["access"] == "open" and p["method"] != "checkpoint-ablation"]
+        elif cfg.get("pair"):
+            chosen = [p for p in pairs if p["id"] == cfg["pair"]]
+            if not chosen:
+                raise SystemExit(f"unknown pair {cfg['pair']!r}; see --list")
         else:
-            print(f"[stage5] {pair['id']}: no (tau, mu_eff) pair — fit.json sidecar skipped", flush=True)
-        write_report(out, f"Stage 5 — {pair['id']}: base vs {pair['method']} tuned",
-                     record["passport"], pair_report(record))
-        print(f"[stage5] wrote {out}", flush=True)
+            raise SystemExit("--pair or --all-open or --list required")
+
+        for pair in chosen:
+            record = evaluate_pair(pair, cfg)
+            validate_record(record)
+            out = os.path.join(cfg["out"], pair["id"])
+            save_json(os.path.join(out, "record.json"), record)
+            fit_rec = pair_fit_record(record)
+            if fit_rec is not None:
+                # stage-3-compatible sidecar: run_stage3 --scaling-in consumes it
+                # directly (same field names as stage-3's own fit.json)
+                validate_fit(fit_rec)
+                save_json(os.path.join(out, "fit.json"), fit_rec)
+            else:
+                print(f"[stage5] {pair['id']}: no (tau, mu_eff) pair — fit.json sidecar skipped", flush=True)
+            sections = pair_report(record)
+            sections.append(criterion_section(self.hypothesis_id, record))
+            write_report(out, f"Stage 5 — {pair['id']}: base vs {pair['method']} tuned",
+                         record["passport"], sections)
+            print(f"[stage5] wrote {out}", flush=True)
+        return None
+
+
+def main() -> None:
+    from stages.common.cli import main as runner_main
+
+    runner_main(Stage5Runner())
 
 
 if __name__ == "__main__":

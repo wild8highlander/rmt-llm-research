@@ -111,6 +111,20 @@ test = [
   "pytest-xdist>=3.0",
   "pytest>=7.0"
 ]
+stages = [
+  "torch>=2.2",
+  "transformers>=4.40",
+  "datasets",
+  "pyyaml",
+  "scipy",
+  "jsonschema",
+  "tqdm"
+]
+stages-sae = ["sae-lens"]
+stages-dev = [
+  "pytest>=7.0",
+  "hypothesis>=6.0"
+]
 
 [project.scripts]
 rmt-llm-verify = "rmt_llm.__main__:main"

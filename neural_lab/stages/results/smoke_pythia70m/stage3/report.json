@@ -1,4 +1,5 @@
 {
+  "schema_version": "1.0",
   "passport": {
     "experiment_id": "stage3_ncrit_v1",
     "hypothesis_id": "S3",
@@ -19,14 +20,28 @@
       "tol": 0.05,
       "n_boot": 200,
       "n_bins": 10,
-      "seed": 0,
       "fast": true,
       "model": "EleutherAI/pythia-70m",
+      "revision": null,
+      "dtype": "float32",
+      "device": "cpu",
+      "out": "/tmp/smoke_v2/stage3",
+      "seed": 0,
+      "config": null,
+      "resume": false,
+      "only": null,
+      "dry_run": false,
+      "verbose": false,
+      "quiet": false,
+      "log_json": null,
       "n_tasks": 24,
+      "mu_eff": null,
+      "mu_eff_from": null,
+      "scaling_in": null,
       "data_hash": "17c2d5f7ebd1f7a5a30a44992c69d2686b08ed11fcec8621b6fc4993b6af6bfd",
       "mu_eff_external": null
     },
-    "config_hash": "88ef1973ea313c58b82e18171c04e35f9e52c8bc447dcbb446594a0c239d95c1",
+    "config_hash": "7587194a14e772bf0890b9b7a3a713d041bf7140c8e92b952f5388e8976c8c18",
     "environment": {
       "python": "3.12.16",
       "numpy": "2.1.3",
@@ -37,7 +52,7 @@
       "datasets": "5.1.0"
     },
     "code": {
-      "git_commit": "fad992198d24b9525f0195886f0c9320d2181583",
+      "git_commit": "6179d55310109e470675140e0f5f85821259e57d",
       "git_dirty": true
     }
   },
@@ -88,6 +103,11 @@
     {
       "name": "Error-rate curve",
       "summary": "see error_curve.csv (bin centers, at-risk normalized rates)"
+    },
+    {
+      "name": "Pre-registered criterion (registry.yaml, in code)",
+      "summary": "[not_resolved] single-model run: the scaling criterion needs >= 3 models (aggregate with run_stage3 --scaling-in)",
+      "notes": []
     }
   ]
 }

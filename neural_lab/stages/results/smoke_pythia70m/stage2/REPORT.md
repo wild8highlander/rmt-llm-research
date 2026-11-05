@@ -9,7 +9,7 @@
 - n_params: 70,426,624
 - transformers 5.22.1, torch 2.15.0+cpu
 
-*code*: `fad992198d24 (dirty)`
+*code*: `6179d5531010 (dirty)`
 
 ## AUROC race (higher = better hallucination detection)
 
@@ -51,3 +51,12 @@
 ## Probe diagnostics
 
 {'skipped': 'insufficient labeled units for probe fitting'}
+
+## Pre-registered criterion (registry.yaml, in code)
+
+[supported] ΔAUROC CI excludes 0 (spectral > baseline) on 2 pairs
+
+- significant_positive_pairs: [["spec_gap_last", "sem_ent", 0.5], ["spec_ncrit_free", "sem_ent", 0.5]]
+- n_significant_pairs: 2
+- best_spectral_auroc: 1.0
+- best_probe_auroc: null

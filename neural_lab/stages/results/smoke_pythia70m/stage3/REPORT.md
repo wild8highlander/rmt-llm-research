@@ -9,7 +9,7 @@
 - n_params: 70,426,624
 - transformers 5.22.1, torch 2.15.0+cpu
 
-*code*: `fad992198d24 (dirty)`
+*code*: `6179d5531010 (dirty)`
 
 ## First-error survival fit (Weibull scale, tokens)
 
@@ -32,3 +32,7 @@ changepoint at token 2.0 (p_perm=0.966)
 ## Error-rate curve
 
 see error_curve.csv (bin centers, at-risk normalized rates)
+
+## Pre-registered criterion (registry.yaml, in code)
+
+[not_resolved] single-model run: the scaling criterion needs >= 3 models (aggregate with run_stage3 --scaling-in)

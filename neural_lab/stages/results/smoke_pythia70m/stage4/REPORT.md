@@ -9,7 +9,7 @@
 - n_params: 70,426,624
 - transformers 5.22.1, torch 2.15.0+cpu
 
-*code*: `fad992198d24 (dirty)`
+*code*: `6179d5531010 (dirty)`
 
 ## Logit lens × BBP spike alignment
 
@@ -53,3 +53,15 @@
 | gpt_neox.layers.5.mlp.dense_4h_to_h.weight | 4.29 | 7.14e-03 | 0.061 | 2.19e-01 | weak |
 
 - alpha(x gap_ratio): {'pearson_r': -0.6855604766098382, 'n_layers': 6, 'matrices_per_layer': {'0': 2, '1': 2, '2': 2, '3': 2, '4': 2, '5': 2}}
+- step 'heavy-tail' took 8.1s
+
+## SAE audit of the spike window
+
+skipped (enable with --sae; needs sae_lens + Gemma access)
+
+## Pre-registered criterion (registry.yaml, in code)
+
+[not_supported] no mechanism alignment is positive and significant (the spike is not (yet) a mechanism on this run)
+
+- n_alignments: 6
+- significant_positive: []

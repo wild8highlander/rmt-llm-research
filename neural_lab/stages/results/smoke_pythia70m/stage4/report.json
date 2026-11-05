@@ -1,4 +1,12 @@
 {
+  "schema_version": "1.0",
+  "steps": [
+    [
+      "observation (lens/patching)",
+      "done",
+      "3.5s"
+    ]
+  ],
   "passport": {
     "experiment_id": "stage4_interpretability_v1",
     "hypothesis_id": "S4",
@@ -15,9 +23,25 @@
     },
     "config": {
       "model": "EleutherAI/pythia-70m",
-      "seed": 0
+      "revision": null,
+      "dtype": "float32",
+      "device": "cpu",
+      "out": "/tmp/smoke_v2/stage4",
+      "seed": 0,
+      "config": null,
+      "resume": false,
+      "only": null,
+      "dry_run": false,
+      "verbose": false,
+      "quiet": false,
+      "log_json": null,
+      "prompts_file": null,
+      "sae": false,
+      "sae_release": "gemma-scope-2b-pt-res-canonical",
+      "sae_id": "layer_12/width_16k/average_l0_71",
+      "weights_filter": "mlp|attn|c_attn|c_proj|c_fc"
     },
-    "config_hash": "c477e6ec1dcb349499f93a49fa6ffc7cb79357a09163c14fe7283f2a0ccfeddd",
+    "config_hash": "fba3a799707b46632ad16ace6984587c1a7fd1d727e44f9d9d80fe2b4f4de996",
     "environment": {
       "python": "3.12.16",
       "numpy": "2.1.3",
@@ -28,7 +52,7 @@
       "datasets": "5.1.0"
     },
     "code": {
-      "git_commit": "fad992198d24b9525f0195886f0c9320d2181583",
+      "git_commit": "6179d55310109e470675140e0f5f85821259e57d",
       "git_dirty": true
     }
   },
@@ -266,7 +290,20 @@
         ]
       },
       "notes": [
-        "alpha(x gap_ratio): {'pearson_r': -0.6855604766098382, 'n_layers': 6, 'matrices_per_layer': {'0': 2, '1': 2, '2': 2, '3': 2, '4': 2, '5': 2}}"
+        "alpha(x gap_ratio): {'pearson_r': -0.6855604766098382, 'n_layers': 6, 'matrices_per_layer': {'0': 2, '1': 2, '2': 2, '3': 2, '4': 2, '5': 2}}",
+        "step 'heavy-tail' took 8.1s"
+      ]
+    },
+    {
+      "name": "SAE audit of the spike window",
+      "summary": "skipped (enable with --sae; needs sae_lens + Gemma access)"
+    },
+    {
+      "name": "Pre-registered criterion (registry.yaml, in code)",
+      "summary": "[not_supported] no mechanism alignment is positive and significant (the spike is not (yet) a mechanism on this run)",
+      "notes": [
+        "n_alignments: 6",
+        "significant_positive: []"
       ]
     }
   ]

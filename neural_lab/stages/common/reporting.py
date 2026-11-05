@@ -29,14 +29,22 @@ def fmt_ci(lo: float, hi: float) -> str:
     return f"[{lo:.3f}, {hi:.3f}]"
 
 
-def write_report(out_dir: str, title: str, passport: dict, sections: list[dict]) -> str:
+def write_report(out_dir: str, title: str, passport: dict, sections: list[dict],
+                 extra: dict | None = None) -> str:
     """sections: list of {name, summary, table: {headers, rows} | None, notes}.
 
     Writes passport.json, report.json and REPORT.md. Returns the .md path.
-    """
+    The report.json payload carries schema_version and is validated against
+    results_schema/v1/report.schema.json before writing — a malformed
+    report fails here, not in some downstream consumer."""
     os.makedirs(out_dir, exist_ok=True)
     save_json(os.path.join(out_dir, "passport.json"), passport)
-    save_json(os.path.join(out_dir, "report.json"), {"passport": passport, "sections": sections})
+    payload = {"schema_version": "1.0", **(extra or {}),
+               "passport": passport, "sections": sections}
+    from stages.common.schemas import validate_report
+
+    validate_report(payload)
+    save_json(os.path.join(out_dir, "report.json"), payload)
 
     lines = [f"# {title}", "", f"*Run*: `{passport['experiment_id']}` · "
              f"hypothesis `{passport['hypothesis_id']}` · protocol v{passport['protocol_version']}", ""]

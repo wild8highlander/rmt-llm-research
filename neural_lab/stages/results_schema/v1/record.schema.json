@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/wild8highlander/rmt-llm-research/main/neural_lab/stages/results_schema/v1/record.schema.json",
+  "title": "Stage-5 pair record (record.json)",
+  "type": "object",
+  "required": ["pair_id", "spectral_deltas", "survival_base", "survival_tuned",
+               "mu_eff_proxy_kl_ab", "mu_eff_proxy_kl_ba"],
+  "properties": {
+    "pair_id": {"type": "string", "minLength": 1},
+    "passport": {"type": "object"},
+    "spectral_deltas": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["delta_mean", "ci95", "p_two_sided"],
+        "properties": {
+          "delta_mean": {"type": "number"},
+          "ci95": {"type": "array", "minItems": 2, "maxItems": 2,
+                   "items": {"type": ["number", "null"]}},
+          "p_two_sided": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "survival_base": {"type": "object"},
+    "survival_tuned": {"type": "object"},
+    "delta_tau_tuned_minus_base": {
+      "type": ["object", "null"],
+      "properties": {
+        "delta_tau": {"type": "number"},
+        "ci95": {"type": ["array", "null"], "minItems": 2, "maxItems": 2,
+                 "items": {"type": "number"}},
+        "n_paired_boot": {"type": "integer"},
+        "note": {"type": "string"}
+      }
+    },
+    "mu_eff_proxy_kl_ab": {"type": "number", "minimum": 0},
+    "mu_eff_proxy_kl_ba": {"type": "number", "minimum": 0},
+    "spectra_per_prompt": {"type": "object"}
+  }
+}

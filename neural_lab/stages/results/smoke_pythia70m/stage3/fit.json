@@ -1,4 +1,5 @@
 {
+  "schema_version": "1.0",
   "model": "EleutherAI/pythia-70m",
   "tau": 2.9172719393961835,
   "tau_ci": [

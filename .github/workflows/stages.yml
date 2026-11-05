@@ -1,0 +1,77 @@
+# CI for neural_lab/stages (the research-stage pipeline).
+#
+# Fast lane: offline unit/property tests on every push/PR (tiny random
+# models, no network, no downloads).
+# Slow lane (nightly + manual): real pythia-70m smoke runs + artifact
+# validation against results_schema/v1 + the sqlite index rebuild.
+
+name: stages
+
+on:
+  push:
+    paths:
+      - "neural_lab/stages/**"
+      - "neural_lab/science/**"
+      - "requirements-stages.txt"
+      - ".github/workflows/stages.yml"
+  pull_request:
+    paths:
+      - "neural_lab/stages/**"
+      - "neural_lab/science/**"
+      - "requirements-stages.txt"
+      - ".github/workflows/stages.yml"
+  schedule:
+    - cron: "0 3 * * *" # nightly: the slow lane
+  workflow_dispatch:
+
+jobs:
+  test-stages:
+    name: unit + property tests (offline)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install torch (CPU) + stage deps
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-stages.txt
+      - name: Run the offline stage suite
+        run: make test-stages
+
+  smoke:
+    name: pythia-70m smoke + artifact validation (nightly)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install torch (CPU) + stage deps
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-stages.txt
+      - name: Slow tests (performance guards)
+        run: make test-stages-slow
+      - name: Smoke runs (pythia-70m)
+        run: make smoke
+      - name: Validate every artifact against results_schema/v1
+        run: make validate-results
+      - name: Rebuild the results index
+        run: make index-results
+      - name: Fail on report artifacts (-Infinity, p=0.000, NaN leaks)
+        run: |
+          ! grep -rEn "Infinity|p=0\.000|, NaN|nan\)" neural_lab/stages/results/smoke_pythia70m/*/REPORT.md
+      - name: Upload smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-results
+          path: results/smoke_ci/
+          retention-days: 14

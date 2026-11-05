@@ -68,10 +68,10 @@ def test_paired_delta_auc_p_never_zero():
     rng = np.random.default_rng(0)
     units = [
         Unit(f"u{i}", "bench", f"item{i}", int(i % 2),
-             {"perfect": float(i % 2), "baseline": float(1 - i % 2)})
+             {"spec_gap_last": float(i % 2), "tok_mean_entropy": float(1 - i % 2)})
         for i in range(20)
     ]
-    res = paired_delta_auc(units, "perfect", "baseline", n_boot=500, seed=0)
+    res = paired_delta_auc(units, "spec_gap_last", "tok_mean_entropy", n_boot=500, seed=0)
     assert res["p_two_sided"] >= 1.0 / (500 + 1)
     assert "n_paired" in res and res["n_paired"] == 20
 
@@ -485,11 +485,13 @@ def test_write_report_no_blank_line_artifacts(tmp_path, tiny_model, tok):
 
 
 def test_evaluate_detector_power_warning_small_n():
-    units = [Unit("a", "b", "i1", 1, {"d": 0.9}), Unit("b", "b", "i2", 0, {"d": 0.1})]
-    res = evaluate_detector(units, "d", n_boot=100)
+    units = [Unit("a", "b", "i1", 1, {"spec_gap_last": 0.9}),
+             Unit("b", "b", "i2", 0, {"spec_gap_last": 0.1})]
+    res = evaluate_detector(units, "spec_gap_last", n_boot=100)
     assert "power_warning" in res and res["n_units"] == 2
-    big = [Unit(f"u{i}", "b", f"i{i}", int(i % 2), {"d": float(i % 2) + 0.01 * i}) for i in range(24)]
-    assert "power_warning" not in evaluate_detector(big, "d", n_boot=100)
+    big = [Unit(f"u{i}", "b", f"i{i}", int(i % 2), {"spec_gap_last": float(i % 2) + 0.01 * i})
+           for i in range(24)]
+    assert "power_warning" not in evaluate_detector(big, "spec_gap_last", n_boot=100)
 
 
 # --- P3.8: per-layer alpha averages over matrices ---------------------------------

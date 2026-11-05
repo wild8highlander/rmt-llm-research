@@ -112,3 +112,38 @@ them can silently turn a negative into a positive.
 - SAE audit (stage 4 `--sae`) needs `sae_lens` + a Gemma checkpoint and
   is intentionally the only optional-heavy path; everything else runs on
   CPU.
+
+## Data flow between the stages
+
+```
+                 ┌───────────────────────────────────────────────┐
+                 │  common: HF loading, passports, schemas, CLI   │
+                 └───────────────────────────────────────────────┘
+ S4 (autonomous)      S2 (detector race)          S3 (N_crit) ◄─── --mu-eff-from
+ ┌─────────────┐      ┌──────────────────┐        ┌──────────────┐
+ │ logit lens  │      │ TruthfulQA /     │        │ arithmetic   │
+ │ patching    │      │ HaluEval /       │        │ tasks, first │
+ │ heavy-tail  │      │ SelfCheckGPT     │        │ errors +     │
+ │ SAE (opt.)  │      │ → units.jsonl    │        │ censoring    │
+ └─────────────┘      └──────────────────┘        └──────────────┘
+        │                     │                        │ fit.json (tau, tau_ci)
+        │ every stage ends with the PRE-REGISTERED    ▼
+        │ criterion section (science/hypotheses/check.py)
+                              │                  S5 (base vs tuned)
+                              │                  ┌──────────────────┐
+                              └─────────────────►│ paired spectra,  │
+                              shared registry &  │ Δtau (paired CI),│
+                              schema validation  │ KL mu_eff proxy  │
+                                                 └──────────────────┘
+                                                          │ fit.json sidecar
+                                                          ▼
+                              S3 --scaling-in ◄── (stage3 fits + stage5 pairs)
+                              scaling.json: slope ~ -1/beta, verdict
+```
+
+Artifacts (`report.json`, `fit.json`, `record.json`, `scaling.json`) are
+validated against `results_schema/v1/` at write time and indexed by
+`common/index.py` (`make index-results`); `compare_reports.py` diffs two
+runs of the same stage. StageRunner CLI (all stages): `--config *.yaml`,
+`--resume`, `--only` (stage4: lens|patching|heavy-tail|sae), `--dry-run`,
+`--log-json`.

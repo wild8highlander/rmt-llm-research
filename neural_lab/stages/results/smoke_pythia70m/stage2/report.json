@@ -1,4 +1,5 @@
 {
+  "schema_version": "1.0",
   "passport": {
     "experiment_id": "stage2_detector_v1",
     "hypothesis_id": "S2",
@@ -17,21 +18,33 @@
       "n_samples": 2,
       "max_new_tokens": 12,
       "temperature": 0.8,
-      "seed": 0,
       "n_folds": 5,
-      "use_chat": false,
       "se_threshold": 0.5,
       "fast": true,
       "model": "EleutherAI/pythia-70m",
+      "revision": null,
+      "dtype": "float32",
+      "device": "cpu",
+      "out": "/tmp/smoke_v2/stage2",
+      "seed": 0,
+      "config": null,
+      "resume": false,
+      "only": null,
+      "dry_run": false,
+      "verbose": false,
+      "quiet": false,
+      "log_json": null,
       "benchmarks": [
         "truthfulqa",
         "halueval",
         "selfcheckgpt"
       ],
       "n_items": 2,
+      "n_boot": 1000,
+      "use_chat": false,
       "data_hash": "ec793aa9d315f1e47eb42362a1c2d1258da55b2a0f9d22c9ab836cbf466878d9"
     },
-    "config_hash": "12c7906c8e390a380d36db6a6a364c154404791d023279ff5ea4c1f30d3717cb",
+    "config_hash": "e66bf14eb66353f87736b56fd3f1d88f2a74a776d8198350db4aa12a9bddfc56",
     "environment": {
       "python": "3.12.16",
       "numpy": "2.1.3",
@@ -42,7 +55,7 @@
       "datasets": "5.1.0"
     },
     "code": {
-      "git_commit": "fad992198d24b9525f0195886f0c9320d2181583",
+      "git_commit": "6179d55310109e470675140e0f5f85821259e57d",
       "git_dirty": true
     }
   },
@@ -240,6 +253,16 @@
     {
       "name": "Probe diagnostics",
       "summary": "{'skipped': 'insufficient labeled units for probe fitting'}"
+    },
+    {
+      "name": "Pre-registered criterion (registry.yaml, in code)",
+      "summary": "[supported] ΔAUROC CI excludes 0 (spectral > baseline) on 2 pairs",
+      "notes": [
+        "significant_positive_pairs: [[\"spec_gap_last\", \"sem_ent\", 0.5], [\"spec_ncrit_free\", \"sem_ent\", 0.5]]",
+        "n_significant_pairs: 2",
+        "best_spectral_auroc: 1.0",
+        "best_probe_auroc: null"
+      ]
     }
   ]
 }

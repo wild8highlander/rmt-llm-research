@@ -20,7 +20,6 @@ such. Run:
 
 from __future__ import annotations
 
-import argparse
 import json
 import os
 import sys
@@ -32,10 +31,9 @@ _NEURAL_LAB = os.path.dirname(os.path.dirname(_HERE))  # .../neural_lab
 if _NEURAL_LAB not in sys.path:
     sys.path.insert(0, _NEURAL_LAB)
 
+from science.hypotheses.check import criterion_section  # noqa: E402
+from stages.common.cli import StageRunner  # noqa: E402
 from stages.common.generation import generate_with_capture  # noqa: E402
-from stages.common.hf_model import load_causal_lm, model_passport  # noqa: E402
-from stages.common.passports import build_passport  # noqa: E402
-from stages.common.reporting import write_report  # noqa: E402
 from stages.stage2_detector.spectral_features import covariance_spectral_features  # noqa: E402
 from stages.stage4_interpretability.activation_patching import (  # noqa: E402
     align_patching_with_spectrum,
@@ -82,115 +80,163 @@ def mean_gap_profile(gap_profiles: list[list[float]]) -> list[float]:
     return np.mean([g[:min_len] for g in gap_profiles], axis=0).tolist()
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser(description="Stage 4: interpretability bridge")
-    ap.add_argument("--model", required=True)
-    ap.add_argument("--revision", default=None)
-    ap.add_argument("--prompts-file", default=None,
-                    help='JSONL: {"clean":..., "corrupted":..., "answer":...}')
-    ap.add_argument("--dtype", default="float32")
-    ap.add_argument("--device", default="cpu")
-    ap.add_argument("--out", required=True)
-    ap.add_argument("--sae", action="store_true", help="run the SAE audit (needs sae_lens + Gemma)")
-    ap.add_argument("--sae-release", default="gemma-scope-2b-pt-res-canonical")
-    ap.add_argument("--sae-id", default="layer_12/width_16k/average_l0_71")
-    ap.add_argument("--seed", type=int, default=0)
-    args = ap.parse_args()
+class Stage4Runner(StageRunner):
+    name = "stage4"
+    title = "Stage 4 — Interpretability bridge"
+    experiment_id = "stage4_interpretability_v1"
+    hypothesis_id = "S4"
+    steps = ("lens", "patching", "heavy-tail", "sae")
 
-    print(f"[stage4] loading {args.model} …", flush=True)
-    model, tokenizer = load_causal_lm(args.model, revision=args.revision, dtype=args.dtype, device=args.device)
-    passport = build_passport(
-        experiment_id="stage4_interpretability_v1",
-        hypothesis_id="S4",
-        model_fields=model_passport(model, tokenizer),
-        config={"model": args.model, "seed": args.seed},
-    )
+    def add_args(self, parser) -> None:
+        parser.add_argument("--prompts-file", default=None,
+                            help='JSONL: {"clean":..., "corrupted":..., "answer":...}')
+        parser.add_argument("--sae", action="store_true", help="run the SAE audit (needs sae_lens + Gemma)")
+        parser.add_argument("--sae-release", default="gemma-scope-2b-pt-res-canonical")
+        parser.add_argument("--sae-id", default="layer_12/width_16k/average_l0_71")
+        parser.add_argument("--weights-filter", default="mlp|attn|c_attn|c_proj|c_fc",
+                            help="regex over parameter names for the heavy-tail step (P2.11)")
 
-    if args.prompts_file:
-        with open(args.prompts_file) as f:
-            pairs = [json.loads(l) for l in f if l.strip()]
-    else:
-        pairs = default_prompts()
+    def default_config(self) -> dict:
+        return {}
 
-    lens_rows, patch_rows, gap_profiles = [], [], []
-    for pr in pairs:
-        ids = tokenizer.encode(pr["clean"])
-        ans_ids = tokenizer.encode(pr["answer"], add_special_tokens=False)
-        if not ans_ids:
-            continue
-        lens = lens_trajectory(model, tokenizer, pr["clean"], pr["answer"])
-        gp = gap_profile_of(model, tokenizer, pr["clean"])
-        align = lens_spike_alignment(lens["per_layer_prob"], gp)
-        lens_rows.append({"prompt": pr["clean"], "final_prob": lens["final_prob"], "alignment": align})
-        gap_profiles.append(gp)
-        try:
-            patch = patching_profile(model, ids, tokenizer.encode(pr["corrupted"]), int(ans_ids[0]))
-            pa = align_patching_with_spectrum(patch["normalized"], gp)
-            patch_rows.append({"prompt": pr["clean"], "p_clean": patch["p_clean"],
-                               "p_corrupt": patch["p_corrupt"], "alignment": pa})
-        except Exception as e:  # architecture-specific hook failures are recorded, not fatal
-            patch_rows.append({"prompt": pr["clean"], "error": str(e)})
+    def run(self, cfg, model, tok, passport) -> tuple[list[dict], dict]:
+        import time as _time
 
-    # one matrix at a time: materializing ALL 2D weights as numpy copies at
-    # once needs ~2x model size in RAM (OOM for 7B on CPU); iterating keeps
-    # peak usage at one matrix (P2.11)
-    mm: list[dict] = []
-    for n, p in model.named_parameters():
-        if p.ndim == 2 and ("mlp" in n or "attn" in n or "c_attn" in n or "c_proj" in n or "c_fc" in n):
-            mm.extend(mm_table({n: p.detach().float().cpu().numpy()}))
-    mean_gap = mean_gap_profile(gap_profiles)
-    alpha_gap = correlate_alpha_with_gap(mm, mean_gap)
+        from stages.common.cli import step_requested
 
-    sections = [
-        {"name": "Logit lens × BBP spike alignment",
-         "table": {"headers": ["prompt", "final P(answer)", "r(commit, gap)", "p", "spike L", "commit L"],
-                   "rows": [[r["prompt"][:38], f"{r['final_prob']:.3f}",
-                             f"{r['alignment'].get('pearson_r', float('nan')):.2f}",
-                             f"{r['alignment'].get('p_perm', float('nan')):.3f}",
-                             r["alignment"].get("argmax_gap_layer"), r["alignment"].get("argmax_commit_layer")]
-                            for r in lens_rows]},
-         "notes": ["Positive r = the layer that commits the answer is the layer with the spectral spike."]},
-        {"name": "Activation patching × BBP spike alignment",
-         "table": {"headers": ["prompt", "P_clean", "P_corrupt", "r(restore, gap)", "p"],
-                   "rows": [[r["prompt"][:38], f"{r.get('p_clean', float('nan')):.3f}",
-                             f"{r.get('p_corrupt', float('nan')):.3f}",
-                             f"{r.get('alignment', {}).get('pearson_r', float('nan')):.2f}",
-                             f"{r.get('alignment', {}).get('p_perm', float('nan')):.3f}"]
-                            for r in patch_rows]}},
-        {"name": "Heavy-tail alpha (Martin & Mahoney bands)",
-         "table": {"headers": ["matrix", "alpha", "xmin", "KS", "lambda_max", "band"],
-                   "rows": [[r["matrix"], f"{r['alpha']:.2f}", f"{r['xmin']:.2e}", f"{r['ks']:.3f}",
-                             f"{r['lambda_max']:.2e}", r["band"]] for r in mm[:40]]},
-         "notes": [f"alpha(x gap_ratio): {alpha_gap}"]},
-    ]
-
-    if args.sae:
-        from stages.stage4_interpretability.sae_bridge import GemmaScopeSource, bbp_feature_audit
-
-        gen_gap = [g[-1] for g in gap_profiles]
-        thr = float(np.quantile(gen_gap, 0.7))
-        spike_texts = [pr["clean"] for pr, g in zip(pairs, gen_gap) if g >= thr]
-        control_texts = [pr["clean"] for pr, g in zip(pairs, gen_gap) if g < thr]
-        if len(spike_texts) < 3 or len(control_texts) < 3:
-            # the default 6-prompt set cannot fill both groups (30/70 split
-            # -> ~2 per side): report the skip instead of crashing the run
-            sections.append({
-                "name": "SAE audit of the spike window",
-                "summary": (f"skipped: need >= 3 prompts per group, have "
-                            f"{len(spike_texts)} spike / {len(control_texts)} control "
-                            "(add prompts via --prompts-file)"),
-            })
+        if cfg.get("prompts_file"):
+            with open(cfg["prompts_file"]) as f:
+                pairs = [json.loads(l) for l in f if l.strip()]
         else:
-            source = GemmaScopeSource(args.sae_release, args.sae_id, device=args.device,
-                                      model=model, tokenizer=tokenizer)
-            audit = bbp_feature_audit(source, spike_texts, control_texts)
-            sections.append({"name": "SAE audit of the spike window",
-                             "table": {"headers": ["feature", "Δ median", "p", "neuronpedia"],
-                                       "rows": [[f["feature"], f"{f['delta_median']:.3f}", f"{f['p_perm']:.3f}",
-                                                 f["neuronpedia"]] for f in audit["features"]]}})
+            pairs = default_prompts()
 
-    write_report(args.out, "Stage 4 — Interpretability bridge", passport, sections)
-    print(f"[stage4] done: {args.out}", flush=True)
+        # the gap profiles feed every mechanism step; compute them when any
+        # consumer is requested (cheapest shared observation)
+        need_gap = any(step_requested(cfg, s) for s in ("lens", "patching", "heavy-tail", "sae"))
+        lens_rows, patch_rows, gap_profiles = [], [], []
+        step_notes: list[list] = []
+        if need_gap:
+            t0 = _time.time()
+            for pr in pairs:
+                ids = tok.encode(pr["clean"])
+                ans_ids = tok.encode(pr["answer"], add_special_tokens=False)
+                if not ans_ids:
+                    continue
+                want_lens = step_requested(cfg, "lens")
+                want_patch = step_requested(cfg, "patching")
+                if not (want_lens or want_patch):
+                    break
+                gp = gap_profile_of(model, tok, pr["clean"])
+                if want_patch:
+                    gap_profiles.append(gp)
+                if want_lens:
+                    lens = lens_trajectory(model, tok, pr["clean"], pr["answer"])
+                    align = lens_spike_alignment(lens["per_layer_prob"], gp)
+                    lens_rows.append({"prompt": pr["clean"], "final_prob": lens["final_prob"], "alignment": align})
+                if want_patch:
+                    try:
+                        patch = patching_profile(model, ids, tok.encode(pr["corrupted"]), int(ans_ids[0]))
+                        pa = align_patching_with_spectrum(patch["normalized"], gp)
+                        patch_rows.append({"prompt": pr["clean"], "p_clean": patch["p_clean"],
+                                           "p_corrupt": patch["p_corrupt"], "alignment": pa})
+                    except Exception as e:  # architecture-specific hook failures are recorded, not fatal
+                        patch_rows.append({"prompt": pr["clean"], "error": str(e)})
+            step_notes.append(["observation (lens/patching)", "done", f"{_time.time() - t0:.1f}s"])
+
+        sections: list[dict] = []
+        if step_requested(cfg, "lens"):
+            sections.append(
+                {"name": "Logit lens × BBP spike alignment",
+                 "table": {"headers": ["prompt", "final P(answer)", "r(commit, gap)", "p", "spike L", "commit L"],
+                           "rows": [[r["prompt"][:38], f"{r['final_prob']:.3f}",
+                                     f"{r['alignment'].get('pearson_r', float('nan')):.2f}",
+                                     f"{r['alignment'].get('p_perm', float('nan')):.3f}",
+                                     r["alignment"].get("argmax_gap_layer"), r["alignment"].get("argmax_commit_layer")]
+                                    for r in lens_rows]},
+                 "notes": ["Positive r = the layer that commits the answer is the layer with the spectral spike."]})
+        else:
+            sections.append({"name": "Logit lens × BBP spike alignment", "summary": "skipped (--only)"})
+
+        if step_requested(cfg, "patching"):
+            sections.append(
+                {"name": "Activation patching × BBP spike alignment",
+                 "table": {"headers": ["prompt", "P_clean", "P_corrupt", "r(restore, gap)", "p"],
+                           "rows": [[r["prompt"][:38], f"{r.get('p_clean', float('nan')):.3f}",
+                                     f"{r.get('p_corrupt', float('nan')):.3f}",
+                                     f"{r.get('alignment', {}).get('pearson_r', float('nan')):.2f}",
+                                     f"{r.get('alignment', {}).get('p_perm', float('nan')):.3f}"]
+                                    for r in patch_rows]}})
+        else:
+            sections.append({"name": "Activation patching × BBP spike alignment", "summary": "skipped (--only)"})
+
+        alpha_gap: dict = {}
+        if step_requested(cfg, "heavy-tail"):
+            t0 = _time.time()
+            # one matrix at a time: materializing ALL 2D weights as numpy copies at
+            # once needs ~2x model size in RAM (OOM for 7B on CPU); iterating keeps
+            # peak usage at one matrix (P2.11)
+            import re as _re
+
+            wpat = _re.compile(cfg["weights_filter"])
+            mm: list[dict] = []
+            for n, p in model.named_parameters():
+                if p.ndim == 2 and wpat.search(n):
+                    mm.extend(mm_table({n: p.detach().float().cpu().numpy()}))
+            mean_gap = mean_gap_profile(gap_profiles)
+            alpha_gap = correlate_alpha_with_gap(mm, mean_gap)
+            sections.append(
+                {"name": "Heavy-tail alpha (Martin & Mahoney bands)",
+                 "table": {"headers": ["matrix", "alpha", "xmin", "KS", "lambda_max", "band"],
+                           "rows": [[r["matrix"], f"{r['alpha']:.2f}", f"{r['xmin']:.2e}", f"{r['ks']:.3f}",
+                                     f"{r['lambda_max']:.2e}", r["band"]] for r in mm[:40]]},
+                 "notes": [f"alpha(x gap_ratio): {alpha_gap}",
+                           step_duration_note("heavy-tail", t0, _time)]})
+        else:
+            sections.append({"name": "Heavy-tail alpha (Martin & Mahoney bands)", "summary": "skipped (--only)"})
+
+        if step_requested(cfg, "sae"):
+            if not cfg["sae"]:
+                sections.append({"name": "SAE audit of the spike window",
+                                 "summary": "skipped (enable with --sae; needs sae_lens + Gemma access)"})
+            else:
+                from stages.stage4_interpretability.sae_bridge import GemmaScopeSource, bbp_feature_audit
+
+                gen_gap = [g[-1] for g in gap_profiles]
+                thr = float(np.quantile(gen_gap, 0.7))
+                spike_texts = [pr["clean"] for pr, g in zip(pairs, gen_gap) if g >= thr]
+                control_texts = [pr["clean"] for pr, g in zip(pairs, gen_gap) if g < thr]
+                if len(spike_texts) < 3 or len(control_texts) < 3:
+                    # the default 6-prompt set cannot fill both groups (30/70 split
+                    # -> ~2 per side): report the skip instead of crashing the run
+                    sections.append({
+                        "name": "SAE audit of the spike window",
+                        "summary": (f"skipped: need >= 3 prompts per group, have "
+                                    f"{len(spike_texts)} spike / {len(control_texts)} control "
+                                    "(add prompts via --prompts-file)"),
+                    })
+                else:
+                    source = GemmaScopeSource(cfg["sae_release"], cfg["sae_id"], device=cfg["device"],
+                                              model=model, tokenizer=tok)
+                    audit = bbp_feature_audit(source, spike_texts, control_texts)
+                    sections.append({"name": "SAE audit of the spike window",
+                                     "table": {"headers": ["feature", "Δ median", "p", "neuronpedia"],
+                                               "rows": [[f["feature"], f"{f['delta_median']:.3f}", f"{f['p_perm']:.3f}",
+                                                         f["neuronpedia"]] for f in audit["features"]]}})
+        else:
+            sections.append({"name": "SAE audit of the spike window", "summary": "skipped (--only)"})
+
+        sections.append(criterion_section(self.hypothesis_id, {"sections": sections}))
+        return sections, {"steps": step_notes or None}
+
+
+def step_duration_note(name: str, t0: float, clock) -> str:
+    return f"step '{name}' took {clock.time() - t0:.1f}s"
+
+
+def main() -> None:
+    from stages.common.cli import main as runner_main
+
+    runner_main(Stage4Runner())
 
 
 if __name__ == "__main__":

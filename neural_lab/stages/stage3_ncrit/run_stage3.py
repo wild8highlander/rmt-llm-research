@@ -30,7 +30,6 @@ Run:
 
 from __future__ import annotations
 
-import argparse
 import glob
 import json
 import os
@@ -43,10 +42,12 @@ _NEURAL_LAB = os.path.dirname(os.path.dirname(_HERE))  # .../neural_lab
 if _NEURAL_LAB not in sys.path:
     sys.path.insert(0, _NEURAL_LAB)
 
+from science.hypotheses.check import criterion_section  # noqa: E402
+from stages.common.cli import JsonlAppender, StageRunner, load_done_rows  # noqa: E402
 from stages.common.generation import generate_with_capture  # noqa: E402
-from stages.common.hf_model import load_causal_lm, model_passport  # noqa: E402
-from stages.common.passports import build_passport, data_hash  # noqa: E402
-from stages.common.reporting import save_json, save_jsonl, write_report  # noqa: E402
+from stages.common.passports import data_hash  # noqa: E402
+from stages.common.reporting import save_json, save_jsonl  # noqa: E402
+from stages.common.schemas import validate_fit  # noqa: E402
 from stages.stage3_ncrit.error_labels import incremental_token_texts, trajectory_table  # noqa: E402
 from stages.stage3_ncrit.numeric_tasks import build_task_set, few_shot_header, make_checker  # noqa: E402
 from stages.stage3_ncrit.scaling_test import beta_consistency, fit_scaling, verdict  # noqa: E402
@@ -59,10 +60,20 @@ from stages.stage3_ncrit.survival_fit import (  # noqa: E402
 )
 
 
-def observe_trajectories(model, tokenizer, tasks, cfg) -> list[dict]:
+def observe_trajectories(model, tokenizer, tasks, cfg, done_ids=None, writer=None) -> list[dict]:
+    """Greedy generation + first-error labeling per task.
+
+    done_ids/writer implement --resume: tasks already recorded in
+    trajectories.jsonl are skipped, fresh rows are appended per task
+    (a crash loses at most one task of work)."""
+    from stages.common.cli import progress
+
+    done_ids = done_ids or set()
     header = few_shot_header(n_shot=cfg["n_shot"], seed=cfg["seed"])
     trajs = []
-    for task in tasks:
+    for task in progress(tasks, cfg, desc="stage3 tasks"):
+        if task["task_id"] in done_ids:
+            continue
         gen = generate_with_capture(
             model, tokenizer, header + task["prompt"],
             max_new_tokens=cfg["max_new_tokens"], temperature=0.0,
@@ -73,16 +84,17 @@ def observe_trajectories(model, tokenizer, tasks, cfg) -> list[dict]:
         from stages.stage3_ncrit.error_labels import first_error_position
 
         t_err, n_tok = first_error_position(pieces, checker)
-        trajs.append(
-            {
-                "task_id": task["task_id"],
-                "family": task["family"],
-                "first_error": t_err,
-                "n_tokens": n_tok,
-                "generated": gen["generated_text"],
-                "truth": task["truth_text"],
-            }
-        )
+        row = {
+            "task_id": task["task_id"],
+            "family": task["family"],
+            "first_error": t_err,
+            "n_tokens": n_tok,
+            "generated": gen["generated_text"],
+            "truth": task["truth_text"],
+        }
+        trajs.append(row)
+        if writer is not None:
+            writer.write(row)
     return trajs
 
 
@@ -109,143 +121,162 @@ def analyze_model(trajs, cfg) -> dict:
     }
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser(description="Stage 3: N_crit / first-error survival analysis")
-    ap.add_argument("--model", default=None, help="single-model mode")
-    ap.add_argument("--revision", default=None)
-    ap.add_argument("--n-tasks", type=int, default=60)
-    ap.add_argument("--n-shot", type=int, default=3)
-    ap.add_argument("--max-new-tokens", type=int, default=24)
-    ap.add_argument("--tol", type=float, default=0.05, help="relative tolerance of the numeric checker")
-    ap.add_argument("--n-boot", type=int, default=300)
-    ap.add_argument("--n-bins", type=int, default=10)
-    ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--dtype", default="float32")
-    ap.add_argument("--device", default="cpu")
-    ap.add_argument("--out", required=True)
-    ap.add_argument("--mu-eff", type=float, default=None,
-                    help="external mu_eff for this model (e.g. stage-5 KL proxy); enables beta fit")
-    ap.add_argument("--mu-eff-from", default=None,
-                    help="path to a stage-5 run dir (record.json) or a record.json file; "
-                         "reads mu_eff_proxy_kl_ab from it (overrides nothing if --mu-eff is given)")
-    ap.add_argument("--scaling-in", nargs="*", default=None,
-                    help="report dirs of per-model runs: aggregate and test the scaling law")
-    ap.add_argument("--fast", action="store_true", default=True)
-    args = ap.parse_args()
+class Stage3Runner(StageRunner):
+    name = "stage3"
+    title = "Stage 3 — N_crit from first-error survival"
+    experiment_id = "stage3_ncrit_v1"
+    hypothesis_id = "S3"
 
-    cfg = {
-        "n_shot": args.n_shot, "max_new_tokens": args.max_new_tokens, "tol": args.tol,
-        "n_boot": args.n_boot, "n_bins": args.n_bins, "seed": args.seed, "fast": args.fast,
-    }
+    def add_args(self, parser) -> None:
+        parser.add_argument("--n-tasks", type=int, default=60)
+        parser.add_argument("--n-shot", type=int, default=3)
+        parser.add_argument("--max-new-tokens", type=int, default=24)
+        parser.add_argument("--tol", type=float, default=0.05, help="relative tolerance of the numeric checker")
+        parser.add_argument("--n-boot", type=int, default=300)
+        parser.add_argument("--n-bins", type=int, default=10)
+        parser.add_argument("--mu-eff", type=float, default=None,
+                            help="external mu_eff for this model (e.g. stage-5 KL proxy); enables beta fit")
+        parser.add_argument("--mu-eff-from", default=None,
+                            help="path to a stage-5 run dir (record.json) or a record.json file; "
+                                 "reads mu_eff_proxy_kl_ab from it (overrides nothing if --mu-eff is given)")
+        parser.add_argument("--scaling-in", nargs="*", default=None,
+                            help="report dirs of per-model runs: aggregate and test the scaling law")
+        parser.add_argument("--fast", action="store_true", default=True)
 
-    if args.scaling_in:
-        run_scaling_aggregate(args.scaling_in, args.out)
-        return
+    def default_config(self) -> dict:
+        return {"n_shot": 3, "max_new_tokens": 24, "tol": 0.05, "n_boot": 300,
+                "n_bins": 10, "fast": True}
 
-    if not args.model:
-        ap.error("--model or --scaling-in is required")
-    if args.mu_eff_from and args.mu_eff is None:
-        # P2.10: reuse the mu_eff already measured by a stage-5 run for this
-        # model instead of asking the user to copy a number by hand
-        p = args.mu_eff_from
-        if os.path.isdir(p):
-            p = os.path.join(p, "record.json")
-        with open(p) as f:
-            rec = json.load(f)
-        mu_from_rec = rec.get("mu_eff_proxy_kl_ab")
-        if not mu_from_rec or mu_from_rec <= 0:
-            raise SystemExit(f"--mu-eff-from: no usable mu_eff_proxy_kl_ab in {p}")
-        args.mu_eff = float(mu_from_rec)
-        print(f"[stage3] mu_eff={args.mu_eff:.4f} taken from {p}", flush=True)
-    print(f"[stage3] loading {args.model} …", flush=True)
-    model, tokenizer = load_causal_lm(args.model, revision=args.revision, dtype=args.dtype, device=args.device)
-    tasks = build_task_set(n_tasks=args.n_tasks, seed=args.seed)
-    passport = build_passport(
-        experiment_id="stage3_ncrit_v1",
-        hypothesis_id="S3",
-        model_fields=model_passport(model, tokenizer),
-        config={**cfg, "model": args.model, "n_tasks": args.n_tasks,
-                "data_hash": data_hash([t["prompt"] for t in tasks]),
-                "mu_eff_external": args.mu_eff},
-    )
-    print(f"[stage3] {len(tasks)} tasks, generating …", flush=True)
-    trajs = observe_trajectories(model, tokenizer, tasks, cfg)
-    res = analyze_model(trajs, cfg)
+    def needs_model(self, cfg: dict) -> bool:
+        return not cfg.get("scaling_in")
 
-    fit = res["fit"]
-    tau_ci = res["bootstrap"].get("c", {}).get("ci95", [fit["tau"] / 2, fit["tau"] * 2])
-    fit_record = {
-        "model": args.model,
-        "tau": fit["tau"],
-        "tau_ci": tau_ci,
-        "gamma": fit["gamma"],
-        "mu_eff": args.mu_eff,
-    }
-    if args.mu_eff and args.mu_eff > 0:
-        tab = trajectory_table(trajs)
-        fit_mu = fit_survival(
-            np.asarray([r["t_first_error"] for r in tab]),
-            np.asarray([0.0 if r["censored"] else 1.0 for r in tab]),
-            mu=np.asarray([args.mu_eff] * len(trajs)),
-            seed=args.seed,
-        )
-        res["fit_with_mu"] = fit_mu
-        # the beta CI must come from a REAL bootstrap under the same mu —
-        # a fabricated [β·0.5, β·1.5] interval would leak into fit.json and
-        # from there into the cross-model scaling test
-        boot_mu = bootstrap_survival(
-            np.asarray([r["t_first_error"] for r in tab]),
-            np.asarray([0.0 if r["censored"] else 1.0 for r in tab]),
-            mu=np.asarray([args.mu_eff] * len(trajs)),
-            n_boot=args.n_boot, seed=args.seed,
-            warm_start=np.asarray(fit_mu["params"], dtype=np.float64),
-        )
-        if not boot_mu.get("beta", {}).get("ci95") or not np.all(np.isfinite(boot_mu["beta"]["ci95"])):
-            raise RuntimeError("bootstrap with mu failed; refusing to fabricate a beta CI")
-        res["bootstrap_with_mu"] = boot_mu
-        fit_record["beta_fit"] = {
-            "beta": fit_mu["beta"],
-            "ci95": boot_mu["beta"]["ci95"],
-            "beta_at_boundary": fit_mu.get("beta_at_boundary", False),
+    def run(self, cfg, model, tok, passport):
+        if cfg.get("scaling_in"):
+            run_scaling_aggregate(cfg["scaling_in"], cfg["out"])
+            return None
+
+        if cfg.get("mu_eff_from") and not cfg.get("mu_eff"):
+            # P2.10: reuse the mu_eff already measured by a stage-5 run for this
+            # model instead of asking the user to copy a number by hand
+            p = cfg["mu_eff_from"]
+            if os.path.isdir(p):
+                p = os.path.join(p, "record.json")
+            with open(p) as f:
+                rec = json.load(f)
+            mu_from_rec = rec.get("mu_eff_proxy_kl_ab")
+            if not mu_from_rec or mu_from_rec <= 0:
+                raise SystemExit(f"--mu-eff-from: no usable mu_eff_proxy_kl_ab in {p}")
+            cfg["mu_eff"] = float(mu_from_rec)
+            print(f"[stage3] mu_eff={cfg['mu_eff']:.4f} taken from {p}", flush=True)
+
+        tasks = build_task_set(n_tasks=cfg["n_tasks"], seed=cfg["seed"])
+        passport["config"]["data_hash"] = data_hash([t["prompt"] for t in tasks])
+        passport["config"]["mu_eff_external"] = cfg.get("mu_eff")
+
+        trajs_path = os.path.join(cfg["out"], "trajectories.jsonl")
+        done_ids: set = set()
+        restored: list[dict] = []
+        if cfg.get("resume") and os.path.isfile(trajs_path):
+            restored, done_ids = load_done_rows(trajs_path, "task_id")
+            print(f"[stage3] resume: {len(restored)} trajectories already recorded", flush=True)
+
+        print(f"[stage3] {len(tasks)} tasks, generating …", flush=True)
+        with JsonlAppender(trajs_path) as writer:
+            fresh = observe_trajectories(model, tok, tasks, cfg,
+                                         done_ids=done_ids, writer=writer)
+        trajs = restored + fresh
+        res = analyze_model(trajs, cfg)
+
+        fit = res["fit"]
+        tau_ci = res["bootstrap"].get("c", {}).get("ci95", [fit["tau"] / 2, fit["tau"] * 2])
+        fit_record = {
+            "schema_version": "1.0",
+            "model": cfg["model"],
+            "tau": fit["tau"],
+            "tau_ci": tau_ci,
+            "gamma": fit["gamma"],
+            "mu_eff": cfg.get("mu_eff"),
         }
-        if fit_mu.get("beta_at_boundary"):
-            print(f"[stage3] WARNING: beta at the parameterization boundary "
-                  f"{fit_mu['beta']:.3f}; treat the CI with care", flush=True)
+        if cfg.get("mu_eff") and cfg["mu_eff"] > 0:
+            tab = trajectory_table(trajs)
+            errs = np.asarray([0.0 if r["censored"] else 1.0 for r in tab])
+            times = np.asarray([r["t_first_error"] for r in tab])
+            mus = np.asarray([cfg["mu_eff"]] * len(trajs))
+            fit_mu = fit_survival(times, errs, mu=mus, seed=cfg["seed"])
+            res["fit_with_mu"] = fit_mu
+            # the beta CI must come from a REAL bootstrap under the same mu —
+            # a fabricated [β·0.5, β·1.5] interval would leak into fit.json and
+            # from there into the cross-model scaling test
+            boot_mu = bootstrap_survival(times, errs, mu=mus,
+                                         n_boot=cfg["n_boot"], seed=cfg["seed"],
+                                         warm_start=np.asarray(fit_mu["params"], dtype=np.float64))
+            if not boot_mu.get("beta", {}).get("ci95") or not np.all(np.isfinite(boot_mu["beta"]["ci95"])):
+                raise RuntimeError("bootstrap with mu failed; refusing to fabricate a beta CI")
+            res["bootstrap_with_mu"] = boot_mu
+            fit_record["beta_fit"] = {
+                "beta": fit_mu["beta"],
+                "ci95": boot_mu["beta"]["ci95"],
+                "beta_at_boundary": fit_mu.get("beta_at_boundary", False),
+            }
+            if fit_mu.get("beta_at_boundary"):
+                print(f"[stage3] WARNING: beta at the parameterization boundary "
+                      f"{fit_mu['beta']:.3f}; treat the CI with care", flush=True)
 
-    save_json(os.path.join(args.out, "fit.json"), fit_record)
+        validate_fit(fit_record)
+        save_json(os.path.join(cfg["out"], "fit.json"), fit_record)
 
-    save_jsonl(os.path.join(args.out, "trajectories.jsonl"), trajs)
-    with open(os.path.join(args.out, "error_curve.csv"), "w") as f:
-        f.write("bin_center,rate,at_risk,errors\n")
-        for c, r, a, e in zip(res["error_curve"]["bin_centers"], res["error_curve"]["rate"],
-                              res["error_curve"]["at_risk"], res["error_curve"]["errors"]):
-            f.write(f"{c:.2f},{r:.5f},{a},{e}\n")
+        save_jsonl(os.path.join(cfg["out"], "trajectories.jsonl"), trajs)
+        with open(os.path.join(cfg["out"], "error_curve.csv"), "w") as f:
+            f.write("bin_center,rate,at_risk,errors\n")
+            for c, r, a, e in zip(res["error_curve"]["bin_centers"], res["error_curve"]["rate"],
+                                  res["error_curve"]["at_risk"], res["error_curve"]["errors"]):
+                f.write(f"{c:.2f},{r:.5f},{a},{e}\n")
 
-    b = res["bootstrap"].get("c", {})
-    g_b = res["bootstrap"].get("gamma", {}).get("ci95")
+        b = res["bootstrap"].get("c", {})
+        g_b = res["bootstrap"].get("gamma", {}).get("ci95")
 
-    def fmt_ci(ci):
-        return f"[{ci[0]:.2f}, {ci[1]:.2f}]" if ci else "—"
+        def fmt_ci(ci):
+            return f"[{ci[0]:.2f}, {ci[1]:.2f}]" if ci else "—"
 
-    sections = [
-        {"name": "First-error survival fit (Weibull scale, tokens)",
-         "table": {"headers": ["quantity", "value", "95% CI"],
-                   "rows": [
-                       ["tau (scale)", f"{fit['tau']:.2f}", fmt_ci(b.get("ci95"))],
-                       ["gamma (shape)", f"{fit['gamma']:.2f}", fmt_ci(g_b)],
-                       ["mean T_crit = tau*Gamma(1+1/gamma)", f"{res['n_crit_weibull_mean']:.2f}", "—"],
-                       ["error rate", f"{res['error_rate_overall']:.2%}", "—"],
-                   ]},
-         "notes": ["gamma ~ 1 = constant hazard (the H1 null A0); gamma >> 1 = accelerating collapse.",
-                   "Censored trajectories (never wrong) enter the likelihood as survival terms."]},
-        {"name": "Breakpoint (the plan's 'izlem')",
-         "summary": f"changepoint at token {res['breakpoint']['breakpoint']} "
-                    f"(p_perm={res['breakpoint'].get('p_perm', float('nan')):.3f})",
-         "notes": ["Exact two-rate Poisson split; permutation p over error-label shuffles."]},
-        {"name": "Error-rate curve", "summary": "see error_curve.csv (bin centers, at-risk normalized rates)"},
-    ]
-    write_report(args.out, "Stage 3 — N_crit from first-error survival", passport, sections)
-    print(f"[stage3] done: {args.out}", flush=True)
+        sections = [
+            {"name": "First-error survival fit (Weibull scale, tokens)",
+             "table": {"headers": ["quantity", "value", "95% CI"],
+                       "rows": [
+                           ["tau (scale)", f"{fit['tau']:.2f}", fmt_ci(b.get("ci95"))],
+                           ["gamma (shape)", f"{fit['gamma']:.2f}", fmt_ci(g_b)],
+                           ["mean T_crit = tau*Gamma(1+1/gamma)", f"{res['n_crit_weibull_mean']:.2f}", "—"],
+                           ["error rate", f"{res['error_rate_overall']:.2%}", "—"],
+                       ]},
+             "notes": ["gamma ~ 1 = constant hazard (the H1 null A0); gamma >> 1 = accelerating collapse.",
+                       "Censored trajectories (never wrong) enter the likelihood as survival terms."]},
+            {"name": "Breakpoint (the plan's 'izlem')",
+             "summary": f"changepoint at token {res['breakpoint']['breakpoint']} "
+                        f"(p_perm={res['breakpoint'].get('p_perm', float('nan')):.3f})",
+             "notes": ["Exact two-rate Poisson split; permutation p over error-label shuffles."]},
+            {"name": "Error-rate curve", "summary": "see error_curve.csv (bin centers, at-risk normalized rates)"},
+        ]
+        if done_ids:
+            sections.append({
+                "name": "Resume",
+                "summary": (f"resumed: {len(restored)} trajectories restored from trajectories.jsonl; "
+                            "the survival fit uses restored + fresh trajectories together")})
+        # the pre-registered criterion (P2.6): the scaling check needs >= 3
+        # models, so a single-model run reports the section as not_resolved
+        sections.append(criterion_section(self.hypothesis_id, {"sections": sections}))
+        return sections, {}
+
+    # --- scaling aggregation (kept here: single source of truth for the law) ---
+    # run_scaling_aggregate / _load_scaling_record live at module level below
+
+
+def main() -> None:
+    from stages.common.cli import main as runner_main
+
+    runner_main(Stage3Runner())
+
+
+if __name__ == "__main__":
+    main()
 
 
 def _load_scaling_record(d: str) -> dict | None:
@@ -283,6 +314,8 @@ def run_scaling_aggregate(dirs: list[str], out_dir: str) -> None:
     never assumed. Records are read from fit.json (stage-3 runs, stage-5
     sidecars) or normalized from stage-5 record.json."""
     from stages import PROTOCOL_VERSION
+    from stages.common.reporting import write_report
+    from stages.common.schemas import validate_scaling
 
     recs = []
     for pat in dirs:
@@ -304,9 +337,13 @@ def run_scaling_aggregate(dirs: list[str], out_dir: str) -> None:
     beta_recs = [r["beta_fit"] for r in recs if r.get("beta_fit")]
     cons = beta_consistency(beta_recs)
     v = verdict(scaling, cons)
-    save_json(os.path.join(out_dir, "scaling.json"),
-              {"protocol_version": PROTOCOL_VERSION, "records": recs, "scaling": scaling,
-               "consistency": cons, "verdict": v})
+    scaling_payload = {
+        "schema_version": "1.0",
+        "protocol_version": PROTOCOL_VERSION, "records": recs, "scaling": scaling,
+        "consistency": cons, "verdict": v,
+    }
+    validate_scaling(scaling_payload)
+    save_json(os.path.join(out_dir, "scaling.json"), scaling_payload)
     rows = [["slope (target -2 for beta=0.5)", f"{scaling['slope']:.2f}"],
             ["slope 95% CI", f"[{scaling['slope_ci95'][0]:.2f}, {scaling['slope_ci95'][1]:.2f}]"],
             ["implied beta", f"{scaling['implied_beta']:.2f}"],
@@ -319,8 +356,8 @@ def run_scaling_aggregate(dirs: list[str], out_dir: str) -> None:
         notes.append(f"NOTE: {cons.get('note', 'no per-model beta fits; consistency unchecked')}")
     write_report(
         out_dir, "Stage 3 — (mu_eff)^(-1/beta) scaling across models",
-        {"experiment_id": "stage3_scaling_v1", "hypothesis_id": "S3", "protocol_version": PROTOCOL_VERSION,
-         "model": {}, "environment": {}},
+        {"experiment_id": "stage3_scaling_v1", "hypothesis_id": "S3",
+         "protocol_version": PROTOCOL_VERSION, "model": {}, "config": {}, "environment": {}},
         [{"name": "Scaling regression",
           "table": {"headers": ["quantity", "value"], "rows": rows},
           "notes": notes}],

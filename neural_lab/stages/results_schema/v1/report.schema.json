@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/wild8highlander/rmt-llm-research/main/neural_lab/stages/results_schema/v1/report.schema.json",
+  "title": "Stage run report (report.json)",
+  "type": "object",
+  "required": ["schema_version", "passport", "sections"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "passport": {
+      "type": "object",
+      "required": ["experiment_id", "hypothesis_id", "protocol_version", "config", "environment"],
+      "properties": {
+        "experiment_id": {"type": "string"},
+        "hypothesis_id": {"type": "string"},
+        "protocol_version": {"type": "string"},
+        "protocol_doc_hash": {"type": ["string", "null"]},
+        "model": {"type": "object"},
+        "config": {"type": "object"},
+        "config_hash": {"type": "string"},
+        "environment": {"type": "object"},
+        "code": {
+          "type": "object",
+          "properties": {
+            "git_commit": {"type": "string"},
+            "git_dirty": {"type": "boolean"}
+          }
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "summary": {"type": "string"},
+          "notes": {"type": "array", "items": {"type": "string"}},
+          "table": {
+            "type": "object",
+            "required": ["headers", "rows"],
+            "properties": {
+              "headers": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+              "rows": {
+                "type": "array",
+                "items": {"type": "array",
+                          "items": {"type": ["string", "number", "null", "boolean"]}}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

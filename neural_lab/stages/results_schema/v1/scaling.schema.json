@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/wild8highlander/rmt-llm-research/main/neural_lab/stages/results_schema/v1/scaling.schema.json",
+  "title": "Cross-model scaling aggregate (scaling.json)",
+  "type": "object",
+  "required": ["schema_version", "protocol_version", "records", "scaling", "consistency", "verdict"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "protocol_version": {"type": "string"},
+    "records": {"type": "array", "minItems": 3},
+    "scaling": {
+      "type": "object",
+      "required": ["slope", "slope_ci95", "n_models", "dof"],
+      "properties": {
+        "slope": {"type": "number"},
+        "slope_ci95": {"type": "array", "minItems": 2, "maxItems": 2,
+                       "items": {"type": "number"}},
+        "implied_beta": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "intercept_log_c": {"type": "number"},
+        "resid_rms": {"type": "number", "minimum": 0},
+        "n_models": {"type": "integer", "minimum": 3},
+        "dof": {"type": "integer", "minimum": 1},
+        "power_warning": {"type": "string"}
+      }
+    },
+    "consistency": {
+      "type": "object",
+      "required": ["all_consistent"],
+      "properties": {
+        "all_consistent": {"enum": [true, false, null]},
+        "note": {"type": "string"}
+      }
+    },
+    "verdict": {"type": "string", "minLength": 1}
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/wild8highlander/rmt-llm-research/main/neural_lab/stages/results_schema/v1/fit.schema.json",
+  "title": "Per-model survival fit (fit.json; stage-3 runs and stage-5 sidecars)",
+  "type": "object",
+  "required": ["schema_version", "model", "tau", "tau_ci"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "model": {"type": "string", "minLength": 1},
+    "tau": {"type": "number", "exclusiveMinimum": 0},
+    "tau_ci": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {"type": "number", "exclusiveMinimum": 0}
+    },
+    "gamma": {"type": ["number", "null"], "exclusiveMinimum": 0},
+    "mu_eff": {"type": ["number", "null"], "exclusiveMinimum": 0},
+    "tau_base": {"type": ["number", "null"], "exclusiveMinimum": 0},
+    "source": {"type": "string"},
+    "beta_fit": {
+      "type": "object",
+      "required": ["beta"],
+      "properties": {
+        "beta": {"type": "number", "exclusiveMinimum": 0},
+        "ci95": {
+          "type": "array", "minItems": 2, "maxItems": 2,
+          "items": {"type": "number", "exclusiveMinimum": 0}
+        },
+        "beta_at_boundary": {"type": "boolean"}
+      }
+    },
+    "delta_tau": {"type": "number"},
+    "delta_tau_ci95": {
+      "type": ["array", "null"], "minItems": 2, "maxItems": 2,
+      "items": {"type": "number"}
+    }
+  }
+}

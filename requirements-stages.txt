@@ -1,0 +1,11 @@
+# Pins for the neural_lab/stages pipeline (CI + local); see pyproject
+# [project.optional-dependencies].stages for the versioned extras.
+torch>=2.2
+transformers>=4.40
+datasets
+pyyaml
+scipy
+jsonschema
+tqdm
+pytest>=7.0
+hypothesis>=6.0

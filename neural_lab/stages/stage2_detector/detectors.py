@@ -29,6 +29,27 @@ import numpy as np
 from science.evaluation import average_precision, bootstrap_metric_ci, roc_auc
 
 
+# The closed detector vocabulary (P2.9). A new detector = implement its
+# scorer, add its name here, add a test, bump the protocol version
+# (see docs/ADD_A_DETECTOR.md).
+KNOWN_DETECTORS = frozenset({
+    # token-entropy family (token_entropy.detector_scores_from_features)
+    "tok_mean_entropy",
+    "tok_max_entropy",
+    "tok_last_entropy",
+    "tok_neg_logprob",
+    "tok_log_perplexity",
+    # semantic entropy (semantic_entropy.semantic_entropy_score)
+    "sem_ent",
+    # RMT spectral single features + spectral probe (run_stage2)
+    "spec_gap_last",
+    "spec_ncrit_free",
+    "spec_probe",
+    # linear probe on last-token hidden states (probes.evaluate_probe_layers)
+    "probe_hidden",
+})
+
+
 @dataclass
 class Unit:
     unit_id: str
@@ -36,6 +57,22 @@ class Unit:
     item_id: str  # grouping key for clustered bootstrap
     label: int  # 1 = hallucinated / nonfactual
     scores: dict[str, float]  # detector_name -> score (higher = worse)
+
+    def __post_init__(self):
+        # an open dict let a typo'd detector name ("spec_gap_las") surface
+        # only at the very END of a run; fail at construction instead
+        unknown = set(self.scores) - KNOWN_DETECTORS
+        if unknown:
+            raise ValueError(
+                f"unknown detector name(s) {sorted(unknown)}; known: "
+                f"{sorted(KNOWN_DETECTORS)}"
+            )
+
+    def score(self, name: str) -> float:
+        """Score by detector name; KeyError on an unknown OR unscored name."""
+        if name not in KNOWN_DETECTORS:
+            raise KeyError(f"unknown detector {name!r}; known: {sorted(KNOWN_DETECTORS)}")
+        return self.scores[name]  # KeyError when not scored for this unit
 
 
 def permutation_p(null: np.ndarray, stat: float, two_sided: bool = True) -> float:

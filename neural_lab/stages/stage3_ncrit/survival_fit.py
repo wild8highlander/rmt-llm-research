@@ -202,7 +202,9 @@ def binned_error_rate(t: np.ndarray, delta: np.ndarray, n_bins: int = 10) -> dic
     centers, rates, at_risk, n_err = [], [], [], []
     for i in range(n_bins):
         lo, hi = edges[i], edges[i + 1]
-        mask_in = (t > lo) & (t <= hi)
+        # left-closed bins so an error at the window start (token 1) counts;
+        # the last bin is right-closed to keep the final edge inclusive
+        mask_in = (t >= lo) & ((t < hi) if i < n_bins - 1 else (t <= hi))
         mask_alive = t >= lo
         at_risk.append(int(mask_alive.sum()))
         err = int((mask_in & (delta == 1)).sum())
