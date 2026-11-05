@@ -1,0 +1,273 @@
+{
+  "passport": {
+    "experiment_id": "stage4_interpretability_v1",
+    "hypothesis_id": "S4",
+    "protocol_version": "1.1",
+    "protocol_doc_hash": "6f0473613ef511295cc26b5117fa412ade8c7396760503b6f4beb3e5288f5b3a",
+    "model": {
+      "model_name": "EleutherAI/pythia-70m",
+      "config_hash": "af0d05652f5b0f67",
+      "weight_sha256": "ebfa4e2f18696ebd83716a0d39fe2c025f2ff8483f72a83ca59c475692fc9d15",
+      "tokenizer_class": "GPTNeoXTokenizer",
+      "tokenizer_vocab_size": 50254,
+      "n_params": 70426624,
+      "weights_source": "hf_hub_snapshot"
+    },
+    "config": {
+      "model": "EleutherAI/pythia-70m",
+      "seed": 0
+    },
+    "config_hash": "c477e6ec1dcb349499f93a49fa6ffc7cb79357a09163c14fe7283f2a0ccfeddd",
+    "environment": {
+      "python": "3.12.16",
+      "numpy": "2.1.3",
+      "platform": "Linux-5.10.134-013.15.kangaroo.al8.x86_64-x86_64-with-glibc2.41",
+      "torch": "2.15.0+cpu",
+      "cuda_available": false,
+      "transformers": "5.22.1",
+      "datasets": "5.1.0"
+    },
+    "code": {
+      "git_commit": "fad992198d24b9525f0195886f0c9320d2181583",
+      "git_dirty": true
+    }
+  },
+  "sections": [
+    {
+      "name": "Logit lens × BBP spike alignment",
+      "table": {
+        "headers": [
+          "prompt",
+          "final P(answer)",
+          "r(commit, gap)",
+          "p",
+          "spike L",
+          "commit L"
+        ],
+        "rows": [
+          [
+            "The capital of France is",
+            "0.002",
+            "-0.28",
+            "0.836",
+            3,
+            5
+          ],
+          [
+            "The capital of Japan is",
+            "0.003",
+            "-0.31",
+            "0.608",
+            3,
+            5
+          ],
+          [
+            "Two plus two equals",
+            "0.006",
+            "-0.35",
+            "0.803",
+            3,
+            5
+          ],
+          [
+            "The author of Romeo and Juliet is",
+            "0.000",
+            "0.02",
+            "0.920",
+            3,
+            5
+          ],
+          [
+            "Water boils at a temperature of 100 de",
+            "0.677",
+            "-0.20",
+            "0.738",
+            2,
+            5
+          ],
+          [
+            "The largest planet in the solar system",
+            "0.005",
+            "-0.19",
+            "0.945",
+            3,
+            5
+          ]
+        ]
+      },
+      "notes": [
+        "Positive r = the layer that commits the answer is the layer with the spectral spike."
+      ]
+    },
+    {
+      "name": "Activation patching × BBP spike alignment",
+      "table": {
+        "headers": [
+          "prompt",
+          "P_clean",
+          "P_corrupt",
+          "r(restore, gap)",
+          "p"
+        ],
+        "rows": [
+          [
+            "The capital of France is",
+            "0.002",
+            "0.000",
+            "0.20",
+            "0.652"
+          ],
+          [
+            "The capital of Japan is",
+            "0.003",
+            "0.000",
+            "-0.10",
+            "0.802"
+          ],
+          [
+            "Two plus two equals",
+            "0.006",
+            "0.009",
+            "-0.77",
+            "0.057"
+          ],
+          [
+            "The author of Romeo and Juliet is",
+            "0.000",
+            "0.000",
+            "0.60",
+            "0.241"
+          ],
+          [
+            "Water boils at a temperature of 100 de",
+            "0.677",
+            "0.762",
+            "-0.55",
+            "0.270"
+          ],
+          [
+            "The largest planet in the solar system",
+            "0.005",
+            "0.005",
+            "0.55",
+            "0.262"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Heavy-tail alpha (Martin & Mahoney bands)",
+      "table": {
+        "headers": [
+          "matrix",
+          "alpha",
+          "xmin",
+          "KS",
+          "lambda_max",
+          "band"
+        ],
+        "rows": [
+          [
+            "gpt_neox.layers.0.mlp.dense_h_to_4h.weight",
+            "6.38",
+            "5.43e-03",
+            "0.063",
+            "4.05e-02",
+            "random-like"
+          ],
+          [
+            "gpt_neox.layers.0.mlp.dense_4h_to_h.weight",
+            "5.42",
+            "1.84e-03",
+            "0.084",
+            "9.01e-03",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.1.mlp.dense_h_to_4h.weight",
+            "3.46",
+            "5.70e-03",
+            "0.028",
+            "7.68e-02",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.1.mlp.dense_4h_to_h.weight",
+            "3.29",
+            "2.42e-03",
+            "0.036",
+            "4.82e-02",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.2.mlp.dense_h_to_4h.weight",
+            "3.83",
+            "5.45e-03",
+            "0.043",
+            "4.05e-01",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.2.mlp.dense_4h_to_h.weight",
+            "3.58",
+            "2.88e-03",
+            "0.043",
+            "2.11e-02",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.3.mlp.dense_h_to_4h.weight",
+            "3.83",
+            "5.70e-03",
+            "0.066",
+            "3.29e-02",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.3.mlp.dense_4h_to_h.weight",
+            "3.04",
+            "4.07e-03",
+            "0.052",
+            "5.83e-02",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.4.mlp.dense_h_to_4h.weight",
+            "3.68",
+            "5.31e-03",
+            "0.062",
+            "4.62e-02",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.4.mlp.dense_4h_to_h.weight",
+            "3.59",
+            "5.63e-03",
+            "0.055",
+            "4.91e-02",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.5.mlp.dense_h_to_4h.weight",
+            "3.14",
+            "4.78e-03",
+            "0.029",
+            "5.20e-02",
+            "weak"
+          ],
+          [
+            "gpt_neox.layers.5.mlp.dense_4h_to_h.weight",
+            "4.29",
+            "7.14e-03",
+            "0.061",
+            "2.19e-01",
+            "weak"
+          ]
+        ]
+      },
+      "notes": [
+        "alpha(x gap_ratio): {'pearson_r': -0.6855604766098382, 'n_layers': 6, 'matrices_per_layer': {'0': 2, '1': 2, '2': 2, '3': 2, '4': 2, '5': 2}}"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+{
+  "passport": {
+    "experiment_id": "stage2_detector_v1",
+    "hypothesis_id": "S2",
+    "protocol_version": "1.1",
+    "protocol_doc_hash": "6f0473613ef511295cc26b5117fa412ade8c7396760503b6f4beb3e5288f5b3a",
+    "model": {
+      "model_name": "EleutherAI/pythia-70m",
+      "config_hash": "af0d05652f5b0f67",
+      "weight_sha256": "ebfa4e2f18696ebd83716a0d39fe2c025f2ff8483f72a83ca59c475692fc9d15",
+      "tokenizer_class": "GPTNeoXTokenizer",
+      "tokenizer_vocab_size": 50254,
+      "n_params": 70426624,
+      "weights_source": "hf_hub_snapshot"
+    },
+    "config": {
+      "n_samples": 2,
+      "max_new_tokens": 12,
+      "temperature": 0.8,
+      "seed": 0,
+      "n_folds": 5,
+      "use_chat": false,
+      "se_threshold": 0.5,
+      "fast": true,
+      "model": "EleutherAI/pythia-70m",
+      "benchmarks": [
+        "truthfulqa",
+        "halueval",
+        "selfcheckgpt"
+      ],
+      "n_items": 2,
+      "data_hash": "ec793aa9d315f1e47eb42362a1c2d1258da55b2a0f9d22c9ab836cbf466878d9"
+    },
+    "config_hash": "12c7906c8e390a380d36db6a6a364c154404791d023279ff5ea4c1f30d3717cb",
+    "environment": {
+      "python": "3.12.16",
+      "numpy": "2.1.3",
+      "platform": "Linux-5.10.134-013.15.kangaroo.al8.x86_64-x86_64-with-glibc2.41",
+      "torch": "2.15.0+cpu",
+      "cuda_available": false,
+      "transformers": "5.22.1",
+      "datasets": "5.1.0"
+    },
+    "code": {
+      "git_commit": "fad992198d24b9525f0195886f0c9320d2181583",
+      "git_dirty": true
+    }
+  },
+  "sections": [
+    {
+      "name": "AUROC race (higher = better hallucination detection)",
+      "table": {
+        "headers": [
+          "detector",
+          "AUROC",
+          "95% CI",
+          "PR-AUC",
+          "n"
+        ],
+        "rows": [
+          [
+            "sem_ent",
+            "0.500",
+            "[0.500, 0.500]",
+            "0.083",
+            12
+          ],
+          [
+            "spec_gap_last",
+            "1.000",
+            "[1.000, 1.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_ncrit_free",
+            "1.000",
+            "[1.000, 1.000]",
+            "1.000",
+            2
+          ],
+          [
+            "tok_last_entropy",
+            "0.692",
+            "[0.357, 1.000]",
+            "0.321",
+            16
+          ],
+          [
+            "tok_log_perplexity",
+            "0.205",
+            "[0.000, 0.500]",
+            "0.155",
+            16
+          ],
+          [
+            "tok_max_entropy",
+            "0.282",
+            "[0.000, 0.800]",
+            "0.193",
+            16
+          ],
+          [
+            "tok_mean_entropy",
+            "0.308",
+            "[0.000, 1.000]",
+            "0.274",
+            16
+          ],
+          [
+            "tok_neg_logprob",
+            "0.205",
+            "[0.000, 0.500]",
+            "0.155",
+            16
+          ]
+        ]
+      },
+      "notes": [
+        "tok_* = token-entropy baselines; sem_ent = semantic entropy (Farquhar et al. 2024);",
+        "probe_hidden = linear probe on last-token hidden states (Azaria & Mitchell protocol, OOF);",
+        "spec_* = RMT spectral detector (gap_ratio / ncrit_free / spectral probe)."
+      ]
+    },
+    {
+      "name": "Spectral vs baselines: paired ΔAUROC (clustered bootstrap)",
+      "table": {
+        "headers": [
+          "spectral",
+          "baseline",
+          "ΔAUROC",
+          "95% CI",
+          "p",
+          "n_paired"
+        ],
+        "rows": [
+          [
+            "spec_gap_last",
+            "sem_ent",
+            "+0.500",
+            "[+0.500, +0.500]",
+            "0.004",
+            2
+          ],
+          [
+            "spec_gap_last",
+            "tok_last_entropy",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_gap_last",
+            "tok_log_perplexity",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_gap_last",
+            "tok_max_entropy",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_gap_last",
+            "tok_mean_entropy",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_gap_last",
+            "tok_neg_logprob",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_ncrit_free",
+            "sem_ent",
+            "+0.500",
+            "[+0.500, +0.500]",
+            "0.004",
+            2
+          ],
+          [
+            "spec_ncrit_free",
+            "tok_last_entropy",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_ncrit_free",
+            "tok_log_perplexity",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_ncrit_free",
+            "tok_max_entropy",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_ncrit_free",
+            "tok_mean_entropy",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ],
+          [
+            "spec_ncrit_free",
+            "tok_neg_logprob",
+            "+0.000",
+            "[+0.000, +0.000]",
+            "1.000",
+            2
+          ]
+        ]
+      },
+      "notes": [
+        "CI excluding 0 = the difference survives item-clustered resampling.",
+        "n_paired: the Δ was computed only on units carrying BOTH detectors."
+      ]
+    },
+    {
+      "name": "Probe diagnostics",
+      "summary": "{'skipped': 'insufficient labeled units for probe fitting'}"
+    }
+  ]
+}

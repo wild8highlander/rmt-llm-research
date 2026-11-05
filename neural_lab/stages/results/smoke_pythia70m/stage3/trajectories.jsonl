@@ -1,0 +1,24 @@
+{"task_id": "ncrit-add3-0", "family": "add3", "first_error": 2, "n_tokens": 16, "generated": "\n13 * 17 = 7\n831 - 731 = 731\n", "truth": "15760"}
+{"task_id": "ncrit-mul2-1", "family": "mul2", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 257 = 7\n831 - 257 = 7\n8", "truth": "221"}
+{"task_id": "ncrit-sub2-2", "family": "sub2", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 257 = 583\n831 - 257 = 583", "truth": "574"}
+{"task_id": "ncrit-sqrt-3", "family": "sqrt", "first_error": 3, "n_tokens": 16, "generated": "\n4624 = -1\n831 - 257 = -1\n8", "truth": "68"}
+{"task_id": "ncrit-add3-4", "family": "add3", "first_error": 3, "n_tokens": 16, "generated": "\n5532 + 6459 + 949 + 949 + 949 +", "truth": "21727"}
+{"task_id": "ncrit-mul2-5", "family": "mul2", "first_error": 3, "n_tokens": 16, "generated": "\n669 * 631 = \n669 * 631 = ", "truth": "39471"}
+{"task_id": "ncrit-sub2-6", "family": "sub2", "first_error": 2, "n_tokens": 16, "generated": "\n9 * 17 = 7\n831 - 749 = 6\n9", "truth": "5919"}
+{"task_id": "ncrit-sqrt-7", "family": "sqrt", "first_error": 3, "n_tokens": 16, "generated": "\n6889 = -6889\n831 - 257 = -5\n", "truth": "83"}
+{"task_id": "ncrit-add3-8", "family": "add3", "first_error": 2, "n_tokens": 16, "generated": "\n16 * 17 = 7\n831 - 731 = 731\n", "truth": "14287"}
+{"task_id": "ncrit-mul2-9", "family": "mul2", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 7 = 7\n831 - 7 = 7\n8", "truth": "1027"}
+{"task_id": "ncrit-sub2-10", "family": "sub2", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 2580 = 7\n831 - 2580 = 7", "truth": "6039"}
+{"task_id": "ncrit-sqrt-11", "family": "sqrt", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 257 = -1\n831 - 257 = -1", "truth": "18"}
+{"task_id": "ncrit-add3-12", "family": "add3", "first_error": 2, "n_tokens": 16, "generated": "\n13 * 17 = 7\n831 - 731 = 731\n", "truth": "8794"}
+{"task_id": "ncrit-mul2-13", "family": "mul2", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 7 = 7\n54 * 5 = \n54 *", "truth": "2544"}
+{"task_id": "ncrit-sub2-14", "family": "sub2", "first_error": 2, "n_tokens": 16, "generated": "\n13 * 17 = -1\n831 - 1 = -1\n", "truth": "21"}
+{"task_id": "ncrit-sqrt-15", "family": "sqrt", "first_error": 3, "n_tokens": 16, "generated": "\n( 0 ) : the square root of 484 is \n( 0 )", "truth": "22"}
+{"task_id": "ncrit-add3-16", "family": "add3", "first_error": 3, "n_tokens": 16, "generated": "\n731 + 731 + 731 + 731 + 731 +", "truth": "195"}
+{"task_id": "ncrit-mul2-17", "family": "mul2", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 7 = 7\n66 * 7 = 7\n\n8", "truth": "5135"}
+{"task_id": "ncrit-sub2-18", "family": "sub2", "first_error": 3, "n_tokens": 16, "generated": "\n931 - 731 = 731\n\nA:\n\nI", "truth": "483"}
+{"task_id": "ncrit-sqrt-19", "family": "sqrt", "first_error": 3, "n_tokens": 16, "generated": "\n6724 = -6724\n831 - 257 = -5\n", "truth": "82"}
+{"task_id": "ncrit-add3-20", "family": "add3", "first_error": 2, "n_tokens": 16, "generated": "\n13 * 17 = 7\n831 - 731 = 731\n", "truth": "21134"}
+{"task_id": "ncrit-mul2-21", "family": "mul2", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 7 = 7\n\nA:\n\nYou can use", "truth": "6120"}
+{"task_id": "ncrit-sub2-22", "family": "sub2", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 799 = 799\n831 - 799 =", "truth": "4376"}
+{"task_id": "ncrit-sqrt-23", "family": "sqrt", "first_error": 3, "n_tokens": 16, "generated": "\n831 - 731 = -731\n831 - 731", "truth": "23"}

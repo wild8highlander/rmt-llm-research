@@ -206,6 +206,7 @@ nav:
       - 2. Training TinyGPT: tutorials/02-training-tinygpt.md
       - 3. Generation & Sampling: tutorials/03-generation-and-sampling.md
       - 4. Multilingual Labs: tutorials/04-multilingual-labs.md
+      - 5. Research Stages 2-5 on Real Models: tutorials/05-research-stages.md
   - API Reference:
       - api/index.md
       - RMT package (src/rmt_llm): api/rmt-llm.md

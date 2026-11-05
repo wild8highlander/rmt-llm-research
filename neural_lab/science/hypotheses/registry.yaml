@@ -137,3 +137,74 @@ hypotheses:
       (tokens / examples / dimension / layer). Until then, any agreement of
       thresholds counts as a coincidence of metrics, not a confirmation of
       the theory.
+
+# =============================================================================
+# S-series — research stages 2–5 on REAL HF models (neural_lab/stages/).
+# Numbering mirrors the stage plan; H1–H4 above stay with the TinyGPT core.
+# Protocols: neural_lab/stages/EXPERIMENT_PROTOCOLS.md (version 1.0, frozen).
+# =============================================================================
+
+  - id: S2
+    title: >
+      RMT spectral features of hidden states detect hallucinations on
+      public benchmarks beyond token entropy, semantic entropy and linear
+      probes (AUROC race).
+    target: AUROC per detector; primary quantity Delta-AUROC(spectral, baseline)
+      with item-clustered bootstrap CI
+    benchmarks: TruthfulQA (generation), HaluEval QA, SelfCheckGPT wiki_bio
+    baselines: tok_* (5 entropy/NLL baselines), sem_ent (Farquhar et al. 2024),
+      probe_hidden (Azaria & Mitchell / Marks & Tegmark protocol, OOF)
+    protocol: neural_lab/stages/EXPERIMENT_PROTOCOLS.md (S2)
+    experiment: neural_lab/stages/stage2_detector/run_stage2.py
+    success_criterion: >
+      Delta-AUROC CI excluding 0 on >= 2 benchmarks AND stable under
+      leave-one-benchmark-out. If spectral features do NOT beat the probes,
+      the negative result is published as it is (pre-registered).
+    status: registered
+
+  - id: S3
+    title: >
+      The first-error time follows T_crit = c * mu_eff^(-1/beta)
+      (Weibull survival, censoring included); beta is consistent across
+      models and the cross-model scaling slope is ~ -1/beta (~ -2 for
+      beta = 0.5).
+    target: tau, gamma (per model); scaling slope s in log tau ~ log mu_eff;
+      changepoint of the binned error-rate curve
+    protocol: neural_lab/stages/EXPERIMENT_PROTOCOLS.md (S3)
+    experiment: neural_lab/stages/stage3_ncrit/run_stage3.py
+    falsification: >
+      slope CI excluding 2 without a consistent beta, OR no changepoint and
+      gamma ~ 1 (constant-rate null) -> not supported; the fitted values are
+      reported as they are.
+    status: registered
+
+  - id: S4
+    title: >
+      The BBP spike layer coincides with a mechanism: the logit-lens commit
+      layer, the activation-patching restoration profile, specific SAE
+      features, and the heavy-tail alpha of the weight matrices.
+    target: Pearson r (permutation p) of (lens commitment, gap profile) and
+      (patching restoration, gap profile); SAE feature audit of the spike
+      window; MM alpha bands per layer
+    protocol: neural_lab/stages/EXPERIMENT_PROTOCOLS.md (S4)
+    experiment: neural_lab/stages/stage4_interpretability/run_stage4.py
+    falsification: >
+      alignment r CI covering 0 on the real model, or no SAE feature
+      separating spike vs control at p < 0.05 -> the spike is a metric
+      without (yet) a mechanism interpretation; report as is.
+    status: registered
+
+  - id: S5
+    title: >
+      Instruction tuning (SFT/RLHF/DPO) of the same model family shifts the
+      spectral statistics and reduces N_crit (the utility trap).
+    target: Delta(tau), Delta(gap_ratio), Delta(ncrit_free) paired across
+      base/tuned on identical items; mu_eff proxy = token-mean KL
+    protocol: neural_lab/stages/EXPERIMENT_PROTOCOLS.md (S5)
+    experiment: neural_lab/stages/stage5_rlhf/run_stage5.py
+    success_criterion: >
+      Delta-tau CI excluding 0 in the predicted direction AND a significant
+      spectral shift, replicated on >= 2 families. Either direction of a
+      significant shift is a result; non-significance is reported as
+      "not resolved".
+    status: registered

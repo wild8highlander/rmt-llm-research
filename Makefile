@@ -101,12 +101,15 @@ typecheck:  ## Run mypy type checker
 	$(MYPY) src/ --ignore-missing-imports
 
 # ─── Testing ────────────────────────────────────────────────────────────────
-.PHONY: test test-fast test-slow test-tiny-gpt test-julia test-rust test-go test-cpp test-all test-coverage test-hypothesis test-bench
+.PHONY: test test-fast test-stages test-slow test-tiny-gpt test-julia test-rust test-go test-cpp test-all test-coverage test-hypothesis test-bench
 test:  ## Run all Python tests (src/rmt_llm/ + laboratory/python/lab_en/)
 	$(PYTEST) src/ laboratory/python/lab_en/tests/ -v
 
 test-fast:  ## Run only fast tests (skip slow ones)
 	$(PYTEST) src/ laboratory/python/lab_en/tests/ -v -m "not slow"
+
+test-stages:  ## Run neural_lab stages 2-5 tests (offline, tiny random models)
+	$(PYTEST) neural_lab/stages/tests/ -v
 
 test-slow:  ## Run only slow tests
 	$(PYTEST) src/ laboratory/python/lab_en/tests/ -v -m "slow"
