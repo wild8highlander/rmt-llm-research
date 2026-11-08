@@ -1,0 +1,1 @@
+https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B

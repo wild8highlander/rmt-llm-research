@@ -1,0 +1,52 @@
+HOW TO UNPACK THE KIT (rmt-pocket-interventions)
+=================================================
+
+The archive is SPLIT into several parts, each under 100 MB:
+
+    rmt-pocket-interventions.z01
+    rmt-pocket-interventions.z02
+    ...
+    rmt-pocket-interventions.zip      <- final volume (keep it next to the others)
+
+1. DOWNLOAD ALL PARTS into ONE folder (every part is required, none can be skipped).
+
+2. JOIN THE PARTS into a single normal ZIP:
+
+   Linux / macOS (with the `zip` tool installed):
+       zip -s 0 rmt-pocket-interventions.zip --out kit_full.zip
+
+   Windows: simply open `rmt-pocket-interventions.zip` with 7-Zip or WinRAR
+   and extract — both handle split volumes automatically.
+
+3. EXTRACT kit_full.zip. You get the project folder:
+
+       rmt-pocket-interventions/
+
+4. REASSEMBLE THE MODEL WEIGHTS (one command, ~10 seconds, verifies SHA-256):
+
+       cd rmt-pocket-interventions
+       python tools/reassemble_model.py
+
+   It joins model/model.safetensors.part-00 ... part-07 into
+   model/model.safetensors (~690 MB) and validates the checksum. After this
+   the project is fully offline-ready.
+
+5. INSTALL DEPENDENCIES AND RUN:
+
+       pip install -r requirements.txt
+       python benchmark_rmt.py                    # before/after benchmark (resume support)
+       python plot_benchmark.py results           # summary chart
+       python spectral_probe/pocket_rmt_probe.py  # stage-1/2 spectral probe
+
+6. PUSH TO YOUR GITHUB REPOSITORY (optional — the repo is ~0.7 GB, every file
+   is under the GitHub 100 MB limit, no LFS needed):
+
+       bash tools/push_to_github.sh https://github.com/<your-user>/<your-repo>.git
+
+   The remote repo must exist and be empty (create it without a README).
+   See README.md ("Pushing to your own GitHub repository") for the manual steps.
+
+Verified on 2026-11-08: the joined archive passes integrity checks, the model
+reassembly matches the recorded SHA-256
+(24e182cebe433e9354dc35567d66c655888e7577ca7f6f71cea196a5b7da6276), and the
+scripts run from the extracted copy as-is.
