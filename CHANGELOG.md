@@ -16,6 +16,17 @@ versions match `pyproject.toml`. Early history lives in the git log.
   with diagnostics on failure, and labels them `ci:cli` / `ci:links`.
 - Root community files: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`,
   `CHANGELOG.md`.
+- Animated README banner `assets/charts/bbp_transition_live.gif` — the
+  BBP phase transition rendered by the package itself
+  (`mp_sample`, `mp_density`, `bbp_lambda_max`); reproducible via
+  `python scripts/gen_banner_gif.py`.
+- `AUDIT.md` — reference repository audit: code inventory by language,
+  CLI entry points, dependency manifests, documentation map, link health,
+  hygiene findings.
+- `CODE.md` — code deep-read companion: three full module samples
+  (Marchenko-Pastur, BBP transition, Tracy-Widom) with mathematical basis,
+  verified usage outputs and the test/artifact chain; concise cards for
+  the remaining core modules.
 
 ### Fixed
 - 41 broken relative links across `README.md`, `assets/`, `docs/` and

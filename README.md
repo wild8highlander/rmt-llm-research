@@ -36,6 +36,20 @@
 
 > **Spectral analysis of LLM activations through the lens of Random Matrix Theory** — detecting hallucinations, cognitive mode transitions, and the mathematical inevitability of autoregressive collapse.
 
+<p align="center">
+  <img src="assets/charts/bbp_transition_live.gif" width="720" alt="Live BBP phase transition: a spiked eigenvalue detaches from the Marchenko-Pastur bulk as the signal strength theta crosses the critical value theta_c = sqrt(q)">
+</p>
+
+*The banner is not a decoration — it is the package running. The bulk is
+sampled by [`src/rmt_llm/marchenko_pastur.py`](src/rmt_llm/marchenko_pastur.py)
+(`mp_sample`), the outlier follows `bbp_lambda_max` from
+[`bbp_transition.py`](src/rmt_llm/bbp_transition.py), and the whole animation
+is reproducible with one command:*
+
+```bash
+python scripts/gen_banner_gif.py
+```
+
 ---
 
 ### 🏗️ Engineering infrastructure
