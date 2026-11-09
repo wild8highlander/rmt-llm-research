@@ -69,8 +69,8 @@ Files in each folder:
 | `README.md` | this navigation page: essence, key numbers, companions |
 
 The 600-dpi cover plates live in
-[`assets/branding/covers/`](../assets/branding/README.md); the figure atlas in
-[`assets/charts/`](../assets/charts/README.md).
+[`assets/branding/covers/`](../../assets/branding/README.md); the figure atlas in
+[`assets/charts/`](../../assets/charts/README.md).
 
 ---
 
@@ -86,7 +86,7 @@ The 600-dpi cover plates live in
 - **Measured registries** — verbatim numbers with provenance
   (`laboratory/results/reports/`, `scaling_report.json`, `scenarios.json`) so
   future runs can be diffed against the printed values.
-- **Figure atlas** — the 600-dpi plates of [`assets/charts/`](../assets/charts/README.md)
+- **Figure atlas** — the 600-dpi plates of [`assets/charts/`](../../assets/charts/README.md)
   embedded with tailored captions per monograph.
 
 ---
@@ -132,7 +132,7 @@ Exit codes of all stands: `0` — accepted, `1` — failure.
 }
 ```
 
-The repository-level citation lives in [`../CITATION.cff`](../CITATION.cff)
+The repository-level citation lives in [`../../CITATION.cff`](../../CITATION.cff)
 (Zenodo DOI `10.5281/zenodo.21825389`) and the main
 [`../README.md`](../README.md).
 
@@ -140,8 +140,8 @@ The repository-level citation lives in [`../CITATION.cff`](../CITATION.cff)
 
 ## ⚖️ License
 
-See [`../LICENSE`](../LICENSE) and the authorship notes in
-[`../AUTHORS.md`](../AUTHORS.md). The monographs are the theoretical backbone
+See [`../../LICENSE`](../../LICENSE) and the authorship notes in
+[`../../AUTHORS.md`](../../AUTHORS.md). The monographs are the theoretical backbone
 of the repository — cite them through the DOI above.
 
 ---

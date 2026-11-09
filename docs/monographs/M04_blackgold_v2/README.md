@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <img src="../../assets/branding/covers/cover_M04_EN.png" width="200" alt="M04 EN cover">
+  <img src="../../../assets/branding/covers/cover_M04_EN.png" width="200" alt="M04 EN cover">
   &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/branding/covers/cover_M04_RU.png" width="200" alt="M04 RU cover">
+  <img src="../../../assets/branding/covers/cover_M04_RU.png" width="200" alt="M04 RU cover">
 </p>
 
 **The extended edition.** v2 adds the comprehensive layer × metric heatmap and
@@ -42,7 +42,7 @@ repository map.
 |---|---|
 | `RMT_LLM_BlackGold_Preprint_v2.docx` | the study + repository supplement (English) |
 | `RMT_LLM_BlackGold_Preprint_v2_RU.docx` | the same edition in Russian |
-| `cover plates` | [`assets/branding/covers/cover_M04_EN.png`](../../assets/branding/covers/) · `_RU.png` |
+| `cover plates` | [`assets/branding/covers/cover_M04_EN.png`](../../../assets/branding/covers/) · `_RU.png` |
 
 **Companions.** The theory base is [M01](../M01_spectral_analysis/) · the pilot
 [M02](../M02_arxiv_preprint/) · the campaign [M03](../M03_blackgold_v1/) /

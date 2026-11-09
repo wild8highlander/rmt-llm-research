@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <img src="../../assets/branding/covers/cover_M06_EN.png" width="200" alt="M06 EN cover">
+  <img src="../../../assets/branding/covers/cover_M06_EN.png" width="200" alt="M06 EN cover">
   &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/branding/covers/cover_M06_RU.png" width="200" alt="M06 RU cover">
+  <img src="../../../assets/branding/covers/cover_M06_RU.png" width="200" alt="M06 RU cover">
 </p>
 
 **The closing theory.** Ten independent paths to `N_crit` — phase, operator,
@@ -33,7 +33,7 @@ the others.
 
 **Framework constants.** `γ₁ = 14.134725` (first zeta zero), `β = 0.5`
 (Caputo memory), `θ_B = 7.07°` — all centralised in
-[`src/rmt_llm/constants.py`](../../src/rmt_llm/constants.py), with the full
+[`src/rmt_llm/constants.py`](../../../src/rmt_llm/constants.py), with the full
 20-zero census reproduced in the supplement.
 
 **Repository supplement (Appendices A–G).** The mechanism → module map for all
@@ -49,7 +49,7 @@ checklist.
 |---|---|
 | `Complex_Analytical_Model_Inevitable_Hallucinations.docx` | the study + repository supplement (English) |
 | `Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx` | the same edition in Russian |
-| `cover plates` | [`assets/branding/covers/cover_M06_EN.png`](../../assets/branding/covers/) · `_RU.png` |
+| `cover plates` | [`assets/branding/covers/cover_M06_EN.png`](../../../assets/branding/covers/) · `_RU.png` |
 
 **Companions.** The theory base is [M01](../M01_spectral_analysis/) · the pilot
 [M02](../M02_arxiv_preprint/) · the campaign [M03](../M03_blackgold_v1/) /

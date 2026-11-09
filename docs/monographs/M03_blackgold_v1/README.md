@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <img src="../../assets/branding/covers/cover_M03_EN.png" width="200" alt="M03 EN cover">
+  <img src="../../../assets/branding/covers/cover_M03_EN.png" width="200" alt="M03 EN cover">
   &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/branding/covers/cover_M03_RU.png" width="200" alt="M03 RU cover">
+  <img src="../../../assets/branding/covers/cover_M03_RU.png" width="200" alt="M03 RU cover">
 </p>
 
 **Version 1 of the full preprint.** Beyond the pilot's ground truth, v1 runs
@@ -43,7 +43,7 @@ spike, heatmap, dashboard), the verification registry and the repository map.
 |---|---|
 | `RMT_LLM_BlackGold_Preprint_v1.docx` | the study + repository supplement (English) |
 | `RMT_LLM_BlackGold_Preprint_v1_RU.docx` | the same edition in Russian |
-| `cover plates` | [`assets/branding/covers/cover_M03_EN.png`](../../assets/branding/covers/) · `_RU.png` |
+| `cover plates` | [`assets/branding/covers/cover_M03_EN.png`](../../../assets/branding/covers/) · `_RU.png` |
 
 **Companions.** The theory base is [M01](../M01_spectral_analysis/) · the pilot
 [M02](../M02_arxiv_preprint/) · the campaign [M03](../M03_blackgold_v1/) /

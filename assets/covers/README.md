@@ -11,7 +11,7 @@
 </p>
 
 Rendered cover images for the six monographs in
-[`monographs/`](../../monographs/README.md), one cover per language
+[`monographs/`](../../docs/monographs/README.md), one cover per language
 edition (EN / RU). These are the deliverable-grade files: they are
 embedded in the monograph READMEs, used as document previews, and
 referenced by the branding set. If you are looking for the *generator*
@@ -48,6 +48,6 @@ cover_M<NN>_<LANG>.png      NN = 01..06 monograph number, LANG = EN | RU
 <p align="center">
   <img src="../logos/covers.avatar.svg" width="56" alt="covers animated avatar"><br>
   <sub>
-    <a href="../README.md">← assets</a> · <a href="../../README.md">🏠 repository root</a> · <a href="../../monographs/README.md">📚 monographs →</a>
+    <a href="../README.md">← assets</a> · <a href="../../README.md">🏠 repository root</a> · <a href="../../docs/monographs/README.md">📚 monographs →</a>
   </sub>
 </p>

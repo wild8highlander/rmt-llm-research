@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <img src="../../assets/branding/covers/cover_M01_EN.png" width="200" alt="M01 EN cover">
+  <img src="../../../assets/branding/covers/cover_M01_EN.png" width="200" alt="M01 EN cover">
   &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/branding/covers/cover_M01_RU.png" width="200" alt="M01 RU cover">
+  <img src="../../../assets/branding/covers/cover_M01_RU.png" width="200" alt="M01 RU cover">
 </p>
 
 **The foundational monograph of the project.** Eight chapters carry the reader
@@ -45,7 +45,7 @@ repository map.
 |---|---|
 | `RMT_LLM_Spectral_Analysis.docx` | the study + repository supplement (English) |
 | `RMT_LLM_Spectral_Analysis_RU.docx` | the same edition in Russian |
-| `cover plates` | [`assets/branding/covers/cover_M01_EN.png`](../../assets/branding/covers/) · `_RU.png` |
+| `cover plates` | [`assets/branding/covers/cover_M01_EN.png`](../../../assets/branding/covers/) · `_RU.png` |
 
 **Companions.** The theory base is [M01](../M01_spectral_analysis/) · the pilot
 [M02](../M02_arxiv_preprint/) · the campaign [M03](../M03_blackgold_v1/) /

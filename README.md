@@ -10,7 +10,7 @@
 [![CodeQL](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/codeql.yml)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](./.pre-commit-config.yaml)
 [![Documents](https://img.shields.io/badge/Documents-12-green.svg)](./docs/)
-[![Papers](https://img.shields.io/badge/Papers-1-blue.svg)](./papers/)
+[![Papers](https://img.shields.io/badge/Papers-1-blue.svg)](./docs/papers/)
 [![Languages](https://img.shields.io/badge/Languages-EN%20%2F%20RU-yellow.svg)](./laboratory/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.21825389-blue)](https://doi.org/10.5281/zenodo.21825389)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0003--7299--0701-a6ce39)](https://orcid.org/0009-0003-7299-0701)
@@ -80,8 +80,8 @@ README wears the same icon-and-divider frame.
   <a href="assets/charts/README.md"><img src="assets/charts/bbp_transition.png" width="46%" alt="BBP phase transition chart"></a>
 </p>
 
-Regenerate everything with `python scripts/render_branding.py` and
-`python scripts/gen_charts.py` — or read the
+Regenerate everything with `python laboratory/scripts/render_branding.py` and
+`python laboratory/scripts/gen_charts.py` — or read the
 [branding guide](assets/branding/README.md).
 
 ---
@@ -94,7 +94,11 @@ git clone https://github.com/wild8highlander/rmt-llm-research.git
 cd rmt-llm-research
 pip install -e ".[dev]"
 
-# 2. Run tests
+# 2. Run the CLI self-check gate
+rmt-llm-verify info                    # package + module list
+rmt-llm-verify verify                  # 5 module self-checks, exit code gate
+
+# 3. Run tests
 pytest -v                              # 240+ tests, ~12 sec
 
 # 3. Train TinyGPT (optional, ~17 min on CPU)
@@ -180,21 +184,21 @@ RLHF optimization creates an artificial drift in the Fokker-Planck equation, for
 graph TD
     A[rmt-llm-research] --> B[docs/]
     A --> C[src/rmt_llm/]
-    A --> D[julia/RMTLLMVerify/]
+    A --> D[laboratory/julia/julia/RMTLLMVerify/]
     A --> E[notebooks/]
-    A --> F[papers/]
+    A --> F[docs/papers/]
     A --> G[.github/workflows/]
-    A --> P[python/rmt_llm_viz/]
-    A --> J[julia/RMTLLMViz/]
-    A --> K[java/rmt-llm-viz/]
+    A --> P[laboratory/python/python/rmt_llm_viz/]
+    A --> J[laboratory/julia/julia/RMTLLMViz/]
+    A --> K[laboratory/java/java/rmt-llm-viz/]
     A --> N[neural_lab/]
 
     N --> N1[web app — Next.js playground]
     N --> N2[research/tinygpt_formula/ — TinyGPT v3 training + scaling]
     N --> N3[science/ — predictive core: H1 protocol, runs, registry]
 
-    B --> B1[en/ — 6 English DOCX]
-    B --> B2[ru/ — 6 Russian DOCX]
+    B --> B1[monographs/ — M01–M06 descriptions]
+    B --> B2[monographs/en/ + ru/ — RU mirrors]
     B --> B3[site/ — GitHub Pages + Demo]
 
     C --> C1[marchenko_pastur.py]
@@ -254,6 +258,14 @@ The `src/rmt_llm/` Python package and `laboratory/julia/julia/RMTLLMVerify/` Jul
 pip install -e ".[test]"
 pytest -v                           # 70+ tests
 pytest --cov=rmt_llm --cov-report=term-missing   # with coverage
+
+# or drive the core through the CLI (no test stack needed):
+rmt-llm-verify mp --q 0.1             # MP support + density peak
+rmt-llm-verify bbp --theta 2.0        # outlier position, supercritical?
+rmt-llm-verify tw --s -1.5 0.5        # Tracy-Widom CDF + moments
+rmt-llm-verify nhse --n-ratio 0.5 --gamma 3.0
+rmt-llm-verify spacing --n 256 --beta 2
+rmt-llm-verify verify                 # self-check of every module
 ```
 
 **Julia tests:**
@@ -328,23 +340,23 @@ cd laboratory/java/java/rmt-llm-viz
 
 | File | Description |
 |------|-------------|
-| [`monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis.docx`](./monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis.docx) | Full monograph — RMT spectral analysis of LLM activations (8 chapters + appendices) |
-| [`monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations.docx`](./monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations.docx) | 10 independent paths to N_crit — NHSE, Caputo, EP-surfaces, Keating-Snaith |
-| [`monographs/M05_llm_analysis_merged/LLM_Analysis_Merged.docx`](./monographs/M05_llm_analysis_merged/LLM_Analysis_Merged.docx) | RLHF utility trap, Landauer principle, thermodynamic irreversibility of lies |
-| [`monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint.docx`](./monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint.docx) | Arxiv preprint — spectral statistics of LLM activation matrices |
-| [`monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1.docx`](./monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1.docx) | BlackGold preprint v1 — RMT approach to cognitive mode detection |
-| [`monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2.docx`](./monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2.docx) | BlackGold preprint v2 — expanded analysis with BBP transition |
+| [`docs/monographs/M01_spectral_analysis/`](docs/monographs/M01_spectral_analysis/) | Full monograph — RMT spectral analysis of LLM activations (8 chapters + appendices) |
+| [`docs/monographs/M06_complex_hallucinations/`](docs/monographs/M06_complex_hallucinations/) | 10 independent paths to N_crit — NHSE, Caputo, EP-surfaces, Keating-Snaith |
+| [`docs/monographs/M05_llm_analysis_merged/`](docs/monographs/M05_llm_analysis_merged/) | RLHF utility trap, Landauer principle, thermodynamic irreversibility of lies |
+| [`docs/monographs/M02_arxiv_preprint/`](docs/monographs/M02_arxiv_preprint/) | Arxiv preprint — spectral statistics of LLM activation matrices |
+| [`docs/monographs/M03_blackgold_v1/`](docs/monographs/M03_blackgold_v1/) | BlackGold preprint v1 — RMT approach to cognitive mode detection |
+| [`docs/monographs/M04_blackgold_v2/`](docs/monographs/M04_blackgold_v2/) | BlackGold preprint v2 — expanded analysis with BBP transition |
 
 ### Russian (Originals + Translations)
 
 | File | Description |
 |------|-------------|
-| [`monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis_RU.docx`](./monographs/M01_spectral_analysis/RMT_LLM_Spectral_Analysis_RU.docx) | Full monograph — RMT and spectral analysis of RNN activations (in Russian) |
-| [`monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx`](./monographs/M06_complex_hallucinations/Complex_Analytical_Model_Inevitable_Hallucinations_RU.docx) | A complex-analytical model of inevitable hallucinations (in Russian) |
-| [`monographs/M05_llm_analysis_merged/LLM_Analysis_Merged_RU.docx`](./monographs/M05_llm_analysis_merged/LLM_Analysis_Merged_RU.docx) | The RLHF trap, the Landauer principle, the thermodynamics of lies (in Russian) |
-| [`monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint_RU.docx`](./monographs/M02_arxiv_preprint/RMT_LLM_Arxiv_Preprint_RU.docx) | arXiv preprint — spectral statistics of RNN activation matrices (in Russian) |
-| [`monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1_RU.docx`](./monographs/M03_blackgold_v1/RMT_LLM_BlackGold_Preprint_v1_RU.docx) | BlackGold preprint v1 — an RMT-based approach to cognitive-regime detection (in Russian) |
-| [`monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2_RU.docx`](./monographs/M04_blackgold_v2/RMT_LLM_BlackGold_Preprint_v2_RU.docx) | BlackGold preprint v2 — extended analysis with the BBP transition (in Russian) |
+| [`docs/monographs/M01_spectral_analysis/`](docs/monographs/M01_spectral_analysis/) | Full monograph — RMT and spectral analysis of RNN activations (in Russian) |
+| [`docs/monographs/M06_complex_hallucinations/`](docs/monographs/M06_complex_hallucinations/) | A complex-analytical model of inevitable hallucinations (in Russian) |
+| [`docs/monographs/M05_llm_analysis_merged/`](docs/monographs/M05_llm_analysis_merged/) | The RLHF trap, the Landauer principle, the thermodynamics of lies (in Russian) |
+| [`docs/monographs/M02_arxiv_preprint/`](docs/monographs/M02_arxiv_preprint/) | arXiv preprint — spectral statistics of RNN activation matrices (in Russian) |
+| [`docs/monographs/M03_blackgold_v1/`](docs/monographs/M03_blackgold_v1/) | BlackGold preprint v1 — an RMT-based approach to cognitive-regime detection (in Russian) |
+| [`docs/monographs/M04_blackgold_v2/`](docs/monographs/M04_blackgold_v2/) | BlackGold preprint v2 — extended analysis with the BBP transition (in Russian) |
 
 ---
 
@@ -352,7 +364,7 @@ cd laboratory/java/java/rmt-llm-viz
 
 | File | Description |
 |------|-------------|
-| [`papers/LLM_Analysis_Merged.pdf`](./papers/LLM_Analysis_Merged.pdf) | Merged analysis paper (PDF) |
+| [`docs/papers/`](docs/papers/) | Merged analysis paper (PDF distributed with releases, not committed to git) |
 
 ---
 
@@ -823,7 +835,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) and look for issues labeled
 
 This work is licensed under the **Proprietary All-Rights-Reserved License**. All rights belong exclusively to Iskhak Hamzatovich Isaev. No distribution, no academic redistribution, no commercial use, no derivative works, no AI training. See [LICENSE](./LICENSE) for full terms.
 
-The previous CC BY-NC-SA 4.0 license is preserved at [LICENSE-CC-BY-NC-SA-4.0-HISTORICAL.txt](./LICENSE-CC-BY-NC-SA-4.0-HISTORICAL.txt) for historical reference only.
+The previous CC BY-NC-SA 4.0 license is preserved at [LICENSE-CC-BY-NC-SA-4.0-HISTORICAL.txt](./LICENSE) for historical reference only.
 
 ---
 

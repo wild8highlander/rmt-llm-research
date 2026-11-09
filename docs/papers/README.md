@@ -22,7 +22,7 @@ The monograph is the theoretical backbone of this repository:
 - the "10 paths to N_crit" argument (Keating–Snaith, Caputo,
   Landauer, …);
 - the Utility Trap and Hallucination Cliff phenomena that the empirical
-  pipelines in [`research/tinygpt_formula/`](../neural_lab/research/tinygpt_formula/README.md)
+  pipelines in [`research/tinygpt_formula/`](../../neural_lab/research/tinygpt_formula/README.md)
   test directly.
 
 The per-monograph Word editions (English and Russian, with repository

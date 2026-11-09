@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <img src="../../assets/branding/covers/cover_M02_EN.png" width="200" alt="M02 EN cover">
+  <img src="../../../assets/branding/covers/cover_M02_EN.png" width="200" alt="M02 EN cover">
   &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/branding/covers/cover_M02_RU.png" width="200" alt="M02 RU cover">
+  <img src="../../../assets/branding/covers/cover_M02_RU.png" width="200" alt="M02 RU cover">
 </p>
 
 **The arXiv-style pilot.** GPT-2 small (117M, `N_HIDDEN=768`, `T_SEQ=32`, 12
@@ -45,7 +45,7 @@ the reproduction path.
 |---|---|
 | `RMT_LLM_Arxiv_Preprint.docx` | the study + repository supplement (English) |
 | `RMT_LLM_Arxiv_Preprint_RU.docx` | the same edition in Russian |
-| `cover plates` | [`assets/branding/covers/cover_M02_EN.png`](../../assets/branding/covers/) · `_RU.png` |
+| `cover plates` | [`assets/branding/covers/cover_M02_EN.png`](../../../assets/branding/covers/) · `_RU.png` |
 
 **Companions.** The theory base is [M01](../M01_spectral_analysis/) · the pilot
 [M02](../M02_arxiv_preprint/) · the campaign [M03](../M03_blackgold_v1/) /

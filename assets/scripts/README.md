@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../assets/logos/root_scripts.banner.svg" width="760" alt="scripts — animated logo: terminal window with blinking cursor">
+  <img src="../logos/github.banner.svg" width="760" alt="scripts — animated logo: terminal window with blinking cursor">
 </p>
 
 # 🛠️ scripts — Repository Utilities
@@ -31,7 +31,7 @@ and a gate that keeps documentation links honest.
 python3 scripts/gen_charts.py
 
 # check documentation links (exit code reflects broken links)
-python3 scripts/validate_md_links.py
+python3 assets/scripts/validate_md_links.py
 ```
 
 `validate_md_links.py` is intentionally strict: it treats a renamed or
@@ -41,19 +41,19 @@ it after any file move; CI performs the equivalent check on push.
 
 ## How it fits
 
-- The charts produced here populate [`assets/charts/`](../assets/charts/README.md)
+- The charts produced here populate [`assets/charts/`](../charts/README.md)
   and are referenced by the documentation set.
-- The link validator complements the [`markdown-lint`](../.github/workflows/markdown-lint.yml)
+- The link validator complements the [`markdown-lint`](../../.github/workflows/markdown-lint.yml)
   workflow: the workflow enforces style, the validator enforces targets.
 - Experiment-side tooling lives elsewhere — see
-  [`neural_lab/science/experiments/`](../neural_lab/science/experiments/README.md)
-  for the H1 runner and [`laboratory/`](../laboratory/README.md) for the
+  [`neural_lab/science/experiments/`](../../neural_lab/science/experiments/README.md)
+  for the H1 runner and [`laboratory/`](../../laboratory/README.md) for the
   per-language labs.
 
 ---
 
 <p align="center">
-  <img src="../assets/logos/root_scripts.avatar.svg" width="56" alt="scripts animated avatar"><br>
+  <img src="../logos/github.avatar.svg" width="56" alt="scripts animated avatar"><br>
   <sub>
     <a href="../README.md">🏠 repository root</a> · <a href="../assets/README.md">🎨 branding</a> · <a href="../neural_lab/README.md">🌐 neural_lab →</a>
   </sub>

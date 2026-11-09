@@ -10,14 +10,15 @@ govern new contributions. Read this before making structural changes.
 
 ```text
 rmt-llm-research/
-├── src/rmt_llm/         # Python verification package (PyPI-installable)
+├── src/rmt_llm/         # Python verification package (PyPI-installable) + CLI
 ├── laboratory/          # Research laboratory — 8 languages × EN+RU
-├── python/rmt_llm_viz/  # Python 3D visualization suite
-├── julia/               # Julia packages: RMTLLMVerify + RMTLLMViz
-├── java/rmt-llm-viz/    # Java JavaFX visualization
-├── docs/                # Monographs (EN + RU), GitHub Pages site
-├── papers/              # PDF preprints
+├── neural_lab/          # MNN-Pocket-0.3B kit, TinyGPT research, science core
+├── formal_proof/        # Formal-model library, executable proofs, monograph
+├── docs/                # Monographs (EN + RU), MkDocs site, papers
 ├── notebooks/           # Jupyter verification notebook
+├── results/             # Top-level run artifacts (charts, reports)
+├── assets/              # Branding, charts, covers, logos
+├── scripts/             # Repo-level maintenance (check_links.py)
 ├── .github/             # CI workflows, issue templates, CODEOWNERS
 ├── pyproject.toml       # Python packaging + tool config (ruff, mypy, pytest)
 ├── Dockerfile           # Reproducible research container
@@ -32,7 +33,8 @@ rmt-llm-research/
 ### Layer 1 — Theoretical Core (`src/rmt_llm/`)
 
 Pure-Python implementations of every mathematical object in the RMT-LLM
-theory. **No I/O, no plotting, no CLI** — just functions and constants.
+theory. **No I/O, no plotting** — just functions and constants; the only
+interface layer is the `rmt-llm-verify` CLI (`cli.py` / `__main__.py`).
 
 ```text
 src/rmt_llm/
@@ -201,7 +203,7 @@ Julia 1.9/1.10.
    in `tiny_gpt_trainer.py`.
 
 6. **Bilingual by construction.** Every lab has `_en` and `_ru` siblings.
-   They are kept in lock-step by `scripts/sync_ru_trainer.py` — do not
+   They are kept in lock-step by `laboratory/scripts/sync_ru_trainer.py` — do not
    hand-edit one without syncing the other.
 
 7. **Tests > docs > comments > types.** When in doubt, write a test. Then
@@ -217,7 +219,7 @@ Julia 1.9/1.10.
 - **Julia packages:** `RMTLLMVerify` and `RMTLLMViz` have separate
   `Project.toml` files; they are not registered in General — install via
   `Pkg.develop(url=...)`.
-- **Java:** Gradle project at `java/rmt-llm-viz/`. Requires JDK 21+.
+- **Java:** Gradle project at `laboratory/java/java/rmt-llm-viz/`. Requires JDK 21+.
 - **Docker:** `Dockerfile` builds a self-contained research image with
   Python, Julia, Java, and Node.js. Published to `ghcr.io` on tag.
 - **Releases:** Tagged commits trigger `.github/workflows/release.yml`,
@@ -232,8 +234,8 @@ Julia 1.9/1.10.
 |--------------------------------------|-----------------------------------------------------|-------------------------------------------------|
 | Add a new RMT formula                | `src/rmt_llm/<module>.py` + `tests/test_<module>.py`| `laboratory/` (it consumes the package)         |
 | Improve TinyGPT training             | `laboratory/python/lab_en/tiny_gpt_trainer.py`      | `src/rmt_llm/` (it's RMT, not training)         |
-| Add a new 3D visualization           | `python/rmt_llm_viz/main.py` + Julia + Java ports   | `src/rmt_llm/` (math goes there, viz calls it)  |
-| Translate docs to RU                 | `docs/ru/` + `laboratory/*/lab_ru/`                 | English sources                                  |
+| Add a new 3D visualization           | `laboratory/python/python/rmt_llm_viz/main.py` + Julia + Java ports   | `src/rmt_llm/` (math goes there, viz calls it)  |
+| Translate docs to RU                 | `docs/monographs/ru/` + `laboratory/*/lab_ru/`                 | English sources                                  |
 | Add a new language port              | `laboratory/<lang>/lab_en/` + `lab_ru/`             | Existing ports (mirror them exactly)            |
 | Fix a CI bug                         | `.github/workflows/*.yml`                            | Source code                                      |
 | Add a new test                       | `src/rmt_llm/tests/` or `laboratory/.../tests/`     | Production code (test-only change)              |
