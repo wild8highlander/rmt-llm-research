@@ -302,16 +302,17 @@ def draw_nl_hero(ax, t: float = 0.0) -> None:
 
     phase = (t * 4.0) % 1.0  # one stage per quarter of the loop
 
-    # left: the app window — five tabs, a live loss curve inside
+    # left: the app window — six tabs (the real TABS of src/app/page.tsx),
+    # a live loss curve inside
     wx, wy, ww, wh = 0.075, 0.22, 0.34, 0.56
     ax.add_patch(plt.Rectangle((wx, wy), ww, wh, fill=False, edgecolor=GRID, lw=2.0, zorder=4))
     ax.plot([wx, wx + ww], [wy + wh - 0.055, wy + wh - 0.055], color=GRID, lw=1.6, zorder=4)
-    tab_cols = [SPIKE, BULK, EDGE, COLLAPSE, GOOD]
+    tab_cols = [SPIKE, BULK, EDGE, COLLAPSE, GOOD, MUTED]
     for i, c in enumerate(tab_cols):
         tab_pulse = 0.85 + 0.35 * max(0.0, np.sin(2 * np.pi * (t * 2 - i * 0.12))) if t else 0.85
         ax.add_patch(
             plt.Circle(
-                (wx + 0.035 + i * 0.058, wy + wh - 0.028),
+                (wx + 0.035 + i * 0.050, wy + wh - 0.028),
                 0.007,
                 facecolor=c,
                 alpha=min(1.0, tab_pulse),

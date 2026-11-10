@@ -7,7 +7,8 @@ Verifies the machine-checkable claims of the README's
   1. every path pinned in ``MANIFEST.json`` exists and matches its sha256;
   2. every visual slot is present in the promised format;
   3. every file respects its size budget (AVIF/WebP 400 KB, GIF 2 MB,
-     WebM 3 MB, MP4 4 MB, ``assets/visuals`` 5 MB total);
+     WebM 3 MB, MP4 4 MB; ``assets/visuals`` ≤ 5 MB, ``assets/anim`` ≤ 12 MB
+     per directory);
   4. every poster promised by ``assets/prompts.yaml`` exists;
   5. every ``<img>``/``<video>`` in a README carries alt text;
   6. (unless ``--skip-cli``) the ``rmt-llm-verify`` self-check exits 0.
@@ -90,6 +91,11 @@ FOLDER_LAYERS = (
 )
 FOLDER_ANIM_GIFS = (
     os.path.join(REPO, "neural_lab", "MNN-Pocket-0.3B", "assets", "anim", "cli-demo.gif"),
+    os.path.join(REPO, "neural_lab", "assets", "anim", "lab-tour-loop.gif"),
+    # animated counterparts of the RCDA figures, drawn from the committed JSONs
+    os.path.join(REPO, "neural_lab", "MNN-Pocket-0.3B", "assets", "anim", "scans-loop.gif"),
+    os.path.join(REPO, "neural_lab", "MNN-Pocket-0.3B", "assets", "anim", "dose-loop.gif"),
+    os.path.join(REPO, "neural_lab", "MNN-Pocket-0.3B", "assets", "anim", "training-loop.gif"),
 )
 
 BUDGET_KB = {
@@ -101,6 +107,7 @@ BUDGET_KB = {
     ".mp4": 4096,
 }
 VISUALS_DIR_BUDGET_MB = 5
+ANIM_DIR_BUDGET_MB = 12
 
 TAG_RE = re.compile(r"<(img|video)\b[^>]*\s[^>]*>", re.IGNORECASE)
 ALT_RE = re.compile(r"\balt\s*=\s*\"[^\"]*\"|\balt\s*=\s*'[^']*'", re.IGNORECASE)
@@ -219,13 +226,25 @@ def check_budgets() -> list[str]:
                 errors.append(
                     f"over budget: {os.path.relpath(path, REPO)} {size_kb:.0f} KB > {limit} KB"
                 )
-    for base in (VISUALS, *(d for d in layer_dirs if d.endswith("visuals"))):
+    for base in (
+        VISUALS,
+        *(d for d in layer_dirs if d.endswith("visuals")),
+    ):
         total_mb = sum(os.path.getsize(os.path.join(base, n)) for n in os.listdir(base)) / (
             1024 * 1024
         )
         if total_mb > VISUALS_DIR_BUDGET_MB:
             errors.append(
                 f"{os.path.relpath(base, REPO)} total {total_mb:.1f} MB > {VISUALS_DIR_BUDGET_MB} MB"
+            )
+    anim_dirs = [ANIM, *(d for d in layer_dirs if d.endswith("anim"))]
+    for base in anim_dirs:
+        total_mb = sum(os.path.getsize(os.path.join(base, n)) for n in os.listdir(base)) / (
+            1024 * 1024
+        )
+        if total_mb > ANIM_DIR_BUDGET_MB:
+            errors.append(
+                f"{os.path.relpath(base, REPO)} total {total_mb:.1f} MB > {ANIM_DIR_BUDGET_MB} MB"
             )
     return errors
 

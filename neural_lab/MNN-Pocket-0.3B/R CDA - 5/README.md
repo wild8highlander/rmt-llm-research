@@ -30,7 +30,9 @@ the surgery — the model found the repository's primitive on its own.
 
 **Start here:** [RCDA-5 report](Research/RCDA/RCDA5_REPORT.md) → then walk
 backwards through the table above; or forward through the gallery in the
-[parent README](../README.md#-the-gallery).
+[parent README](../README.md#-the-gallery). Three of the round stories also
+run as animated GIFs (`scans` / `dose` / `training` loops) built from **this
+folder's** `results/` JSONs — see [`assets/anim/`](../assets/anim/).
 
 > Earlier snapshots (`R CDA - 2/3/4`) are frozen history; when they disagree
 > with this folder, this folder is authoritative.

@@ -69,8 +69,8 @@
       "sha256": "7754df1bb17b0837a2ef21fd964f76cb9b1f0669d6f786492e02df923f9e0db7"
     },
     "assets/prompts.yaml": {
-      "bytes": 17001,
-      "sha256": "e437be586f60bcc6c7e3bc7b66433b8532ffe3932e1167d0ba10925bbaf0fa39"
+      "bytes": 19412,
+      "sha256": "629be53b3adc5b9d4dcd9c13d005264906fd66a51dc2b431d31ef45b13a167ad"
     },
     "assets/visuals/architecture-2x.avif": {
       "bytes": 10013,
@@ -196,6 +196,10 @@
       "bytes": 203677,
       "sha256": "30b19a1a6d9f7454b8e171975f1e41625bebd9411c6cef792b921f68627d4159"
     },
+    "neural_lab/MNN-Pocket-0.3B/assets/anim/dose-loop.gif": {
+      "bytes": 809900,
+      "sha256": "4713fa4652443057e3cee8ec8f6625e692f41cc86da1db210bdf02e53aab541c"
+    },
     "neural_lab/MNN-Pocket-0.3B/assets/anim/hero-loop.gif": {
       "bytes": 1758408,
       "sha256": "ece37d4b4951a5e23b89af49db31ed67667597a2d0a3222f08815b4b84e0a2c4"
@@ -207,6 +211,14 @@
     "neural_lab/MNN-Pocket-0.3B/assets/anim/hero-loop.webm": {
       "bytes": 571319,
       "sha256": "31825d56000c4933e0dd54970c550eb2ab092d9137d0df38b81215d9b288cb31"
+    },
+    "neural_lab/MNN-Pocket-0.3B/assets/anim/scans-loop.gif": {
+      "bytes": 308519,
+      "sha256": "ae17ac6ddfaa85a715c83b15d5688d810efbcd2b620172f3527ae0fce9c0421c"
+    },
+    "neural_lab/MNN-Pocket-0.3B/assets/anim/training-loop.gif": {
+      "bytes": 768687,
+      "sha256": "85cee462a1c7b8c73d9b22744b89bed372ae81800c16bc275a132126fed2e1e6"
     },
     "neural_lab/MNN-Pocket-0.3B/assets/visuals/divider-2x.avif": {
       "bytes": 2041,
@@ -249,16 +261,20 @@
       "sha256": "c4e59166334ed919f4e9971527f73930cea39a86ae6e9d510630ec28ee44e523"
     },
     "neural_lab/assets/anim/hero-loop.gif": {
-      "bytes": 967356,
-      "sha256": "3511e75c9abddc497539fc91a2a8ef34539e83f297c3ba38b35c73b80637add2"
+      "bytes": 974577,
+      "sha256": "d45bac07beb160eac20c7bcb1e705586c5c6a076da42e0188d71941e0dca6439"
     },
     "neural_lab/assets/anim/hero-loop.mp4": {
-      "bytes": 164921,
-      "sha256": "177086b44aa8bec5912b132cacea58ccb42fc59c010f245b43f2dc62ee37677d"
+      "bytes": 165812,
+      "sha256": "6589c6f3b2252a757a1135a512ec10cc13ccc8848548c4c4a893bd8bcca27dcd"
     },
     "neural_lab/assets/anim/hero-loop.webm": {
-      "bytes": 355169,
-      "sha256": "ac8dd105a990c00e567c07610ca6f6710c2b2b8d54840f42300632ff06c48cfc"
+      "bytes": 358037,
+      "sha256": "aebfdd151c86886276ab8abb524cccbea24fd4440b91641112c07140412e071e"
+    },
+    "neural_lab/assets/anim/lab-tour-loop.gif": {
+      "bytes": 485684,
+      "sha256": "bbbd32229285b713e0dd23d02a5b9ad4ecb4586abd689e010da9c3c7bea3f755"
     },
     "neural_lab/assets/visuals/divider-2x.avif": {
       "bytes": 1707,
@@ -273,20 +289,20 @@
       "sha256": "52d95045fa50531af15d191f83b5a35deae599805e326312aa30f2a9c7f0a43d"
     },
     "neural_lab/assets/visuals/hero-2x.avif": {
-      "bytes": 13196,
-      "sha256": "573a01e9c7f7fd4593d6e3bd499ddc3dbb85a432bdefb30be3e3e7967d6027e9"
+      "bytes": 13183,
+      "sha256": "a16fa45298adea719ef7c70aa05ea279b047500ce6fc4faa739ea22a4636d5ee"
     },
     "neural_lab/assets/visuals/hero-2x.png": {
-      "bytes": 1074115,
-      "sha256": "f68b3c0c64c1e6fefd5e347fee1c65abd57da7bbc04c51b6a82f2482cff7ba01"
+      "bytes": 1075730,
+      "sha256": "4104c1c9702fd30114f717ee4679f03afa387320dfa41fc739c762ff090a38a6"
     },
     "neural_lab/assets/visuals/hero-2x.webp": {
-      "bytes": 26046,
-      "sha256": "40d5838052cafd2c62f9b8da5266c7c3c210eb6fc689e633176c073c8766a918"
+      "bytes": 26264,
+      "sha256": "2c33d4e8dd7a1d16be1c9637db2315715f62b260c4f0b0c4ec261ef962b7df44"
     },
     "neural_lab/assets/visuals/neural-lab-hero-poster.avif": {
-      "bytes": 18772,
-      "sha256": "2d3229a4dee3a61f521036d503a6ef204ae67ced63452eb7e74bf757ed80f7e5"
+      "bytes": 18902,
+      "sha256": "b4d40133089465cc714be5cd2a62bb8e297a502e5358fb0b0c39c184e8defcad"
     },
     "results/reports/20260813_112352_3d_exp_12.json": {
       "bytes": 11561,

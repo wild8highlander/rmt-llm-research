@@ -8,7 +8,7 @@
   <picture>
     <source srcset="assets/visuals/hero-2x.avif" type="image/avif">
     <source srcset="assets/visuals/hero-2x.webp" type="image/webp">
-    <img src="assets/visuals/hero-2x.png" width="1000" alt="The living lab: an app window with five glowing tabs and a live loss curve beside the science ring — hypothesis, measurement, prediction, validation — with the prediction node firing an amber BBP spike">
+    <img src="assets/visuals/hero-2x.png" width="1000" alt="The living lab: an app window with six glowing tabs and a live loss curve beside the science ring — hypothesis, measurement, prediction, validation — with the prediction node firing an amber BBP spike">
   </picture>
 </p>
 
@@ -16,12 +16,23 @@
   <img src="assets/anim/hero-loop.gif" width="800" loading="lazy" alt="Animated science ring: the four pipeline stages light up in sequence while the amber prediction spike rises and the app tabs pulse">
 </p>
 <p align="center"><sub><em>
-  Left — the app: five tabs reading real artifacts, a training curve that is
+  Left — the app: six tabs reading real artifacts, a training curve that is
   never hand-entered. Right — the science core: one pre-registered pipeline,
   the prediction node firing a BBP spike, and 52 tests holding it all together
   (the two rows of emerald dots). Regenerate:
   <code>python scripts/gen_folder_visuals.py</code> +
   <code>python scripts/gen_folder_anims.py</code>.
+</em></sub></p>
+
+<p align="center">
+  <img src="assets/anim/lab-tour-loop.gif" width="760" loading="lazy" alt="Guided tour of the six real app tabs: Обзор, Нейросеть, Обучение, Бенчмарк, Открытые вопросы, Модель и сервер — each tab shows a stylized sketch built from measured numbers">
+</p>
+<p align="center"><sub><em>
+  A ten-second map of the app's six tabs (labels are the product's own — the
+  UI is Russian, like the experiment prompts). Every sketch is stylized, the
+  numbers are not: the benchmark bars are the measured ρ_bad of the three
+  arms (0.80 / 0.80 / 0.35), the decaying curve is the real 150-step penalty
+  log. Regenerate: <code>python scripts/gen_folder_anims.py --slot nl-lab-tour</code>.
 </em></sub></p>
 
 <p align="center">
@@ -53,7 +64,7 @@ next to the results.
 
 | What | Count | Where |
 |------|-------|-------|
-| App tabs over real artifacts | **5** | `src/app/` |
+| App tabs over real artifacts | **6** | `src/app/` |
 | API routes (thin artifact wrappers) | **4** | `src/app/api/` |
 | Science-core tests (offline, NumPy-only) | **52** | [`science/tests/`](science/tests/) |
 | Pre-registered runs with passports | **2** (+1 queued) | [`science/results/`](science/results/) |

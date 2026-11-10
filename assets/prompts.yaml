@@ -313,12 +313,12 @@ folders:
         size: [3200, 1800]
         provider: procedural
         alt: >-
-          The living lab: an app window with five glowing tabs and a live loss
+          The living lab: an app window with six glowing tabs and a live loss
           curve beside the science ring — hypothesis, measurement, prediction,
           validation — with the prediction node firing an amber BBP spike
         prompt: >-
           Futuristic scientific visualization on near-black (#05060A): a dark
-          app-window outline whose five tab dots glow cyan/amber/violet and a
+          app-window outline whose six tab dots glow cyan/amber/violet and a
           luminous cyan training-loss curve decays inside it; to the right a
           violet orbital science ring with four glowing stage nodes, the top
           node firing an amber eigenvalue spike upward, a thin row of 52
@@ -346,8 +346,24 @@ folders:
           Seamless 5s loop: four stage nodes of a violet orbital ring ignite
           one after another (hypothesis, measurement, prediction, validation),
           the prediction node fires an amber spike that melts back into a cyan
-          bulk, the five app-tab dots pulse in sync, loss curve gently
+          bulk, the six app-tab dots pulse in sync, loss curve gently
           redraws; no camera movement, perfect loop, no text
+      lab-tour:
+        seed: 20261110
+        size: [1280, 800]
+        fps: 6
+        kind: ui-tour-gif
+        alt: >-
+          Guided tour of the app's six real tabs (Обзор, Нейросеть, Обучение,
+          Бенчмарк, Открытые вопросы, Модель и сервер): each tab shows a
+          stylized sketch built from measured numbers — the live loss view,
+          the playground typing, the 150-step penalty decay, the three
+          benchmark arms (ρ_bad 0.80/0.80/0.35), the Q1–Q4 tracker and the
+          checksummed weights
+        motion_prompt: >-
+          UI tour, no camera movement: the tab bar lights one tab at a time
+          with its label, the panel sketch animates (curve draws, text types,
+          bars grow), then the tour moves on and loops
 
   mnn-pocket:
     static:
@@ -414,3 +430,41 @@ folders:
           Terminal session, seamless loop: run the before/after benchmark and
           the 150-step training, real measured numbers light up line by line,
           brief hold, loop
+      scans:
+        seed: 20261110
+        size: [940, 470]
+        fps: 12
+        kind: data-gif
+        alt: >-
+          Animated fig6: the eight matrix-scan bars grow one after another,
+          the two supercritical ones flash crimson, the λ_v = λ_+ edge slides in
+        motion_prompt: >-
+          Data sweep from rcda_probe_report.json: staggered bar growth with
+          completion flashes, then the Marchenko–Pastur edge line fades in
+          and the frame holds; perfect loop
+      dose:
+        seed: 20261110
+        size: [940, 470]
+        fps: 12
+        kind: data-gif
+        alt: >-
+          Animated fig8: the KL(base||edited) line draws left to right while
+          the dose bars (changed bad = crimson, good = amber) rise and the
+          RepRate-4 trace follows, clean baseline dotted line fades in
+        motion_prompt: >-
+          Data draw from rcda2_dose.json: progressive line growth with
+          popping dose bars, legend appears early, frame holds at the end;
+          perfect loop
+      training:
+        seed: 20261110
+        size: [980, 500]
+        fps: 12
+        kind: data-gif
+        alt: >-
+          Animated fig15(b): the real 150-step SGD sweep — pen_norm (violet)
+          and the MSE anchor (cyan) draw over the steps while the bench
+          ρ_mini markers pop at 0.80 → 0.50 → 0.45
+        motion_prompt: >-
+          Data sweep from training_log.json: both loss terms draw step by
+          step, the anchor cap fades in, the three benchmark points pop with
+          their values and the frame holds; perfect loop
