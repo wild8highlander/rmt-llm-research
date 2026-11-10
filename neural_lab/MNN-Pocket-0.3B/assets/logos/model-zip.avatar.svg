@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="model-zip avatar">
+  <defs>
+    <radialGradient id="avmodelzipbg" cx="30%" cy="28%" r="120%">
+      <stop offset="0%" stop-color="#0B1220"/>
+      <stop offset="60%" stop-color="#070A12"/>
+      <stop offset="100%" stop-color="#05060A"/>
+    </radialGradient>
+    <filter id="avmodelzipglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="26" fill="url(#avmodelzipbg)"/>
+  <g transform="translate(-56,-56) scale(0.62)"><rect x="140" y="150" width="128" height="20" rx="5" fill="#38E1C0" opacity="0.75"/><rect x="140" y="124" width="128" height="20" rx="5" fill="#38E1C0" opacity="0.55"/><rect x="140" y="98" width="128" height="20" rx="5" fill="#38E1C0" opacity="0.35"/><rect x="140" y="72" width="128" height="20" rx="5" fill="#FFB020" filter="url(#avmodelzipglow)"><animate attributeName="opacity" values="1;0.45;1" dur="5s" repeatCount="indefinite"/></rect></g>
+  <rect x="1.5" y="1.5" width="125" height="125" rx="24" fill="none" stroke="#1A2130" stroke-width="2"/>
+</svg>

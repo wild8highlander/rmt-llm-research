@@ -1,77 +1,76 @@
-# RCDA-2 — поведенческий контраст, дозозависимость и спектральные предвестники зацикливания
+# RCDA-2 — behavioral contrast, dose-response and spectral precursors of looping
 
-**Модель:** taobao-mnn/MNN-Pocket-0.3B (Qwen3ForCausalLM, 28 слоёв, d=896, 14 голов,
-tied embeddings). **Дата:** 2026-11-08. **Инструментарий:** `neural_lab/MNN-Pocket-0.3B/Code`
-(RCDA-расширение), все правки весов проходят RMT-допуск и TW-контроль.
+**Model:** taobao-mnn/MNN-Pocket-0.3B (Qwen3ForCausalLM, 28 layers, d=896, 14 heads,
+tied embeddings). **Date:** 2026-11-08. **Toolkit:** `neural_lab/MNN-Pocket-0.3B/Code`
+(RCDA extension); every weight edit passes the RMT tolerance and TW control.
 
-Раунд 1 (RCDA по целевому плану) дал хирургически чистую, но поведенчески
-инертную правку: 0 из 20 жадных траекторий изменились. Раунд 2 — мой
-собственный протокол с четырьмя новыми инструментами; каждый отвечал на один
-вопрос и дал число.
+Round 1 (RCDA per the target plan) produced a surgically clean but behaviorally
+inert edit: 0 of 20 greedy trajectories changed. Round 2 is my own protocol with
+four new instruments; each answered one question and produced a number.
 
 ---
 
-## 1. Поведенческий контраст вместо стилевого (главный результат)
+## 1. Behavioral contrast instead of style contrast (the main result)
 
-**Гипотеза раунда 1 о конфаундере:** Δh, посчитанный как разность средних
-«плохие промпты − хорошие промпты», смешивает дефект со стилем (длинный
-chain-of-thought против короткого фактического ответа).
+**Round 1's confounder hypothesis:** Δh computed as the mean difference
+"bad prompts − good prompts" mixes the defect with style (long chain-of-thought
+versus short factual answers).
 
-**Метод:** метки ставит сама модель. Токен помечается «в петле», если его
-токен-уровневая 4-грамма уже встречалась ранее в той же генерации; пул
-LOOP — токены петельного режима, пул CLEAN — токены генераций без единого
-коллапса, обе группы из одних и тех же 40 промптов (bad и good), окно позиций
-≥ 8. Δh_behavioral = μ_loop − μ_clean по каждому слою; RMT-паспорт как в
-раунде 1 (Hotelling z_diff, β против √(λ₁/N)).
+**Method:** the labels are set by the model itself. A token is marked "in the loop"
+if its token-level 4-gram already occurred earlier in the same generation; the LOOP
+pool is the tokens of the looping regime, the CLEAN pool is the tokens of generations
+with not a single collapse — both groups drawn from the same 40 prompts (bad and
+good), positions ≥ 8. Δh_behavioral = μ_loop − μ_clean per layer; the RMT passport
+is as in round 1 (Hotelling z_diff, β against √(λ₁/N)).
 
-**Результат:** 30 из 40 генераций зацикливаются, медиана начала коллапса —
-токен 7; в пулы попало 798 петельных токенов. Топ по z_diff — **слои
-L15–L18** (z_diff ≈ 1.1–1.4·10⁵), а не L8–L12 из раунда 1. Решающий тест —
-косинус между направлениями:
+**Result:** 30 of 40 generations loop, the median collapse onset is token 7;
+798 loop tokens entered the pools. The z_diff top is **layers L15–L18**
+(z_diff ≈ 1.1–1.4·10⁵), not L8–L12 from round 1. The decisive test is the cosine
+between the directions:
 
-| слой | |cos|(Δh_style, Δh_behavioral) |
+| layer | |cos|(Δh_style, Δh_behavioral) |
 |---|---|
 | L15 | 0.011 |
 | L16 | 0.038 |
 | L17 | 0.065 |
 | L18 | 0.088 |
 
-Направления **практически ортогональны**. Конфаундер подтверждён
-количественно: раунд 1 вычитал «стиль ответа», а не «механику петли», — этим
-объясняются и 0/20 изменённых траекторий, и безвредность (PPL не тронута).
+The directions are **practically orthogonal**. The confounder is confirmed
+quantitatively: round 1 subtracted "answer style", not "loop mechanics" — this
+explains both the 0/20 changed trajectories and the harmlessness (PPL untouched).
 
-## 2. Матричные сканы поведенческого направления: пишет ли петлю o_proj?
+## 2. Matrix scans of the behavioral direction: does o_proj write the loop?
 
-Для топ-4 слоёв просканированы down_proj и o_proj (допуск плана: λ_v > λ₊⁽ᵂ⁾,
-θ_v > θ_c = √q):
+For the top-4 layers, down_proj and o_proj were scanned (plan tolerance:
+λ_v > λ₊⁽ᵂ⁾, θ_v > θ_c = √q):
 
-| матрица | λ_v/λ₊ | θ_v | θ_c | δ | α₀ (κ=0.5) | колонок auto_chi2 | вердикт |
+| matrix | λ_v/λ₊ | θ_v | θ_c | δ | α₀ (κ=0.5) | auto_chi2 columns | verdict |
 |---|---|---|---|---|---|---|---|
-| L15 o_proj | 1.28 | 2.03 | 1.00 | 0.51 | 0.52 | 63 | суперкритична |
-| L16 o_proj | 1.34 | 2.09 | 1.00 | 0.52 | 0.55 | 65 | суперкритична |
-| L17 o_proj | 0.77 | 1.44 | 1.00 | 0.31 | 0.22 | 25 | субкритична |
-| L18 o_proj | 1.41 | 2.15 | 1.00 | 0.54 | 0.58 | 84 | суперкритична |
-| L15–L18 down_proj | 0.46–0.54 | 0.24–0.36 | 0.59 | 0 | 0 | 2–9 | отказ по допуску |
+| L15 o_proj | 1.28 | 2.03 | 1.00 | 0.51 | 0.52 | 63 | supercritical |
+| L16 o_proj | 1.34 | 2.09 | 1.00 | 0.52 | 0.55 | 65 | supercritical |
+| L17 o_proj | 0.77 | 1.44 | 1.00 | 0.31 | 0.22 | 25 | subcritical |
+| L18 o_proj | 1.41 | 2.15 | 1.00 | 0.54 | 0.58 | 84 | supercritical |
+| L15–L18 down_proj | 0.46–0.54 | 0.24–0.36 | 0.59 | 0 | 0 | 2–9 | refused by tolerance |
 
-Вывод: петлю в residual stream пишут **o_proj** слоёв L15/L16/L18; down_proj
-RMT-допуск не проходят (α₀ = 0 — по дисциплине плана не трогаются).
+Conclusion: the loop in the residual stream is written by the **o_proj** matrices of
+L15/L16/L18; down_proj fails the RMT tolerance (α₀ = 0 — untouched by plan discipline).
 
-## 3. Атрибуция направления через tied embeddings
+## 3. Direction attribution via tied embeddings
 
-Δlogits ∝ E·Δh (tied embeddings). Направление петли **качает
-мета-токены-продолжатели**: «etc», «total», «until», «indices», «loops»,
-«cyclic», скобки и служебные символы; контентные токены подавляются.
-Интерпретация: дефект — «аттрактор перечисления/продолжения списка», а не
-тематический параметр.
+Δlogits ∝ E·Δh (tied embeddings). The loop direction **pumps the
+meta-tokens-of-continuation**: "etc", "total", "until", "indices", "loops",
+"cyclic", brackets and service symbols; content tokens are suppressed.
+Interpretation: the defect is an "enumeration/continuation attractor",
+not a topical parameter.
 
-## 4. Дозозависимость α: почему одной матрицы мало
+## 4. Dose-response of α: why one matrix is not enough
 
-Калибровочная сетка α ∈ {0.1, 0.25, 0.5, 0.75, 1.0} на правке трёх
-суперкритичных o_proj (in-memory, колонки auto_chi2), метрики: KL(base‖edited)
-на teacher-forced продолжениях, число изменённых жадных траекторий, rep4 на
-калибровочных 8 bad:
+Calibration grid α ∈ {0.1, 0.25, 0.5, 0.75, 1.0} on the edit of the three
+supercritical o_proj matrices (in-memory, auto_chi2 columns), metrics: KL(base‖edited)
+on teacher-forced continuations, the number of changed greedy trajectories, rep4 on
+the calibration 8 bad:
 
-| α | KL | изменено bad | rep4_bad |
+| α | KL | changed bad | rep4_bad |
 |---|---|---|---|
 | 0.10 | 0.0000 | 0/8 | 0.562 |
 | 0.25 | 0.0000 | 1/8 | 0.570 |
@@ -79,97 +78,98 @@ RMT-допуск не проходят (α₀ = 0 — по дисциплине 
 | 0.75 | 0.0003 | 2/8 | 0.570 |
 | 1.00 | 0.0006 | 2/8 | 0.570 |
 
-Даже полное (α = 1) вычитание направления из трёх o_proj сдвигает лишь 2 из 8
-калибровочных траекторий и не снижает rep4. KL растёт линейно и остаётся
-микроскопическим: **дефект распределён по многим писателям** — это сценарий
-§9 плана («дефект не локализован в одном направлении»), а не сбой метода.
+Even a full (α = 1) subtraction of the direction from the three o_proj matrices moves
+only 2 of 8 calibration trajectories and does not reduce rep4. KL grows linearly and
+stays microscopic: **the defect is distributed across many writers** — this is the
+scenario of plan §9 ("the defect is not localized in one direction"), not a method
+failure.
 
-## 5. Итерация 2: финальная правка с TW-backoff и бенчмарк
+## 5. Iteration 2: the final edit with TW backoff and the benchmark
 
-Финальная правка: α* = 1.0 (выбор по дозозависимости — максимум воздействия),
-с TW-откатом по матрице (§7.2 плана: L18 при α=1 нарушал TW-контроль, откат до
-0.5). Итого 189 952 веса (≈ 0.062% параметров):
+Final edit: α* = 1.0 (chosen by dose-response — maximum impact), with a per-matrix
+TW backoff (plan §7.2: L18 at α=1 violated TW control, rolled back to 0.5). In total
+189,952 weights (≈ 0.062% of parameters):
 
-| матрица | α | колонок | весов | TW-контроль |
+| matrix | α | columns | weights | TW control |
 |---|---|---|---|---|
-| L15 o_proj | 1.0 | 63 | 56 448 | pass |
-| L16 o_proj | 1.0 | 65 | 58 240 | pass |
-| L18 o_proj | 0.5 | 84 | 75 264 | pass (после отката) |
+| L15 o_proj | 1.0 | 63 | 56,448 | pass |
+| L16 o_proj | 1.0 | 65 | 58,240 | pass |
+| L18 o_proj | 0.5 | 84 | 75,264 | pass (after rollback) |
 
-Бенчмарк до/после (20 bad + 20 good, max_new = 96, greedy):
+Before/after benchmark (20 bad + 20 good, max_new = 96, greedy):
 
-| величина | baseline | edited v2 |
+| quantity | baseline | edited v2 |
 |---|---|---|
-| ρ (доля дефекта на P_bad) | 70% (14/20) | **65% (13/20)** |
-| ложные срабатывания на P_good | 55% (11/20) | 60% (12/20) |
-| изменённых траекторий | — | **5 bad / 3 good** |
+| ρ (defect share on P_bad) | 70% (14/20) | **65% (13/20)** |
+| false positives on P_good | 55% (11/20) | 60% (12/20) |
+| changed trajectories | — | **5 bad / 3 good** |
 | Wilcoxon p (rep4 / distinct4 / collapse) | — | 0.465 / 0.465 / **0.109** |
-| PPL на контрольных текстах | 3793.6 | 3662.4 (−3.5%) |
+| PPL on control texts | 3793.6 | 3662.4 (−3.5%) |
 
-Поведенческий сдвиг реален (5/20 траекторий изменились против 0/20 в раунде 1;
-Wilcoxon по времени коллапса p = 0.109 — положительный тренд без значимости на
-n = 20), способности не деградировали (PPL улучшилась). Но полного излечения
-нет — согласованный вывод §4 и §5: однонаправленная абляция недостаточна.
+The behavioral shift is real (5/20 trajectories changed versus 0/20 in round 1;
+Wilcoxon on collapse time p = 0.109 — a positive trend without significance at
+n = 20), abilities did not degrade (PPL improved). But there is no full cure — the
+consistent conclusion of §4 and §5: unidirectional ablation is insufficient.
 
-## 6. Спектральные предвестники: participation ratio предсказывает коллапс
+## 6. Spectral precursors: participation ratio predicts the collapse
 
-Скользящее окно 16 токенов, participation ratio PR = (Σs²)²/Σs⁴ по SVD окна
-(меньше PR — эффективнее ранг):
+A sliding window of 16 tokens, participation ratio PR = (Σs²)²/Σs⁴ over the SVD of
+the window (lower PR — a more efficient rank):
 
-| слой | PR за 16–24 токенов до коллапса | PR в петле | падение |
+| layer | PR 16–24 tokens before collapse | PR in the loop | drop |
 |---|---|---|---|
-| L15 | 2.85 → 2.58 | 1.69 | −9% до коллапса, −41% в петле |
+| L15 | 2.85 → 2.58 | 1.69 | −9% before collapse, −41% in the loop |
 | L16 | 2.37 → 2.16 | 1.53 | −9% / −35% |
 | L17 | 2.26 → 2.07 | 1.50 | −8% / −34% |
 
-PR начинает падать **до** текстового коллапса (−8…−9% на окнах −16…−4) и
-обваливается на треть в петле. Это готовый онлайн-детектор: правило вида
-«PR(L15) упал на 5% от скользящей нормы → включить runtime-хук clip из
-`rmt_intervention.py`» связывает статические правки с штатным механизмом
-репозитория без единой правки весов.
+PR starts falling **before** the textual collapse (−8…−9% on windows −16…−4) and
+collapses by a third inside the loop. This is a ready online detector: a rule of the
+form "PR(L15) dropped 5% below its sliding norm → arm the runtime clip hook from
+`rmt_intervention.py`" connects static edits with the repository's built-in mechanism
+without touching a single weight.
 
-## 7. Локализация до голов внимания
+## 7. Localization down to attention heads
 
-Колонки o_proj — это выходные размерности голов (14 голов × 64):
-L15 → голова **7** (18 колонок, обогащение ×4.0), L16 → голова **8** (×3.4),
-L18 → голова **0** (×2.7). Следующий раунд: пер-головная абляция
-(вычитание v только из 64-колоночного блока выбранной головы) — ещё более
-хирургическая правка с предсказуемо меньшим TW-следом.
+o_proj columns are the output dimensions of heads (14 heads × 64):
+L15 → head **7** (18 columns, enrichment ×4.0), L16 → head **8** (×3.4),
+L18 → head **0** (×2.7). Next round: per-head ablation (subtracting v only from the
+64-column block of the selected head) — an even more surgical edit with a
+predictably smaller TW footprint.
 
-## 8. Запасной путь §9 реализован
+## 8. The §9 fallback path is implemented
 
-В `Code/rmt_intervention.py` добавлен режим bulk-шриниджа
+`Code/rmt_intervention.py` gained a bulk-shrinkage mode
 (`rcda_shrink`, `apply_pack_with_shrink`): W = UΣVᵀ, μ_i = σ_i²/n,
-μ_i ← min(μ_i, λ₊ + τ·TW-scale) для i ≥ r, топ-r компонент не трогается.
-Синтетический тест на шипованной матрице: топ-10 сингулярных чисел
-бит-в-бит, bulk зажат к MP-краю, TW-контроль pass. Это проверяемая гипотеза
-«дефект — не направление, а перегретый шумовой bulk» для следующего раунда.
+μ_i ← min(μ_i, λ₊ + τ·TW-scale) for i ≥ r, the top-r components untouched.
+A synthetic test on a spiked matrix: top-10 singular values bit-for-bit, the bulk
+clamped to the MP edge, TW control pass. This is the testable hypothesis "the defect
+is not a direction but an overheated noise bulk" for the next round.
 
-## 9. Выводы
+## 9. Conclusions
 
-1. Раунд 1 правил стиль, а не дефект: |cos| ≈ 0.01–0.09 между стилевым и
-   поведенческим направлениями. Контраст нужно строить по меткам поведения
-   модели, а не по типам промптов.
-2. Поведенческое направление петли RMT-подтверждено в o_proj L15/L16/L18;
-   down_proj отвергнут допуском.
-3. Дозозависимость показывает распределённость дефекта: α = 1 на трёх
-   матрицах меняет ~25% траекторий (KL ~10⁻⁴). Полное излечение требует
-   пер-головной абляции, итерационной петли с перепробой Δh или §9-шриниджа.
-4. TW-контроль делает даже α = 1 безопасным по способностям (PPL −3.5%).
-5. PR-предвестник (−9% до коллапса) — мост к runtime-детекции штатными
-   хуками репозитория.
+1. Round 1 edited style, not the defect: |cos| ≈ 0.01–0.09 between the style and
+   behavioral directions. The contrast must be built from the model's behavioral
+   labels, not from prompt types.
+2. The behavioral loop direction is RMT-confirmed in o_proj L15/L16/L18;
+   down_proj is rejected by the tolerance.
+3. The dose-response shows the defect is distributed: α = 1 on three matrices
+   changes ~25% of trajectories (KL ~10⁻⁴). A full cure requires per-head ablation,
+   an iterative loop with Δh re-estimation, or §9 shrinkage.
+4. TW control makes even α = 1 safe for abilities (PPL −3.5%).
+5. The PR precursor (−9% before collapse) is the bridge to runtime detection with
+   the repository's built-in hooks.
 
-## Воспроизведение
+## Reproduction
 
 ```bash
-python Research/RCDA/tools/rcda2_stage1_probe.py     # контраст + пробы + предвестники
-python Research/RCDA/tools/rcda2_stage2_dose.py      # дозозависимость + финальная правка
+python Research/RCDA/tools/rcda2_stage1_probe.py     # contrast + probes + precursors
+python Research/RCDA/tools/rcda2_stage2_dose.py      # dose-response + final edit
 python Code/benchmark_rmt.py --baseline_dir model --edited_dir edited_model_v2 \
     --bad_set prompts/bad.jsonl --good_set prompts/good.jsonl \
     --control_set prompts/control.jsonl --out_dir bench_v2 --max_new 96
-python Research/RCDA/tools/rcda2_stage3_figures.py   # fig7-fig10 + дайджест
-python Research/RCDA/tools/test_rcda_math.py         # 25 синтетических проверок
+python Research/RCDA/tools/rcda2_stage3_figures.py   # fig7-fig10 + digest
+python Research/RCDA/tools/test_rcda_math.py         # 25 synthetic checks
 ```
 
-Все артефакты: `Research/RCDA/results/` (JSON), `Research/RCDA/figures/`
+All artifacts: `Research/RCDA/results/` (JSON), `Research/RCDA/figures/`
 (fig7–fig10), `Research/RCDA/vectors/` (Δh_behavioral L15–L18).

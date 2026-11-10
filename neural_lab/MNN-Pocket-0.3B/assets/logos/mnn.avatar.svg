@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="mnn avatar">
+  <defs>
+    <radialGradient id="avmnnbg" cx="30%" cy="28%" r="120%">
+      <stop offset="0%" stop-color="#0B1220"/>
+      <stop offset="60%" stop-color="#070A12"/>
+      <stop offset="100%" stop-color="#05060A"/>
+    </radialGradient>
+    <filter id="avmnnglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="26" fill="url(#avmnnbg)"/>
+  <g transform="translate(-56,-56) scale(0.62)"><path d="M120,170 C160,170 175,86 215,86 C255,86 262,170 300,170" fill="none" stroke="#00D4FF" stroke-width="4" opacity="0.85" filter="url(#avmnnglow)"/><rect x="330" y="70" width="10" height="104" rx="4" fill="#FFB020" filter="url(#avmnnglow)"><animate attributeName="height" values="104;58;104" dur="6s" repeatCount="indefinite"/><animate attributeName="y" values="70;116;70" dur="6s" repeatCount="indefinite"/></rect></g>
+  <rect x="1.5" y="1.5" width="125" height="125" rx="24" fill="none" stroke="#1A2130" stroke-width="2"/>
+</svg>

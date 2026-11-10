@@ -41,6 +41,10 @@ PINNED_GLOBS = [
     "assets/prompts.yaml",
     "assets/visuals/*",
     "assets/anim/*",
+    "neural_lab/assets/visuals/*",
+    "neural_lab/assets/anim/*",
+    "neural_lab/MNN-Pocket-0.3B/assets/visuals/*",
+    "neural_lab/MNN-Pocket-0.3B/assets/anim/*",
     "results/reports/*.json",
     "CITATION.cff",
 ]
@@ -64,6 +68,28 @@ POSTERS = (
     "thread-2-poster",
     "thread-3-poster",
     "dataflow-poster",
+)
+
+# Folder-level visual layers (see the `folders:` section of prompts.yaml).
+# Each entry: (visuals dir, anim dir, static slots, anim slots, posters).
+FOLDER_LAYERS = (
+    (
+        os.path.join(REPO, "neural_lab", "assets", "visuals"),
+        os.path.join(REPO, "neural_lab", "assets", "anim"),
+        ("hero", "divider"),
+        ("hero",),
+        ("neural-lab-hero-poster",),
+    ),
+    (
+        os.path.join(REPO, "neural_lab", "MNN-Pocket-0.3B", "assets", "visuals"),
+        os.path.join(REPO, "neural_lab", "MNN-Pocket-0.3B", "assets", "anim"),
+        ("hero", "divider", "og-image"),
+        ("hero",),
+        ("mnn-hero-poster",),
+    ),
+)
+FOLDER_ANIM_GIFS = (
+    os.path.join(REPO, "neural_lab", "MNN-Pocket-0.3B", "assets", "anim", "cli-demo.gif"),
 )
 
 BUDGET_KB = {
@@ -127,6 +153,31 @@ def check_manifest() -> list[str]:
     return errors
 
 
+def _check_folder_layers() -> list[str]:
+    errors = []
+    for vis_dir, anim_dir, static_slots, anims, posters in FOLDER_LAYERS:
+        for slot in static_slots:
+            exts = ("png",) if slot == "og-image" else ("avif", "webp", "png")
+            for ext in exts:
+                name = f"{slot}-2x.{ext}" if slot != "og-image" else f"{slot}.{ext}"
+                p = os.path.join(vis_dir, name)
+                if not os.path.exists(p):
+                    errors.append(f"missing folder static: {os.path.relpath(p, REPO)}")
+        for slot in anims:
+            for ext in ("webm", "mp4", "gif"):
+                p = os.path.join(anim_dir, f"{slot}-loop.{ext}")
+                if not os.path.exists(p):
+                    errors.append(f"missing folder anim: {os.path.relpath(p, REPO)}")
+        for poster in posters:
+            p = os.path.join(vis_dir, f"{poster}.avif")
+            if not os.path.exists(p):
+                errors.append(f"missing folder poster: {os.path.relpath(p, REPO)}")
+    for gif in FOLDER_ANIM_GIFS:
+        if not os.path.exists(gif):
+            errors.append(f"missing folder anim: {os.path.relpath(gif, REPO)}")
+    return errors
+
+
 def check_slots() -> list[str]:
     errors = []
     for slot, exts in STATIC_SLOTS.items():
@@ -147,12 +198,18 @@ def check_slots() -> list[str]:
             errors.append(f"missing poster: {os.path.relpath(p, REPO)}")
     if not os.path.exists(os.path.join(ANIM, "cli-demo.gif")):
         errors.append("missing anim slot: assets/anim/cli-demo.gif")
+    errors += _check_folder_layers()
     return errors
 
 
 def check_budgets() -> list[str]:
     errors = []
-    for base in (VISUALS, ANIM):
+    layer_dirs: list[str] = []
+    for vis_dir, anim_dir, _st, _an, _po in FOLDER_LAYERS:
+        layer_dirs += [vis_dir, anim_dir]
+    for base in (VISUALS, ANIM, *layer_dirs):
+        if not os.path.isdir(base):
+            continue
         for name in os.listdir(base):
             path = os.path.join(base, name)
             size_kb = os.path.getsize(path) / 1024
@@ -162,11 +219,14 @@ def check_budgets() -> list[str]:
                 errors.append(
                     f"over budget: {os.path.relpath(path, REPO)} {size_kb:.0f} KB > {limit} KB"
                 )
-    total_mb = sum(os.path.getsize(os.path.join(VISUALS, n)) for n in os.listdir(VISUALS)) / (
-        1024 * 1024
-    )
-    if total_mb > VISUALS_DIR_BUDGET_MB:
-        errors.append(f"assets/visuals total {total_mb:.1f} MB > {VISUALS_DIR_BUDGET_MB} MB")
+    for base in (VISUALS, *(d for d in layer_dirs if d.endswith("visuals"))):
+        total_mb = sum(os.path.getsize(os.path.join(base, n)) for n in os.listdir(base)) / (
+            1024 * 1024
+        )
+        if total_mb > VISUALS_DIR_BUDGET_MB:
+            errors.append(
+                f"{os.path.relpath(base, REPO)} total {total_mb:.1f} MB > {VISUALS_DIR_BUDGET_MB} MB"
+            )
     return errors
 
 

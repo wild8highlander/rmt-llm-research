@@ -1,146 +1,144 @@
-# RCDA-4: Weight-Space Programming по мотивам MIT CSAIL — план эксперимента
+# RCDA-4: Weight-Space Programming after MIT CSAIL — experiment plan
 
-Составлен: 9 ноября 2026. Статус: план; выполнение — следующий запуск.
-Все ссылки и цифры в разделе 1 проверены по первоисточнику (открыт целиком), разделы
-2–5 привязаны к нашему действующему стенду RCDA (раунды 1–3, MNN-Pocket-0.3B, CPU).
+Written: November 9, 2026. Status: plan; execution — the next run.
+Every link and figure in section 1 was verified against the primary source (read in
+full); sections 2–5 are tied to our existing RCDA bench (rounds 1–3,
+MNN-Pocket-0.3B, CPU).
 
 ---
 
-## 1. Что опубликовали (проверено по первоисточнику)
+## 1. What was published (verified against the primary source)
 
-**«Sparks of Weight-Space Programming: LLMs can natively read & write neural
-network weights»** — Рикия Такехи, Джейден Тео, Алекс Чжан, Омар Хаттаб (MIT CSAIL),
-2 ноября 2026:
+**"Sparks of Weight-Space Programming: LLMs can natively read & write neural
+network weights"** — Rikiya Takehi, Jayden Teo, Alex Zhang, Omar Khattab (MIT CSAIL),
+November 2, 2026:
 
-- первоисточник: https://rikiyat.github.io/blog/weight-space-programming
-- полные логи всех сессий агента: https://github.com/RikiyaT/lm_understand-logs
-- правленная модель на HF: https://huggingface.co/RikiyaT/Qwen3.5-0.8B-weight-space-programming
-- база: https://huggingface.co/Qwen/Qwen3.5-0.8B (ungated, один safetensors)
-- пересказ на Хабре: https://habr.com/ru/post/1103198/
+- primary source: https://rikiyat.github.io/blog/weight-space-programming
+- full logs of all agent sessions: https://github.com/RikiyaT/lm_understand-logs
+- the edited model on HF: https://huggingface.co/RikiyaT/Qwen3.5-0.8B-weight-space-programming
+- the base: https://huggingface.co/Qwen/Qwen3.5-0.8B (ungated, one safetensors)
+- a retelling on Habr: https://habr.com/ru/post/1103198/
 
-Суть: фронтирная LLM (GPT-6 Astra) в 8 экспериментах читает чужие веса как текст
-или через Python-kernel и пишет их без градиентов и обучения. Ключевой для нас
-**эксперимент 8** — «сделай Qwen3.5-0.8B лучше в математике, правя веса»:
+The gist: a frontier LLM (GPT-6 Astra) in 8 experiments reads foreign weights as text
+or through a Python kernel and writes them without gradients or training. The key one
+for us is **experiment 8** — "make Qwen3.5-0.8B better at math by editing weights":
 
-- агенту дали Python-kernel над весами, train-промпты GSM8K/MATH и бюджет
-  **10 / 25 / 50 forward-проходов** (проход = ответы до 512 задач или чтение до
-  1024 текстов); обучение и градиенты запрещены;
-- диагноз: маленькие reasoning-модели **зацикливаются** (85 из 96 первых ответов
-  упирались в лимит 32 768 токенов); Astra проследила петлю до **одного
-  направления, которое пишут MLP слоёв 15 и 19**, и **вычла его из 64 выходных
-  столбцов в каждом** — ровно 131 072 веса = 0.016% модели;
-- результат (50 проходов): MATH-500 7.9→48.1, GSM8K 13.8→67.1, IFEval 21.0→62.3,
-  доля ответов, упёршихся в лимит: 93%→33.1%. При 10–25 проходах петли
-  « barely went away» — бюджет верификации критичен;
-- отрицательный результат: Gemma 3 270M не зацикливается — править нечего,
-  точечные правки двигали MATH-500 меньше чем на 1 пункт. Вывод авторов: правка
-  весов может **убрать препятствие перед существующей способностью, но не
-  добавить новую**;
-- в эксперименте 3 Astra нашла по одним лишь весам (без запуска сети) все
-  induction-головы в трёх 7.2M-моделях — метод Elhage et al., который ей не
-  называли;
-- оговорки Хабра: значительная часть прироста — «модели наконец дали договорить»;
-  независимого воспроизведения **пока нет**; двойное применение (та же техника
-  умеет встраивать закладки — работа Карлини, arxiv 2610.37741).
+- the agent got a Python kernel over the weights, GSM8K/MATH train prompts and a
+  budget of **10 / 25 / 50 forward passes** (a pass = answering up to 512 problems or
+  reading up to 1024 texts); training and gradients are forbidden;
+- diagnosis: small reasoning models **loop** (85 of 96 first answers hit the
+  32,768-token limit); Astra traced the loop to **one direction written by the MLP of
+  layers 15 and 19** and **subtracted it from 64 output columns in each** — exactly
+  131,072 weights = 0.016% of the model;
+- result (50 passes): MATH-500 7.9→48.1, GSM8K 13.8→67.1, IFEval 21.0→62.3; the share
+  of answers hitting the limit: 93%→33.1%. At 10–25 passes the loops "barely went
+  away" — the verification budget is critical;
+- a negative result: Gemma 3 270M does not loop — nothing to edit; targeted edits
+  moved MATH-500 by less than 1 point. The authors' conclusion: a weight edit can
+  **remove an obstacle in front of an existing ability, but not add a new one**;
+- in experiment 3 Astra found, from the weights alone (without running the network),
+  all induction heads in three 7.2M models — the Elhage et al. method, which she was
+  not told about;
+- Habr's caveats: a large share of the gain is "the model was finally allowed to
+  finish"; an independent reproduction **does not exist yet**; dual use (the same
+  technique can implant backdoors — the Carlini work, arxiv 2610.37741).
 
-## 2. Почему это прямой аналог нашего RCDA
+## 2. Why this is a direct analog of our RCDA
 
-Мы уже делали то же самое вручную и другими инструментами:
+We already did the same thing manually and with other instruments:
 
-| MIT / Astra | Наш RCDA (раунды 1–3) |
+| MIT / Astra | Our RCDA (rounds 1–3) |
 | --- | --- |
-| «одно направление в активациях, написанное MLP» | PR-вектор v из SVD-спектра Петрова–Ринга (доля PM-энергии 0.9995) |
-| вычесть направление из 64 столбцов W_out двух слоёв | обнулить/масштабировать TW-проходящие колонки W_o (190 000 весов ≈ 0.027%) |
-| слои 15 и 19 из 24 (глубина ~0.63) | слои 15, 16, 18 из 24 (та же зона ~2/3 глубины) |
-| диагноз по forward-проходам, бюджет 10–50 | диагноз по PR-монитору + спектральные пороги θ |
-| верификация: бенчмарки MATH-500/GSM8K | наш бенчмарк: ρ (defect rate), отход в петле, distinct-4, KL, PPL |
-| induction-головы из весов (exp 3) | концентрация голов L15→h7 (×3.11), L16→h8 (×2.22), плацебо-контроль (раунд 3) |
+| "one direction in activations, written by MLP" | the PR vector v from the Petrov–Ring SVD spectrum (PM-energy share 0.9995) |
+| subtract the direction from 64 columns of W_out of two layers | zero/scale the TW-passing columns of W_o (190,000 weights ≈ 0.027%) |
+| layers 15 and 19 of 24 (depth ~0.63) | layers 15, 16, 18 of 24 (the same ~2/3-depth zone) |
+| diagnosis via forward passes, budget 10–50 | diagnosis via the PR monitor + spectral thresholds θ |
+| verification: MATH-500/GSM8K benchmarks | our benchmark: ρ (defect rate), in-loop waste, distinct-4, KL, PPL |
+| induction heads from weights (exp 3) | head concentration L15→h7 (×3.11), L16→h8 (×2.22), placebo control (round 3) |
 
-Что у нас есть, чего нет у MIT: **спектральный TW-гейт** (их правку никто не
-проверял на спектральную целостность — в раунде 3 обнуление целой головы давало
-violation, а селективные колонки проходили), **плацебо-контроль**, персистентные
-политики (C' = 0.10 без правки весов), готовый воспроизводимый стенд с
-pre-registered правилами.
+What we have that MIT does not: **the spectral TW gate** (nobody checked their edit
+for spectral integrity — in round 3 zeroing a whole head produced a violation while
+selective columns passed), **placebo control**, persistent policies (C' = 0.10
+without touching weights), and a ready reproducible bench with pre-registered rules.
 
-Наш главный вопрос раунда 4: **может ли LLM-программист заменить человека в
-контуре RCDA** — и как проверить чужую правку спектрально.
+Our main round-4 question: **can an LLM programmer replace the human in the RCDA
+loop** — and how to verify someone else's edit spectrally.
 
-## 3. Три части эксперимента
+## 3. The three experiment parts
 
-### Часть A — независимая верификация правки MIT (дёшево, ~1–1.5 ч)
+### Part A — independent verification of the MIT edit (cheap, ~1–1.5 h)
 
-Первое независимое воспроизведение (Habr: «пока нет») — на их же опубликованных
-весах, но на нашем узком бенчмарке зацикливания. Релевантно: по их же таблице
-главный механизм правки — уход от петель (лимитные обрывы 93→33%).
+The first independent reproduction (Habr: "does not exist yet") — on their own
+published weights, but on our narrow looping benchmark. Relevance: by their own
+table, the edit's main mechanism is escaping loops (limit truncations 93→33%).
 
-- Скачать обе модели (~1.6 ГБ каждая, ungated). Железо: 3 ГБ RAM — грузить строго
-  по одной, bf16, `del model + gc` между руками; 2 ядра CPU.
-- Промпты: наш стандартный набор (12 bad + 6 good), плюс 6 fresh GSM8K-train
-  промптов на английском (их фикс мерился на математике; тестовые наборы не
-  трогаем). Sampling по карточке: temperature 0.6, top-p 0.95, thinking on,
-  max_new_tokens 256.
-- Метрики: ρ (доля зациклившихся), средний отход в петле, доля оборванных на
-  лимит, distinct-4, на good — ρ_good и «изменённость» текста.
-- **Gate A (pre-registered):** ρ_edited ≤ 0.5·ρ_base и обрывы ↓ — подтверждение;
-  иначе честный негатив (фикс специфичен для их промптов/языка, или не переносится
-  на узкий бенчмарк) — тоже результат.
+- Download both models (~1.6 GB each, ungated). Hardware: 3 GB RAM — load strictly
+  one at a time, bf16, `del model + gc` between arms; 2 CPU cores.
+- Prompts: our standard set (12 bad + 6 good), plus 6 fresh GSM8K-train prompts in
+  English (their fix was measured on math; test sets are untouched). Sampling per the
+  card: temperature 0.6, top-p 0.95, thinking on, max_new_tokens 256.
+- Metrics: ρ (share of looping), mean in-loop waste, share truncated at the limit,
+  distinct-4; on good — ρ_good and text "changedness".
+- **Gate A (pre-registered):** ρ_edited ≤ 0.5·ρ_base and truncations ↓ — confirmation;
+  otherwise an honest negative (the fix is specific to their prompts/language, or does
+  not transfer to the narrow benchmark) — also a result.
 
-### Часть B — сам трюк у нас: GLM-программист над нашим стендом (~2–3 ч)
+### Part B — the trick itself on our bench: a GLM programmer (~2–3 h)
 
-Роль Astra играет **GLM через z-ai SDK** (Node, multi-turn; мы исполняем его
-код-команды в нашей песочнице) над MNN-Pocket-0.3B с дефектом зацикливания.
-Полный аналог их harness: Python-kernel над state_dict + бюджет «проходов».
+Astra's role is played by **GLM via the z-ai SDK** (Node, multi-turn; we execute its
+code commands in our sandbox) over MNN-Pocket-0.3B with the looping defect. A full
+analog of their harness: a Python kernel over the state_dict + a "pass" budget.
 
-- Harness (новый `rcda4_wsp.py` + агентный цикл): агенту доступны
-  `list_tensors()`, `stats(name)`, `slice(name, rows, cols)` и право присылать
-  python-код, который мы исполняем над загруженным state_dict (чтение/анализ и
-  правка весов). Отдельный инструмент `benchmark()` = мини-прогон 8 bad-промптов
-  (это его «forward passes»): **бюджет 10 вызовов** + 20 код-команд, результат
-  каждого вызова ≤ 3 КБ в контекст.
-- Две руки (ablation, которого у MIT нет):
-  - **blind** — только общие описания тензоров, никаких наших спектральных
-    диагностик (PR-вектор, профили голов, пороги θ не показываются);
-  - **aided** — те же инструменты + наши диагностики как равноправные данные.
-- **Gates B (pre-registered):** успех = ρ на мини-бенчмарке ≤ 0.35, финальная
-  правка проходит TW-гейт, KL на 5 контрольных ≤ 0.15. Гипотезы:
-  - H4a: aided повторит или превзойдёт ручную RCDA-2 (ρ 0.65 + TW pass);
-  - H4b: blind не справится или правка будет спектрально грязной (violation) —
-    значит, ценность именно в диагностике, а не в «агент вообще»;
-- Финал успешной руки: полная правка → полный бенчмарк (20 bad + 20 good) +
-  KL/PPL + **косинус найденного агентом направления с нашим PR-вектором**
-  («нашёл ли агент ТО направление или другое, работающее»).
-- Уникальная ценность против MIT: (а) нефронтирный программист (GLM ≠ GPT-6) —
-  проверка масштабируемости трюка вниз по классу моделей; (б) спектральная
-  гигиена правок, которой у авторов нет; (в) blind/aided ablation.
+- Harness (a new `rcda4_wsp.py` + the agent loop): the agent has `list_tensors()`,
+  `stats(name)`, `slice(name, rows, cols)` and the right to send python code that we
+  execute over the loaded state_dict (read/analyze and edit weights). A separate
+  `benchmark()` tool = a mini-run of 8 bad prompts (this is its "forward passes"):
+  **a budget of 10 calls** + 20 code commands, each call's result ≤ 3 KB in context.
+- Two arms (an ablation MIT does not have):
+  - **blind** — only generic tensor descriptions; none of our spectral diagnostics
+    (the PR vector, head profiles, θ thresholds are not shown);
+  - **aided** — the same tools plus our diagnostics as first-class data.
+- **Gates B (pre-registered):** success = ρ on the mini-benchmark ≤ 0.35, the final
+  edit passes the TW gate, KL on 5 control texts ≤ 0.15. Hypotheses:
+  - H4a: aided matches or beats manual RCDA-2 (ρ 0.65 + TW pass);
+  - H4b: blind fails or the edit is spectrally dirty (violation) — the value is in
+    the diagnostics, not in "an agent per se";
+- A successful arm's finale: the full edit → the full benchmark (20 bad + 20 good) +
+  KL/PPL + **the cosine of the agent-found direction with our PR vector**
+  ("did the agent find THE direction or another working one").
+- Unique value versus MIT: (a) a non-frontier programmer (GLM ≠ GPT-6) — a test of
+  the trick's scalability down the model-class ladder; (b) spectral hygiene of edits,
+  which the authors lack; (c) the blind/aided ablation.
 
-### Часть C — «чтение весов» против нашего ground truth (~30 мин, можно параллельно с B)
+### Part C — "reading weights" against our ground truth (~30 min, can run in parallel with B)
 
-Дать GLM срезы W_o слоёв 15/16/18 без подписей голов и попросить указать
-головы-концентраторы/копиры. Скор против измеренного (L15h7 ×3.11, L16h8 ×2.22,
-L18h12 ×1.91; медIANные головы = плацебо из раунда 3). Метрика: попадание в
-top-1 и top-3 по слою. Это наш аналог эксперимента 3 MIT — на модели, где истина
-уже измерена.
+Give GLM slices of the W_o of layers 15/16/18 without head labels and ask it to name
+the hub/copier heads. The score against the measured one (L15h7 ×3.11, L16h8 ×2.22,
+L18h12 ×1.91; median heads = the round-3 placebo). Metric: top-1 and top-3 hits per
+layer. This is our analog of MIT's experiment 3 — on a model where the truth is
+already measured.
 
-## 4. Риски и порядок выполнения
+## 4. Risks and execution order
 
-- **Порядок:** C → A → B. Если бюджет времени ограничен — A даёт максимум новой
-  ценности на минуту (независимая проверка, которой ни у кого нет).
-- RAM 3 ГБ: одна модель за раз, bf16, обязательный `del + gc`; 0.8B ≈ 1.6 ГБ.
-- CPU 2 ядра: 0.8B ≈ 2–3 ток/с → ген 256 ток ≈ 2 мин → arm из 18 промптов ≈
-  35–40 мин; планировать ночные фоновые прогоны.
-- Скачивание ~3.2 ГБ: резать на части, докачивать через `curl -C -`.
-- Контекст GLM: каждый результат ≤ 3 КБ, история — только сводки (как у MIT:
-  «показывай агенту агрегаты, а не сырые тензоры»).
-- Доставляемость правки: механизм overlay-правки state_dict уже есть в
-  `reassemble_model.py --overlay_state` (раунд 1) и в edit-скриптах раунда 2.
+- **Order:** C → A → B. If time is limited — A gives the most new value per minute
+  (an independent check nobody else has).
+- 3 GB RAM: one model at a time, bf16, mandatory `del + gc`; 0.8B ≈ 1.6 GB.
+- 2 CPU cores: 0.8B ≈ 2–3 tok/s → a 256-token generation ≈ 2 min → an 18-prompt arm ≈
+  35–40 min; plan overnight background runs.
+- ~3.2 GB of downloads: split into parts, resume with `curl -C -`.
+- GLM context: every result ≤ 3 KB, history = summaries only (as at MIT:
+  "show the agent aggregates, not raw tensors").
+- Deliverability of the edit: the state_dict overlay-edit mechanism already exists in
+  `reassemble_model.py --overlay_state` (round 1) and the round-2 edit scripts.
 
-## 5. Оформление результата
+## 5. Deliverable
 
-`Research/RCDA/RCDA4_REPORT.md` в репозитории (по образцу раундов 1–3):
-протоколы всех трёх частей, pre-registered gates и их исход, трейс агента B
-(промпты/команды/результаты — как у MIT в lm_understand-logs), fig14 (траектория
-ρ по итерациям агента), обновление `Docs/RCDA_RUNBOOK.md`, пересборка zip.
+`Research/RCDA/RCDA4_REPORT.md` in the repository (modeled on rounds 1–3):
+protocols of all three parts, pre-registered gates and their outcomes, the agent-B
+trace (prompts/commands/results — as at MIT in lm_understand-logs), fig14 (the ρ
+trajectory over the agent's iterations), an update of `Docs/RCDA_RUNBOOK.md`, a zip
+rebuild.
 
-Честная рамка: наш бенчмарк меряет зацикливание, а не математическую корректность;
-их фикс мог частично лежать вне нашей метрики — поэтому Part A явно включает
-GSM8K-train подмножество и долю обрывов, а не только ρ.
+The honest frame: our benchmark measures looping, not mathematical correctness;
+their fix may partially lie outside our metric — that is why Part A explicitly
+includes the GSM8K-train subset and the truncation share, not only ρ.

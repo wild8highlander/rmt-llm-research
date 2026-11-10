@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220" role="img" aria-label="R CDA — 3 — animated logo">
+  <defs>
+    <radialGradient id="rcda3bg" cx="28%" cy="30%" r="110%">
+      <stop offset="0%" stop-color="#0B1220"/>
+      <stop offset="55%" stop-color="#070A12"/>
+      <stop offset="100%" stop-color="#05060A"/>
+    </radialGradient>
+    <linearGradient id="rcda3main" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00D4FF"><animate attributeName="stop-color" values="#00D4FF;#FFB020;#B026FF;#00D4FF" dur="12s" repeatCount="indefinite"/></stop>
+      <stop offset="100%" stop-color="#B026FF"><animate attributeName="stop-color" values="#B026FF;#00D4FF;#FFB020;#B026FF" dur="14s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="rcda3sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="rcda3glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="rcda3soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+  <rect width="800" height="220" rx="18" fill="url(#rcda3bg)"/>
+  <g stroke="#1A2130" stroke-width="1" opacity="0.55">
+    <line x1="40" y1="18" x2="40" y2="202"/><line x1="116" y1="18" x2="116" y2="202"/><line x1="192" y1="18" x2="192" y2="202"/><line x1="268" y1="18" x2="268" y2="202"/><line x1="344" y1="18" x2="344" y2="202"/><line x1="420" y1="18" x2="420" y2="202"/><line x1="496" y1="18" x2="496" y2="202"/><line x1="572" y1="18" x2="572" y2="202"/><line x1="648" y1="18" x2="648" y2="202"/><line x1="724" y1="18" x2="724" y2="202"/>
+    <line x1="18" y1="40" x2="782" y2="40"/><line x1="18" y1="94" x2="782" y2="94"/><line x1="18" y1="148" x2="782" y2="148"/><line x1="18" y1="202" x2="782" y2="202"/>
+  </g>
+  <g filter="url(#rcda3soft)">
+    <path d="M-40,178 C160,150 320,196 480,168 C640,142 720,190 840,166 L840,260 L-40,260 Z" fill="#00D4FF" opacity="0.10">
+      <animate attributeName="opacity" values="0.07;0.15;0.07" dur="13s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <g><path d="M186.8,82.1 A46,46 0 0,1 148.7,148.2" fill="none" stroke="#00D4FF" stroke-width="9" stroke-linecap="round" opacity="1.0" filter="url(#rcda3glow)"><animate attributeName="opacity" values="1;0.5;1" dur="6s" repeatCount="indefinite"/></path><path d="M151.9,153.7 A46,46 0 0,1 228.1,153.7" fill="none" stroke="#00D4FF" stroke-width="9" stroke-linecap="round" opacity="0.65" filter="url(#rcda3glow)"></path><path d="M231.3,148.2 A46,46 0 0,1 193.2,82.1" fill="none" stroke="#00D4FF" stroke-width="9" stroke-linecap="round" opacity="0.65" filter="url(#rcda3glow)"></path></g>
+  <text x="336" y="104" font-family="Verdana, 'DejaVu Sans', sans-serif" font-size="37" font-weight="bold" fill="#E8EEF7" letter-spacing="0.5">R CDA — 3</text>
+  <text x="338" y="106" font-family="Verdana, 'DejaVu Sans', sans-serif" font-size="37" font-weight="bold" fill="url(#rcda3main)" opacity="0.55">R CDA — 3</text>
+  <text x="338" y="146" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="15" fill="#8CA3C7">spectral sentinel · TPR 96.7% · ρ 0.50</text>
+  <rect width="800" height="220" rx="18" fill="url(#rcda3sweep)">
+    <animate attributeName="x" values="-800;800" dur="9s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="1.5" y="1.5" width="797" height="217" rx="17" fill="none" stroke="#1A2130" stroke-width="2"/>
+</svg>

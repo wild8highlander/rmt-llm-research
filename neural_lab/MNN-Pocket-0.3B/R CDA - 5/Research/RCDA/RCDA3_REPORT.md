@@ -1,180 +1,175 @@
-# RCDA-3 — спектральный сентинел: онлайн-детекция и спасение траекторий
+# RCDA-3 — the spectral sentinel: online detection and rescue of trajectories
 
-**Модель:** taobao-mnn/MNN-Pocket-0.3B (Qwen3ForCausalLM, 28 слоёв, d=896, 14 голов).
-**Дата:** 2026-11-08. **Раунд 3** по собственному плану: превращаем предвестник
-fig9 (монотонное падение participation ratio окна до текстового коллапса) в
-работающий онлайн-контроллер и отвечаем на вопрос «что лечит петлю лучше —
-разовая правка весов или терапия в моменте?». Все числа измерены, источники —
-`Research/RCDA/results/rcda3_*.json`.
+**Model:** taobao-mnn/MNN-Pocket-0.3B (Qwen3ForCausalLM, 28 layers, d=896, 14 heads).
+**Date:** 2026-11-08. **Round 3**, per my own plan: we turn the fig9 precursor
+(the monotonic drop of the windowed participation ratio before the textual collapse)
+into a working online controller and answer the question "what cures the loop better —
+a one-time weight edit or therapy in the moment?". All numbers are measured; the
+sources are `Research/RCDA/results/rcda3_*.json`.
 
 ---
 
-## 1. Постановка
+## 1. Setup
 
-Раунд 2 установил: (а) поведенческое направление петли локализовано в o_proj
-L15–L18; (б) дефект распределён — даже α=1.0 на трёх матрицах меняет 2/8
-траекторий; (в) PR окна-16 падает на 8–9% до коллапса. Раунд 3 проверяет три
-гипотезы:
+Round 2 established: (a) the behavioral loop direction is localized in o_proj
+L15–L18; (b) the defect is distributed — even α=1.0 on three matrices changes 2/8
+trajectories; (c) the window-16 PR drops 8–9% before the collapse. Round 3 tests
+three hypotheses:
 
-- **H1 (сентинел):** пороговый детектор на скользящем PR обнаруживает петлю
-  онлайн с высоким TPR и нулевым FPR на здоровых генерациях.
-- **H2 (аттрактор):** разовые интервенции (таймерные) не выводят из петли —
-  аттрактор восстанавливается; это активационное подтверждение вывода раунда 2
-  о распределённости дефекта.
-- **H3 (вакцинация vs лечение):** условная интервенция по тревоге
-  (веса не трогаются) снижает долю дефектных генераций сильнее, чем
-  постоянная правка весов раунда 2.
+- **H1 (sentinel):** a threshold detector on the sliding PR detects the loop online
+  with high TPR and zero FPR on healthy generations.
+- **H2 (attractor):** one-shot interventions (timer-based) do not pull the
+  generation out of the loop — the attractor restores itself; an activation-level
+  confirmation of round 2's distributedness conclusion.
+- **H3 (vaccination vs cure):** a conditional alarm-triggered intervention (weights
+  untouched) reduces the defective-generation share more than round 2's permanent
+  weight edit.
 
-## 2. Метод
+## 2. Method
 
-**Калибровка без порогового тюнинга.** Здоровое распределение PR получено
-teacher-forced прогоном 5 контрольных текстов (`prompts/control.jsonl`):
-по 314–354 окна на (масштаб, слой), θ = q10 этого пула. Два масштаба:
-W=8 («быстрый», доступен с 8-го токена) и W=16 («медленный», окно fig9),
-слои-сентинелы L15/16/17. Тревога = PR < θ два шага подряд на любом
-(слой, масштаб). Правило зафиксировано до эксперимента.
+**Calibration without threshold tuning.** The healthy PR distribution comes from a
+teacher-forced run of 5 control texts (`prompts/control.jsonl`):
+314–354 windows per (scale, layer), θ = q10 of that pool. Two scales:
+W=8 ("fast", available from token 8) and W=16 ("slow", the fig9 window); sentinel
+layers L15/16/17. Alarm = PR < θ two steps in a row on any (layer, scale). The rule
+was fixed before the experiment.
 
-**Онлайн-контур.** Генерация жадная с KV-кэшем; на каждом шаге скрытые
-состояния нового токена попадают в деки сентинела, PR окна считается через
-SVD (16×896 — миллисекунды). Детекция и интервенции работают в моменте.
+**Online loop.** Greedy generation with a KV cache; at every step the new token's
+hidden states enter the sentinel deques, the window PR is computed via SVD
+(16×896 — milliseconds). Detection and interventions work in the moment.
 
-**Руки спасения (a priori):** `ban` — на 4 шага запретить токен, который в
-этой генерации уже продолжал текущую 3-грамму; `steer` — на 8 шагов вычесть
-γ·Δh_behav из резидуала на слоях-писателях L15/16/18; `both` — комбинация.
-Успех = ни одной новой петли-4-граммы после тревоги и ≥8 токенов продолжения
-(или чистый EOS).
+**Rescue arms (a priori):** `ban` — for 4 steps forbid the token that in this
+generation already continued the current 3-gram; `steer` — for 8 steps subtract
+γ·Δh_behav from the residual at the writer layers L15/16/18; `both` — the combination.
+Success = no new 4-gram loop after the alarm and ≥8 tokens of continuation
+(or a clean EOS).
 
-## 3. Результаты
+## 3. Results
 
-**Детекция (H1 — подтверждена).** Регенерация 40 генераций раунда 2 воспроизвела
-**40/40 текстов точно** (детерминизм контура подтверждён). По a-priori меткам
-30/40 генераций лупятся; TPR сентинела **29/30 = 96.7%**, на чистых генерациях
-**0 тревог**. 10 тревог предиктивные (медианное опережение 2 токена), 19 —
-заперты на onset. ROC без порога: AUC 0.720 для W8 при горизонте 4 токена;
-W16 «срабатывает раньше горизонта» — при фиксированном горизонте 4 его AUC
-0.439, что является прямым следом предвестника fig9 (сигнал появляется за
-пределами горизонта разметки), при согласованном горизонте 12 картина
-симметрично меняется (0.415/0.720 — см. rcda3_digest.md и fig11c: пары
-W8/h12 и W16/h4).
+**Detection (H1 — confirmed).** Regenerating the 40 round-2 generations reproduced
+**40/40 texts exactly** (loop determinism confirmed). By the a-priori labels 30/40
+generations loop; the sentinel's TPR is **29/30 = 96.7%**, with **zero alarms** on
+clean generations. 10 alarms are predictive (median lead 2 tokens), 19 are onset-locked.
+Threshold-free ROC: AUC 0.720 for W8 at a 4-token horizon; W16 "fires before its
+horizon" — at the fixed horizon 4 its AUC is 0.439, a direct footprint of the fig9
+precursor (the signal appears beyond the labeling horizon); at the matched horizon 12
+the picture flips symmetrically (0.415/0.720 — see rcda3_digest.md and fig11c: the
+W8/h12 and W16/h4 pairs).
 
-**Аттрактор (H2 — подтверждена).** Таймерные руки: `ban` **0/30** (отход в
-петле 73.8→68.2 токенов при 3.5 интервенциях на генерацию), `steer` **12/30**
-(40%, отход 40.4), `both` **18/30** (60%, отход 28.8). Даже успешные спасения
-дают медианный чистый хвост 0–1 токен: интервенция обрывает текущий цикл
-петли, но жадная динамика немедленно возвращает модель в аттрактор. Четыре
-интервенции за генерацию — норма. Вывод: разовый «толчок» не лечит; дефект
-нужно либо давить постоянно, либо править веса.
+**Attractor (H2 — confirmed).** Timer arms: `ban` **0/30** (in-loop waste
+73.8→68.2 tokens at 3.5 interventions per generation), `steer` **12/30**
+(40%, waste 40.4), `both` **18/30** (60%, waste 28.8). Even successful rescues have a
+median clean tail of 0–1 tokens: the intervention breaks the current loop cycle, but
+greedy dynamics immediately returns the model to the attractor. Four interventions
+per generation is the norm. Conclusion: a one-time "push" does not cure; the defect
+must either be suppressed continuously or the weights must be edited.
 
-**Вакцинация vs лечение (H3 — подтверждена).** Бенчмарк 20 bad-промптов,
-96 токенов, один и тот же код генерации:
+**Vaccination vs cure (H3 — confirmed).** Benchmark of 20 bad prompts, 96 tokens,
+the same generation code:
 
-| Рука | ρ (дефект) | Отход в петле, токенов/ген | Изменение весов |
+| Arm | ρ (defect) | In-loop waste, tokens/gen | Weight change |
 | --- | --- | --- | --- |
-| A базовая | 0.70 | 70.0 | — |
-| B постоянная правка (раунд 2) | 0.65 | — | 190k весов, TW pass |
-| C сентинел (`both`) | **0.50** | **16.4** | 0 |
+| A baseline | 0.70 | 70.0 | — |
+| B permanent edit (round 2) | 0.65 | — | 190k weights, TW pass |
+| C sentinel (`both`) | **0.50** | **16.4** | 0 |
 
-Базовая рука A воспроизвела ρ=0.70 раунда 2 точно (валидность оценщика).
-Сентинел превзошёл постоянную правку (−20 п.п. против −5 п.п.) и сократил
-отход в петле в 4.3 раза — при полном отсутствии правки весов, т.е. PPL на
-контрольных текстах не меняется по построению. Цена: на 20 good-промптах
-сентинел изменил 11 текстов (12 из них и так лупятся — интервенции по
-адресу; ложно-тревожных срабатываний на действительно чистых генерациях
-детекция не дала вовсе).
+Arm A reproduced round 2's ρ=0.70 exactly (estimator validity). The sentinel beat
+the permanent edit (−20 pp versus −5 pp) and cut the in-loop waste 4.3× — with zero
+weight change, i.e. PPL on control texts is unchanged by construction. The price:
+on 20 good prompts the sentinel changed 11 texts (12 of them were looping anyway —
+the interventions were on target; the detector produced no false alarms on genuinely
+clean generations).
 
-**Трансфер.** На модели с правкой раунда 2 (`edited_model_v2`), с теми же
-θ: TPR **13/13**, ρ 0.65 (совпадает с бенчмарком раунда 2). Сентинел
-не зависит от того, правлены веса или нет, — монитор и терапия композируются
-с любым статическим лечением.
+**Transfer.** On the model with round 2's edit (`edited_model_v2`), with the same θ:
+TPR **13/13**, ρ 0.65 (matches the round-2 benchmark). The sentinel does not care
+whether the weights are edited — the monitor and therapy compose with any static cure.
 
-## 3.5 Персистентные политики: постоянное давление вместо разового толчка
+## 3.5 Persistent policies: constant pressure instead of a one-time push
 
-Механизм H2 (аттрактор восстанавливается) подсказал exploratory-политику —
-давить, пока петля пытается собраться, а не N токенов по таймеру:
+The H2 mechanism (the attractor restores itself) suggested exploratory policies —
+suppress while the loop tries to re-form, not N tokens by timer:
 
-- **`ban_persist`** — на каждом шаге запрещаются ВСЕ токены, когда-либо
-  продолжавшие текущую 3-грамму в этой генерации. Любая токен-4-грамма
-  может встретиться не более одного раза — петля невозможна по построению.
-  Сентинел для этого не нужен: это декодерное ограничение.
-- **`both_persist`** — то же + стиринг, переармимый пока PR ниже θ.
+- **`ban_persist`** — at every step forbid ALL tokens that ever continued the
+  current 3-gram in this generation. Any token 4-gram can occur at most once — a loop
+  is impossible by construction. The sentinel is not needed: this is a decoding
+  constraint.
+- **`both_persist`** — the same plus steering, re-armed while PR is below θ.
 
-Результат на 30 лупящихся генерациях: обе руки дают **rescue 0.97, отход
-в петле 0.0 токенов** (против 28.8 у лучшей таймерной руки). Стиринг не
-добавляет ничего, кроме цены: `both_persist` меняет 16/20 good-текстов
-против 12/20 у `ban_persist`, а 12 changed у ban_persist — это ровно
-12 лупящихся good-генераций, **ρ_good = 0.00**: ни одного вмешательства
-на действительно чистом тексте. Финальная политика — `ban_persist`.
+Result on 30 looping generations: both arms give **rescue 0.97, in-loop waste
+0.0 tokens** (versus 28.8 for the best timer arm). Steering adds nothing but cost:
+`both_persist` changes 16/20 good texts versus 12/20 for `ban_persist`, and the
+12 changed under ban_persist are exactly the 12 looping good generations —
+**ρ_good = 0.00**: not a single intervention on genuinely clean text. The final
+policy is `ban_persist`.
 
-Бенчмарк 20 bad-промптов: **ρ(C') = 0.10** против 0.70 (база), 0.65
-(постоянная правка), 0.50 (сентинел с таймерными руками). Итоговая таблица
-терапии: постоянная правка весов почти бесполезна (−5 п.п.), условная
-интервенция по тревоге даёт −20 п.п., декодерное исчерпание n-грамм —
-**−60 п.п.** без единого правленного веса.
+Benchmark of 20 bad prompts: **ρ(C') = 0.10** versus 0.70 (base), 0.65
+(permanent edit), 0.50 (sentinel with timer arms). The final therapy table: a
+permanent weight edit is almost useless (−5 pp), an alarm-triggered conditional
+intervention gives −20 pp, decoder n-gram exhaustion gives **−60 pp** without a
+single edited weight.
 
-Честные оговорки: (а) strict-критерий спасения для ban_persist выполняется
-по построению — содержательны именно ρ бенчмарка, нулевой FP на чистых
-генерациях и нулевой отход; (б) ограничение банит точный повтор 4-граммы,
-но не запрещает словесные повторы с другой токенизацией — distinct-4
-спасённых текстов в JSON; (в) политика exploratory, пороги не тюнинговались.
+Honest caveats: (a) the strict rescue criterion for ban_persist holds by
+construction — the meaningful quantities are the benchmark ρ, the zero FP on clean
+generations and the zero waste; (b) the constraint bans exact 4-gram repeats but not
+verbal repetitions with a different tokenization — see distinct-4 of the rescued
+texts in the JSON; (c) the policy is exploratory, thresholds were not tuned.
 
-## 4. Хирургия голов: концентрация причинна, обнуление — не терапия
+## 4. Head surgery: the concentration is causal, zeroing is not therapy
 
-Профиль чувствительности `e_h = ||W_o[:, block_h]^T v||²` подтверждает
-локализацию раунда 2 на независимой выкладке: **L15→h7 (×3.11), L16→h8
-(×2.22)**; для L18 пересчёт чистым суррогратом даёт h12 (×1.91) вместо h0 —
-в отчёте раунда 2 концентрация L18 была слабее и неустойчивее к выбору
-суррограта.
+The sensitivity profile `e_h = ||W_o[:, block_h]^T v||²` confirms round 2's
+localization on an independent computation: **L15→h7 (×3.11), L16→h8 (×2.22)**;
+for L18 a pure-surrogate recomputation gives h12 (×1.91) instead of h0 — in the
+round-2 report L18's concentration was weaker and unstable to the surrogate choice.
 
-Калибровка обнуления (8 bad + 8 good, 48 токенов, веса в памяти):
+Zeroing calibration (8 bad + 8 good, 48 tokens, weights in memory):
 
-| Условие | changed bad/good | hit_bad | hit_good | KL | TW |
+| Condition | changed bad/good | hit_bad | hit_good | KL | TW |
 | --- | --- | --- | --- | --- | --- |
-| база | — | 0.625 | 0.625 | 0 | — |
+| base | — | 0.625 | 0.625 | 0 | — |
 | L15 h7 | 4/3 | 0.50 | 0.62 | 0.062 | violation |
 | L16 h8 | 6/3 | 0.50 | 0.75 | 0.017 | violation |
 | L18 h12 | 3/2 | 0.50 | 0.50 | 0.029 | violation |
 | combo3 | 5/4 | 0.50 | **0.88** | 0.107 | violation×3 |
-| **плацебо3** (медианные головы) | 5/4 | **0.62** | 0.62 | 0.088 | violation×3 |
+| **placebo3** (median heads) | 5/4 | **0.62** | 0.62 | 0.088 | violation×3 |
 
-Плацебо-контроль — ключевой результат: обнуление «обычных» голов меняет
-столько же траекторий (5/4), но **не снижает дефект** (0.62 = база), тогда
-как top-головы стабильно дают 0.50. Спецификация концентрации подтверждена.
-Но по заранее зафиксированному правилу (hit_bad ≤ 0.475, hit_good ≤ 0.725)
-— **NO-GO**: combo поднимает дефект good-сплита до 0.88, а обнуление целой
-головы (24–26% нормы Фробениуса матрицы) грубо ломает спектр (TW violation
-всюду) — в отличие от точечных правок колонок раунда 2. Вывод: концентрация
-причинна, но хирургия головы — не терапия; правильные инструменты —
-селективные колонки (раунд 2, TW pass) и онлайн-политики (C/C').
+The placebo control is the key result: zeroing "ordinary" heads changes just as many
+trajectories (5/4) but **does not reduce the defect** (0.62 = base), whereas the
+top heads consistently give 0.50. The concentration specification is confirmed.
+But by the pre-registered rule (hit_bad ≤ 0.475, hit_good ≤ 0.725) — **NO-GO**: combo
+raises the good-split defect to 0.88, and zeroing a whole head (24–26% of the
+matrix's Frobenius norm) coarsely breaks the spectrum (TW violation everywhere) —
+unlike round 2's selective column edits. Conclusion: the concentration is causal,
+but head surgery is not therapy; the right tools are selective columns (round 2,
+TW pass) and online policies (C/C').
 
-## 5. Что осталось на следующий раунд
+## 5. What carries over to the next round
 
-- Коррекция книги раунда 2: 5 записей jsonl имели `clean_gen=False` при
-  нулевых метках; регенерация подтверждает счёт **30/40** лупящихся
-  (мета раунда 2 верна, сохранённые labels 5 записей — артефакт).
-- Персистентный монитор PR — кандидат в `Code/` как runtime-хук `clip`:
-  детекция стоит миллисекунды (SVD 16×896) и не требует use_cache=False.
-- Связка C' + сентинел: ограничение ban_persist гарантирует отсутствие
-  токен-4-грамм, сентинел следит за спектром для НЕ n-граммных форм деградации
-  (словесные повторы, числовые лестницы) — единый runtime-хук с двумя
-  контурами.
-- Выборочные правки колонок внутри top-голов (гибрид «хирургия + TW»):
-  нулить не всю голову, а только её TW-проходящие колонки из профиля раунда 2.
+- Correction of round 2's bookkeeping: 5 jsonl records had `clean_gen=False` with
+  zero labels; the regeneration confirms the count of **30/40** looping
+  (round 2's meta is correct; the saved labels of 5 records are an artifact).
+- The persistent PR monitor is a candidate for `Code/` as a runtime `clip` hook:
+  detection costs milliseconds (SVD 16×896) and does not require use_cache=False.
+- The C' + sentinel combo: ban_persist guarantees no token 4-grams, the sentinel
+  watches the spectrum for non-n-gram degradation forms (verbal repetitions, numeric
+  ladders) — one runtime hook with two loops.
+- Selective column edits inside top heads (a "surgery + TW" hybrid): zero not the
+  whole head but only its TW-passing columns from the round-2 profile.
 
-## 6. Воспроизведение
+## 6. Reproduction
 
 ```bash
-python3 Research/RCDA/tools/rcda3_sentinel.py            # ~18 мин CPU: калибровка, детекция, руки, бенчмарк
-python3 Research/RCDA/tools/rcda3_fix_steer.py           # перезапуск steer-руки с фиксом армирования
-python3 Research/RCDA/tools/rcda3_explore.py             # персистентные политики + бенчмарк C' (~12 мин)
-python3 Research/RCDA/tools/rcda3_heads.py               # профиль + хирургия голов + TW (~6 мин)
+python3 Research/RCDA/tools/rcda3_sentinel.py            # ~18 min CPU: calibration, detection, arms, benchmark
+python3 Research/RCDA/tools/rcda3_fix_steer.py           # re-run the steer arm with fixed hook arming
+python3 Research/RCDA/tools/rcda3_explore.py             # persistent policies + C' benchmark (~12 min)
+python3 Research/RCDA/tools/rcda3_heads.py               # head profile + head surgery + TW (~6 min)
 python3 Research/RCDA/tools/rcda3_stage3_figures.py      # fig11–fig13, digest, comparison
 ```
 
-Артефакты: `results/rcda3_sentinel.json` (калибровка, детекция, руки,
-бенчмарк, трансфер), `results/rcda3_explore.json` (персистентные политики,
-бенчмарк C'), `results/rcda3_heads.json` (профили голов, условия, NO-GO),
+Artifacts: `results/rcda3_sentinel.json` (calibration, detection, arms,
+benchmark, transfer), `results/rcda3_explore.json` (persistent policies,
+C' benchmark), `results/rcda3_heads.json` (head profiles, conditions, NO-GO),
 `results/rcda3_sentinel_generations.jsonl`
-(100 записей: 40 detect с PR-трассами + 3×30 рук спасения),
+(100 records: 40 detect with PR traces + 3×30 rescue arms),
 `results/rcda3_comparison.json`, `results/rcda3_digest.md`,
 `figures/fig11_sentinel.png`, `figures/fig12_heads.png`,
 `figures/fig13_therapy.png`, `config/rcda3_sentinel.yaml`.

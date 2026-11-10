@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="code avatar">
+  <defs>
+    <radialGradient id="avcodebg" cx="30%" cy="28%" r="120%">
+      <stop offset="0%" stop-color="#0B1220"/>
+      <stop offset="60%" stop-color="#070A12"/>
+      <stop offset="100%" stop-color="#05060A"/>
+    </radialGradient>
+    <filter id="avcodeglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="128" height="128" rx="26" fill="url(#avcodebg)"/>
+  <g transform="translate(-56,-56) scale(0.62)"><path d="M150,84 L118,128 L150,172" fill="none" stroke="#00D4FF" stroke-width="6" stroke-linecap="round" filter="url(#avcodeglow)"/><path d="M196,84 L228,128 L196,172" fill="none" stroke="#B026FF" stroke-width="6" stroke-linecap="round" filter="url(#avcodeglow)"/><line x1="178" y1="176" x2="168" y2="80" stroke="#FFB020" stroke-width="4" stroke-linecap="round" filter="url(#avcodeglow)"><animate attributeName="opacity" values="0.6;1;0.6" dur="4s" repeatCount="indefinite"/></line></g>
+  <rect x="1.5" y="1.5" width="125" height="125" rx="24" fill="none" stroke="#1A2130" stroke-width="2"/>
+</svg>

@@ -1,150 +1,148 @@
-# RCDA — RMT-Calibrated Directional Ablation для MNN-Pocket-0.3B
+# RCDA — RMT-Calibrated Directional Ablation for MNN-Pocket-0.3B
 
-Реализация целевого плана **RCDA (RMT-Calibrated Directional Ablation)** поверх
-инструментария `neural_lab/MNN-Pocket-0.3B` репозитория
-`wild8highlander/rmt-llm-research`. Ни одна формула не введена «с потолка»:
-вся калибровка построена на математике репозитория — законе Марченко–Пастура
-(`marchenko_pastur.py`, `probe_real_gpt2._mp_bounds_general`), BBP-переходе
-(`src/rmt_llm/bbp_transition.py`: `bbp_critical_theta(q) = sqrt(q)`) и
-Tracy–Widom-масштабе края спектра. Отличие от исходного бенчмарка: вместо
-runtime-хуков на активации **правятся сами веса**, и каждое число правки
-(допуск направления, сила α, число колонок, критерий остановки) имеет
-статистическое обоснование, а не подбирается перебором.
+An implementation of the target **RCDA (RMT-Calibrated Directional Ablation)** plan on
+top of the `neural_lab/MNN-Pocket-0.3B` toolkit of the
+`wild8highlander/rmt-llm-research` repository. No formula is invented from thin air:
+every calibration step is built on the repository's mathematics — the Marchenko–Pastur
+law (`marchenko_pastur.py`, `probe_real_gpt2._mp_bounds_general`), the BBP transition
+(`src/rmt_llm/bbp_transition.py`: `bbp_critical_theta(q) = sqrt(q)`) and the
+Tracy–Widom scale of the spectral edge. The difference from the original benchmark:
+instead of runtime activation hooks, **the weights themselves are edited**, and every
+number of the edit (direction tolerance, strength α, column count, stopping criterion)
+has a statistical justification rather than being tuned by trial and error.
 
-## Состав
+## Contents
 
-```
+```text
 Code/
-  marchenko_pastur.py    — RCDA-ядро: mp_upper_edge, tw_scale, rmt_z_score,
+  marchenko_pastur.py    — RCDA core: mp_upper_edge, tw_scale, rmt_z_score,
                            bbp_threshold, rayleigh_spike_strength, bbp_excess,
-                           alpha_from_bbp (формулы плана, разделы 2–5)
-  pocket_rmt_probe.py    — + режим --rcds-probe: Δh^(l), z_RMT, β/β_floor,
+                           alpha_from_bbp (plan formulas, sections 2–5)
+  pocket_rmt_probe.py    — + --rcds-probe mode: Δh^(l), z_RMT, β/β_floor,
                            Hotelling z_diff, matrix scans (λ_v vs λ_+, θ_v/θ_c),
-                           сохранение векторов направлений (.pt) и отчёта
-  rmt_intervention.py    — + весовой редактор --rcda: matrix_scan, select_columns
+                           saving direction vectors (.pt) and the report
+  rmt_intervention.py    — + --rcda weight editor: matrix_scan, select_columns
                            (auto_tw / auto_chi2 / topk), rcda_edit
                            (W' = W − α·v·p_maskedᵀ), spectral_tw_control,
-                           самодостаточный edit-pack (векторы в base64) и
-                           воспроизведение правки через --apply_pack
-  benchmark_rmt.py       — + режим --baseline_dir/--edited_dir: ρ (доля дефекта
-                           repetition_loop) на P_bad, ложные срабатывания на
-                           P_good, PPL-контроль, Wilcoxon, спектральный
-                           TW-контроль изменённых матриц
-  reassemble_model.py    — + --eval_dir/--overlay_state: сборка eval-директории
-                           с наложением отредактированных тензоров на базу
-  probe_real_gpt2.py, plot_benchmark.py — без изменений
-config/rcda_experiment.yaml — конфиг эксперимента (раздел 8 плана)
-prompts/bad.jsonl       — 20 промптов, провоцирующих repetition_loop (RU+EN)
-prompts/good.jsonl      — 20 коротких фактических промптов (FPR-контроль)
-prompts/control.jsonl   — 5 текстов для PPL-контроля способностей
-rcda.patch              — unified diff ко всем изменённым файлам Code/
-example_run/            — артефакты реального прогона на MNN-Pocket-0.3B
+                           a self-contained edit-pack (vectors in base64) and
+                           edit reproduction via --apply_pack
+  benchmark_rmt.py       — + --baseline_dir/--edited_dir mode: ρ (share of the
+                           repetition_loop defect) on P_bad, false positives on
+                           P_good, PPL control, Wilcoxon, spectral TW control of
+                           the edited matrices
+  reassemble_model.py    — + --eval_dir/--overlay_state: assemble an eval directory
+                           overlaying edited tensors onto the base
+  probe_real_gpt2.py, plot_benchmark.py — unchanged
+config/rcda_experiment.yaml — experiment config (plan section 8)
+prompts/bad.jsonl       — 20 prompts that provoke repetition_loop (RU+EN)
+prompts/good.jsonl      — 20 short factual prompts (FPR control)
+prompts/control.jsonl   — 5 texts for the abilities PPL control
+rcda.patch              — unified diff of all changed Code/ files
+example_run/            — artifacts of the real run on MNN-Pocket-0.3B
 ```
 
-Все изменения аддитивны: исходные режимы (хуки clip/dampen/project/random,
-дефолтный пробы, старый бенчмарк) работают как раньше.
+All changes are additive: the original modes (clip/dampen/project/random hooks,
+default probes, the old benchmark) keep working as before.
 
-## Конвенции (зафиксированы один раз)
+## Conventions (fixed once)
 
-Для веса `W ∈ R^{m×n}` (m = out_features, n = in_features) и единичного
-направления `v` в выходном пространстве:
+For a weight matrix `W ∈ R^{m×n}` (m = out_features, n = in_features) and a unit
+direction `v` in the output space:
 
-- ковариация колонок: `C = W·Wᵀ/n`, аспект `q = m/n` (та же конвенция
-  «колонки = выборка», что и в `rmt_intervention.py` для токенов; q > 1
-  допустим — используется `_mp_bounds_general`);
-- `σ_W² = median(eig(C))` — bulk-оценка из репозитория;
+- column covariance: `C = W·Wᵀ/n`, aspect `q = m/n` (the same "columns = sample"
+  convention as in `rmt_intervention.py` for tokens; q > 1 is allowed —
+  `_mp_bounds_general` is used);
+- `σ_W² = median(eig(C))` — the repository's bulk estimate;
 - `λ_+^{(W)} = σ_W²·(1+√q)²`, `TW-scale(λ_+, N) = λ_+·N^{−2/3}`;
-- `λ_v = ‖vᵀW‖²/n = vᵀCv` — масса проекции (при нуль-гипотезе ≈ σ_W²);
-- сила сигнала в параметризации BBP репозитория:
-  `θ_v = √(q·max(λ_v/σ_W² − 1, 0))`, порог `θ_c = bbp_critical_theta(q) = √q`
-  (совпадает с планом `θ_c = √(n/m)` при n ≤ m и с перестановкой при n > m);
-- избыток BBP: `δ = max(0, (θ_v − θ_c)/θ_v)`;
-- сила правки: `α₀ = min(1, κ·δ/(1−δ))`, κ = 0.5 (план, раздел 5);
-- слой-кандидат: `z_RMT = (λ_max − λ_+)/TW-scale` по объединённой ковариации
-  активаций; для Δh дополнительно `β = ⟨Δh, u₁⟩` против шума `√(λ₁/N)`
-  (план, раздел 2) и дискриминативный тест Хотеллинга `z_diff` на разность
-  средних двух групп;
-- колонки: `auto_tw` — `p_j²/n > λ_+ + τ·TW-scale` (строгий гейт плана),
-  `auto_chi2` — χ²₁-квантиль с поправкой Бонферрони, `topk=K` — по бумаге;
-- TW-контроль (план, раздел 7.2): здоровые топ-сингулярные числа W′ не должны
-  уходить дальше `±2 TW-scale` (нарушение при `>3`).
+- `λ_v = ‖vᵀW‖²/n = vᵀCv` — the projection mass (under the null ≈ σ_W²);
+- signal strength in the repository's BBP parameterization:
+  `θ_v = √(q·max(λ_v/σ_W² − 1, 0))`, threshold `θ_c = bbp_critical_theta(q) = √q`
+  (matches the plan's `θ_c = √(n/m)` for n ≤ m and its transposition for n > m);
+- BBP excess: `δ = max(0, (θ_v − θ_c)/θ_v)`;
+- edit strength: `α₀ = min(1, κ·δ/(1−δ))`, κ = 0.5 (plan, section 5);
+- candidate layer: `z_RMT = (λ_max − λ_+)/TW-scale` on the pooled activation
+  covariance; for Δh additionally `β = ⟨Δh, u₁⟩` against the noise `√(λ₁/N)`
+  (plan, section 2) and the discriminative Hotelling test `z_diff` on the
+  difference of the two group means;
+- columns: `auto_tw` — `p_j²/n > λ_+ + τ·TW-scale` (the plan's strict gate),
+  `auto_chi2` — χ²₁ quantile with the Bonferroni correction, `topk=K` — per the paper;
+- TW control (plan, section 7.2): the healthy top singular values of W′ must not
+  move beyond `±2 TW-scale` (a violation is flagged at `>3`).
 
-## Как запустить (после `python tools/reassemble_model.py`)
+## How to run (after `python tools/reassemble_model.py`)
 
 ```bash
-# 1) RCDS-проба: где живёт дефект и какие матрицы его «пишут»
+# 1) RCDS probe: where the defect lives and which matrices "write" it
 python Code/pocket_rmt_probe.py --rcds-probe \
     --model_dir model --bad_set prompts/bad.jsonl --good_set prompts/good.jsonl \
     --out_dir rcda_results            # -> rcda_probe_report.json, fig5/fig6, vectors/
 
-# 2) RCDA-правка весов (α по BBP, колонки по гейту)
+# 2) RCDA weight edit (α from BBP, columns by the gate)
 python Code/rmt_intervention.py --rcda --model_dir model \
     --layer 9  --matrix down_proj --vector rcda_results/vectors/L9_delta_h.pt \
     --layer 11 --matrix o_proj    --vector rcda_results/vectors/L11_delta_h.pt \
     --alpha auto --columns auto_chi2 --out_dir edited_model
-#    --columns auto_tw       — строгий гейт плана (может законно отказать)
-#    --columns topk=54       — фиксированные 54 колонки, как в статье
-#    --full                  — полная ранг-1 абляция W − α·v(vᵀW)
-# воспроизведение правки где угодно: --apply_pack edited_model/rcda_edit_report.json
+#    --columns auto_tw       — the plan's strict gate (may legitimately refuse)
+#    --columns topk=54       — a fixed 54 columns, as in the paper
+#    --full                  — a full rank-1 ablation W − α·v(vᵀW)
+# reproduce the edit anywhere: --apply_pack edited_model/rcda_edit_report.json
 
-# 3) Бенчмарк до/после: ρ, FPR, PPL, Wilcoxon, TW-контроль
+# 3) Before/after benchmark: ρ, FPR, PPL, Wilcoxon, TW control
 python Code/benchmark_rmt.py --baseline_dir model --edited_dir edited_model \
     --bad_set prompts/bad.jsonl --good_set prompts/good.jsonl \
     --control_set prompts/control.jsonl --out_dir bench --max_new 64
 
-# 4) Альтернативная сборка eval-модели из базы + правок
+# 4) Alternative assembly of the eval model from base + edits
 python Code/reassemble_model.py --model_dir model \
     --eval_dir eval_model --overlay_state edited_model/model.safetensors
 ```
 
-Порядок `config/rcda_experiment.yaml` задаёт те же параметры + критерии
-остановки итерационной петли edit→measure→keep/revert (план, раздел 6).
+The `config/rcda_experiment.yaml` order sets the same parameters plus the stopping
+criteria of the iterative edit→measure→keep/revert loop (plan, section 6).
 
-## Что показал реальный прогон (см. example_run/)
+## What the real run showed (see example_run/)
 
-1. **RCDS-проба** (20+20 промптов, 958+287 токенов): Δh статистически
-   сверхзначим во всех слоях (z_diff ≈ 600–760; |β|/√(λ₁/N) ≈ 18), спектры
-   активаций глубоко суперкритичны к MP (z_RMT ~ 10⁸ — модель целиком лежит
-   вне MP-null, как и зафиксировано в протоколе репозитория). Ранг по z_diff
-   выделил блоки L8–L12 — «средне-глубокая» зона, согласующаяся с априорной
-   подсказкой статьи (слои 15/19 из 28).
-2. **Матричные сканы**: допуск `λ_v > λ_+^{(W)}` получили только
+1. **RCDS probe** (20+20 prompts, 958+287 tokens): Δh is statistically
+   super-significant in every layer (z_diff ≈ 600–760; |β|/√(λ₁/N) ≈ 18); activation
+   spectra are deeply supercritical versus MP (z_RMT ~ 10⁸ — the model as a whole lies
+   outside the MP null, as fixed by the repository protocol). The z_diff ranking
+   singled out blocks L8–L12 — the "mid-depth" zone, consistent with the paper's
+   prior hint (layers 15/19 of 28).
+2. **Matrix scans**: the tolerance `λ_v > λ_+^{(W)}` was met only by
    **L9 down_proj** (λ_v/λ₊ = 1.06, θ_v = 0.77 > θ_c = 0.59, δ = 0.23 →
-   α₀ = 0.15) и **L11 o_proj** (λ_v/λ₊ = 1.10, θ_v = 1.84 > θ_c = 1.00,
-   δ = 0.46 → α₀ = 0.42). L8/L10 — субкритичны, редактор их не трогает
-   (α₀ = 0 по формуле).
-3. **Строгий гейт auto_tw** отказал обеим матрицам (0 колонок: профиль
-   направления плотный, ни одна колонка не несёт массу выше края MP) — это
-   легитимный ответ плана «не вычитать то, что не подтверждено». Рабочая
-   правка выполнена с `auto_chi2`: 15 + 55 колонок, **62 720 весов ≈ 0.021%**
-   параметров — точно в целевом коридоре плана 0.016–0.05%.
-4. **TW-контроль** обеих изменённых матриц: verdict `pass` (0 нарушений);
-   PPL на контрольных текстах не изменилась (отношения 0.996–1.013) — правка
-   хирургическая.
-5. **Поведенчески** одна итерация мягкой правки ρ не снизила:
-   ρ = 65% (13/20) → 65% (13/20), FPR на good = 50% → 55%, изменённых
-   жадных генераций: 0 из 20 bad и 2 из 20 good (Wilcoxon — «identical»:
-   на bad-наборе все траектории побайтово совпали). Диагноз ровно по
-   разделу 6 плана: α = 0.15/0.42 на 15/55 колонках слишком мягко, чтобы
-   сдвинуть жадные траектории, а Δh смешивает «дефект» с общей разницей
-   «длинный CoT-контекст vs короткий фактический ответ» (FPR_baseline 50%
-   показывает, что модель 0.3B зацикливается и на коротких good-промптах).
-   Следующие итерации петли: чистить контраст групп (одинаковая длина/тема,
-   различие только в провокации дефекта), переоценивать Δh на
-   отредактированной модели, при δ→1 переходить к `--full` либо к бόльшему
-   числу слоёв-кандидатов. Инфраструктура петли (probe → edit → benchmark →
-   stop-критерии в yaml) готова и переиспользуется без изменений кода.
+   α₀ = 0.15) and **L11 o_proj** (λ_v/λ₊ = 1.10, θ_v = 1.84 > θ_c = 1.00,
+   δ = 0.46 → α₀ = 0.42). L8/L10 are subcritical and the editor does not touch
+   them (α₀ = 0 by formula).
+3. **The strict auto_tw gate refused both matrices** (0 columns: the direction
+   profile is dense, no column carries mass above the MP edge) — a legitimate plan
+   response, "do not subtract what is not confirmed". The working edit used
+   `auto_chi2`: 15 + 55 columns, **62,720 weights ≈ 0.021%** of the parameters —
+   exactly inside the plan's target corridor of 0.016–0.05%.
+4. **TW control of both edited matrices**: verdict `pass` (0 violations);
+   PPL on control texts unchanged (ratios 0.996–1.013) — the edit is surgical.
+5. **Behaviorally**, one iteration of the soft edit did not reduce ρ:
+   ρ = 65% (13/20) → 65% (13/20), FPR on good = 50% → 55%, changed greedy
+   generations: 0 of 20 bad and 2 of 20 good (Wilcoxon — "identical": on the bad
+   set every trajectory matched byte for byte). The diagnosis follows plan section 6
+   exactly: α = 0.15/0.42 on 15/55 columns is too soft to move greedy trajectories,
+   and Δh mixes "defect" with the generic "long CoT context vs short factual answer"
+   difference (the 50% FPR baseline shows the 0.3B model loops even on short good
+   prompts). Next loop iterations: clean up the group contrast (same length/topic,
+   differing only in defect provocation), re-estimate Δh on the edited model, and at
+   δ→1 move to `--full` or more candidate layers. The loop infrastructure
+   (probe → edit → benchmark → stop criteria in yaml) is ready and is reused without
+   code changes.
 
-## Ограничения и честные оговорки
+## Limitations and honest caveats
 
-- Промпт-сеты — стартовые (20+20+5); для рабочего эффекта их нужно расширять
-  и выравнивать по длине/теме между группами, иначе Δh кодирует стиль, а не
-  дефект (см. пункт 5 выше).
-- `z_RMT` на реальных LLM-активациях всегда огромен (структура ≫ шума), поэтому
-  рабочим критерием допуска Δh в RCDA является пара `z_diff` + `β/β_floor`;
-  `z_RMT` оставлен как требует план и как диагностический столбец.
-- Параметризация `bbp_lambda_max` в `src/rmt_llm` — упрощённая асимптотика;
-  RCDA использует только её обратное отображение для θ_v и порог `θ_c = √q`,
-  что совпадает с планом.
-- Проверка «слой 15 и 19»: RMT-сканы отвергают подсказку в пользу L8–L12
-  (по z_diff) — то есть локализацию следует брать из пробы, а не из аналогии.
+- The prompt sets are a starting point (20+20+5); for a working effect they must be
+  extended and length/topic-matched between groups, otherwise Δh encodes style rather
+  than the defect (see item 5 above).
+- `z_RMT` on real LLM activations is always huge (structure ≫ noise), so the working
+  RCDA tolerance criterion for Δh is the pair `z_diff` + `β/β_floor`;
+  `z_RMT` is kept as the plan requires and as a diagnostic column.
+- The `bbp_lambda_max` parameterization in `src/rmt_llm` is simplified asymptotics;
+  RCDA uses only its inverse mapping for θ_v and the threshold `θ_c = √q`, which
+  matches the plan.
+- Checking the "layers 15 and 19" hint: the RMT scans reject it in favor of L8–L12
+  (by z_diff) — i.e. localization must come from the probe, not from analogy.
