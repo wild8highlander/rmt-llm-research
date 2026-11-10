@@ -1,0 +1,23 @@
+{
+ "tag": "aided",
+ "edited_state": "edited_state_aided.safetensors",
+ "n_changed_tensors": 1,
+ "changed": {
+  "model.layers.16.self_attn.q_proj.weight": {
+   "rel_frobenius": 6.91167,
+   "n_weights": 802113
+  }
+ },
+ "tw": {
+  "model.layers.16.self_attn.q_proj.weight": {
+   "verdict": "violation"
+  }
+ },
+ "cosine_edit_vs_v": {
+  "model.layers.16.self_attn.q_proj.weight": 0.0539
+ },
+ "rho_bad": 0.85,
+ "rho_good": 0.6,
+ "loop_waste_mean": 76.0,
+ "kl_ctrl": 0.0654
+}

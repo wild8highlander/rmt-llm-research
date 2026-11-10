@@ -34,7 +34,7 @@ from them.
 > $f$ be weakly differentiable. Then
 > $\mathbb E[x f(x)] = \gamma^2 \mathbb E[f'(x)]$ and
 > $\mathbb E[x^2 f(x)] = \gamma^2\mathbb E[f] + \gamma^4 \mathbb E[f'']$.
-
+>
 > **Proposition 2.3 (GELU moments).** For $x\sim\mathcal N(0,\gamma^2)$
 > and $\mathrm{GELU}(x) = x\Phi(x)$, with
 > $\varphi_0 = (2\pi)^{-1/2}$:
@@ -62,7 +62,7 @@ completes the proof. $\square$
 > $\mathrm{SiLU}(x) = x\,\sigma(x)$. It has no elementary closed form and
 > is evaluated exactly (to quadrature precision) by tensor Gauss-Hermite
 > quadrature — `layer_ops.bivariate_kernel`.
-
+>
 > **Proposition 2.5 (covariance transform).** Under A3, the output
 > covariance of a GELU layer $y = \mathrm{GELU}(Wx)$, $x\sim\mathcal N(0,C)$,
 > is

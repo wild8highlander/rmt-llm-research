@@ -1,0 +1,53 @@
+# ============================================================================
+# rcda2_behavioral.yaml — round 2: behavioral contrast (RCDA-2)
+# Token-level labels produced by the model itself (loop = repeated token 4-gram)
+# remove the style confound of round 1 (|cos(style, behavioral)| ~ 0.01-0.09).
+# ============================================================================
+
+round: 2
+target_defect: "repetition_loop"
+
+# ------------------------------------------------- stage 1 (behavioral probe)
+probe:
+  prompts: ["prompts/bad.jsonl", "prompts/good.jsonl"]  # both feed BOTH pools
+  max_new: 96
+  pos_lo: 8            # token position window for loop/clean pools
+  loop_ngram: 4        # token-level n-gram defining "in a loop"
+  top_layers: 4
+  precursor_window: 16 # sliding window for the participation-ratio detector
+
+# ------------------------------------------------- stage 2 (dose-response)
+dose:
+  targets: "auto"      # scans with lambda_v > lambda_+ (supercritical)
+  alpha_grid: [0.1, 0.25, 0.5, 0.75, 1.0]
+  column_mode: "auto_chi2"
+  chi2_eta: 0.05
+  cal_prompts: 8
+  cal_max_new: 48
+  kl_texts: 2          # teacher-forced KL(base||edited) texts
+  selection_rule: "smallest alpha with >=2 changed bad trajectories and
+                   rep4_bad drop >= 0.15; fallback alpha=1.0 + escalation note"
+  tw_backoff_alpha_ladder: [1.0, 0.75, 0.5, 0.25, 0.1]
+
+# ------------------------------------------------- final edit (round 2 result)
+edit:
+  # from the actual run (see Research/RCDA/results/rcda2_edit_report.json)
+  layers: [15, 16, 18]
+  matrix: "o_proj"
+  alpha: {15: 1.0, 16: 1.0, 18: 0.5}   # 18 backed off by the TW control
+  total_weights: 189952                 # ~0.062% of parameters
+
+# ------------------------------------------------- findings to carry forward
+findings:
+  style_confound_cosine: [0.011, 0.038, 0.065, 0.088]   # L15-L18
+  loop_heads: {15: 7, 16: 8, 18: 0}    # top-enriched attention heads
+  pr_precursor_drop_percent: {15: 41, 16: 35, 17: 34}   # pre-loop vs loop
+  pr_precursor_early_drop_percent: 9                    # before textual collapse
+  boosted_tokens: ["etc", "total", "until", "indices", "loops", "cyclic"]
+
+# ------------------------------------------------- next round plan
+next:
+  - "per-head o_proj ablation (64-column blocks of heads L15:h7, L16:h8, L18:h0)"
+  - "iterative re-probe loop on the edited model (stop rules of rcda_experiment.yaml)"
+  - "bulk shrinkage fallback (rcda_shrink, r=10, tau=2) on L15-L18 o_proj"
+  - "PR-based runtime clip-hook trigger (window 16, layer 15, -5% threshold)"

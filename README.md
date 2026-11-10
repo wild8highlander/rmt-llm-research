@@ -34,6 +34,25 @@
 [![Property tests](https://img.shields.io/badge/property%20tests-hypothesis-1f6feb.svg)](https://github.com/HypothesisWorks/hypothesis)
 [![Benchmarks](https://img.shields.io/badge/benchmarks-pytest--benchmark-1f6feb.svg)](https://pytest-benchmark.readthedocs.io/)
 
+<p align="center">
+  <picture>
+    <source srcset="assets/visuals/hero-2x.avif" type="image/avif">
+    <source srcset="assets/visuals/hero-2x.webp" type="image/webp">
+    <img src="assets/visuals/hero-2x.png" width="1200" alt="Marchenko-Pastur bulk with an amber BBP eigenvalue spike rising out of cyan noise, framed by violet nuclear energy levels">
+  </picture>
+</p>
+
+<p align="center">
+  <img src="assets/anim/hero-loop.gif" width="800" loading="lazy" alt="Animated Marchenko-Pastur curve breathing while the amber BBP spike rises out of the bulk and violet nuclear orbitals precess">
+</p>
+<p align="center"><sub><em>
+  The spectrum rendered as an atomic nucleus — MP bulk in cyan
+  (#00D4FF), the BBP outlier in amber (#FFB020), orbital levels in violet
+  (#B026FF). The curve is <code>mp_density</code>, the spike sits at
+  <code>bbp_lambda_max</code>: regenerate with <code>make images</code> and
+  <code>make anims</code>.
+</em></sub></p>
+
 > **Spectral analysis of LLM activations through the lens of Random Matrix Theory** — detecting hallucinations, cognitive mode transitions, and the mathematical inevitability of autoregressive collapse.
 
 <p align="center">
@@ -49,6 +68,50 @@ is reproducible with one command:*
 ```bash
 python scripts/gen_banner_gif.py
 ```
+
+---
+
+## ⌛ The idea in 60 seconds
+
+Treat the covariance matrix of an LLM's hidden-state activations as the
+density matrix of a quantum system. If the model is only mixing random
+associations, the eigenvalue spectrum collapses onto the **Marchenko–Pastur
+bulk** — pure noise, cyan in every visual of this repository. The moment the
+model recalls something structured, a single eigenvalue detaches from the
+bulk and crosses the **BBP threshold** — an amber spike, a quantum
+transition. Past a critical context length **N_crit ≈ 114.5** the
+autoregressive machinery is mathematically forced to hallucinate (ten
+independent proofs converge on the same number), and RLHF's usefulness
+pressure makes that moment arrive quadratically sooner
+(**β ≈ 0.5**, the crimson collapse). Every number below is computed by
+[`src/rmt_llm`](src/rmt_llm/) and pinned by tests — nothing is hand-waved.
+
+| Symbol | Value | Meaning | Source |
+|--------|-------|---------|--------|
+| θ_c | √q (= 0.3162 for q = 0.1) | BBP critical signal strength | [`bbp_transition.py`](src/rmt_llm/bbp_transition.py) |
+| N_crit | **114.5488** | Critical token count — hallucination becomes inevitable | `caputo_n_crit()` in [`caputo_fractional.py`](src/rmt_llm/caputo_fractional.py) |
+| β | 0.5 | Caputo memory parameter — RLHF entropic-collapse exponent | [`constants.py`](src/rmt_llm/constants.py) |
+| θ_b | 7.07° | Rotation angle from the Navier–Stokes regularity analysis | [`constants.py`](src/rmt_llm/constants.py) |
+| γ₁ | 14.134725 | First nontrivial Riemann zeta zero (spectral gap) | [`constants.py`](src/rmt_llm/constants.py) |
+| 〈T_crit〉 | μ_eff^(−1/β) (4× slower decay for 2× RLHF drift) | Mean hallucination collapse time | `caputo_mean_collapse_time()` |
+| TW mean / var | −1.7711 / 0.8132 | Tracy–Widom F₂ moments of the bulk edge | [`constants.py`](src/rmt_llm/constants.py) |
+
+## 🧿 Three key formulas
+
+| Formula | Reads as | Implemented in |
+|---------|----------|----------------|
+| ρ(λ) = √((λ₊ − λ)(λ − λ₋)) / (2πσ²λq),  λ± = σ²(1 ± √q)² | Marchenko–Pastur density — the null hypothesis "this model is only doing random projections" | [`marchenko_pastur.py`](src/rmt_llm/marchenko_pastur.py) |
+| λ_max → σ²(1 + θ²/q)  when  θ > √q | BBP transition — a spike of structured signal leaves the noise bulk | [`bbp_transition.py`](src/rmt_llm/bbp_transition.py) |
+| N_crit = γ₁ / (θ_b·π/180) ≈ 114.5 | Hallucination inevitability threshold from Caputo fractional dynamics | [`caputo_fractional.py`](src/rmt_llm/caputo_fractional.py) |
+| 〈T_crit〉 = c·μ_eff^(−1/β),  β ≈ 0.5 | RLHF usefulness trap — drift quadratically accelerates collapse | [`caputo_fractional.py`](src/rmt_llm/caputo_fractional.py) |
+
+## 🏆 Headline results
+
+| ID | Thread | Result | Pinned evidence |
+|----|--------|--------|-----------------|
+| R1 | Spectral statistics | MP law fits activation spectra; an eigenvalue separates from the bulk exactly when θ crosses √q | `rmt-llm-verify verify` → 5/5 self-checks (CI gate), 101 tests in [`src/rmt_llm/tests/`](src/rmt_llm/tests/) |
+| R2 | Inevitable hallucinations | Ten independent paths converge on N_crit ≈ 114.5 tokens | Caputo/NHSE/EP test suites + monograph [`M06`](docs/monographs/M06_complex_hallucinations/) |
+| R3 | The RLHF usefulness trap | β = 0.5 ⇒ 〈T_crit〉 ∝ μ_eff⁻² — twice the RLHF drift, four times faster collapse | `caputo_mean_collapse_time(0.5) = 4.0` vs `(1.0) = 1.0` + monograph [`M05`](docs/monographs/M05_llm_analysis_merged/) |
 
 ---
 
@@ -87,6 +150,13 @@ README wears the same icon-and-divider frame.
 | [aurora-banner.svg](assets/branding/aurora-banner.svg) | the animated hero above |
 | [aurora-avatar](assets/branding/aurora-avatar-1024.png) / [icon](assets/branding/aurora-icon-512.png) | GitHub avatar & social preview (`1280×640` ready) |
 | [aurora-divider.svg](assets/branding/aurora-divider.svg) | section divider in every folder README |
+| [hero-2x](assets/visuals/hero-2x.avif) + [hero-loop](assets/anim/hero-loop.webm) | the "Model Weights × Nuclear Levels" hero above |
+| [thread-1/2/3 cards](assets/visuals/thread-1-spectral-2x.avif) + [loops](assets/anim/thread-1-loop.webm) | one card + one seamless loop per research thread |
+| [dataflow-loop](assets/anim/dataflow-loop.webm) | the pipeline flow under the structure diagram |
+| [og-image.png](assets/visuals/og-image.png) | social preview (1200×630, set in repo settings) |
+| [favicon-2x](assets/visuals/favicon-2x.png) | docs site glyph — the atom × matrix mark |
+| [assets/visuals/](assets/visuals/) + [assets/anim/](assets/anim/) | every static slot in AVIF/WebP/PNG, every loop in WebM/MP4/GIF + poster |
+| [assets/prompts.yaml](assets/prompts.yaml) | single source of truth: palette, seeds, sizes, prompts |
 | [assets/charts/](assets/charts/README.md) | publication-grade **600 dpi** figures: Marchenko–Pastur, BBP, Tracy–Widom, Dyson BM, spectral entropy, detector ROC, repo metrics |
 
 <p align="center">
@@ -96,7 +166,10 @@ README wears the same icon-and-divider frame.
 
 Regenerate everything with `python laboratory/scripts/render_branding.py` and
 `python laboratory/scripts/gen_charts.py` — or read the
-[branding guide](assets/branding/README.md).
+[branding guide](assets/branding/README.md). The scientific visual layer
+(hero, thread cards, loops, OG) regenerates deterministically from
+[`assets/prompts.yaml`](assets/prompts.yaml): `make images`, `make anims`,
+`make og-image`, `make verify-repo-manifest`.
 
 ---
 
@@ -140,14 +213,27 @@ in the docs.
 | Simulate full CI locally | `make ci` |
 | See all available targets | `make help` |
 
+<p align="center">
+  <img src="assets/anim/cli-demo.gif" width="720" loading="lazy" alt="Terminal recording: rmt-llm-verify verify runs the five module self-checks, all [OK], verify: 5/5 checks passed">
+</p>
+<p align="center"><sub><em>
+  The self-check gate, live. Full CLI reference in
+  <a href="src/rmt_llm/README.md">src/rmt_llm/README.md</a>; the recording is
+  regenerated with <code>make anims-cli-demo</code>.
+</em></sub></p>
+
 ---
 
 ## 📑 Table of Contents
 
-- [Recent Updates](#-recent-updates)
+- [Engineering infrastructure](#-engineering-infrastructure)
 - [Quick Start](#-quick-start-60-seconds)
+- [The idea in 60 seconds](#-the-idea-in-60-seconds)
+- [Three key formulas](#-three-key-formulas)
+- [Headline results](#-headline-results)
 - [Overview](#-overview)
 - [Research Topics](#-research-topics)
+- [How to read this repository](#-how-to-read-this-repository)
 - [Repository Structure](#-repository-structure)
 - [Verification Package](#-verification-package)
 - [Advanced Visualization Suites](#-advanced-visualization-suites)
@@ -158,9 +244,11 @@ in the docs.
 - [Getting Started](#-getting-started)
 - [Visual Identity](#-visual-identity)
 - [Professional Engineering](#-professional-engineering)
+- [Evidence & reproducibility](#-evidence--reproducibility)
 - [FAQ](#-faq)
 - [Roadmap](#-roadmap)
 - [Citation](#-citation)
+- [The Research Laboratory](#-research-laboratory-recently-added)
 - [Contributors](#-contributors)
 - [License](#-license)
 
@@ -182,13 +270,75 @@ This repository presents a comprehensive research program applying **Random Matr
 
 Covariance matrices of GPT-2 hidden-state activations exhibit fundamentally different spectral properties depending on whether the model is in factual recall or creative generation mode. The BBP phase transition, Marchenko-Pastur bounds, and Tracy-Widom fluctuations provide quantitative markers for cognitive mode detection.
 
+- **Null hypothesis**: a factual-recall-free spectrum must follow the MP law — [`marchenko_pastur.py`](src/rmt_llm/marchenko_pastur.py) (density, CDF, sampling, Stieltjes transform)
+- **Signal marker**: λ_max detaches from the bulk exactly at θ_c = √q — [`bbp_transition.py`](src/rmt_llm/bbp_transition.py)
+- **Edge marker**: Tracy–Widom F₂ fluctuations of the largest eigenvalue — [`tracy_widom.py`](src/rmt_llm/tracy_widom.py)
+- **Folder**: [`src/rmt_llm/`](src/rmt_llm/README.md) · monographs [`M01`](docs/monographs/M01_spectral_analysis/), [`M02`](docs/monographs/M02_arxiv_preprint/), [`M03`](docs/monographs/M03_blackgold_v1/), [`M04`](docs/monographs/M04_blackgold_v2/)
+
+<img src="assets/visuals/divider-thread-1-2x.png" width="100%" loading="lazy" alt="">
+
+<p align="center">
+  <picture>
+    <source srcset="assets/visuals/thread-1-spectral-2x.avif" type="image/avif">
+    <source srcset="assets/visuals/thread-1-spectral-2x.webp" type="image/webp">
+    <img src="assets/anim/thread-1-loop.gif" width="720" loading="lazy" alt="Eigenvalue cloud forming the Marchenko-Pastur semicircle; one eigenvalue detaches above the critical threshold and returns">
+  </picture>
+</p>
+<p align="center"><sub><em>Thread 1 — the BBP transition: when an eigenvalue leaves the bulk (seamless loop; the MP curve is <code>mp_density</code>).</em></sub></p>
+
 ### 2. Inevitable Hallucinations in Autoregressive Models
 
 Ten independent mathematical paths converge on a single critical token count N_crit: complex phase, operator dynamics, GUE spectral statistics, thermodynamic entropy, Lévy-Langevin fractional dynamics, EP-surfaces, Tracy-Widom, quantum channel degradation, NHSE (winding number), and Caputo fractional-time memory.
 
+- **NHSE path**: winding-number transition Im(λ) → 0 at N = N_crit — [`nhse.py`](src/rmt_llm/nhse.py)
+- **Caputo path**: fractional memory drives 〈T_crit〉 = c·μ_eff^(−1/β) — [`caputo_fractional.py`](src/rmt_llm/caputo_fractional.py)
+- **Finite-context correction**: γ₁(N) = 14.1347 + c₁/N + c₂/N² — [`keating_snaith.py`](src/rmt_llm/keating_snaith.py)
+- **Rounding sensitivity**: exceptional points amplify float64 noise as ε^(1/k) — [`ep_surfaces.py`](src/rmt_llm/ep_surfaces.py)
+- **Folder**: [`src/rmt_llm/`](src/rmt_llm/README.md) · monograph [`M06`](docs/monographs/M06_complex_hallucinations/)
+
+<img src="assets/visuals/divider-thread-2-2x.png" width="100%" loading="lazy" alt="">
+
+<p align="center">
+  <picture>
+    <source srcset="assets/visuals/thread-2-hallucination-2x.avif" type="image/avif">
+    <source srcset="assets/visuals/thread-2-hallucination-2x.webp" type="image/webp">
+    <img src="assets/anim/thread-2-loop.gif" width="720" loading="lazy" alt="Violet orbital rings around a dark core; an amber transition arrow sweeps across a critical barrier while a crimson probability cloud leaks beyond it">
+  </picture>
+</p>
+<p align="center"><sub><em>Thread 2 — the leak past N_crit: probability mass crossing the critical barrier and resetting (seamless loop).</em></sub></p>
+
 ### 3. The Utility Trap: RLHF and Entropic Collapse
 
 RLHF optimization creates an artificial drift in the Fokker-Planck equation, forcing the model to "lie beautifully once" rather than risk a self-correction cycle. The Caputo memory parameter β ≈ 0.5 makes 〈T_crit〉 ∝ (μ_eff)⁻² — even small RLHF pressure quadratically accelerates hallucination onset.
+
+- **Free-energy view**: F = U − T·S_spec — factual mode is a crystal, creative mode a gas — [`thermodynamics.py`](src/rmt_llm/thermodynamics.py)
+- **Irreversibility**: Landauer cost of the autoregressive erase-and-predict cycle — [`thermodynamics.py`](src/rmt_llm/thermodynamics.py)
+- **RG flow**: coupling renormalization across transformer layers — [`thermodynamics.py`](src/rmt_llm/thermodynamics.py)
+- **Folder**: [`src/rmt_llm/`](src/rmt_llm/README.md) · monograph [`M05`](docs/monographs/M05_llm_analysis_merged/)
+
+<img src="assets/visuals/divider-thread-3-2x.png" width="100%" loading="lazy" alt="">
+
+<p align="center">
+  <picture>
+    <source srcset="assets/visuals/thread-3-rlhf-2x.avif" type="image/avif">
+    <source srcset="assets/visuals/thread-3-rlhf-2x.webp" type="image/webp">
+    <img src="assets/anim/thread-3-loop.gif" width="720" loading="lazy" alt="A cyan-violet probability cloud spiraling into a crimson singularity and re-expanding — entropy collapse">
+  </picture>
+</p>
+<p align="center"><sub><em>Thread 3 — entropic collapse: the output distribution spirals into the RLHF attractor and re-expands (seamless loop).</em></sub></p>
+
+---
+
+## 🧭 How to read this repository
+
+Four curated entry points — pick the one that matches your time budget.
+
+| I want to… | Time | Go to |
+|------------|------|-------|
+| 🕐 **get the gist** | 15 min | [The idea in 60 seconds](#-the-idea-in-60-seconds) → [Headline results](#-headline-results) → monograph [`M02`](docs/monographs/M02_arxiv_preprint/) (arXiv preprint) |
+| 🌆 **understand the science** | one evening | [Research Topics](#-research-topics) above → folder guides [`src/rmt_llm/`](src/rmt_llm/README.md) + [`docs/monographs/`](docs/monographs/README.md) → [`M06`](docs/monographs/M06_complex_hallucinations/) |
+| 🌌 **go deep** | a weekend | Full monographs [`M01`](docs/monographs/M01_spectral_analysis/) → [`M05`](docs/monographs/M05_llm_analysis_merged/) → [`M06`](docs/monographs/M06_complex_hallucinations/) → [notebook](notebooks/) reproductions |
+| 🧪 **run the code** | 10 min | [Quick Start](#-quick-start-60-seconds) below → [`src/rmt_llm/README.md`](src/rmt_llm/README.md) → `make verify-repo` |
 
 ---
 
@@ -247,6 +397,16 @@ graph TD
     K --> K3[RMTVerifier.java — Headless checks]
     K --> K4[RMTConstants.java + Complex.java]
 ```
+
+<p align="center">
+  <img src="assets/anim/dataflow-loop.gif" width="720" loading="lazy" alt="Animated data flow: activation particles streaming through statistics and verification stages, cyan to amber to violet">
+</p>
+<p align="center"><sub><em>
+  The pipeline as a flow: raw activations (cyan) → MP/BBP statistics (amber)
+  → verification &amp; monographs (violet). Documentation hygiene is
+  enforced on the same path by <code>make verify-repo</code> and the
+  markdown link checker in CI.
+</em></sub></p>
 
 ---
 
@@ -515,6 +675,34 @@ make test-all       # All 8 languages (slow — needs Julia, Rust, Go, Java, C++
 make ci             # Simulate the full CI pipeline locally
 make test-coverage  # Generate HTML coverage report at htmlcov/index.html
 ```
+
+---
+
+## 🔏 Evidence & reproducibility
+
+Every scientific claim in this README is backed by a machine-checkable
+artifact, and the backing is itself checked by CI. [`MANIFEST.json`](MANIFEST.json)
+pins the sha256 of the visual layer, the CLI entry points and the pinned
+result reports; [`scripts/verify_repo.py`](scripts/verify_repo.py) re-verifies
+all of it locally in about a second.
+
+```bash
+make verify-repo        # → MANIFEST.json OK — <N> entries verified
+python scripts/verify_repo.py --all
+```
+
+| Check | What it proves | Enforced by |
+|-------|----------------|-------------|
+| `MANIFEST.json` sha256 match | Visuals and pinned artifacts were not silently altered | `verify-repo.yml` on every PR |
+| Image budgets (AVIF/WebP ≤ 400 KB, GIF ≤ 2 MB, WebM ≤ 3 MB) | The visual layer stays cheap to clone and render | `verify_repo.py --budgets` |
+| Alt text on every `<img>`/`<video>` | The layer stays accessible and link-checkable | `verify_repo.py --alt` |
+| `rmt-llm-verify verify` exit 0 | The math the visuals claim is the math the code computes | [`cli-doctor.yml`](.github/workflows/cli-doctor.yml) |
+| 101 + 141 pytest tests | Formulas behave as the monographs state | [`ci.yml`](.github/workflows/ci.yml) |
+| markdownlint + link check | No dead relative paths in any README | [`markdown-lint.yml`](.github/workflows/markdown-lint.yml) |
+| CITATION.cff + Zenodo DOI | citable provenance | [`zenodo.yml`](.github/workflows/zenodo.yml) |
+
+To re-pin after regenerating assets: `make images && make anims && make
+og-image && make verify-repo-manifest`.
 
 ---
 

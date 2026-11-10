@@ -1,6 +1,5 @@
 # Formal Proof: Deriving the Spectral Laws of LLM Activations
 
-
 **rmt-llm-research · first-principles program · derived-theorems edition**
 
 This monograph contains only statements derived from explicitly stated
@@ -11,7 +10,6 @@ phenomenological and untouched.
 **Contents:** Chapters 1-12 below · Russian edition: [monograph_RU.md](monograph_RU.md)
 
 ---
-
 
 # Chapter 1 — Scope, Assumptions and Notation
 
@@ -86,9 +84,7 @@ Every derivation chapter ends with the numerical verification that backs
 it; all six experiments reproduce in ~3 minutes via
 `formal_proof/experiments/run_all.py`.
 
-
 ---
-
 
 # Chapter 2 — The Layer Operator: RMSNorm Conservation and Nonlinear Kernels
 
@@ -126,7 +122,7 @@ from them.
 > $f$ be weakly differentiable. Then
 > $\mathbb E[x f(x)] = \gamma^2 \mathbb E[f'(x)]$ and
 > $\mathbb E[x^2 f(x)] = \gamma^2\mathbb E[f] + \gamma^4 \mathbb E[f'']$.
-
+>
 > **Proposition 2.3 (GELU moments).** For $x\sim\mathcal N(0,\gamma^2)$
 > and $\mathrm{GELU}(x) = x\Phi(x)$, with
 > $\varphi_0 = (2\pi)^{-1/2}$:
@@ -154,7 +150,7 @@ completes the proof. $\square$
 > $\mathrm{SiLU}(x) = x\,\sigma(x)$. It has no elementary closed form and
 > is evaluated exactly (to quadrature precision) by tensor Gauss-Hermite
 > quadrature — `layer_ops.bivariate_kernel`.
-
+>
 > **Proposition 2.5 (covariance transform).** Under A3, the output
 > covariance of a GELU layer $y = \mathrm{GELU}(Wx)$, $x\sim\mathcal N(0,C)$,
 > is
@@ -180,9 +176,7 @@ The kernels are *derived* (Prop 2.3) or *numerically exact* (Def 2.4);
 the only assumption is A3, and Experiment 6 shows the assumption is
 quantitatively benign at these widths.
 
-
 ---
-
 
 # Chapter 3 — The Silverstein Equation and the Marchenko-Pastur Bulk
 
@@ -214,7 +208,7 @@ the equation is quadratic.
 > Equivalently for the resolvent convention $G = -m =
 > \tfrac1N\mathrm{Tr}(zI-C)^{-1}$:
 > $\sigma^2 q z G^2 - \big(z+\sigma^2(q-1)\big)G + 1 = 0$.
-
+>
 > **Corollary 3.1b (closed form).** The physical root of (3.2), analytic
 > on $\mathbb C\setminus[\lambda_-,\lambda_+]$ with $m(z)\sim -1/z$ at
 > infinity, is
@@ -265,9 +259,7 @@ cross-check the closed form in `mp.py`.
 | Empirical spectrum vs derived density ($N=900$, $T=2571$) | KS distance $0.0033$ |
 | Largest eigenvalue vs $\lambda_+$ | relative deviation $0.010$ (TW-scale, Ch. 9) |
 
-
 ---
-
 
 # Chapter 4 — Free Probability of Weight-Activation Products
 
@@ -346,9 +338,7 @@ literature. Chapter 11 therefore treats the free-probability branch as
 *derived mathematics with a stated domain of validity*, not as a
 description of trained checkpoints.
 
-
 ---
-
 
 # Chapter 5 — The BBP Phase Transition
 
@@ -429,9 +419,7 @@ Subcritical spikes stick to the edge (residual deficit is the
 Tracy-Widom scale, Chapter 9); supercritical spikes follow the derived
 trajectory. The animation `bbp_transition.gif` shows the detachment.
 
-
 ---
-
 
 # Chapter 6 — Outlier Trajectories and Eigenvector Overlaps
 
@@ -459,13 +447,18 @@ equivalent literature. The formula is implemented as
 
 Three regimes, all verified numerically:
 
-* **$\mu \downarrow \mu_c$:** numerator $\to 1 - q\sigma^4/\mu_c^2 = 0$:
+- **$\mu \downarrow \mu_c$:** numerator $\to 1 - q\sigma^4/\mu_c^2 = 0$:
+
   the alignment vanishes continuously — at threshold the spike carries
   *no* usable direction, even though its eigenvalue touches the edge.
-* **$\mu \gg \sigma^2\sqrt q$:** overlap $\to 1$: the sample direction
+
+- **$\mu \gg \sigma^2\sqrt q$:** overlap $\to 1$: the sample direction
+
   recovers the semantic direction; the residual misalignment is
   $q\sigma^2/\mu$.
-* **fixed $\mu$, growing $q$:** alignment degrades polynomially — at
+
+- **fixed $\mu$, growing $q$:** alignment degrades polynomially — at
+
   aspect ratios hostile to the signal, the outlier eigenvalue still
   detaches but points in an increasingly wrong direction. This is the
   rigorous version of "geometric distortion of semantic predictions as
@@ -509,9 +502,7 @@ precision; Experiment 4).
 | Overlap at $\mu = 3\mu_c$ | empirical $0.757$ vs derived $0.753$ |
 | Overlap at $\mu\le\mu_c$ | empirical $\le 0.05$ vs derived $0$ |
 
-
 ---
-
 
 # Chapter 7 — The Hallucination Split: a Spectral Definition
 
@@ -528,11 +519,11 @@ admits a canonical, parameter-free decomposition.
 > $$\mathcal H_{\mathrm{signal}} = \mathrm{span}\{\hat v_k : \lambda_k > \lambda_+\},\qquad
 >   \mathcal H_{\mathrm{bulk}} = \mathrm{span}\{\hat v_k : \lambda_k \le \lambda_+\},$$
 > $$\mathcal H = \mathcal H_{\mathrm{signal}} \oplus \mathcal H_{\mathrm{bulk}}.$$
-
+>
 > **Definition 7.2 (projector ratio).** For a vector $x\in\mathcal H$
 > (e.g. the last-position activation $x_T^{(L)}$):
 > $$r(x) \;=\; \frac{\|P_{\mathrm{bulk}}\,x\|^2}{\|P_{\mathrm{signal}}\,x\|^2 + \varepsilon}.$$
-
+>
 > **Definition 7.3 (flagging rule).** $x$ is *noise-dominated* iff
 > $r(x) > \eta_{\mathrm{crit}}$, where $\eta_{\mathrm{crit}}$ is a
 > decision parameter, not a derived constant.
@@ -556,19 +547,20 @@ consequence that survives under explicit assumptions.
 
 `rmt_fp/hallucination.py` provides:
 
-* `spectral_split(eigs, lambda_plus)` — the index split of Definition 7.1;
-* `noise_signal_ratio(x, vecs, eigs, lambda_plus)` — Definition 7.2 by
+- `spectral_split(eigs, lambda_plus)` — the index split of Definition 7.1;
+- `noise_signal_ratio(x, vecs, eigs, lambda_plus)` — Definition 7.2 by
+
   exact projector arithmetic;
-* `hallucination_flag(...)` — Definition 7.3;
-* `spiked_activation_matrix(...)` — the synthetic harness used by the
+
+- `hallucination_flag(...)` — Definition 7.3;
+- `spiked_activation_matrix(...)` — the synthetic harness used by the
+
   experiments (MP bulk + rank-$r$ semantic spikes).
 
 The module is deliberately thin: it makes the definition executable and
 auditable, nothing more.
 
-
 ---
-
 
 # Chapter 8 — Entropy Response of the Decoder to Bulk Noise
 
@@ -627,10 +619,13 @@ $E_\xi[p_\xi]$ is flat in $\tau$ to this order (its deviation from
 uniform is $\mathcal O(\tau^{-4})$). Both facts are visible in the
 verification figure. Consequences:
 
-* any statement of the form "$H = H_0 + \frac{1}{2\tau^2}\int\lambda\rho\,d\lambda$"
+- any statement of the form "$H = H_0 + \frac{1}{2\tau^2}\int\lambda\rho\,d\lambda$"
+
   requires specifying *which* entropy and carries, under the natural
   conditional reading, the **opposite sign** and a $(1-1/K)$ factor;
-* the honest claim exported from this chapter is Theorem 8.2 with its
+
+- the honest claim exported from this chapter is Theorem 8.2 with its
+
   assumptions — the parent repository's Step 11 formula is left as it
   stands (phenomenological), and this chapter replaces it wherever the
   derived statement is required.
@@ -649,9 +644,7 @@ The derived slope $-\,(1-1/K)\bar\sigma^2/2 = -0.6577$ per unit
 $1/\tau^2$ matches the regression of the MC curve; third-order effects
 appear only at $\tau < 2$.
 
-
 ---
-
 
 # Chapter 9 — Tracy-Widom Edge Fluctuations and Finite-Size Corrections
 
@@ -728,9 +721,7 @@ alarms at rate $\alpha$ determined by the $F_1$ tail. The rigorous
 calibration of thresholds is therefore: flag at
 $\mu_{N,T} + s_{N,T}\,q_\alpha(F_1)$ — with $F_1$, not $F_2$.
 
-
 ---
-
 
 # Chapter 10 — Optimal Spectral Filtering: Three Problems, Three Exact Solutions
 
@@ -750,7 +741,7 @@ its own exact solution, and they are frequently conflated.
 > is solved exactly by keeping the top-$r$ sample eigenvalues *unchanged*
 > and zeroing the rest. Any soft de-biasing of the kept eigenvalues makes
 > the Frobenius error strictly larger.
-
+>
 > **Theorem 10.2 (inverse-BBP estimator; derived in Prop 6.2).** For the
 > problem *estimate the population covariance*
 > $\Sigma = \sigma^2 I + \sum_k \mu_k v_kv_k^{\mathsf T}$ *from the sample
@@ -763,7 +754,7 @@ its own exact solution, and they are frequently conflated.
 > $\sum_k\mu_kv_kv_k^{\mathsf T}$). This operator is the exact inverse of
 > the BBP map (Theorem 5.1/6.1); its first-order expansion is
 > $\lambda - q\sigma^2 - q\sigma^4/\lambda$.
-
+>
 > **Theorem 10.3 (Gavish-Donoho).** For the problem *recover the
 > spike-only signal $P$ from $X = P + \sigma Z$* under the oracle
 > Frobenius AMSE, the optimal hard threshold for singular values is
@@ -782,12 +773,15 @@ Theorem 10.2; Gavish-Donoho (2014) for Theorem 10.3; Donoho-Gavish
 With $N=300$, $T=600$, $q=0.5$, $25$ trials per point, relative
 Frobenius error:
 
-* **Target $\Sigma$ (full population).** The exact inverse-BBP operator
+- **Target $\Sigma$ (full population).** The exact inverse-BBP operator
+
   achieves $0.013$–$0.028$ across the spike grid — *two orders of
   magnitude* below the hard truncation / MP-clip operators
   ($\approx 0.95$–$1.00$, which destroy the $\sigma^2$ bulk) and below
   its own first-order expansion ($0.018$–$0.038$).
-* **Target $P$ (spike-only).** The de-biased soft operator (bulk zeroed)
+
+- **Target $P$ (spike-only).** The de-biased soft operator (bulk zeroed)
+
   dominates at and above threshold; the Gavish-Donoho hard threshold is
   conservative for weak spikes by design (its optimality is a minimax
   statement over spike strength, not a pointwise claim), and raw-λ
@@ -803,9 +797,7 @@ problem as literally stated* is solved by plain truncation
 threshold (Theorem 10.3). The three answers differ; the program should
 name which problem it means at each use site.
 
-
 ---
-
 
 # Chapter 11 — Verification Summary
 
@@ -831,30 +823,38 @@ python3 run_all.py
 
 ## 11.2 Reproducibility
 
-* Seeds are fixed in every script; results are deterministic to MC noise.
-* Dependencies: `numpy`, `scipy`, `matplotlib`, `pillow` (see
+- Seeds are fixed in every script; results are deterministic to MC noise.
+- Dependencies: `numpy`, `scipy`, `matplotlib`, `pillow` (see
+
   `formal_proof/requirements.txt`). No GPU, no network.
-* Figures land in `formal_proof/assets/figures/`, animations in
+
+- Figures land in `formal_proof/assets/figures/`, animations in
+
   `assets/animations/` — both are committed so the monograph renders
   without rerunning anything.
 
 ## 11.3 Known finite-size effects (documented honestly)
 
-* The largest eigenvalue sits slightly *below* $\lambda_+$ at
+- The largest eigenvalue sits slightly *below* $\lambda_+$ at
+
   subcritical spikes — the Tracy-Widom scale of Chapter 9, not an error.
-* The Johnstone centering leaves an $\mathcal O(N^{-1/2})$ bias in the
+
+- The Johnstone centering leaves an $\mathcal O(N^{-1/2})$ bias in the
+
   standardized TW mean at $N\sim200$; El Karoui's correction
   (`el_karoui_center_scale`) reduces it.
-* The GOE/GUE TW generators converge slowly in $p$; the suite compares
+
+- The GOE/GUE TW generators converge slowly in $p$; the suite compares
+
   *distributions* (two-sample KS), which is robust to that residual
   bias, and reports absolute moments only as diagnostics.
-* Third-order entropy terms appear at $\tau \lesssim 2$; Theorem 8.2 is
+
+- Third-order entropy terms appear at $\tau \lesssim 2$; Theorem 8.2 is
+
   a second-order statement and should not be extrapolated to low
   temperatures.
 
-
 ---
-
 
 # References
 
@@ -862,75 +862,124 @@ Primary sources for the derived results, in the order used by the
 chapters.
 
 **Random matrix theory — bulk.**
+
 - V. A. Marchenko, L. A. Pastur, *Distribution of eigenvalues for some
+
   sets of random matrices*, Math. USSR-Sb. **1** (1967) 457–483.
+
 - J. W. Silverstein, *The smallest eigenvalue of a large dimensional
+
   Wishart matrix*, Ann. Probab. **13** (1985) 1364–1368.
+
 - J. W. Silverstein, *The eigenvalue distribution of a matrix with
+
   dependent entries*, Ann. Probab. **23** (1995) 1437–1460.
+
 - Z. D. Bai, J. W. Silverstein, *Spectral Analysis of Large Dimensional
+
   Random Matrices*, 2nd ed., Springer (2010) — Thm 4.3 (Silverstein
   equation), Ch. 3 (MP law).
 
 **Free probability.**
+
 - D. Voiculescu, *Addition of certain non-commuting random matrices*,
+
   J. Funct. Anal. **123** (1994) 215–235.
+
 - D. Voiculescu, *Multiplication of certain non-commuting random
+
   matrices*, J. Oper. Theory **18** (1987) 223–235 (S-transform).
+
 - R. Speicher, *Free calculus and the R-transform*, J. Theor. Probab.
+
   **7** (1994) 381–395.
 
 **Spiked models.**
+
 - J. Baik, G. Ben Arous, S. Péché, *Phase transition of the largest
+
   eigenvalue for nonnull complex sample covariance matrices*, Ann.
   Statist. **33** (2005) 1753–1797.
+
 - D. Paul, *Asymptotics of sample eigenstructure for a large
+
   dimensional spiked covariance model*, Statist. Sinica **17** (2007)
   1617–1642.
+
 - B. Nadler, *Finite rank perturbation of random covariance matrices*,
+
   Ann. Statist. **36** (2008) 741–788.
+
 - F. Benaych-Georges, R. R. Nadler, *The eigenvalues of random
+
   covariance matrices*, Random Matrices: Theory Appl. **1** (2012)
   1150001.
+
 - W. Knowles, J. Yin, *Anisotropic local laws for random matrices*,
+
   Probab. Theory Relat. Fields **169** (2017) 257–352.
+
 - I. M. Johnstone, *On the distribution of the largest eigenvalue in
+
   principal components analysis*, Ann. Statist. **29** (2001) 295–327.
+
 - A. El Karoui, *A rate of convergence result for the largest eigenvalue
+
   of complex white Wishart matrices*, Ann. Statist. **34** (2006)
   2073–2097.
+
 - A. Bloemendal, A. Knowles, H.-T. Lee, E. Vu, *On the principal
+
   components of sample covariance matrices*, Probab. Theory Relat.
   Fields **164** (2016) 1–102.
+
 - C. A. Tracy, H. Widom, *Level-spacing distributions and the Airy
+
   kernel*, Comm. Math. Phys. **159** (1994) 151–174; *On orthogonal and
   symplectic matrix ensembles*, Comm. Math. Phys. **177** (1996)
   727–754. (Moments: Bornemann tables; see also the Tracy–Widom
   distribution reference tables.)
 
 **Spectral estimation.**
+
 - C. Eckart, G. Young, *The approximation of one matrix by another of
+
   lower rank*, Psychometrika **1** (1936) 211–218.
+
 - L. Mirsky, *Symmetric gauge functions and unitarily invariant norms*,
+
   Quart. J. Math. **11** (1960) 50–59.
+
 - M. Gavish, D. L. Donoho, *The optimal hard threshold for singular
+
   values is $4/\sqrt 3$*, IEEE Trans. Inform. Theory **60** (2014)
   5040–5053.
+
 - D. L. Donoho, M. Gavish, *Optimal shrinkage of eigenvalues in the
+
   spiked covariance model*, Comm. Pure Appl. Math. (2018).
 
 **Layer calculus.**
+
 - R. Price, *A useful theorem for nonlinear devices having Gaussian
+
   inputs*, IRE Trans. Inform. Theory **4** (1958) 69–72.
+
 - C. Stein, *A bound for the error in the normal approximation to the
+
   distribution of a sum of dependent random variables*, Proc. 6th
   Berkeley Symp. **2** (1972) 583–602.
+
 - D. Hendrycks, K. Gimpel, *Gaussian Error Linear Units (GELU)*,
+
   arXiv:1606.08415 (2016).
+
 - N. Shazeer, *GLU variants improve transformer*, arXiv:2002.05202
+
   (2020).
 
 **In-repo companions.**
+
 - Phenomenological core: `src/rmt_llm/` (unchanged by this monograph).
 - Derived core: `formal_proof/rmt_fp/`.
 - Verification suite: `formal_proof/experiments/run_all.py`.

@@ -1,0 +1,29 @@
+{
+ "base": {
+  "ppl_control_mean": 4873.0,
+  "ppl_per_text": [
+   9729.4,
+   9.0,
+   24.2,
+   9729.4
+  ]
+ },
+ "surgical": {
+  "ppl_control_mean": 4864.0,
+  "ppl_per_text": [
+   9711.6,
+   8.8,
+   24.1,
+   9711.6
+  ]
+ },
+ "trained": {
+  "ppl_control_mean": 4856.7,
+  "ppl_per_text": [
+   9695.6,
+   7.6,
+   27.9,
+   9695.6
+  ]
+ }
+}

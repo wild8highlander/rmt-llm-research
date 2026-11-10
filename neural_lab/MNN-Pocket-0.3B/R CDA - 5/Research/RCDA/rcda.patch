@@ -1,0 +1,1451 @@
+# RCDA patch: original Code/ -> RCDA-extended Code/ (rounds 1+2, incl. section-9 shrinkage)
+# base: rmt-llm-research/neural_lab/MNN-Pocket-0.3B/Code (cloned 2026-11-08)
+--- /home/z/my-project/rmt-llm-research/neural_lab/MNN-Pocket-0.3B/Code/marchenko_pastur.py	2026-11-08 20:30:11.592162876 +0000
++++ /home/z/my-project/download/rcda_mnn_pocket/Code/marchenko_pastur.py	2026-11-08 20:38:13.560160536 +0000
+@@ -8,6 +8,30 @@
+ References:
+   - Marchenko & Pastur (1967), "Distribution of eigenvalues for some sets
+     of random matrices", Mat. Sb.
++
++RCDA extension (RMT-Calibrated Directional Ablation, see README_RCDA.md):
++  - mp_upper_edge(sigma2, c)   — lambda_+ = sigma2 * (1 + sqrt(c))^2, any c > 0
++  - tw_scale(lambda_plus, N)   — Tracy-Widom edge-fluctuation scale lambda_+ * N^{-2/3}
++  - bbp_threshold(c)           — critical spike strength theta_c = sqrt(c)
++  - bbp_excess(theta_v, c)     — delta = max(0, (theta_v - theta_c) / theta_v) in [0, 1)
++  - alpha_from_bbp(theta_v, c, kappa) — alpha_0 = min(1, kappa * delta / (1 - delta))
++  - rayleigh_spike_strength(...) — invert the repo's BBP asymptotic for an observed
++    Rayleigh quotient (see the docstring for the exact parametrization)
++
++Conventions used throughout RCDA (fixed once, everywhere):
++  * A weight matrix W in R^{m x n} (m = out_features, n = in_features) is treated
++    as n samples (columns) in R^m, so its sample covariance is
++        C = (1/n) * W W^T in R^{m x m},   aspect q = m/n,
++    matching the hidden-state convention of rmt_intervention.py (T tokens as
++    samples). q > 1 is allowed (continuous bulk edge, cf. _mp_bounds_general in
++    probe_real_gpt2.py).
++  * sigma_W^2 is estimated from the bulk: median(eig(C)) — the same working
++    heuristic as in rmt_intervention.py ("conservative for supercritical data").
++  * The plan's theta_c = sqrt(n/m) (n <= m) with permutation when n > m equals
++    sqrt(min(q, 1/q)); the additive-spike parametrization used for calibration
++    keeps theta_c = sqrt(q) of rmt_llm.bbp_transition (the repo formula), which
++    for q <= 1 coincides with the plan and for q > 1 remains the general-q BBP
++    threshold.
+ """
+ 
+ from __future__ import annotations
+@@ -16,6 +40,130 @@
+ from numpy.typing import ArrayLike
+ 
+ 
++# ---------------------------------------------------------------------------
++# RCDA calibration core (RMT-Calibrated Directional Ablation)
++# ---------------------------------------------------------------------------
++
++def mp_upper_edge(sigma2: float, c: float) -> float:
++    """Upper MP bulk edge lambda_+ = sigma2 * (1 + sqrt(c))^2 for any c > 0.
++
++    Same expression as ``mp_bounds`` but valid beyond q in (0, 1]: for c > 1
++    the continuous part of the support still ends at sigma2*(1+sqrt(c))^2
++    (cf. ``_mp_bounds_general`` in probe_real_gpt2.py).
++    """
++    if sigma2 <= 0:
++        raise ValueError(f"sigma2 must be positive, got {sigma2}")
++    if c <= 0:
++        raise ValueError(f"c must be positive, got {c}")
++    return float(sigma2 * (1.0 + np.sqrt(c)) ** 2)
++
++
++def tw_scale(lambda_plus: float, n: float) -> float:
++    """Tracy-Widom edge-fluctuation scale of lambda_max.
++
++    RCDA plan formula: TW-scale(lambda_+, N) = lambda_+ * N^{-2/3}.
++    The fluctuation of the largest eigenvalue of a sample covariance matrix
++    around the bulk edge is of this order (sigma = 1 in TW units; the F1/F2
++    spread contributes an O(1) factor deliberately absorbed into the z-threshold).
++
++    Parameters
++    ----------
++    lambda_plus : float
++        Upper MP bulk edge (same units as the eigenvalues).
++    n : float
++        Sample size N behind the covariance (tokens, columns, ...).
++
++    Returns
++    -------
++    scale : float
++        One Tracy-Widom unit expressed in eigenvalue units.
++    """
++    if n <= 0:
++        raise ValueError(f"n must be positive, got {n}")
++    if lambda_plus <= 0:
++        raise ValueError(f"lambda_plus must be positive, got {lambda_plus}")
++    return float(lambda_plus * float(n) ** (-2.0 / 3.0))
++
++
++def rmt_z_score(lambda_max: float, lambda_plus: float, n: float) -> float:
++    """RMT anomaly score of a layer: z = (lambda_max - lambda_+) / TW-scale.
++
++    z <=~ 2 means "no RMT-confirmed structure above the bulk edge";
++    the layer's spectrum is then indistinguishable from MP noise at the
++    resolution of the sample.
++    """
++    scale = tw_scale(lambda_plus, n)
++    return float((lambda_max - lambda_plus) / scale)
++
++
++def bbp_threshold(c: float) -> float:
++    """Critical spike strength theta_c = sqrt(c) of the BBP transition.
++
++    This is the repo formula (rmt_llm.bbp_transition.bbp_critical_theta)
++    generalised to any c > 0: for the aspect ratio q = m/n of the covariance
++    at hand the threshold is sqrt(q). The RCDA plan writes sqrt(n/m) for
++    n <= m and permutes for n > m, which equals sqrt(min(c, 1/c)) in the
++    (n, m)-notation; with the convention q = m/n both agree for q <= 1.
++    """
++    if c <= 0:
++        raise ValueError(f"c must be positive, got {c}")
++    return float(np.sqrt(c))
++
++
++def rayleigh_spike_strength(lambda_v: float, sigma2: float, q: float) -> float:
++    """Spike strength theta_v of an observed Rayleigh quotient (repo parametrization).
++
++    The repo's BBP asymptotic (rmt_llm.bbp_transition.bbp_lambda_max) reads
++        lambda_max = sigma2 * (1 + theta^2 / q)   for the supercritical spike.
++    Given an observed projection mass lambda_v = v^T C v of a unit direction v
++    on the sample covariance C, the implied theta_v is therefore
++        theta_v = sqrt(q * (lambda_v / sigma2 - 1))   (clipped at 0).
++    Under the null lambda_v ~ sigma2 and theta_v ~ 0; theta_v > theta_c = sqrt(q)
++    flags a supercritical direction (equivalent, up to the parametrization of
++    the asymptote, to the plan's test lambda_v > lambda_+).
++    """
++    if sigma2 <= 0:
++        raise ValueError(f"sigma2 must be positive, got {sigma2}")
++    if q <= 0:
++        raise ValueError(f"q must be positive, got {q}")
++    excess = lambda_v / sigma2 - 1.0
++    if excess <= 0:
++        return 0.0
++    return float(np.sqrt(q * excess))
++
++
++def bbp_excess(theta_v: float, c: float) -> float:
++    """BBP excess delta = max(0, (theta_v - theta_c) / theta_v) in [0, 1).
++
++    delta ~ 0        — the direction has barely left the bulk (fragile signal);
++    delta -> 1       — a strong outlier; full subtraction may be justified.
++    delta == 0       — the direction is inside the bulk: do not touch it.
++    """
++    if theta_v <= 0:
++        return 0.0
++    theta_c = bbp_threshold(c)
++    if theta_v <= theta_c:
++        return 0.0
++    return float((theta_v - theta_c) / theta_v)
++
++
++def alpha_from_bbp(theta_v: float, c: float, kappa: float = 0.5) -> float:
++    """Calibrated ablation strength alpha_0 = min(1, kappa * delta / (1 - delta)).
++
++    RCDA plan, section 5: the BBP excess delta is mapped to a starting alpha
++    instead of a blind grid search. delta = 0 -> alpha_0 = 0 (do not touch);
++    delta -> 1 -> alpha_0 -> kappa / (1 - delta) -> 1 (cap). ``kappa`` is the
++    safety factor (0.5 by default). This is a starting point for the
++    edit-measure-keep loop, not a replacement for behavioural validation.
++    """
++    delta = bbp_excess(theta_v, c)
++    if delta <= 0.0:
++        return 0.0
++    if delta >= 1.0:  # pragma: no cover (delta < 1 by construction)
++        return 1.0
++    return float(min(1.0, kappa * delta / (1.0 - delta)))
++
++
+ def mp_bounds(q: float, sigma2: float = 1.0) -> tuple[float, float]:
+     """Compute the support bounds lambda_-, lambda_+ of the MP law.
+ 
+--- /home/z/my-project/rmt-llm-research/neural_lab/MNN-Pocket-0.3B/Code/rmt_intervention.py	2026-11-08 20:30:11.592162876 +0000
++++ /home/z/my-project/download/rcda_mnn_pocket/Code/rmt_intervention.py	2026-11-08 22:14:04.543677975 +0000
+@@ -145,3 +145,632 @@
+ def remove_hooks(handles):
+     for h in handles:
+         h.remove()
++
++
++# ===========================================================================
++# RCDA — RMT-Calibrated Directional Ablation (weight-space edits)
++# ===========================================================================
++# In contrast to the hook modes above (runtime spectral filtering of hidden
++# states), RCDA edits the WEIGHTS themselves:
++#
++#     W' = W - alpha * v (v^T W)              (full rank-1 ablation)
++#     W' = W - alpha * v (p_masked)           (column-restricted ablation,
++#          p = v^T W, p_masked keeps only the RMT-confirmed columns)
++#
++# The direction v (unit norm, output space R^m) comes from the RCDS probe
++# (pocket_rmt_probe.py --rcds-probe): the bad-vs-good mean activation
++# difference Delta_h^{(l)} normalized. alpha is calibrated from the BBP
++# excess of the direction in the target matrix, columns are selected by an
++# RMT threshold — every number in the report has a statistical meaning
++# (see README_RCDA.md and marchenko_pastur.py).
++
++import base64  # noqa: E402
++import glob as _glob  # noqa: E402
++import json as _json  # noqa: E402
++import os as _os  # noqa: E402
++
++from marchenko_pastur import (  # noqa: E402
++    alpha_from_bbp,
++    bbp_excess,
++    bbp_threshold,
++    mp_upper_edge,
++    rayleigh_spike_strength,
++    tw_scale,
++)
++
++RCDA_MATRICES = {
++    # matrix name -> (qualname suffix in a HF state dict)
++    "down_proj": "mlp.down_proj.weight",
++    "o_proj": "self_attn.o_proj.weight",
++}
++COLUMN_MODES = ("auto_tw", "auto_chi2", "topk")
++
++
++def matrix_scan(W, v, tau=2.0):
++    """Full RCDA spectral passport of a matrix W (m x n, torch/numpy) vs unit v (m,).
++
++    Returns a dict with the quantities of the plan (sections 3-5):
++      sigma2_w       — bulk variance median(eig(W W^T / n))      (repo heuristic)
++      lambda_plus_w  — MP upper edge sigma2_w (1+sqrt(q))^2,  q = m/n
++      lambda_v       — v^T C v = ||v^T W||^2 / n              (projection mass)
++      lambda_over_edge, theta_v, theta_c, delta, alpha0(kappa=0.5)
++      s_v            — ||v^T W|| / ||W||_F                    (projection mass, raw)
++      profile        — v^T W (length n, float32)
++    """
++    import numpy as _np
++    import torch as _torch
++
++    if isinstance(W, _torch.Tensor):
++        W = W.detach().cpu().to(_torch.float32).numpy()
++    W = _np.asarray(W, dtype=_np.float64)
++    v = _np.asarray(v, dtype=_np.float64).ravel()
++    v = v / _np.linalg.norm(v)
++    m, n = W.shape
++    q = m / n
++
++    # C = W W^T / n via the singular values of W (no m x m product needed)
++    S = _np.linalg.svd(W, compute_uv=False)
++    eigC = S ** 2 / n
++    sigma2_w = float(_np.median(eigC))
++    lambda_plus_w = mp_upper_edge(sigma2_w, q)
++    lambda_max_w = float(eigC[0])
++
++    p = v @ W                                    # (n,)
++    lambda_v = float(p @ p / n)
++    theta_v = rayleigh_spike_strength(lambda_v, sigma2_w, q)
++    theta_c = bbp_threshold(q)
++    delta = bbp_excess(theta_v, q)
++    return {
++        "shape": [int(m), int(n)],
++        "q": float(q),
++        "sigma2_w": sigma2_w,
++        "lambda_max_w": lambda_max_w,
++        "lambda_plus_w": lambda_plus_w,
++        "lambda_v": lambda_v,
++        "lambda_over_edge": lambda_v / lambda_plus_w,
++        "theta_v": theta_v,
++        "theta_c": theta_c,
++        "delta": delta,
++        "alpha0_kappa0.5": alpha_from_bbp(theta_v, q, kappa=0.5),
++        "s_v": float(_np.linalg.norm(p) / _np.linalg.norm(W)),
++        "supercritical": bool(lambda_v > lambda_plus_w),
++        "profile": p.astype(_np.float32),
++    }
++
++
++def select_columns(profile, sigma2_w, lambda_plus_w, m, mode="auto_tw",
++                   k=54, tau=2.0, chi2_eta=0.05):
++    """Select the input columns j whose profile entry carries RMT-confirmed signal.
++
++    Modes
++    -----
++    auto_tw   — plan, section 4: keep j with (p_j^2 / n) > lambda_+ + tau * TW-scale.
++                The strictest gate: a column passes only if its projection mass on
++                the covariance scale exceeds the bulk edge itself (plus tau
++                Tracy-Widom units). May legitimately select zero columns — that
++                means "no RMT-confirmed write path; do not edit".
++    auto_chi2 — Gaussian null per column: under the null p_j ~ N(0, sigma2_w),
++                so p_j^2/sigma2_w ~ chi2_1; keep j above the Bonferroni quantile
++                (family-wise level chi2_eta over n columns). A softer,
++                multiple-testing-corrected gate.
++    topk      — literal top-k by |p_j| (paper-style fixed cardinality,
++                section 4: k ~ 48 000 / 896 ~ 54).
++
++    Returns (indices, info) with the indices sorted by descending |p_j|.
++    """
++    import numpy as _np
++
++    p = _np.asarray(profile, dtype=_np.float64).ravel()
++    n = p.shape[0]
++    abs_p2 = p ** 2
++    order = _np.argsort(-abs_p2, kind="stable")
++    info = {"mode": mode, "n_columns": 0, "threshold": None}
++
++    if mode == "topk":
++        kk = max(0, min(int(k), n))
++        idx = order[:kk]
++        info["threshold"] = float(abs_p2[idx[-1]]) if kk else None
++    elif mode == "auto_tw":
++        thr = lambda_plus_w + tau * tw_scale(lambda_plus_w, m)
++        # per-column mass on the covariance scale: v^T C v contribution = p_j^2 / n
++        idx = order[abs_p2[order] / n > thr]
++        info["threshold"] = float(thr * n)
++    elif mode == "auto_chi2":
++        from scipy.stats import chi2 as _chi2
++        z2 = float(_chi2.ppf(1.0 - chi2_eta / n, df=1.0))   # ~ (3.5-4 sigma)^2
++        idx = order[abs_p2[order] > z2 * sigma2_w]
++        info["threshold"] = float(z2 * sigma2_w)
++    else:
++        raise ValueError(f"unknown column mode: {mode} (choose from {COLUMN_MODES})")
++
++    idx = _np.sort(idx)                                  # canonical order by column id
++    idx = idx[_np.argsort(-abs_p2[idx], kind="stable")]  # report by strength
++    info["n_columns"] = int(idx.size)
++    return idx, info
++
++
++def rcda_edit(W, v, alpha, columns=None):
++    """Apply W' = W - alpha * v p_masked^T (columns=None -> full profile p = v^T W).
++
++    Returns (W', n_weights_changed). The edit is a rank-<=1 update confined to
++    the selected columns; with columns=None it is the classic full rank-1
++    directional ablation.
++    """
++    import numpy as _np
++    import torch as _torch
++
++    was_torch = isinstance(W, _torch.Tensor)
++    W_np = W.detach().cpu().to(_torch.float32).numpy() if was_torch else _np.asarray(W)
++    v = _np.asarray(v, dtype=_np.float64).ravel()
++    v = v / _np.linalg.norm(v)
++    p = v @ W_np.astype(_np.float64)
++    if columns is not None:
++        mask = _np.zeros_like(p, dtype=bool)
++        mask[_np.asarray(list(columns), dtype=int)] = True
++        p = p * mask
++    dW = _np.outer(v, p)
++    W_new = W_np.astype(_np.float64) - float(alpha) * dW
++    n_changed = int(_np.count_nonzero(dW))
++    W_new_t = _torch.from_numpy(W_new.astype(_np.float32))
++    return (W_new_t if was_torch else W_new), n_changed
++
++
++def spectral_tw_control(W_before, W_after, v, tau_violation=3.0, top_r=10):
++    """Plan, section 7.2: Tracy-Widom control of the healthy singular spectrum.
++
++    Compares the top-r eigenvalues mu_i = sigma_i^2 / n of C = W W^T / n before
++    and after the edit. The component whose left singular vector is closest to
++    v is the "target"; every other top component must stay within
++    tau_violation * TW-scale(lambda_+) (plan: +-2 TW units is clean, > 3 is a
++    violation). Returns a dict with a pass/fail verdict.
++    """
++    import numpy as _np
++
++    Wb = _np.asarray(W_before, dtype=_np.float64)
++    Wa = _np.asarray(W_after, dtype=_np.float64)
++    v = _np.asarray(v, dtype=_np.float64).ravel()
++    v = v / _np.linalg.norm(v)
++    m, n = Wb.shape
++    q = m / n
++
++    Ub, Sb, _ = _np.linalg.svd(Wb, full_matrices=False)
++    Ua, Sa, _ = _np.linalg.svd(Wa, full_matrices=False)
++    mub, mua = Sb ** 2 / n, Sa ** 2 / n
++    sigma2_w = float(_np.median(mub))
++    lambda_plus_w = mp_upper_edge(sigma2_w, q)
++    scale = tw_scale(lambda_plus_w, m)
++
++    r = min(top_r, len(mub))
++    cos = _np.abs(Ub[:, :r].T @ v)
++    target = int(_np.argmax(cos))
++    comps = []
++    for i in range(r):
++        shift_tw = float((mua[i] - mub[i]) / scale)
++        comps.append({
++            "i": i, "mu_before": float(mub[i]), "mu_after": float(mua[i]),
++            "shift_tw_units": shift_tw, "cos_to_v": float(cos[i]),
++            "is_target": i == target,
++        })
++    violations = [c for c in comps
++                  if not c["is_target"] and abs(c["shift_tw_units"]) > tau_violation]
++    target_shift = comps[target]["shift_tw_units"] if r else 0.0
++    return {
++        "tw_scale": float(scale),
++        "lambda_plus_w": float(lambda_plus_w),
++        "target_index": target,
++        "target_shift_tw_units": target_shift,
++        "components": comps,
++        "n_violations": len(violations),
++        "tau_violation": float(tau_violation),
++        "verdict": "pass" if not violations else "violation",
++        "violations": violations,
++    }
++
++
++# ------------------------------------------------------------------ edit pack
++
++def _vec_to_b64(vec):
++    import numpy as _np
++    return base64.b64encode(_np.asarray(vec, dtype=_np.float32).tobytes()).decode("ascii")
++
++
++def _b64_to_vec(b64):
++    import numpy as _np
++    return _np.frombuffer(base64.b64decode(b64), dtype=_np.float32).astype(_np.float64)
++
++
++def state_dict_key(layer, matrix):
++    try:
++        suffix = RCDA_MATRICES[matrix]
++    except KeyError:
++        raise ValueError(f"unknown matrix {matrix!r}; choose from {sorted(RCDA_MATRICES)}")
++    return f"model.layers.{int(layer)}.{suffix}"
++
++
++def load_state_dict(path):
++    """Load a .safetensors file (or every safetensors file of a directory)."""
++    import torch as _torch
++    from safetensors.torch import load_file
++
++    paths = [path] if _os.path.isfile(path) else sorted(
++        _glob.glob(_os.path.join(path, "*.safetensors")))
++    if not paths:
++        raise FileNotFoundError(f"no safetensors found at {path}")
++    sd = {}
++    for p in paths:
++        sd.update(load_file(p))
++    return sd
++
++
++def build_edits(specs, kappa=0.5, alpha_mode="auto_bbp", alpha_fixed=1.0,
++                column_mode="auto_tw", columns_k=54, tw_tau=2.0, chi2_eta=0.05,
++                vectors=None, scans=None):
++    """Turn edit specs [{layer, matrix, vector?}, ...] into resolved edit plans.
++
++    Every spec gets a matrix_scan; alpha is either calibrated from the BBP
++    excess (alpha_mode='auto_bbp', plan section 5) or taken fixed; columns are
++    selected per ``column_mode``. Vectors not given in ``specs`` are looked up
++    in ``vectors`` {(layer, matrix) -> unit vector}.
++    """
++    import numpy as _np
++
++    edits = []
++    for spec in specs:
++        layer, matrix = int(spec["layer"]), spec["matrix"]
++        key = (layer, matrix)
++        if spec.get("vector") is not None:
++            v = _np.asarray(spec["vector"], dtype=_np.float64).ravel()
++        elif vectors and key in vectors:
++            v = _np.asarray(vectors[key], dtype=_np.float64).ravel()
++        else:
++            raise KeyError(f"no direction vector for (layer={layer}, matrix={matrix})")
++        norm = float(_np.linalg.norm(v))
++        v = v / norm
++        edits.append({"layer": layer, "matrix": matrix, "vector": v,
++                      "vector_norm_raw": norm})
++    return edits
++
++
++def resolve_edit(sd, plan, kappa=0.5, alpha_mode="auto_bbp", alpha_fixed=1.0,
++                 column_mode="auto_tw", columns_k=54, tw_tau=2.0, chi2_eta=0.05,
++                 full_ablation=False):
++    """Resolve one edit plan against a state dict -> report dict + edited tensor."""
++    import numpy as _np
++    import torch as _torch
++
++    layer, matrix, v = plan["layer"], plan["matrix"], plan["vector"]
++    key = state_dict_key(layer, matrix)
++    if key not in sd:
++        raise KeyError(f"tensor {key} not found in the state dict")
++    W = sd[key]
++    if isinstance(W, _np.ndarray):
++        W = _torch.from_numpy(W.astype(_np.float32))
++    W = W.detach().cpu().to(_torch.float32)   # base weights may be bf16 on disk
++    scan = matrix_scan(W, v)
++    m, n = scan["shape"]
++
++    if full_ablation:
++        columns, col_info, alpha = None, {"mode": "full_rank1", "n_columns": n}, (
++            alpha_fixed if alpha_mode == "fixed" else scan["alpha0_kappa0.5"])
++    else:
++        columns, col_info = select_columns(
++            scan["profile"], scan["sigma2_w"], scan["lambda_plus_w"], m,
++            mode=column_mode, k=columns_k, tau=tw_tau, chi2_eta=chi2_eta)
++        if alpha_mode == "fixed":
++            alpha = float(alpha_fixed)
++        else:
++            alpha = alpha_from_bbp(scan["theta_v"], scan["q"], kappa=kappa)
++
++    report = {
++        "layer": layer, "matrix": matrix, "state_dict_key": key,
++        "vector_norm_raw": plan["vector_norm_raw"],
++        "scan": {k: scan[k] for k in scan if k != "profile"},
++        "columns": {"mode": col_info["mode"], "n_columns": col_info["n_columns"],
++                    "threshold_profile_sq": col_info["threshold"],
++                    "indices": [int(i) for i in (columns if columns is not None else [])]},
++        "alpha_mode": alpha_mode, "alpha": float(alpha),
++        "kappa": float(kappa) if alpha_mode == "auto_bbp" else None,
++        "tw_tau": float(tw_tau),
++    }
++    if columns is not None and col_info["n_columns"] == 0:
++        report["status"] = "aborted_no_rmt_columns"
++        report["reason"] = (
++            "auto_tw selected 0 columns: no input column of this matrix carries "
++            "projection mass above lambda_+ + tau*TW-scale (plan section 4). "
++            "Per the RMT discipline the edit is refused; use column_mode "
++            "auto_chi2/topk or a different layer/matrix.")
++        return report, None
++
++    W_new, n_changed = rcda_edit(W, v, alpha, columns=columns)
++    ctrl = spectral_tw_control(W.cpu().numpy().astype(_np.float64),
++                               W_new.numpy().astype(_np.float64), v)
++    report["n_weights_changed"] = int(n_changed)
++    report["rel_frobenius_change"] = float(_np.linalg.norm(
++        W_new.numpy() - W.cpu().numpy()) / _np.linalg.norm(W.cpu().numpy()))
++    report["tw_control"] = ctrl
++    report["status"] = "applied"
++    return report, W_new
++
++
++def save_edit_pack(path, reports, meta=None):
++    """Persist resolved edits (vectors included) as a self-contained JSON pack."""
++    import numpy as _np
++    pack = {"meta": meta or {}, "edits": []}
++    for r in reports:
++        e = {k: r[k] for k in r if k != "vector"}
++        if r.get("vector") is not None:
++            e["vector_b64_f32"] = _vec_to_b64(r["vector"])
++        pack["edits"].append(e)
++    with open(path, "w", encoding="utf-8") as f:
++        _json.dump(pack, f, ensure_ascii=False, indent=1)
++
++
++def load_edit_pack(path):
++    """Load an edit pack; returns (list of edit dicts with 'vector' as np array, meta)."""
++    with open(path, encoding="utf-8") as f:
++        pack = _json.load(f)
++    edits = []
++    for e in pack["edits"]:
++        e = dict(e)
++        if "vector_b64_f32" in e:
++            e["vector"] = _b64_to_vec(e.pop("vector_b64_f32"))
++        edits.append(e)
++    return edits, pack.get("meta", {})
++
++
++def apply_pack(sd, edits, skip_tw=True):
++    """Apply a resolved edit pack (e.g. from --apply-pack) to a state dict in place.
++
++    Returns the list of per-edit summaries. Edits with status
++    'aborted_no_rmt_columns' are skipped with a warning.
++    """
++    import numpy as _np
++
++    out = []
++    for e in edits:
++        if e.get("status") == "aborted_no_rmt_columns":
++            out.append({"layer": e["layer"], "matrix": e["matrix"], "status": "skipped_aborted_in_pack"})
++            continue
++        key = e.get("state_dict_key") or state_dict_key(e["layer"], e["matrix"])
++        if key not in sd:
++            raise KeyError(f"tensor {key} not found in the state dict")
++        v = _np.asarray(e["vector"], dtype=_np.float64).ravel()
++        v = v / _np.linalg.norm(v)
++        cols = e.get("columns", {}).get("indices")
++        W_new, n_changed = rcda_edit(sd[key], v, e["alpha"],
++                                     columns=None if not cols else cols)
++        sd[key] = W_new
++        out.append({"layer": e["layer"], "matrix": e["matrix"], "key": key,
++                    "alpha": e["alpha"], "n_columns": len(cols or []),
++                    "n_weights_changed": int(n_changed), "status": "applied"})
++    return out
++
++
++# ------------------------------------------------------------------ CLI
++
++def _cli():
++    import argparse
++    import numpy as _np
++    import torch as _torch
++    from safetensors.torch import save_file
++
++    ap = argparse.ArgumentParser(
++        description="RCDA weight edit (RMT-Calibrated Directional Ablation).")
++    ap.add_argument("--rcda", action="store_true", help="run the RCDA weight editor")
++    ap.add_argument("--model_dir", default="model",
++                    help="model directory with model.safetensors (base weights)")
++    ap.add_argument("--state_dict", default=None,
++                    help="explicit safetensors path (default <model_dir>/model.safetensors)")
++    ap.add_argument("--out_dir", default="edited_model",
++                    help="output directory for the edited model + rcda_edit_report.json")
++    ap.add_argument("--edits", default=None,
++                    help="JSON file with edit specs [{layer, matrix, vector_path?}] "
++                         "(vector_path = .pt/.npy with the unit direction)")
++    ap.add_argument("--layer", type=int, action="append", default=[],
++                    help="layer index (repeatable; pairs with --matrix/--vector)")
++    ap.add_argument("--matrix", action="append", default=[],
++                    choices=list(RCDA_MATRICES), help="matrix name (repeatable)")
++    ap.add_argument("--vector", action="append", default=[],
++                    help="path to the direction (.pt/.npy) (repeatable)")
++    ap.add_argument("--alpha", default="auto",
++                    help="'auto' (BBP-calibrated) or a fixed float in [0, 1]")
++    ap.add_argument("--bbp_kappa", type=float, default=0.5)
++    ap.add_argument("--columns", default="auto_tw",
++                    help="'auto_tw' | 'auto_chi2' | 'topk=K' (e.g. topk=54)")
++    ap.add_argument("--tw_tau", type=float, default=2.0)
++    ap.add_argument("--full", action="store_true",
++                    help="full rank-1 ablation W - alpha v(v^T W) instead of the "
++                         "column-restricted edit")
++    ap.add_argument("--apply_pack", default=None,
++                    help="re-apply a previously saved rcda_edit_report.json / pack")
++    args = ap.parse_args()
++
++    sd_path = args.state_dict or _os.path.join(args.model_dir, "model.safetensors")
++    _os.makedirs(args.out_dir, exist_ok=True)
++
++    if args.apply_pack:
++        edits, meta = load_edit_pack(args.apply_pack)
++        sd = load_state_dict(sd_path)
++        summary = apply_pack(sd, edits)
++        meta_note = {"applied_from": args.apply_pack, **meta}
++        save_file(sd, _os.path.join(args.out_dir, "model.safetensors"),
++                  metadata={"format": "pt", "rcda": "1"})
++    else:
++        specs = []
++        if args.edits:
++            with open(args.edits, encoding="utf-8") as f:
++                specs = _json.load(f)
++            if isinstance(specs, dict):
++                specs = specs.get("edits", [])
++        if args.layer:
++            assert len(args.layer) == len(args.matrix) == len(args.vector), \
++                "--layer/--matrix/--vector must be given the same number of times"
++            specs = specs + [{"layer": l, "matrix": m, "vector": vp}
++                             for l, m, vp in zip(args.layer, args.matrix, args.vector)]
++        vectors = {}
++        plans = []
++        for s in specs:
++            vp = s.get("vector")
++            if vp:
++                if vp.endswith(".npy"):
++                    vec = _np.load(vp)
++                else:
++                    vec = _torch.load(vp, weights_only=True).numpy()
++                vectors[(int(s["layer"]), s["matrix"])] = _np.asarray(vec).ravel()
++            plans.append({"layer": int(s["layer"]), "matrix": s["matrix"]})
++        sd = load_state_dict(sd_path)
++
++        col_mode, col_k = args.columns, 54
++        if col_mode.startswith("topk="):
++            col_mode, col_k = "topk", int(col_mode.split("=", 1)[1])
++        elif col_mode.isdigit():
++            col_mode, col_k = "topk", int(col_mode)
++
++        alpha_mode = "fixed" if args.alpha.lower() not in ("auto", "auto_bbp") else "auto_bbp"
++        alpha_fixed = 1.0 if alpha_mode == "auto_bbp" else float(args.alpha)
++
++        reports = []
++        tensors = {}
++        for plan in plans:
++            v = vectors.get((plan["layer"], plan["matrix"]))
++            if v is None:
++                raise KeyError(f"no vector for (layer={plan['layer']}, matrix={plan['matrix']})")
++            report, W_new = resolve_edit(
++                sd, {"layer": plan["layer"], "matrix": plan["matrix"],
++                     "vector": v, "vector_norm_raw": float(_np.linalg.norm(v))},
++                kappa=args.bbp_kappa, alpha_mode=alpha_mode, alpha_fixed=alpha_fixed,
++                column_mode=col_mode, columns_k=col_k, tw_tau=args.tw_tau,
++                full_ablation=args.full)
++            report["vector"] = v
++            reports.append(report)
++            if W_new is not None:
++                tensors[report["state_dict_key"]] = W_new
++
++        for r in reports:  # strip the raw vector from the console copy
++            r.setdefault("status", "applied")
++        summary = [{k: r[k] for k in r if k != "vector"} for r in reports]
++        meta_note = {"base_state_dict": sd_path, "kappa": args.bbp_kappa,
++                     "alpha_mode": alpha_mode, "alpha_fixed": alpha_fixed,
++                     "column_mode": col_mode, "columns_k": col_k,
++                     "tw_tau": args.tw_tau, "full_ablation": args.full,
++                     "summary": summary}
++
++        # save the edited state dict (full copy of the base with edits applied)
++        if tensors:
++            for k, t in tensors.items():
++                sd[k] = t
++            save_file(sd, _os.path.join(args.out_dir, "model.safetensors"),
++                      metadata={"format": "pt", "rcda": "1"})
++        else:
++            print("no edits applied — edited model.safetensors NOT written")
++
++    # The report is written as a self-contained edit pack (vectors inside as
++    # base64), so `--apply_pack <this file>` reproduces the edit anywhere.
++    save_edit_pack(_os.path.join(args.out_dir, "rcda_edit_report.json"),
++                   reports if not args.apply_pack else
++                   [{"layer": s.get("layer"), "matrix": s.get("matrix"),
++                     "status": s.get("status")} for s in summary],
++                   meta=meta_note)
++
++    # copy the small model files (config / tokenizer / chat template) next to the
++    # edited weights so the out_dir is a loadable model directory
++    base_dir = _os.path.dirname(sd_path) or "."
++    for fname in sorted(_os.listdir(base_dir)):
++        lp = _os.path.join(base_dir, fname)
++        if (_os.path.isfile(lp) and not fname.endswith(".safetensors")
++                and not fname.startswith("model.safetensors.part")
++                and not fname.endswith(".sha256")):
++            import shutil as _shutil
++            _shutil.copy2(lp, _os.path.join(args.out_dir, fname))
++
++    print(f"RCDA edit summary ({len(summary)} edits):")
++    for s in summary:
++        line = (f"  layer {s.get('layer')} {s.get('matrix')}: status={s.get('status')}")
++        if s.get("status") == "applied" and s.get("alpha") is not None:
++            sc = s.get("scan", {})
++            line += (f" alpha={s.get('alpha'):.3f} columns={s.get('columns', {}).get('n_columns')}"
++                     f" theta_v={sc.get('theta_v'):.3f} theta_c={sc.get('theta_c'):.3f}"
++                     f" lambda_v/lambda_+={sc.get('lambda_over_edge'):.2f}"
++                     f" weights={s.get('n_weights_changed')}"
++                     f" tw={s.get('tw_control', {}).get('verdict')}")
++        print(line)
++    print(f"report -> {_os.path.join(args.out_dir, 'rcda_edit_report.json')}")
++    if not args.apply_pack:
++        print(f"edited model -> {_os.path.join(args.out_dir, 'model.safetensors')}")
++
++
++if __name__ == "__main__":
++    _cli()
++
++
++# ===========================================================================
++# RCDA plan, section 9 — RMT-regularization fallback (bulk shrinkage)
++# ===========================================================================
++# When no direction passes the RMT admission (or the directional ablation does
++# not move the behaviour), the plan prescribes the alternative: do not subtract
++# a direction, instead compress the bulk of the spectrum towards its
++# Marchenko-Pastur prediction, keeping the top-r singular components intact:
++#
++#     W = U diag(s) V^T,   mu_i = s_i^2 / n
++#     mu_i <- min(mu_i, lambda_+^(W) + tau * TW-scale)   for bulk i (i >= r)
++#     W'  = U diag(sqrt(mu'_i * n)) V^T
++#
++# This tests the hypothesis "the defect is not one direction but an over-energetic
++# noise bulk" and is validated by the same TW control (healthy top components).
++
++def rcda_shrink(W, r=10, tau=2.0, extra_edge=0.0):
++    """Bulk spectral shrinkage of W (plan, section 9). Returns (W', info).
++
++    Only singular values outside the top-r are clamped to the shrunken MP edge
++    lambda_+ + tau*TW-scale (raised by ``extra_edge``); the top-r carry the
++    functional structure and stay bit-identical.
++    """
++    import numpy as _np
++    import torch as _torch
++
++    was_torch = isinstance(W, _torch.Tensor)
++    W_np = (W.detach().cpu().to(_torch.float32).numpy() if was_torch
++            else _np.asarray(W))
++    W64 = W_np.astype(_np.float64)
++    m, n = W64.shape
++    q = m / n
++    U, S, Vh = _np.linalg.svd(W64, full_matrices=False)
++    mu = S ** 2 / n
++    sigma2_w = float(_np.median(mu))
++    from marchenko_pastur import mp_upper_edge, tw_scale
++    edge = mp_upper_edge(sigma2_w, q) + tau * tw_scale(mp_upper_edge(sigma2_w, q), m) \
++        + extra_edge
++    r_eff = min(int(r), len(mu))
++    mu_new = mu.copy()
++    mu_new[r_eff:] = _np.minimum(mu_new[r_eff:], edge)
++    n_clamped = int(_np.sum(mu_new < mu - 1e-12))
++    W_new = (U * _np.sqrt(mu_new * n)) @ Vh
++    info = {
++        "mode": "shrink", "r": r_eff, "tau": float(tau), "edge": float(edge),
++        "sigma2_w": sigma2_w, "lambda_plus_w": float(mp_upper_edge(sigma2_w, q)),
++        "n_clamped": n_clamped,
++        "energy_removed": float(1.0 - (mu_new.sum() / mu.sum())),
++        "rel_frobenius_change": float(_np.linalg.norm(W_new - W64)
++                                      / _np.linalg.norm(W64)),
++    }
++    Wt = _torch.from_numpy(W_new.astype(_np.float32))
++    return (Wt if was_torch else W_new), info
++
++
++def apply_pack_with_shrink(sd, edits, shrink_r=10, shrink_tau=2.0, shrink_layers=None):
++    """Apply an edit pack; additionally bulk-shrink o_proj/down_proj of the given
++    layers (plan section 9 fallback). Returns per-op summaries."""
++    import numpy as _np
++
++    out = apply_pack(sd, edits)
++    for layer in (shrink_layers or []):
++        for matrix in RCDA_MATRICES:
++            key = state_dict_key(layer, matrix)
++            if key not in sd:
++                continue
++            W_new, info = rcda_shrink(sd[key], r=shrink_r, tau=shrink_tau)
++            info.update({"layer": int(layer), "matrix": matrix, "key": key,
++                         "status": "shrunk"})
++            sd[key] = W_new
++            out.append(info)
++    return out
+--- /home/z/my-project/rmt-llm-research/neural_lab/MNN-Pocket-0.3B/Code/pocket_rmt_probe.py	2026-11-08 20:30:11.592162876 +0000
++++ /home/z/my-project/download/rcda_mnn_pocket/Code/pocket_rmt_probe.py	2026-11-08 20:46:11.071156230 +0000
+@@ -22,6 +22,19 @@
+ Usage:
+   python pocket_rmt_probe.py                          # defaults: model/ -> spectral_probe/results/
+   python pocket_rmt_probe.py --model_dir /path/to/model --out_dir /tmp/probe_out
++
++RCDS probe (RCDA plan, sections 1-3 — RMT-Calibrated Directional Search):
++  python pocket_rmt_probe.py --rcds-probe --model_dir model \
++      --bad-set prompts/bad.jsonl --good-set prompts/good.jsonl \
++      --out_dir rcda_results [--vectors-out rcda_vectors]
++
++  Collects hidden states for the bad/good prompt sets, computes the per-layer
++  difference vector Delta_h^(l) = mu_bad^(l) - mu_good^(l), its RMT passport
++  (z_RMT, beta vs the sqrt(lambda_1/N) noise floor, Hotelling z_diff) and, for
++  the candidate layers, the matrix scans (lambda_v vs lambda_+^(W),
++  theta_v/theta_c, BBP excess, column previews) for down_proj and o_proj.
++  Saves rcda_probe_report.json + figures + the Delta_h vectors (.pt) that
++  rmt_intervention.py --rcda consumes.
+ """
+ 
+ from __future__ import annotations
+@@ -303,6 +316,275 @@
+         return text
+ 
+ 
++# ============================================================================
++# RCDS probe — RMT-Calibrated Directional Search (RCDA plan, sections 1-3)
++# ============================================================================
++
++def _read_prompt_set(path: str, max_prompts: int = 0) -> list[dict]:
++    """Read a JSONL prompt set: one {"id"?, "text": ...} object per line."""
++    items = []
++    with open(path, encoding="utf-8") as f:
++        for line in f:
++            line = line.strip()
++            if not line or line.startswith("#"):
++                continue
++            obj = json.loads(line)
++            text = obj.get("text") or obj.get("prompt")
++            if text:
++                items.append({"id": obj.get("id", f"{os.path.basename(path)}#{len(items)}"),
++                              "text": text})
++            if max_prompts and len(items) >= max_prompts:
++                break
++    if not items:
++        raise ValueError(f"no prompts found in {path}")
++    return items
++
++
++class _CovAcc:
++    """Online accumulator for a pooled (T, H) sample: sum, second moment, covariance."""
++
++    def __init__(self, H: int):
++        self.H = H
++        self.n = 0
++        self.s1 = np.zeros(H, dtype=np.float64)
++        self.s2 = np.zeros((H, H), dtype=np.float64)
++
++    def add(self, X: np.ndarray) -> None:
++        X = X.astype(np.float64, copy=False)
++        self.n += X.shape[0]
++        self.s1 += X.sum(axis=0)
++        self.s2 += X.T @ X
++
++    def merge(self, *others: "_CovAcc") -> "_CovAcc":
++        acc = _CovAcc(self.H)
++        for a in (self, *others):
++            acc.n += a.n
++            acc.s1 += a.s1
++            acc.s2 += a.s2
++        return acc
++
++    def moments(self):
++        """-> (mean, covariance) or (None, None) if n < 2."""
++        if self.n < 2:
++            return None, None
++        mu = self.s1 / self.n
++        cov = (self.s2 - self.n * np.outer(mu, mu)) / (self.n - 1)
++        return mu, cov
++
++
++def run_rcds_probe() -> None:
++    ap = argparse.ArgumentParser(description="RCDS probe: RMT passport of the bad-vs-good difference.")
++    ap.add_argument("--model_dir", default="model")
++    ap.add_argument("--bad_set", default="prompts/bad.jsonl")
++    ap.add_argument("--good_set", default="prompts/good.jsonl")
++    ap.add_argument("--out_dir", default="rcda_results")
++    ap.add_argument("--vectors_out", default=None,
++                    help="directory for the Delta_h vectors (.pt); default <out_dir>/vectors")
++    ap.add_argument("--max_length", type=int, default=512, help="max tokens per prompt")
++    ap.add_argument("--max_prompts", type=int, default=0, help="0 = use all")
++    ap.add_argument("--top_layers", type=int, default=4,
++                    help="how many top layers get the full matrix scan")
++    ap.add_argument("--tw_tau", type=float, default=2.0,
++                    help="tau for the auto_tw column preview (plan section 4)")
++    args, _unknown = ap.parse_known_args()   # ignore the dispatch flag --rcds-probe
++
++    from rmt_intervention import RCDA_MATRICES, matrix_scan, select_columns, state_dict_key
++    from marchenko_pastur import mp_upper_edge, rmt_z_score
++
++    out_dir = args.out_dir
++    vectors_dir = args.vectors_out or os.path.join(out_dir, "vectors")
++    os.makedirs(out_dir, exist_ok=True)
++    os.makedirs(vectors_dir, exist_ok=True)
++
++    bad = _read_prompt_set(args.bad_set, args.max_prompts)
++    good = _read_prompt_set(args.good_set, args.max_prompts)
++    print(f"RCDS probe: {len(bad)} bad / {len(good)} good prompts", flush=True)
++
++    t0 = time.time()
++    probe = PocketProbe(args.model_dir)
++    H, L = probe.hidden_dim, probe.n_layers
++    print(f"model: {probe.arch} | layers={L} hidden={H}", flush=True)
++
++    accs = {"bad": [_CovAcc(H) for _ in range(L)],
++            "good": [_CovAcc(H) for _ in range(L)]}
++    means = {"bad": [[] for _ in range(L)], "good": [[] for _ in range(L)]}
++    tok_counts = {"bad": [], "good": []}
++
++    for split, items in (("bad", bad), ("good", good)):
++        for i, it in enumerate(items):
++            hs, n_tok = probe.extract_hidden_states(it["text"], max_length=args.max_length)
++            tok_counts[split].append(n_tok)
++            for l in range(L):
++                X = hs[l]
++                accs[split][l].add(X)
++                means[split][l].append(X.mean(axis=0))
++            print(f"  [{split} {i + 1}/{len(items)}] {it['id']}: {n_tok} tok "
++                  f"({time.time() - t0:.1f}s)", flush=True)
++
++    layers = []
++    for l in range(L):
++        mu_bad = np.mean(np.stack(means["bad"][l]), axis=0)     # plan: (1/N_bad) sum h(x)
++        mu_good = np.mean(np.stack(means["good"][l]), axis=0)
++        dh = mu_bad - mu_good
++        dh_norm = float(np.linalg.norm(dh))
++
++        mu_b, cov_b = accs["bad"][l].moments()
++        mu_g, cov_g = accs["good"][l].moments()
++        pooled = accs["bad"][l].merge(accs["good"][l])
++        _, cov_all = pooled.moments()
++        N_all = pooled.n
++        Nb, Ng = accs["bad"][l].n, accs["good"][l].n
++
++        eigs, U = np.linalg.eigh(cov_all)
++        eigs = eigs[::-1].clip(min=0.0)
++        U = U[:, ::-1]
++        lam1 = float(eigs[0])
++        u1 = U[:, 0]
++        sigma2 = float(np.median(eigs))                          # repo bulk heuristic
++        c = H / N_all
++        lam_p = mp_upper_edge(sigma2, c)
++        z_rmt = rmt_z_score(lam1, lam_p, N_all)
++
++        beta = float(dh @ u1)                                    # plan section 2
++        beta_floor = float(np.sqrt(lam1 / N_all))
++        cos_dh_u1 = float(beta / max(dh_norm, 1e-12))
++
++        # discriminative test on Delta_h itself (Hotelling T^2 with the pooled
++        # two-sample covariance; z = (T^2 - H)/sqrt(2H) ~ N(0,1) under H0)
++        cov_p = (((Nb - 1) * cov_b + (Ng - 1) * cov_g) / (Nb + Ng - 2)
++                 if (Nb > 1 and Ng > 1) else cov_all)
++        ridge = cov_p + 1e-6 * np.trace(cov_p) / H * np.eye(H)
++        t2 = float(Nb * Ng / (Nb + Ng) * (dh @ np.linalg.solve(ridge, dh)))
++        z_diff = float((t2 - H) / np.sqrt(2.0 * H))
++
++        layers.append({
++            "layer": l, "n_tokens_bad": Nb, "n_tokens_good": Ng, "n_tokens_all": N_all,
++            "q": float(c), "sigma2_bulk": sigma2,
++            "lambda_max": lam1, "lambda_plus_mp": float(lam_p), "z_rmt": z_rmt,
++            "beta": beta, "beta_noise_floor": beta_floor,
++            "beta_over_floor": float(abs(beta) / max(beta_floor, 1e-12)),
++            "delta_h_norm": dh_norm, "cos_delta_h_u1": cos_dh_u1,
++            "hotelling_t2": t2, "z_diff": z_diff,
++        })
++
++    rank = sorted(layers, key=lambda d: (-d["z_diff"], -d["z_rmt"]))
++    candidates = [d["layer"] for d in rank[:args.top_layers] if d["z_diff"] > 2.0]
++    if not candidates:
++        candidates = [d["layer"] for d in rank[:2]]
++        print("WARNING: no layer with z_diff > 2 — taking the top-2 by rank anyway "
++              "(plan section 9: treat the result as 'defect not RMT-localized').",
++              flush=True)
++
++    # ------------------------------------------------------------------ matrix scans
++    sd = probe.model.state_dict()
++    matrix_scans = []
++    for l in candidates:
++        dh = (np.mean(np.stack(means["bad"][l]), axis=0)
++              - np.mean(np.stack(means["good"][l]), axis=0))
++        dh_norm = np.linalg.norm(dh)
++        v = dh / max(dh_norm, 1e-12)
++        torch.save(torch.from_numpy(dh.astype(np.float32)),
++                   os.path.join(vectors_dir, f"L{l}_delta_h.pt"))
++        for matrix in RCDA_MATRICES:
++            key = state_dict_key(l, matrix)
++            scan = matrix_scan(sd[key].cpu().numpy(), v)
++            previews = {}
++            for mode in ("auto_tw", "auto_chi2"):
++                idx, info = select_columns(
++                    scan["profile"], scan["sigma2_w"], scan["lambda_plus_w"],
++                    scan["shape"][0], mode=mode, tau=args.tw_tau)
++                previews[mode] = {"n_columns": info["n_columns"],
++                                  "top10_profile": [float(x) for x in
++                                                    scan["profile"][idx[:10]]]}
++            top_idx = np.argsort(-np.abs(scan["profile"]))[:10]
++            matrix_scans.append({
++                "layer": l, "matrix": matrix, "state_dict_key": key,
++                "delta_h_vec_file": os.path.join(vectors_dir, f"L{l}_delta_h.pt"),
++                "scan": {k: scan[k] for k in scan if k != "profile"},
++                "column_previews": previews,
++                "top10_profile_abs": [float(scan["profile"][i]) for i in top_idx],
++            })
++            print(f"  [scan] L{l} {matrix}: lambda_v/lambda_+="
++                  f"{scan['lambda_over_edge']:.2f} theta_v={scan['theta_v']:.3f} "
++                  f"theta_c={scan['theta_c']:.3f} delta={scan['delta']:.3f} "
++                  f"cols(auto_tw)={previews['auto_tw']['n_columns']} "
++                  f"cols(auto_chi2)={previews['auto_chi2']['n_columns']}", flush=True)
++
++    report = {
++        "meta": {
++            "model": {"name": "taobao-mnn/MNN-Pocket-0.3B", "arch": probe.arch,
++                      "n_layers": L, "hidden_dim": H},
++            "bad_set": args.bad_set, "good_set": args.good_set,
++            "n_prompts": {"bad": len(bad), "good": len(good)},
++            "n_tokens": {"bad": int(sum(tok_counts["bad"])),
++                         "good": int(sum(tok_counts["good"]))},
++            "max_length": args.max_length, "tw_tau": args.tw_tau,
++            "formulas": "marchenko_pastur.py (RCDA block) + probe_real_gpt2._mp_bounds_general",
++        },
++        "layers": layers,
++        "ranking_by_z_diff": [d["layer"] for d in rank],
++        "candidate_layers": candidates,
++        "matrix_scans": matrix_scans,
++        "elapsed_s": round(time.time() - t0, 1),
++    }
++    with open(os.path.join(out_dir, "rcda_probe_report.json"), "w", encoding="utf-8") as f:
++        json.dump(report, f, ensure_ascii=False, indent=1)
++
++    # ------------------------------------------------------------------ figures
++    li = [d["layer"] for d in layers]
++    fig, axes = plt.subplots(3, 1, figsize=(9, 8.4), constrained_layout=True, sharex=True)
++    axes[0].semilogy(li, [d["lambda_max"] for d in layers], "o-", ms=3, lw=1.2,
++                     color="#1f77b4", label=r"$\lambda_{max}$ (pooled cov)")
++    axes[0].semilogy(li, [d["lambda_plus_mp"] for d in layers], "--", lw=1.2,
++                     color="#d62728", label=r"$\lambda_+$ (MP)")
++    axes[0].set_ylabel(r"$\lambda$")
++    axes[0].set_title("RCDS probe: layer spectra vs MP bulk edge")
++    axes[1].semilogy(li, [max(d["z_rmt"], 1e-3) for d in layers], "o-", ms=3, lw=1.2,
++                     color="#1f77b4", label=r"$z_{RMT}$")
++    axes[1].semilogy(li, [max(d["z_diff"], 1e-3) for d in layers], "s-", ms=3, lw=1.2,
++                     color="#2ca02c", label=r"$z_{diff}$ (Hotelling on $\Delta h$)")
++    axes[1].axhline(2.0, color="k", ls=":", lw=1.0)
++    axes[1].text(li[0], 2.3, " z = 2", fontsize=8)
++    axes[1].set_ylabel("z-score")
++    for cd in candidates:
++        for ax in axes:
++            ax.axvline(cd, color="#ff7f0e", ls="--", lw=0.8, alpha=0.7)
++    axes[2].plot(li, [abs(d["beta"]) for d in layers], "o-", ms=3, lw=1.2,
++                 color="#9467bd", label=r"$|\beta| = |\langle\Delta h, u_1\rangle|$")
++    axes[2].plot(li, [d["beta_noise_floor"] for d in layers], "--", lw=1.2,
++                 color="#7f7f7f", label=r"$\sqrt{\lambda_1/N}$ (noise floor)")
++    axes[2].set_yscale("log")
++    axes[2].set_ylabel(r"$|\beta|$")
++    axes[2].set_xlabel("block index (0-27)")
++    for ax in axes:
++        ax.grid(alpha=0.3)
++        ax.legend(loc="upper left", fontsize=8)
++    fig.suptitle(f"RCDS probe: {len(bad)} bad vs {len(good)} good prompts, "
++                 f"candidates {candidates}", fontsize=11)
++    fig.savefig(os.path.join(out_dir, "fig5_rcds_layers.png"), dpi=150)
++    plt.close(fig)
++
++    if matrix_scans:
++        fig, ax = plt.subplots(figsize=(9, 4.6), constrained_layout=True)
++        xs = np.arange(len(matrix_scans))
++        vals = [s["scan"]["lambda_over_edge"] for s in matrix_scans]
++        cols = ["#d62728" if s["scan"]["supercritical"] else "#1f77b4" for s in matrix_scans]
++        ax.bar(xs, vals, color=cols)
++        ax.axhline(1.0, color="k", ls="--", lw=1.2)
++        ax.text(xs[0], 1.05, r" $\lambda_v = \lambda_+$", fontsize=9)
++        ax.set_xticks(xs, [f"L{s['layer']}\n{s['matrix']}" for s in matrix_scans],
++                      fontsize=8)
++        ax.set_ylabel(r"$\lambda_v / \lambda_+^{(W)}$")
++        ax.set_title("Matrix scans: projection mass of $\\Delta h$ vs the MP edge "
++                     "(red = supercritical)")
++        ax.grid(alpha=0.3, axis="y")
++        fig.savefig(os.path.join(out_dir, "fig6_matrix_scans.png"), dpi=150)
++        plt.close(fig)
++
++    print(f"\ncandidate layers: {candidates}")
++    print(f"done in {report['elapsed_s']}s -> {out_dir}")
++
++
+ def main() -> None:
+     ap = argparse.ArgumentParser(description="Spectral (RMT) probe for a HF causal LM.")
+     ap.add_argument("--model_dir", default="model",
+@@ -458,4 +740,11 @@
+ 
+ 
+ if __name__ == "__main__":
+-    main()
++    _ap = argparse.ArgumentParser(description="Spectral (RMT) probe for a HF causal LM.")
++    _ap.add_argument("--rcds-probe", dest="rcds_probe", action="store_true",
++                     help="run the RCDA directional search (bad/good activation diff)")
++    _rcds_args, _rest = _ap.parse_known_args()
++    if _rcds_args.rcds_probe:
++        run_rcds_probe()
++    else:
++        main()
+--- /home/z/my-project/rmt-llm-research/neural_lab/MNN-Pocket-0.3B/Code/benchmark_rmt.py	2026-11-08 20:30:11.592162876 +0000
++++ /home/z/my-project/download/rcda_mnn_pocket/Code/benchmark_rmt.py	2026-11-08 21:13:41.790809237 +0000
+@@ -248,6 +248,227 @@
+         f.write("\n".join(L) + "\n")
+ 
+ 
++# ================================================================
++# RCDA mode — before/after evaluation of WEIGHT edits (plan, 6-7)
++# ================================================================
++
++def _read_jsonl_texts(path, limit=0):
++    items = []
++    with open(path, encoding="utf-8") as f:
++        for line in f:
++            line = line.strip()
++            if not line or line.startswith("#"):
++                continue
++            obj = json.loads(line)
++            text = obj.get("text") or obj.get("prompt")
++            if text:
++                items.append({"id": obj.get("id", f"{os.path.basename(path)}#{len(items)}"),
++                              "text": text})
++            if limit and len(items) >= limit:
++                break
++    return items
++
++
++@torch.no_grad()
++def _greedy_generate_cached(model, tok, prompt, max_new_tokens):
++    """Greedy generation with the KV cache (RCDA edits weights, not activations,
++    so the hook constraint use_cache=False does not apply here)."""
++    enc = tok(prompt, return_tensors="pt")
++    n_in = enc["input_ids"].shape[1]
++    out = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False,
++                         pad_token_id=tok.eos_token_id)
++    gen_ids = out[0][n_in:]
++    text = tok.decode(gen_ids, skip_special_tokens=True)
++    n_gen = int((gen_ids != tok.eos_token_id).sum()) if tok.eos_token_id in gen_ids \
++        else int(gen_ids.shape[0])
++    return text, min(n_gen, int(gen_ids.shape[0]))
++
++
++def _defect_flags(text, n_tokens, max_new, rep_threshold, collapse_frac):
++    """Binary classifier of the repetition_loop defect (plan, section 0).
++
++    defect_hit = (a 4-gram collapse happened within collapse_frac*max_new tokens)
++                 OR (Repetition Rate-4 >= rep_threshold).
++    Truncation (generation ran to the token limit) is reported separately:
++    for small models it is common even without looping.
++    """
++    rep4 = repetition_rate(text, 4)
++    coll = collapse_step(text, 4)
++    truncated = n_tokens >= max_new
++    collapsed_early = coll is not None and coll <= collapse_frac * max_new
++    rep_hit = rep4 is not None and rep4 >= rep_threshold
++    return {"rep4": _clean(rep4), "distinct4": _clean(distinct_n(text, 4)),
++            "collapse": coll, "n_tokens": n_tokens, "truncated": truncated,
++            "collapsed_early": collapsed_early, "rep_hit": rep_hit,
++            "defect_hit": bool(collapsed_early or rep_hit)}
++
++
++def _load_model_dir(model_dir, device="cpu"):
++    tok = AutoTokenizer.from_pretrained(model_dir)
++    try:
++        model = AutoModelForCausalLM.from_pretrained(model_dir, dtype=torch.float32)
++    except TypeError:  # older transformers
++        model = AutoModelForCausalLM.from_pretrained(model_dir, torch_dtype=torch.float32)
++    model.eval().to(device)
++    return model, tok
++
++
++def run_rcda_benchmark(args):
++    from rmt_intervention import load_edit_pack, spectral_tw_control
++
++    out_dir = args.out_dir
++    os.makedirs(out_dir, exist_ok=True)
++    bad = _read_jsonl_texts(args.bad_set, args.n_prompts or 0)
++    good = _read_jsonl_texts(args.good_set, args.n_prompts or 0)
++    control_texts = ([t["text"] for t in _read_jsonl_texts(args.control_set)]
++                     if args.control_set else list(VAL_TEXTS))
++    print(f"RCDA benchmark: {len(bad)} bad / {len(good)} good prompts, "
++          f"{len(control_texts)} control texts", flush=True)
++
++    runs = {}
++    for name, model_dir in (("baseline", args.baseline_dir), ("edited", args.edited_dir)):
++        model, tok = _load_model_dir(model_dir)
++        rows = []
++        for split, items in (("bad", bad), ("good", good)):
++            for it in items:
++                t0 = time.time()
++                text, ntok = _greedy_generate_cached(model, tok, it["text"], args.max_new)
++                flags = _defect_flags(text, ntok, args.max_new,
++                                      args.rep_threshold, args.collapse_frac)
++                rows.append({"split": split, "id": it["id"], **flags,
++                             "seconds": round(time.time() - t0, 1),
++                             "text": text})
++                print(f"  [{name}:{split}] {it['id']}: hit={flags['defect_hit']} "
++                      f"rep4={flags['rep4']} coll={flags['collapse']} "
++                      f"ntok={ntok}", flush=True)
++        ppls = [perplexity(model, tok, t) for t in control_texts]
++        runs[name] = {"model_dir": model_dir, "rows": rows, "ppl": ppls}
++        del model
++        print(f"  [{name}] PPL on control: {ppls}", flush=True)
++
++    def _split(runs_, name, split):
++        return [r for r in runs_[name]["rows"] if r["split"] == split]
++
++    def _rho(rows):
++        hits = [r["defect_hit"] for r in rows]
++        return (float(np.mean(hits)), int(sum(hits)), len(hits)) if hits else (None, 0, 0)
++
++    rho0, h0, n0 = _rho(_split(runs, "baseline", "bad"))
++    rho1, h1, n1 = _rho(_split(runs, "edited", "bad"))
++    fpr0, f0, g0 = _rho(_split(runs, "baseline", "good"))
++    fpr1, f1, g1 = _rho(_split(runs, "edited", "good"))
++    ppl0 = float(np.mean([p for p in runs["baseline"]["ppl"] if p])) if any(runs["baseline"]["ppl"]) else None
++    ppl1 = float(np.mean([p for p in runs["edited"]["ppl"] if p])) if any(runs["edited"]["ppl"]) else None
++
++    # paired tests (edited vs baseline on the same prompts)
++    bad_ids = [r["id"] for r in _split(runs, "baseline", "bad")]
++    base_by_id = {r["id"]: r for r in _split(runs, "baseline", "bad")}
++    edit_by_id = {r["id"]: r for r in _split(runs, "edited", "bad")}
++    tests = {}
++    for metric in ("rep4", "distinct4"):
++        b = [base_by_id[i][metric] or 0 for i in bad_ids if i in base_by_id]
++        e = [edit_by_id[i][metric] or 0 for i in bad_ids if i in edit_by_id]
++        tests[metric] = ("identical (0 diffs)" if np.array_equal(np.asarray(b), np.asarray(e))
++                         else paired_p(b, e))
++    b_coll = [base_by_id[i]["collapse"] if base_by_id[i]["collapse"] is not None
++              else base_by_id[i]["n_tokens"] + 1 for i in bad_ids if i in base_by_id]
++    e_coll = [edit_by_id[i]["collapse"] if edit_by_id[i]["collapse"] is not None
++              else edit_by_id[i]["n_tokens"] + 1 for i in bad_ids if i in edit_by_id]
++    tests["collapse"] = ("identical (0 diffs)" if np.array_equal(np.asarray(b_coll), np.asarray(e_coll))
++                         else paired_p(b_coll, e_coll))
++    tests = {k: (round(v, 4) if isinstance(v, float) else v) for k, v in tests.items()}
++
++    # how many greedy trajectories actually changed (iteration signal, plan section 6)
++    n_changed = {}
++    for split in ("bad", "good"):
++        base_split = {r["id"]: r for r in _split(runs, "baseline", split)}
++        edit_split = {r["id"]: r for r in _split(runs, "edited", split)}
++        n_changed[split] = int(sum(base_split[i]["text"] != edit_split[i]["text"]
++                                   for i in base_split if i in edit_split))
++
++    # ---------------------------------------------------------------- TW control
++    report_path = args.rcda_report or os.path.join(args.edited_dir, "rcda_edit_report.json")
++    tw_controls = []
++    if os.path.exists(report_path):
++        from safetensors import safe_open
++        edits, _ = load_edit_pack(report_path)
++        with safe_open(os.path.join(args.baseline_dir, "model.safetensors"), "pt") as fb, \
++                safe_open(os.path.join(args.edited_dir, "model.safetensors"), "pt") as fe:
++            for e in edits:
++                if e.get("status") == "aborted_no_rmt_columns" or "vector" not in e:
++                    continue
++                key = e.get("state_dict_key")
++                if key not in fb.keys() or key not in fe.keys():
++                    continue
++                ctrl = spectral_tw_control(fb.get_tensor(key).float().numpy(),
++                                           fe.get_tensor(key).float().numpy(), e["vector"])
++                tw_controls.append({"layer": e["layer"], "matrix": e["matrix"],
++                                    "key": key, **ctrl})
++    else:
++        print(f"NOTE: {report_path} not found — spectral TW control skipped", flush=True)
++
++    summary = {
++        "defect": "repetition_loop",
++        "n_changed_generations": n_changed,
++        "params": {"max_new": args.max_new, "rep_threshold": args.rep_threshold,
++                   "collapse_frac": args.collapse_frac},
++        "rho_baseline": rho0, "rho_edited": rho1,
++        "rho_reduction_pp": (100.0 * (rho0 - rho1) if (rho0 is not None and rho1 is not None) else None),
++        "fpr_baseline": fpr0, "fpr_edited": fpr1,
++        "ppl_baseline": ppl0, "ppl_edited": ppl1,
++        "ppl_ratio": (ppl1 / ppl0 if (ppl0 and ppl1) else None),
++        "wilcoxon_edited_vs_baseline": tests,
++        "tw_control_verdicts": [{"layer": c["layer"], "matrix": c["matrix"],
++                                 "verdict": c["verdict"],
++                                 "n_violations": c["n_violations"],
++                                 "target_shift_tw_units": c["target_shift_tw_units"]}
++                                for c in tw_controls],
++    }
++    with open(os.path.join(out_dir, "rcda_benchmark.json"), "w", encoding="utf-8") as f:
++        json.dump({"meta": {"baseline_dir": args.baseline_dir,
++                            "edited_dir": args.edited_dir,
++                            "bad_set": args.bad_set, "good_set": args.good_set,
++                            "max_new": args.max_new, "date": time.strftime("%Y-%m-%d %H:%M")},
++                   "summary": summary,
++                   "runs": {k: {"ppl": v["ppl"],
++                                "rows": [{kk: vv for kk, vv in r.items()}
++                                         for r in v["rows"]]}
++                            for k, v in runs.items()},
++                   "tw_controls": tw_controls},
++                  f, ensure_ascii=False, indent=1, default=_clean)
++
++    def _pct(x):
++        return "—" if x is None else f"{100 * x:.1f}%"
++
++    L = ["# RCDA before/after — repetition_loop defect", "",
++         f"baseline: `{args.baseline_dir}` · edited: `{args.edited_dir}` · "
++         f"greedy, KV cache on · max_new_tokens={args.max_new} · "
++         f"defect: collapse within {args.collapse_frac:.0%} of max_new OR RepRate-4 >= {args.rep_threshold}", "",
++         "| quantity | baseline | edited |",
++         "|---|---|---|",
++         f"| rho on P_bad (defect rate) | {_pct(rho0)} ({h0}/{n0}) | {_pct(rho1)} ({h1}/{n1}) |",
++         f"| false-trigger rate on P_good | {_pct(fpr0)} ({f0}/{g0}) | {_pct(fpr1)} ({f1}/{g1}) |",
++         f"| PPL on control texts | {ppl0 and round(ppl0, 2)} | {ppl1 and round(ppl1, 2)} |",
++         f"| Wilcoxon p (rep4 / distinct4 / collapse) | — | {tests['rep4']} / {tests['distinct4']} / {tests['collapse']} |",
++         f"| changed greedy generations (of {len(bad)} bad / {len(good)} good) | — | "
++         f"{n_changed['bad']} / {n_changed['good']} |",
++         ""]
++    if tw_controls:
++        L += ["| edited matrix | TW control | violations | target shift (TW units) |",
++              "|---|---|---|---|"]
++        for c in tw_controls:
++            L.append(f"| L{c['layer']} {c['matrix']} | {c['verdict']} | {c['n_violations']} "
++                     f"| {c['target_shift_tw_units']:.2f} |")
++        L += ["",
++              "TW control: healthy top singular values must stay within +-2 TW-scale units "
++              "(plan section 7.2); any component shifted by more than 3 units is a violation."]
++    md = os.path.join(out_dir, "rcda_summary.md")
++    with open(md, "w", encoding="utf-8") as f:
++        f.write("\n".join(L) + "\n")
++    print("\n" + "\n".join(L), flush=True)
++    print(f"\nsaved: {os.path.join(out_dir, 'rcda_benchmark.json')}\nsaved: {md}", flush=True)
++
++
+ # ---------------------------------------------------------------- main
+ 
+ def main():
+@@ -259,8 +480,32 @@
+     ap.add_argument("--n_prompts", type=int, default=0, help="0 = use all prompts")
+     ap.add_argument("--configs", default="", help="comma-separated config names, empty = all")
+     ap.add_argument("--seed", type=int, default=0)
++    # ---- RCDA mode (plan, sections 6-7): weight-edit before/after evaluation ----
++    ap.add_argument("--baseline_dir", default=None,
++                    help="RCDA mode: model directory with the BASE weights")
++    ap.add_argument("--edited_dir", default=None,
++                    help="RCDA mode: model directory with the EDITED weights "
++                         "(activates the RCDA benchmark instead of the hook benchmark)")
++    ap.add_argument("--bad_set", default="prompts/bad.jsonl",
++                    help="RCDA mode: JSONL prompts that trigger the target defect")
++    ap.add_argument("--good_set", default="prompts/good.jsonl",
++                    help="RCDA mode: JSONL prompts where the defect must NOT appear (FPR)")
++    ap.add_argument("--control_set", default=None,
++                    help="RCDA mode: JSONL texts for the PPL ability control "
++                         "(default: the built-in VAL_TEXTS)")
++    ap.add_argument("--rep_threshold", type=float, default=0.2,
++                    help="Repetition Rate-4 above which a generation counts as a repetition defect")
++    ap.add_argument("--collapse_frac", type=float, default=0.8,
++                    help="a 4-gram collapse before this fraction of max_new counts as a defect")
++    ap.add_argument("--rcda_report", default=None,
++                    help="path to rcda_edit_report.json (default: <edited_dir>/rcda_edit_report.json); "
++                         "its matrices get the spectral TW control")
+     args = ap.parse_args()
+ 
++    if args.edited_dir:                       # RCDA branch — weight-edit evaluation
++        run_rcda_benchmark(args)
++        return
++
+     os.makedirs(args.out_dir, exist_ok=True)
+     prompts = PROMPTS if args.n_prompts == 0 else PROMPTS[:args.n_prompts]
+ 
+--- /home/z/my-project/rmt-llm-research/neural_lab/MNN-Pocket-0.3B/Code/reassemble_model.py	2026-11-08 20:30:11.592162876 +0000
++++ /home/z/my-project/download/rcda_mnn_pocket/Code/reassemble_model.py	2026-11-08 20:43:01.993152966 +0000
+@@ -22,8 +22,11 @@
+ import glob
+ import hashlib
+ import os
++import shutil
+ import sys
+ 
++_copy = shutil.copy2
++
+ CHUNK_TEMPLATE = "model.safetensors.part-*"
+ SHA_FILE = "model.safetensors.sha256"
+ OUT_FILE = "model.safetensors"
+@@ -33,6 +36,13 @@
+     ap = argparse.ArgumentParser(description="Reassemble model.safetensors from chunks.")
+     ap.add_argument("--model_dir", default="model",
+                     help="directory containing the chunks and the checksum file")
++    # ---- RCDA: assemble an evaluation directory with edited weights on top ----
++    ap.add_argument("--eval_dir", default=None,
++                    help="build a self-contained eval model directory (config + tokenizer "
++                         "+ merged weights) instead of editing model_dir in place")
++    ap.add_argument("--overlay_state", default=None,
++                    help="safetensors file (or directory with such files) whose tensors "
++                         "override the base weights, e.g. an RCDA edited state dict")
+     args = ap.parse_args()
+ 
+     model_dir = args.model_dir
+@@ -71,6 +81,47 @@
+     print(f"SHA-256 OK: {actual}")
+     print(f"model ready: {out_path}")
+ 
++    # ---------------------------------------------------------------- RCDA eval dir
++    if args.eval_dir:
++        import glob as _glob
++
++        from safetensors.torch import load_file, save_file
++
++        if not args.overlay_state:
++            sys.exit("error: --eval_dir requires --overlay_state (the edited tensors)")
++        os.makedirs(args.eval_dir, exist_ok=True)
++
++        overlay_paths = ([args.overlay_state] if os.path.isfile(args.overlay_state)
++                         else sorted(_glob.glob(os.path.join(args.overlay_state, "*.safetensors"))))
++        if not overlay_paths:
++            sys.exit(f"error: no safetensors overlay found at {args.overlay_state}")
++        overlay = {}
++        for p in overlay_paths:
++            print(f"overlay: {p}")
++            overlay.update(load_file(p))
++
++        # copy every small model file except the base weights / chunks / checksum
++        skip = {"model.safetensors", SHA_FILE, CHUNK_TEMPLATE}
++        for fname in os.listdir(model_dir):
++            if fname in skip or glob.fnmatch.fnmatch(fname, CHUNK_TEMPLATE) \
++                    or not os.path.isfile(os.path.join(model_dir, fname)):
++                continue
++            if fname.endswith(".safetensors"):
++                continue
++            _copy(os.path.join(model_dir, fname), os.path.join(args.eval_dir, fname))
++
++        sd = load_file(out_path)
++        n_overridden = 0
++        for k, t in overlay.items():
++            if k in sd:
++                assert sd[k].shape == t.shape, f"shape mismatch for {k}: {sd[k].shape} vs {t.shape}"
++                n_overridden += 1
++            sd[k] = t
++        save_file(sd, os.path.join(args.eval_dir, OUT_FILE),
++                  metadata={"format": "pt", "rcda": "1"})
++        print(f"eval model dir ready: {args.eval_dir} "
++              f"({n_overridden} tensors overridden by the overlay)")
++
+ 
+ if __name__ == "__main__":
+     main()

@@ -1,0 +1,12 @@
+{
+ "tag": "base",
+ "edited_state": "base_state.safetensors",
+ "n_changed_tensors": 0,
+ "changed": {},
+ "tw": {},
+ "cosine_edit_vs_v": {},
+ "rho_bad": 0.8,
+ "rho_good": 0.6,
+ "loop_waste_mean": 72.75,
+ "kl_ctrl": 0.0
+}

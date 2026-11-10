@@ -1,0 +1,51 @@
+# ============================================================================
+# rcda_experiment.yaml — RMT-Calibrated Directional Ablation on MNN-Pocket-0.3B
+# (neural_lab/MNN-Pocket-0.3B; Qwen3ForCausalLM, 28 layers, d=896, d_ff=2560)
+#
+# Pipeline (each step is a separate command, see README_RCDA.md):
+#   1) pocket_rmt_probe.py --rcds-probe   -> layers, Delta_h, z_RMT/beta/z_diff,
+#                                            matrix scans (lambda_v, theta_v/theta_c)
+#   2) rmt_intervention.py --rcda         -> edited model.safetensors + edit pack
+#   3) benchmark_rmt.py --baseline_dir .. --edited_dir .. -> rho, FPR, PPL, TW control
+#   4) iterate (edit -> measure -> keep/revert) until stop conditions are met
+# ============================================================================
+
+target_defect: "repetition_loop"   # repetition_loop | refusal_overfire | format_loss
+
+# ------------------------------------------------------------------ prompt sets
+bad_set: "prompts/bad.jsonl"       # prompts where the defect must appear
+good_set: "prompts/good.jsonl"     # prompts where it must NOT appear (FPR control)
+control_set: "prompts/control.jsonl"  # PPL ability control (not related to the defect)
+
+# ------------------------------------------------------------------ probe
+probe:
+  max_length: 512        # max tokens per prompt for activation collection
+  top_layers: 4          # how many top layers get the full matrix scan
+  # a-priori hint from the paper (layers 15 and 19 of a 28-layer Qwen); the RMT
+  # scores must confirm or reject it — do NOT restrict the scan to these layers
+  prior_layers: [15, 19]
+
+# ------------------------------------------------------------------ edit (step 2)
+matrices: ["down_proj", "o_proj"]  # candidate writer matrices of the residual stream
+alpha_mode: "auto_bbp"             # alpha from the BBP excess (plan section 5); or a float
+bbp_kappa: 0.5                     # safety factor in alpha_0 = kappa * delta / (1 - delta)
+column_mode: "auto_tw"             # plan section 4: keep only RMT-confirmed columns
+                                   # alternatives: "auto_chi2" (Bonferroni chi2 gate),
+                                   # "topk=54" (paper-style fixed cardinality)
+tw_tau: 2.0                        # tau in lambda_+ + tau * TW-scale (column gate)
+chi2_eta: 0.05                     # family-wise level for the auto_chi2 gate
+full_ablation: false               # true = classic W - alpha * v (v^T W) on all columns
+
+# ------------------------------------------------------------------ iterate (step 4)
+stop:
+  rho_target: 0.2       # stop when the defect rate on P_bad drops below this
+  rmt_z_max: 2.0        # ... or when z_diff of Delta_h falls below 2 everywhere
+  max_passes: 50        # forward-pass budget of the edit-measure-keep loop
+  fpr_max: 0.15         # revert if false triggers on P_good exceed this
+  ppl_max_ratio: 1.10   # revert if control PPL grows by more than 10%
+
+# ------------------------------------------------------------------ benchmark (step 3)
+benchmark:
+  max_new: 64
+  rep_threshold: 0.2    # RepRate-4 defect threshold
+  collapse_frac: 0.8    # a 4-gram collapse before 80% of max_new counts as a defect

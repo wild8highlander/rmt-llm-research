@@ -16,10 +16,12 @@ Requires matplotlib + Pillow (both in the ``dev`` extra).
 import os
 import sys
 
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "src"))
 
 import matplotlib
+
 
 matplotlib.use("Agg")
 import matplotlib.font_manager as fm
@@ -27,10 +29,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation, PillowWriter
 
+
 fm.fontManager.addfont("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")
 
 from rmt_llm.bbp_transition import bbp_critical_theta, bbp_lambda_max
-from rmt_llm.marchenko_pastur import mp_bounds, mp_density, mp_sample
+from rmt_llm.marchenko_pastur import mp_density, mp_sample
+
 
 # --- scene parameters (q = 0.1, sigma2 = 1: the default activation regime)
 Q, SIGMA2 = 0.1, 1.0
@@ -109,18 +113,17 @@ def draw(k: int):
     theta = float(THETA_GRID[k])
     lmax = float(lmax_curve[k])
     super_ = theta > THETA_C
-    y0, y1 = ax_s.get_ylim()
+    _y0, y1 = ax_s.get_ylim()
     lmax_vis = min(lmax, XMAX * 0.97)
     spike_v.set_data([lmax_vis, lmax_vis], [0, y1])
     spike.set_data([lmax_vis], [1.42])
     out_lbl.set_text("")
     if lmax > XMAX * 0.97:
-        out_lbl.set_text("$\\lambda_{\\max}$=%.1f $\\rightarrow$" % lmax)
+        out_lbl.set_text(f"$\\lambda_{{\\max}}$={lmax:.1f} $\\rightarrow$")
     state_lbl.set_text(
-        "$\\theta=%.2f$  %s  $\\theta_c=%.2f$\n%s" % (
-            theta, ">" if super_ else "<", THETA_C,
-            "SUPERCITICAL — outlier escaped" if super_
-            else "subcritical — outlier hidden in bulk"))
+        f"$\\theta={theta:.2f}$  {'>' if super_ else '<'}  "
+        f"$\\theta_c={THETA_C:.2f}$\n"
+        f"{'SUPERCITICAL — outlier escaped' if super_ else 'subcritical — outlier hidden in bulk'}")
     state_lbl.set_color(GOLD if super_ else MUTED)
     marker.set_data([theta], [lmax])
     trace.set_data(THETA_GRID[:k + 1], lmax_curve[:k + 1])

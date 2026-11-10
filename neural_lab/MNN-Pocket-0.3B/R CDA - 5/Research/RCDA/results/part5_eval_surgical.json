@@ -1,0 +1,39 @@
+{
+ "tag": "surgical",
+ "edited_state": "surgical_state.safetensors",
+ "n_changed_tensors": 3,
+ "changed": {
+  "model.layers.15.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.02637,
+   "n_weights": 56448
+  },
+  "model.layers.16.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.02603,
+   "n_weights": 58240
+  },
+  "model.layers.18.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.01466,
+   "n_weights": 75264
+  }
+ },
+ "tw": {
+  "model.layers.15.self_attn.o_proj.weight": {
+   "verdict": "pass"
+  },
+  "model.layers.16.self_attn.o_proj.weight": {
+   "verdict": "pass"
+  },
+  "model.layers.18.self_attn.o_proj.weight": {
+   "verdict": "pass"
+  }
+ },
+ "cosine_edit_vs_v": {
+  "model.layers.15.self_attn.o_proj.weight": 1.0,
+  "model.layers.16.self_attn.o_proj.weight": 1.0,
+  "model.layers.18.self_attn.o_proj.weight": 1.0
+ },
+ "rho_bad": 0.8,
+ "rho_good": 0.6,
+ "loop_waste_mean": 73.05,
+ "kl_ctrl": 0.0065
+}

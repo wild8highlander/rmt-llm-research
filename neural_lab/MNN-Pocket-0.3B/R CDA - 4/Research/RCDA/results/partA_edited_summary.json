@@ -1,0 +1,24 @@
+{
+ "tag": "edited",
+ "model_dir": "/home/z/my-project/rcda_work/rcda4/models/edited",
+ "n_gens": 18,
+ "max_new": 512,
+ "sampling": {
+  "do_sample": true,
+  "temperature": 0.6,
+  "top_p": 0.95,
+  "top_k": 20,
+  "max_new_tokens": 512
+ },
+ "rho_bad_ru": 1.0,
+ "rho_good_ru": 1.0,
+ "rho_gsm8k_en": 1.0,
+ "trunc_bad_ru": 1.0,
+ "trunc_gsm8k_en": 1.0,
+ "loop_share_bad_mean": 0.190675,
+ "loop_share_gsm_mean": 0.24251666666666669,
+ "finished_bad_ru": 0.0,
+ "finished_gsm8k_en": 0.0,
+ "line_repeat_bad_mean": 0.0,
+ "distinct4_bad_mean": 0.8082
+}

@@ -16,7 +16,7 @@ its own exact solution, and they are frequently conflated.
 > is solved exactly by keeping the top-$r$ sample eigenvalues *unchanged*
 > and zeroing the rest. Any soft de-biasing of the kept eigenvalues makes
 > the Frobenius error strictly larger.
-
+>
 > **Theorem 10.2 (inverse-BBP estimator; derived in Prop 6.2).** For the
 > problem *estimate the population covariance*
 > $\Sigma = \sigma^2 I + \sum_k \mu_k v_kv_k^{\mathsf T}$ *from the sample
@@ -29,7 +29,7 @@ its own exact solution, and they are frequently conflated.
 > $\sum_k\mu_kv_kv_k^{\mathsf T}$). This operator is the exact inverse of
 > the BBP map (Theorem 5.1/6.1); its first-order expansion is
 > $\lambda - q\sigma^2 - q\sigma^4/\lambda$.
-
+>
 > **Theorem 10.3 (Gavish-Donoho).** For the problem *recover the
 > spike-only signal $P$ from $X = P + \sigma Z$* under the oracle
 > Frobenius AMSE, the optimal hard threshold for singular values is
@@ -48,12 +48,15 @@ Theorem 10.2; Gavish-Donoho (2014) for Theorem 10.3; Donoho-Gavish
 With $N=300$, $T=600$, $q=0.5$, $25$ trials per point, relative
 Frobenius error:
 
-* **Target $\Sigma$ (full population).** The exact inverse-BBP operator
+- **Target $\Sigma$ (full population).** The exact inverse-BBP operator
+
   achieves $0.013$–$0.028$ across the spike grid — *two orders of
   magnitude* below the hard truncation / MP-clip operators
   ($\approx 0.95$–$1.00$, which destroy the $\sigma^2$ bulk) and below
   its own first-order expansion ($0.018$–$0.038$).
-* **Target $P$ (spike-only).** The de-biased soft operator (bulk zeroed)
+
+- **Target $P$ (spike-only).** The de-biased soft operator (bulk zeroed)
+
   dominates at and above threshold; the Gavish-Donoho hard threshold is
   conservative for weak spikes by design (its optimality is a minimax
   statement over spike strength, not a pointwise claim), and raw-λ

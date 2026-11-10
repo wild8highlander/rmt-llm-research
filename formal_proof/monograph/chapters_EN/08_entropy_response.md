@@ -55,10 +55,13 @@ $E_\xi[p_\xi]$ is flat in $\tau$ to this order (its deviation from
 uniform is $\mathcal O(\tau^{-4})$). Both facts are visible in the
 verification figure. Consequences:
 
-* any statement of the form "$H = H_0 + \frac{1}{2\tau^2}\int\lambda\rho\,d\lambda$"
+- any statement of the form "$H = H_0 + \frac{1}{2\tau^2}\int\lambda\rho\,d\lambda$"
+
   requires specifying *which* entropy and carries, under the natural
   conditional reading, the **opposite sign** and a $(1-1/K)$ factor;
-* the honest claim exported from this chapter is Theorem 8.2 with its
+
+- the honest claim exported from this chapter is Theorem 8.2 with its
+
   assumptions — the parent repository's Step 11 formula is left as it
   stands (phenomenological), and this chapter replaces it wherever the
   derived statement is required.

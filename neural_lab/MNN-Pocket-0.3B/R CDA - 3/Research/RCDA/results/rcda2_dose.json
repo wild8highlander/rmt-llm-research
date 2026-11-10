@@ -1,0 +1,65 @@
+{
+ "alpha_star": 1.0,
+ "note": "no alpha in the grid fixed the defect on the calibration set; alpha=1.0 recorded for the full benchmark (escalation candidate: more layers or --full ablation)",
+ "base_cal": {
+  "rep4_bad": 0.5620763764659114,
+  "hit_bad": 0.625
+ },
+ "dose_response": [
+  {
+   "alpha": 0.1,
+   "kl": 5.802324039905216e-06,
+   "changed": {
+    "bad": 0,
+    "good": 1
+   },
+   "rep4_bad": 0.5620763764659114,
+   "hit_bad": 0.625,
+   "hit_good": 0.625
+  },
+  {
+   "alpha": 0.25,
+   "kl": 3.627745809353655e-05,
+   "changed": {
+    "bad": 1,
+    "good": 1
+   },
+   "rep4_bad": 0.5698677043791904,
+   "hit_bad": 0.625,
+   "hit_good": 0.625
+  },
+  {
+   "alpha": 0.5,
+   "kl": 0.00014505715444101952,
+   "changed": {
+    "bad": 2,
+    "good": 1
+   },
+   "rep4_bad": 0.5698677043791904,
+   "hit_bad": 0.625,
+   "hit_good": 0.625
+  },
+  {
+   "alpha": 0.75,
+   "kl": 0.00032634921080898494,
+   "changed": {
+    "bad": 2,
+    "good": 1
+   },
+   "rep4_bad": 0.5698677043791904,
+   "hit_bad": 0.625,
+   "hit_good": 0.625
+  },
+  {
+   "alpha": 1.0,
+   "kl": 0.0005802716768812388,
+   "changed": {
+    "bad": 2,
+    "good": 1
+   },
+   "rep4_bad": 0.5698677043791904,
+   "hit_bad": 0.625,
+   "hit_good": 0.625
+  }
+ ]
+}

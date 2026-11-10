@@ -62,11 +62,13 @@
         "summary",
         "b",
         "code",
+        "em",
         "p",
         "a",
         "sub",
         "div",
         "span",
+        "video",
         "picture",
         "source"
       ]
@@ -159,6 +161,7 @@
     "!node_modules/**",
     "!**/.git/**",
     "!**/.venv/**",
+    "!**/.pytest_cache/**",
     "!**/results/**"
   ],
   "overrides": [
@@ -170,6 +173,16 @@
       "config": {
         "MD001": false,
         "MD042": false
+      }
+    },
+    {
+      "filter": [
+        "formal_proof/monograph/monograph_EN.md",
+        "formal_proof/monograph/monograph_RU.md"
+      ],
+      "combine": "merge",
+      "config": {
+        "MD025": false
       }
     }
   ]

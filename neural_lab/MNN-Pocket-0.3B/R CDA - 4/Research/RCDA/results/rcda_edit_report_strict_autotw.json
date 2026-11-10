@@ -1,0 +1,162 @@
+{
+ "meta": {
+  "base_state_dict": "../model/model.safetensors",
+  "kappa": 0.5,
+  "alpha_mode": "auto_bbp",
+  "alpha_fixed": 1.0,
+  "column_mode": "auto_tw",
+  "columns_k": 54,
+  "tw_tau": 2.0,
+  "full_ablation": false,
+  "summary": [
+   {
+    "layer": 9,
+    "matrix": "down_proj",
+    "state_dict_key": "model.layers.9.mlp.down_proj.weight",
+    "vector_norm_raw": 77.82048034667969,
+    "scan": {
+     "shape": [
+      896,
+      2560
+     ],
+     "q": 0.35,
+     "sigma2_w": 0.00038550025229867055,
+     "lambda_max_w": 0.004571585891245045,
+     "lambda_plus_w": 0.0009765553904039986,
+     "lambda_v": 0.0010384631940374158,
+     "lambda_over_edge": 1.0633940524436674,
+     "theta_v": 0.7699560855261537,
+     "theta_c": 0.5916079783099616,
+     "delta": 0.23163412897024763,
+     "alpha0_kappa0.5": 0.1507316616365424,
+     "s_v": 0.04801310164141511,
+     "supercritical": true
+    },
+    "columns": {
+     "mode": "auto_tw",
+     "n_columns": 0,
+     "threshold_profile_sq": 2.553779226170712,
+     "indices": []
+    },
+    "alpha_mode": "auto_bbp",
+    "alpha": 0.1507316616365424,
+    "kappa": 0.5,
+    "tw_tau": 2.0,
+    "status": "aborted_no_rmt_columns",
+    "reason": "auto_tw selected 0 columns: no input column of this matrix carries projection mass above lambda_+ + tau*TW-scale (plan section 4). Per the RMT discipline the edit is refused; use column_mode auto_chi2/topk or a different layer/matrix."
+   },
+   {
+    "layer": 11,
+    "matrix": "o_proj",
+    "state_dict_key": "model.layers.11.self_attn.o_proj.weight",
+    "vector_norm_raw": 78.11386108398438,
+    "scan": {
+     "shape": [
+      896,
+      896
+     ],
+     "q": 1.0,
+     "sigma2_w": 0.00015864586989940312,
+     "lambda_max_w": 0.004100948971835592,
+     "lambda_plus_w": 0.0006345834795976125,
+     "lambda_v": 0.0006961363393792373,
+     "lambda_over_edge": 1.096997261606393,
+     "theta_v": 1.8406490829122133,
+     "theta_c": 1.0,
+     "delta": 0.45671339024718743,
+     "alpha0_kappa0.5": 0.42032454145610665,
+     "s_v": 0.04017200705573712,
+     "supercritical": true
+    },
+    "columns": {
+     "mode": "auto_tw",
+     "n_columns": 0,
+     "threshold_profile_sq": 0.5808222894340654,
+     "indices": []
+    },
+    "alpha_mode": "auto_bbp",
+    "alpha": 0.42032454145610665,
+    "kappa": 0.5,
+    "tw_tau": 2.0,
+    "status": "aborted_no_rmt_columns",
+    "reason": "auto_tw selected 0 columns: no input column of this matrix carries projection mass above lambda_+ + tau*TW-scale (plan section 4). Per the RMT discipline the edit is refused; use column_mode auto_chi2/topk or a different layer/matrix."
+   }
+  ]
+ },
+ "edits": [
+  {
+   "layer": 9,
+   "matrix": "down_proj",
+   "state_dict_key": "model.layers.9.mlp.down_proj.weight",
+   "vector_norm_raw": 77.82048034667969,
+   "scan": {
+    "shape": [
+     896,
+     2560
+    ],
+    "q": 0.35,
+    "sigma2_w": 0.00038550025229867055,
+    "lambda_max_w": 0.004571585891245045,
+    "lambda_plus_w": 0.0009765553904039986,
+    "lambda_v": 0.0010384631940374158,
+    "lambda_over_edge": 1.0633940524436674,
+    "theta_v": 0.7699560855261537,
+    "theta_c": 0.5916079783099616,
+    "delta": 0.23163412897024763,
+    "alpha0_kappa0.5": 0.1507316616365424,
+    "s_v": 0.04801310164141511,
+    "supercritical": true
+   },
+   "columns": {
+    "mode": "auto_tw",
+    "n_columns": 0,
+    "threshold_profile_sq": 2.553779226170712,
+    "indices": []
+   },
+   "alpha_mode": "auto_bbp",
+   "alpha": 0.1507316616365424,
+   "kappa": 0.5,
+   "tw_tau": 2.0,
+   "status": "aborted_no_rmt_columns",
+   "reason": "auto_tw selected 0 columns: no input column of this matrix carries projection mass above lambda_+ + tau*TW-scale (plan section 4). Per the RMT discipline the edit is refused; use column_mode auto_chi2/topk or a different layer/matrix.",
+   "vector_b64_f32": "a/pfvtxEd7xwQCu+9E59PTjytLxcRAs+NopxviiOu7z+O5892VVkPe4DG74Qhr29/CY6vrB2PjyUEJc8NX9UvbQD3L1vPNK9FsWPPax0xj3Y4fk8lpTGPbha9T2GHlo9gDiTu4AOgroyLyI+4lEnPik/mL4xwuY90OA9uzrviT2DjwG9tPmSvbVUzr0XjRs+z9dTvmDBLLsYRDK++kzvvXLeCL5W9QK9rAeLPaI0Bb7wvui9qFlsPhkabz09rPY9jpbhvT8MI75ah/s9wQ37vX7GQr0sh589XY7VPFYlFr6ygzW+/3CVvo2MkD3Z43g+3OY/varFYT0JBhQ+pUbRvdQwsrz+QUO9Dq6xvdroLD30w5C9craQPvpDFr4aExM+N30hvbjvq7zetpC8M1M/P7p63j1CI5e92il/vQGz9L2SDjW9OIIavrlLEz5g8lu9gEaqOx5Rkrytyso9a1FpvujQR74WxIq94JiZPO7jLL10DES+FDEhPjbHiz0Hkcs9v34bPhQyHz5wt52+WAUJvM32aj6w+J67UJ1ru4b+z71gl9m96HqNPbj9HT4Yz+S8gsSOvlzQKz004U2+dK3PvECpx7tQwRQ+QDiIPLhKeT243lM9WJEwPW4fCD7Ckdm8xh01vjF95r1CL8k9Nu4QP1tsEj74gsA8Bc7GvqWyiD06e1K9QimbPrrPU77Z1co9LOhevkUlkD0Ydwo+GEqyPAYX5r4mxE+91y4zPiDLAzvUeqs9+FgIPhW1RT6iupc91qOWPY+4HD7whxQ+dDUzvefmjTwmR9Y99grjvZQeRL4y/T++CQkHvoQsNjxd74A9iSx+PekaEr70PSe9ICFlvOeuOj5L9Gs+MkOMPJscjD0ADji7EvF5Pm7mLT7j8aw+SFB0PgIK6r15xnC9BrufPWAxub2UtJK+RzQJvWjklL2CDHW9yBQFvq5Mg74tsRg+zX47Pcl2Xb75AgC+F65ZvfDSRr7cxvm9gkKRvu2iEr24k6W9IXi4PqniAT6gY50+2D3cvJy3Lr2glGe7p7xtvSHnDL3Yzku8ijOWvVTFAj3esBw8SnKyvpFY8L1CAwq9ThrnPcshdD2GeeS9qhBNPofwuL0LgUG+9zYFPuDwIjtANdW9wAwKvaoo4j0BI+u9KMyCPDwfAL6irAS++26APWj6JL507ki++FAlPoxfcD7gjgA8KUYSPh4EaT5sCpq9XSS4vJqg5r34ccE+XCoZvYAfg716flE9RoZiPW6jtr0TfB6+p+8vvqnmS75K3XW+y9ViPoMETr4qav+9TDmbPWEdWr4QmOe8nlrIvepe1L1YSfW7CM2Yu5JV+L0tc/W9SW+XPSixCj3YXju+DPQsPjAJO7y+XaC9NRpIPnxIhT3cOEU9UATfvMRK4L16qZ28rhikvpT/TT5/HJC9dsGbPej5M77ifnK+4mFRPcVpZL2E4QA+0NKJPUAVrLuUcwk+gkW+vTAGvr0sUpw+irnxPZ1yBj1Fsae+reXrPplM+L0tF+i9rNARPQS5/zzZexk+WChXPVAk6bxdvSE+sIx+vYSs0j2u6bw9EmXuPaR7UT7gjAQ+dJkQvZUE+D3gqak9KH3jP6C0/j0G5AU9piHmvQmyqL6k3oa+Zu6GvahO5T2UKSm9WxmqvUCv9LsPU5O+9JEmvmhChLwn+bO8YS/jPT2W/70REis+bpd8PqoUTD5syC8+qAmgPWLbSb2HgzM+xta8PbBweDzw7Bu8ODWDPErqNr7gjA2+pqObPtrKEb38mUs9lAZbPPiBljnB1iC92aB4PrUovz2o8fE9oI5cPgDMJr44G7o9W6oxvgD+9zzoAJO+yd8LvVTWLLzyiNa9FkqjPmztJ70UMYo9jQz5PTqIOL70hE6+PGx/vj3DKj2b32E+JCbCvF5Jm8KykDE+JG5jvVjWGT1gwmW93POAPWyF6zzUog++epJDPY0YSj4A6rm5N+gwvagbNT2Iois+JhqnvmCyzj1QSAk+CwNBvnfxHD454VE99jATPWonl76uIk8+gYDbvfUaqT3QlAs9FpdWvsxoobyZArA9LBCovDwmBr7TEbU9QjEivlSrfby7Qbq9K9U4vdLfgD7yt3c9O+dAvtyekT0BlpC90Fy8vDrQWj6AG+88Mks2PBmYnb5Mwj++vRM6Pjyger3286o+43mhPojVt7xWJ0k9kfhdvWwuVz2zDxg+wg2IPVfH3z5wKdk8UGYXPXaLBb6+CTu+wO2luxT8mD2wfAg++mcVPtfzHT4jWp09/GUuvxfRa71mdXS9UleCPWtVkL1iwVK9pUFGvkjoE74hKQ8+/twVvsBtjLsOthC8His5vmZSYb4idki8WHe3vmYDnr0PN74+EtFQvj5U5r3oh2Y95qFbPe2KL758b8893DGsPZ5hJj0xKbI8HFkWPU4XhTwhI7O9+oWNPoBjWrqyWxQ+Tdb2PQ6V2T1Q7ti86p3gvQ/vkL1UEnO+Yo3pvNDXHr0Y/HM+MbFkPmCABz7o1pk8dz3rPig/rj0g8Ja73mZNvk2El74aQOO9f0znvT4YU72xbOQ9Y1qZPRpZBT4znRS+/kyCPQBD1D0GG469NEGmvVWhdD4r0jq+fvfuvd4Djb0Me4U80YQoPm3/LL4S0L28XsgaviU4hj70LFC9n+CMvWJoob2Qnt49Nug/PoKNu76kNRC+lMKAPMhaED5VyKy9qjQ7PpTXKT7aO1O+wBsyPMWiB74Qt/28nU7xvRSQbr6Ga/q9eHICvul76b27SY8+IL73OpBBSD1A8zC9CEn0PA7F1j3+oma+zDIwPZywXr3S4kW+uF8rvk/Ocb4TJI+9enEqveWPLr0MkNc9FqX5PGJZYD3WMJw+Wm2VPJTlcz7WQqK+qvB8PPcTFL6kQdY9ckhNPrj57b2sgCC+QJGturLWA74e65s93iSHvUnEdz3bLKk9lYKnvZMyoz0+aTS9Z4YhvljGlz6mcPs81gVgvvJNDD5sRCI+Hj1qvhiCtj05l488pevPvXEBBD6neAC+soD3PcYFn73m4No9wFSevbKkMT37je49RhIoPvBhp75WS4Y95sw0PcBrdbvKy8A+iqY1PgLNar0OPhc+n4yTPoKlCT6fXD+9sC1yPYlKBz7o0Iq8BGopPphc9rvQmJS9uJ2nPES0bL5O5ri+CLZLvXVngj6CJEs+fGzRPeIiX75guDU+mHemPkDzoDr8pde9cbRovbDc9T0iaEg9XxwoPjaozr3MO6E9fk0CPkMrC76CcsO9fsmGvePhKL7pNZk+/FJzvW/2ir+2EFU9Wv7/PRrPNT0AFb89MAVcPo1ttb2IbjG+FoMKvozaFbvHvmk+OucWPrCIOD3gWPG8CPOLPWhSwjtFLre+uaWQPTjRcD1Xl4E+2TWmvQolGT/L+lA+2msOvqGERD2h9tI8XxCDPdQhp7sHy/E8XH4WvhTmkjzgZvW9wOwJPtH8jT5gA8G9iZ8VPmSnqr6sOLG+QGdyvKQJKLwzSzi+DoPwvfKLeD6VIEg+2JyUvrmlTr4EQCY+wHmxOmhp2L0HMaw9UmvNPOMIgL5t5CY9iZekvd27Ej4ME1g92EMKPgSs6LxOKYs9KI2TvXDV2bwoFmo96JMqvcWP7b7kmVC+xqHivexiOL3KEgA+QC8HvQe7772DgoY++CZOvNXkwz0hoAC9v8oKPqYWzT060IK+RiMAvuWLRj6q8Cw8kA3pvHpil71I0Im9amixvYzvBb5RAJS+/En6vLylRb4qsAu8fH+yvXLzjb0JhbG9kMGPPd3xkj1cuLi7NobgPQoVCL2AIm653L14vUhl7rzskGg9EKv7vRD9c761QUW+E/g6vptRLD7fcBa+LsnkPHkEkr5agme9UjAovgF9Lj2KV8C9ibrRvPgxh71CubC9GErAPbbMlj0IQ569YM2qvejLwjxMiNI+hhjePTJ7P77c1Ko97lg/vRh5Er7sCWe+LohlPmrxIb4xEaq+RpUVPick5T2Oxjk+ZmQ1vpZHxL3Iv729Er0qPtl307zwdpU+KG20vY+aprw1ldW94yCBPnS/Gz6IOqA9DJqpPXK3Rz45EOK9SXAxPcekp75wUIU9hvQDPiDcAL6aI7A+ApC6vXafi75co4C+opLnvHgDXT0xmRo+xsMiPp9Cmz3TFCm9mWwSPggB/rs9k6S9TCR+vUm4eD4+48K9VVlUvhzH3L1PRF++9UIMvkS5Dz73E1C+AoCxPwHVXT6eaqG9wJ/AvQgIzz3P4I49goUsPe9lIj7C3AM+CfY2vcNNCz6RQZ6+MAEQPlLTkz0esuu944mkvfTYKj3EwPu9JH9ePqhZXb36Myi9JsQLPje5qr68gMy8QyfVvfIOQT0b2b09PXlyvsy2Ar5HvSA+Ie9Gvp5blz5El8+8rJkLPnjL4b0SuEe++D0EvOCf4z2oLPO8Esb0vdja2D2APBY8lsJOPju3B758jxs8fo2YPpMzvj3wYqs7u0DNvaLdU72Ztpm9AW0sPpZAKr6Zazq+YHjZO4zHi73l/L6+mhtyvWu4F748Ife9tvIgPeyJYr3grVU9j77qPXb9/LzsriK+vq9avrxz3zzpOY69JtgZvgOGYz5gVaA7ipmBvbiYCj1OPBy+C1qPvoRi6bxgdmm9wG0HPAs4zz72oo0+zLASPOv9hL188CY+PCsAviQKDb5eVYW+efMdvTgzhztmaS69sfhQvgLtEL7ggCK96vZBPevBHj1EEA2+3lvrPSyWAb5a5hQ+sJiiPrTBiz4Hq0S+ys5yvdzWfT4="
+  },
+  {
+   "layer": 11,
+   "matrix": "o_proj",
+   "state_dict_key": "model.layers.11.self_attn.o_proj.weight",
+   "vector_norm_raw": 78.11386108398438,
+   "scan": {
+    "shape": [
+     896,
+     896
+    ],
+    "q": 1.0,
+    "sigma2_w": 0.00015864586989940312,
+    "lambda_max_w": 0.004100948971835592,
+    "lambda_plus_w": 0.0006345834795976125,
+    "lambda_v": 0.0006961363393792373,
+    "lambda_over_edge": 1.096997261606393,
+    "theta_v": 1.8406490829122133,
+    "theta_c": 1.0,
+    "delta": 0.45671339024718743,
+    "alpha0_kappa0.5": 0.42032454145610665,
+    "s_v": 0.04017200705573712,
+    "supercritical": true
+   },
+   "columns": {
+    "mode": "auto_tw",
+    "n_columns": 0,
+    "threshold_profile_sq": 0.5808222894340654,
+    "indices": []
+   },
+   "alpha_mode": "auto_bbp",
+   "alpha": 0.42032454145610665,
+   "kappa": 0.5,
+   "tw_tau": 2.0,
+   "status": "aborted_no_rmt_columns",
+   "reason": "auto_tw selected 0 columns: no input column of this matrix carries projection mass above lambda_+ + tau*TW-scale (plan section 4). Per the RMT discipline the edit is refused; use column_mode auto_chi2/topk or a different layer/matrix.",
+   "vector_b64_f32": "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"
+  }
+ ]
+}

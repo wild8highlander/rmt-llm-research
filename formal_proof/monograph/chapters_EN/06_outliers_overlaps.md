@@ -24,13 +24,18 @@ equivalent literature. The formula is implemented as
 
 Three regimes, all verified numerically:
 
-* **$\mu \downarrow \mu_c$:** numerator $\to 1 - q\sigma^4/\mu_c^2 = 0$:
+- **$\mu \downarrow \mu_c$:** numerator $\to 1 - q\sigma^4/\mu_c^2 = 0$:
+
   the alignment vanishes continuously — at threshold the spike carries
   *no* usable direction, even though its eigenvalue touches the edge.
-* **$\mu \gg \sigma^2\sqrt q$:** overlap $\to 1$: the sample direction
+
+- **$\mu \gg \sigma^2\sqrt q$:** overlap $\to 1$: the sample direction
+
   recovers the semantic direction; the residual misalignment is
   $q\sigma^2/\mu$.
-* **fixed $\mu$, growing $q$:** alignment degrades polynomially — at
+
+- **fixed $\mu$, growing $q$:** alignment degrades polynomially — at
+
   aspect ratios hostile to the signal, the outlier eigenvalue still
   detaches but points in an increasingly wrong direction. This is the
   rigorous version of "geometric distortion of semantic predictions as

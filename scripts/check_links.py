@@ -15,6 +15,7 @@ import re
 import sys
 from urllib.parse import unquote
 
+
 DEFAULT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_ROOT
 MD = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
@@ -29,7 +30,8 @@ for dirpath, dirnames, filenames in os.walk(ROOT):
         if not fn.endswith(".md"):
             continue
         path = os.path.join(dirpath, fn)
-        text = open(path, encoding="utf-8", errors="replace").read()
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            text = fh.read()
         for t in MD.findall(text) + REF.findall(text):
             if t.startswith(("http://", "https://", "mailto:", "#", "<")):
                 continue

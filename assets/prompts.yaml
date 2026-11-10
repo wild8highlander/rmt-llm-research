@@ -1,0 +1,299 @@
+# =============================================================================
+# Visual layer — single source of truth for every static and animated slot.
+#
+# Regenerate:
+#   make images            # all static slots  -> assets/visuals/
+#   make images-<slot>     # one static slot
+#   make anims             # all animation slots -> assets/anim/ + posters
+#   make anims-<slot>      # one animation slot
+#   make og-image          # composite the OG text lockup
+#
+# Two providers are supported per slot:
+#   provider: procedural   (default) — deterministic matplotlib/PIL renderer,
+#                                      exact palette, seeded, offline, no API.
+#   provider: flux|sdxl|dalle|midjourney — gen-AI prompts kept verbatim below
+#                                      for external re-rendering; drop the
+#                                      -raw.png next to the slot and run
+#                                      `python scripts/gen_images.py --slot <slot> --from-raw`.
+# =============================================================================
+
+meta:
+  project: rmt-llm-research
+  concept: >-
+    Model weights x nuclear levels: the LLM activation spectrum rendered as
+    an atomic nucleus — the Marchenko-Pastur bulk is the noise floor, a BBP
+    outlier is a quantum transition, Tracy-Widom edge fluctuations are the
+    emission rim, and RLHF entropy collapse is a crimson singularity.
+  static_dir: assets/visuals
+  anim_dir: assets/anim
+  budget:
+    static_max_kb: 400
+    gif_max_kb: 2048
+    webm_max_kb: 3072
+    visuals_dir_max_mb: 5
+
+palette:
+  background: "#05060A"   # bulk of the spectrum — near-black space
+  bulk:      "#00D4FF"    # cyan   — Marchenko-Pastur noise
+  spike:     "#FFB020"    # amber  — BBP signal / quantum transition
+  edge:      "#B026FF"    # violet — Tracy-Widom edge fluctuations / orbitals
+  collapse:  "#FF3B6B"    # crimson — RLHF entropic collapse
+  text:      "#E8EEF7"    # primary contrast text (images: OG only)
+  grid:      "#1A2130"    # coordinate grid / faint structure
+
+typography:
+  formulas: JetBrains Mono      # not baked into images; used in docs markup
+  labels:   Inter               # OG lockup only
+  fallback: DejaVu Sans Mono    # terminal recordings (cli-demo)
+
+# No image except the OG lockup and the terminal demo carries text.
+negative_prompt: >-
+  text, letters, watermark, signature, logo, human faces, hands,
+  photorealistic people, cartoon, anime, cluttered, low-contrast,
+  lens flare, chromatic aberration, oversaturated, stock-photo style,
+  3D-render plastic look, blurry, jpeg artifacts, jitter, flicker,
+  temporal inconsistency, morphing artifacts
+
+# =============================================================================
+# Static slots — assets/visuals/<slot>-2x.(avif|webp|png)
+# =============================================================================
+static:
+  hero:
+    seed: 20261109
+    size: [3200, 1800]          # 2x retina; 1x display width 1600
+    display_width: 1600
+    aspect: "16:9"
+    provider: procedural
+    alt: >-
+      Marchenko-Pastur bulk with an amber BBP eigenvalue spike rising out of
+      cyan noise, framed by violet nuclear energy levels
+    prompt: >-
+      Futuristic scientific visualization, dark near-black background (#05060A),
+      a luminous Marchenko-Pastur density curve in electric cyan emerging from
+      a faint coordinate grid, one eigenvalue spike breaking out of the bulk in
+      amber (#FFB020) ascending like a quantum transition, orbiting energy
+      levels of an atomic nucleus as thin concentric ellipses in violet
+      (#B026FF), soft volumetric haze, generative art, high detail, cinematic
+      lighting from the signal itself, 16:9, no text, no logos, no people
+
+  thread-1-spectral:
+    seed: 20261109
+    size: [1600, 1000]          # 2x retina; 1x display width 800
+    display_width: 800
+    aspect: "8:5"
+    provider: procedural
+    alt: >-
+      Eigenvalue cloud forming the Marchenko-Pastur semicircle with a single
+      amber spike emerging above the critical threshold
+    prompt: >-
+      Scientific generative art, dense eigenvalue cloud in cyan forming the
+      Marchenko-Pastur semicircle on a black grid, a single eigenvalue
+      detaching and rising into an amber spike above a dashed critical
+      threshold line, surrounding halo of Tracy-Widom edge fluctuations in
+      violet, thin spectral emission lines crossing the frame, minimal,
+      elegant, no text, 8:5
+
+  thread-2-hallucination:
+    seed: 20261109
+    size: [1600, 1000]
+    display_width: 800
+    aspect: "8:5"
+    provider: procedural
+    alt: >-
+      Nuclear energy-level diagram: violet orbital rings, an amber transition
+      arrow crossing a critical barrier, a crimson probability cloud leaking
+      beyond it
+    prompt: >-
+      Atomic energy-level diagram reimagined as a futuristic blueprint,
+      discrete orbital rings in violet around a dark core, a cascading
+      transition arrow in amber crossing a critical energy barrier, faint
+      crimson probability cloud leaking beyond the barrier, coordinate grid,
+      scientific precision, black background (#05060A), no text, 8:5
+
+  thread-3-rlhf:
+    seed: 20261109
+    size: [1600, 1000]
+    display_width: 800
+    aspect: "8:5"
+    provider: procedural
+    alt: >-
+      Entropy collapse: a luminous cyan-violet probability cloud contracting
+      along a downward spiral into a crimson singularity
+    prompt: >-
+      Abstract visualization of entropy collapse, a luminous probability cloud
+      in cyan and violet contracting along a downward spiral into a crimson
+      singularity, thin decaying energy-level lines converging, fading quantum
+      orbitals, dark background (#05060A), elegant, minimal, generative art,
+      no text, 8:5
+
+  architecture:
+    seed: 20261109
+    size: [1600, 900]
+    display_width: null         # background layer, not shown standalone
+    aspect: "16:9"
+    provider: procedural
+    alt: ""
+    prompt: >-
+      Very subtle abstract background, dark near-black (#05060A), faint hex
+      lattice and coordinate grid, barely-visible spectral lines in cyan at
+      low opacity, sci-fi blueprint aesthetic, minimal contrast, designed to
+      sit under a diagram, no focal point, no text, 16:9
+
+  og-base:
+    seed: 20261109
+    size: [1200, 630]
+    display_width: null
+    aspect: "1.91:1"
+    provider: procedural
+    alt: ""
+    prompt: >-
+      Futuristic scientific hero banner, Marchenko-Pastur cyan curve, amber
+      eigenvalue spike, violet nuclear orbitals, dark background (#05060A),
+      generous negative space on the left third for a typographic lockup,
+      16:9, no text in image, no logos
+
+  favicon:
+    seed: 20261109
+    size: [512, 512]
+    display_width: null
+    aspect: "1:1"
+    provider: procedural
+    alt: ""
+    prompt: >-
+      Minimal glyph, single amber eigenvalue spike rising from a cyan
+      semicircle, one violet orbital ring, dark background, flat vector style,
+      crisp edges, 1:1
+
+  divider-thread-1:
+    seed: 20261109
+    size: [1600, 80]
+    display_width: null
+    aspect: "20:1"
+    provider: procedural
+    alt: ""
+    prompt: >-
+      Thin horizontal decorative strip, gradient cyan to violet, faint
+      spectral barcode texture, dark background, minimal, 20:1, no text
+
+  divider-thread-2:
+    seed: 20261109
+    size: [1600, 80]
+    display_width: null
+    aspect: "20:1"
+    provider: procedural
+    alt: ""
+    prompt: >-
+      Thin horizontal decorative strip, gradient violet to amber, faint
+      spectral barcode texture, dark background, minimal, 20:1, no text
+
+  divider-thread-3:
+    seed: 20261109
+    size: [1600, 80]
+    display_width: null
+    aspect: "20:1"
+    provider: procedural
+    alt: ""
+    prompt: >-
+      Thin horizontal decorative strip, gradient amber to crimson, faint
+      spectral barcode texture, dark background, minimal, 20:1, no text
+
+# =============================================================================
+# Animation slots — assets/anim/<slot>-loop.(webm|mp4) + poster in visuals/.
+# All loops are seamless: every driver is a periodic function of t.
+# Rules: no text inside, cubic easing, no flicker/jitter/morphing.
+# =============================================================================
+anims:
+  hero:
+    seed: 20261109
+    size: [1600, 900]
+    duration_s: 4
+    fps: 24
+    poster: hero-poster
+    alt: >-
+      Animated Marchenko-Pastur curve breathing while the amber BBP spike
+      rises out of the bulk and violet nuclear orbitals precess
+    motion_prompt: >-
+      Slow, seamless loop, 4 seconds: a cyan Marchenko-Pastur density curve
+      gently pulsing like a breathing wave, an amber eigenvalue spike rising
+      out of the bulk in a smooth quantum transition then returning, violet
+      nuclear orbital ellipses rotating slowly around a dark core, soft
+      volumetric haze drifting, dark background (#05060A), cinematic lighting
+      from the signal, no camera shake, no flicker, perfect loop point,
+      no text, no logos
+
+  thread-1:
+    seed: 20261109
+    size: [1600, 900]
+    duration_s: 5
+    fps: 24
+    poster: thread-1-poster
+    alt: >-
+      Animated BBP transition: an eigenvalue leaves the Marchenko-Pastur
+      bulk, rises above the critical threshold, and returns
+    motion_prompt: >-
+      Seamless 5s loop: cyan eigenvalue cloud forming the MP semicircle,
+      one eigenvalue smoothly detaching and rising into an amber spike above
+      a dashed threshold line, then rejoining; violet Tracy-Widom edge
+      fluctuations shimmering along the semicircle rim; no camera movement,
+      perfect loop, no text
+
+  thread-2:
+    seed: 20261109
+    size: [1600, 900]
+    duration_s: 5
+    fps: 24
+    poster: thread-2-poster
+    alt: >-
+      Animated leak beyond a critical barrier: violet orbitals rotate, an
+      amber transition arrow sweeps, a crimson probability cloud pulses out
+      and resets
+    motion_prompt: >-
+      Seamless 5s loop: violet orbital rings slowly rotating around a dark
+      core, an amber transition arrow sweeping across a critical barrier,
+      crimson probability cloud pulsing and leaking beyond the barrier then
+      resetting; minimal, precise, no flicker, perfect loop, no text
+
+  thread-3:
+    seed: 20261109
+    size: [1600, 900]
+    duration_s: 5
+    fps: 24
+    poster: thread-3-poster
+    alt: >-
+      Animated entropy collapse: a cyan-violet cloud spirals into a crimson
+      singularity and re-expands, looped
+    motion_prompt: >-
+      Seamless 5s loop: cyan and violet probability cloud spiraling inward
+      into a crimson singularity, then gently re-expanding back to the
+      initial state; decaying energy-level lines contracting and releasing;
+      dark background (#05060A), elegant, minimal, perfect loop, no text
+
+  dataflow:
+    seed: 20261109
+    size: [1600, 900]
+    duration_s: 6
+    fps: 24
+    poster: dataflow-poster
+    alt: >-
+      Animated data flow: activation particles stream through statistics and
+      verification stages, cyan to amber to violet
+    motion_prompt: >-
+      Seamless 6s loop: abstract data particles flowing left-to-right through
+      three stages marked by faint nodes, first stage in cyan (raw
+      activations), second in amber (statistics), third in violet
+      (verification), particles emitting soft glow, dark background
+      (#05060A), minimal, no text
+
+  cli-demo:
+    seed: 20261109
+    size: [1600, 900]
+    duration_s: 6
+    fps: 12
+    kind: terminal-gif
+    alt: >-
+      Terminal recording: rmt-llm-verify --help, then the self-check passing
+      five of five modules
+    motion_prompt: >-
+      Terminal session, seamless loop: type `rmt-llm-verify verify`, the five
+      module self-checks light up [OK] one by one, final line
+      "verify: 5/5 checks passed", brief hold, loop

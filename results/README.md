@@ -34,6 +34,14 @@ cd laboratory/python/lab_en
 python main.py            # menu item "Research 3D"
 ```
 
+## Provenance
+
+Every report here is pinned by sha256 in [`MANIFEST.json`](../MANIFEST.json);
+[`make verify-repo`](../scripts/verify_repo.py) fails if any of these files
+changes without a re-pin. Treat the tree as read-only evidence: regenerate
+from the lab instead of editing, and re-pin afterwards with
+`make verify-repo-manifest`.
+
 Related: the per-run mirrors at
 [`laboratory/results/`](../laboratory/results/README.md) and the curated
 [chart gallery](../assets/charts/README.md).

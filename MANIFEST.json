@@ -1,0 +1,215 @@
+{
+  "files": {
+    "CITATION.cff": {
+      "bytes": 2518,
+      "sha256": "39882a95ef5bfc6a6ff05e39c5ceda24b35650fd981cc9fc8e0ba4e471d97463"
+    },
+    "assets/anim/cli-demo.gif": {
+      "bytes": 128080,
+      "sha256": "1e83f17e025f70d0708783797aeda20195b3101da80c5761a8a68d89a336f5e1"
+    },
+    "assets/anim/dataflow-loop.gif": {
+      "bytes": 771054,
+      "sha256": "f3b00da2fdc7e1125e05c18afb018dc1aedbc3c50dd2e32aeed44e884967f93e"
+    },
+    "assets/anim/dataflow-loop.mp4": {
+      "bytes": 266923,
+      "sha256": "0f9a6de16a43dde2b3cc71160b150ab358269a3398ba989d2ed0e181d9cdfcac"
+    },
+    "assets/anim/dataflow-loop.webm": {
+      "bytes": 381725,
+      "sha256": "d118acfdf932faf1302951b4ad177ecd135cb6fcf049e139fe9867f4913f2ffc"
+    },
+    "assets/anim/hero-loop.gif": {
+      "bytes": 1040042,
+      "sha256": "f3e0d2b4ccacec6ac6780bc0db3842482745c464f6121e5595a5124b04db122e"
+    },
+    "assets/anim/hero-loop.mp4": {
+      "bytes": 125105,
+      "sha256": "5a82500bb048c3887d43b2283efd634ebb0f3f8f4c705eb721485babd8318206"
+    },
+    "assets/anim/hero-loop.webm": {
+      "bytes": 238919,
+      "sha256": "4a574cc2cfaeb666632f74b113d75449c8a78495e8eee5a1f8605a0bbc5a9087"
+    },
+    "assets/anim/thread-1-loop.gif": {
+      "bytes": 317255,
+      "sha256": "3181691ddfa4ab9d418d18fbafe2f319d59c146b1f9a72811986a004047d0f6b"
+    },
+    "assets/anim/thread-1-loop.mp4": {
+      "bytes": 38828,
+      "sha256": "0dce043d815e88cb72052e33355fd1c3108c0e21381f4f38ba75014a5eeda220"
+    },
+    "assets/anim/thread-1-loop.webm": {
+      "bytes": 70947,
+      "sha256": "94466454751581f1cbeda3b35aa388320000ee3eac842b4b6b51aaacaf4a515b"
+    },
+    "assets/anim/thread-2-loop.gif": {
+      "bytes": 1441183,
+      "sha256": "ad7356802305c9b44fb922e97a560a191358d972e61f57e014c7e9c43221cf0b"
+    },
+    "assets/anim/thread-2-loop.mp4": {
+      "bytes": 197818,
+      "sha256": "b5b94d186c7833839ffefd4c09f9e3096f48223046b6a9323a3c87747e1292bd"
+    },
+    "assets/anim/thread-2-loop.webm": {
+      "bytes": 403864,
+      "sha256": "4daba2edf964efd5fcb528cd17fe79f45224c5539c284d6621645e8c2614158b"
+    },
+    "assets/anim/thread-3-loop.gif": {
+      "bytes": 1900287,
+      "sha256": "bf4bdc06d02513a4cae152c0e5ec8af61aa0e1a7fc35ac57250c8d0ee97240fe"
+    },
+    "assets/anim/thread-3-loop.mp4": {
+      "bytes": 657690,
+      "sha256": "ac63bba53e89e533ba60ba886b4ab102b7918a7772e21543a34784a54a7d09c2"
+    },
+    "assets/anim/thread-3-loop.webm": {
+      "bytes": 765291,
+      "sha256": "7754df1bb17b0837a2ef21fd964f76cb9b1f0669d6f786492e02df923f9e0db7"
+    },
+    "assets/prompts.yaml": {
+      "bytes": 11842,
+      "sha256": "589c4b25c90a505f9268aa4576de52a3bc6f3ad113c25686815524e4b93f5142"
+    },
+    "assets/visuals/architecture-2x.avif": {
+      "bytes": 10013,
+      "sha256": "ff9b9dc28b52029716f22fb7b28b10f84f3bfa1997d56db6e926353be8ccb20e"
+    },
+    "assets/visuals/architecture-2x.png": {
+      "bytes": 31292,
+      "sha256": "ca9cf004c97663733131cdfca46a21debd27c6bf9517013ea215937ac9c9ad1c"
+    },
+    "assets/visuals/architecture-2x.webp": {
+      "bytes": 6806,
+      "sha256": "b7e59ef1c8d0086ab82f87ed33bf2b515eb1469b34b6fb4f4b920cc3f741dbd9"
+    },
+    "assets/visuals/dataflow-poster.avif": {
+      "bytes": 10379,
+      "sha256": "23ca3aeb15f4cf95ba4ad2728107e8b18b98498a0c0faf31be305324f24eaabe"
+    },
+    "assets/visuals/divider-thread-1-2x.avif": {
+      "bytes": 4875,
+      "sha256": "2a7753d6e4c9938b4f132cb1aafe7be93386b9d634c76bfca12b7c2f2bc53582"
+    },
+    "assets/visuals/divider-thread-1-2x.png": {
+      "bytes": 8340,
+      "sha256": "981fee3708076a3f6e79fd71601cab1706229f0ca0efaaa2f3959dbcaae84d3c"
+    },
+    "assets/visuals/divider-thread-1-2x.webp": {
+      "bytes": 11252,
+      "sha256": "4a6d809d74f143d792af13aab3f82aa3ce8ced32986cefa1b3a4485023b39197"
+    },
+    "assets/visuals/divider-thread-2-2x.avif": {
+      "bytes": 4862,
+      "sha256": "aa4d0bb7a55f7f280cc21a1b29c1ce223054a46973655b6ae7ce3d74ee6dd5cb"
+    },
+    "assets/visuals/divider-thread-2-2x.png": {
+      "bytes": 8894,
+      "sha256": "ab87c0ce74242b5325cc2c905f19dd18edcd16150ef585c6260c0949f73c861e"
+    },
+    "assets/visuals/divider-thread-2-2x.webp": {
+      "bytes": 11292,
+      "sha256": "aa7eb70f8e7d97dcd4a4697f9949296aee10756cc113655d37b5caa49bf1d76a"
+    },
+    "assets/visuals/divider-thread-3-2x.avif": {
+      "bytes": 4941,
+      "sha256": "0f38f73aa449e14095af9c88fbe450cbcb87970c4869904c441da501dae39dad"
+    },
+    "assets/visuals/divider-thread-3-2x.png": {
+      "bytes": 7949,
+      "sha256": "c2b90a5a880a81bfe57ad7e58ebb102fb642a1eb92383e97b82ee76ca87d493d"
+    },
+    "assets/visuals/divider-thread-3-2x.webp": {
+      "bytes": 12158,
+      "sha256": "3dbf96ab2592a4251070999b803dfb4139cc05ce001278b6ac891ad591f830d3"
+    },
+    "assets/visuals/favicon-2x.avif": {
+      "bytes": 2567,
+      "sha256": "f16d9b77186398f265581b644e422553bdc3df28ce0bcdb6d2562117950eb2ae"
+    },
+    "assets/visuals/favicon-2x.png": {
+      "bytes": 3679,
+      "sha256": "91af151f77317de4d34a784fd560c7e0f0c4cf76dd4e03ebd36ccef07586a582"
+    },
+    "assets/visuals/favicon-2x.webp": {
+      "bytes": 7422,
+      "sha256": "b5d420e6b58f4b9340aa00872125c8841b46f8fae436a1787fa104a00866d0a6"
+    },
+    "assets/visuals/hero-2x.avif": {
+      "bytes": 26810,
+      "sha256": "297027fb9db4c422fa7f77f690088e3e799429c9f4834949b596197a6bd19549"
+    },
+    "assets/visuals/hero-2x.png": {
+      "bytes": 1085060,
+      "sha256": "787c2c3655d5c58424da356d6888b90f75ba8cbb239a0a6a53cf1dd419d64e40"
+    },
+    "assets/visuals/hero-2x.webp": {
+      "bytes": 173620,
+      "sha256": "8f77897caff2481769fd6381d8b09de03357a05f607e9aea06ab057c102f6ac8"
+    },
+    "assets/visuals/hero-poster.avif": {
+      "bytes": 19384,
+      "sha256": "49a1db8b39e88d7ca890fea138e693e9528a18e20df9772d8b411e8dea7d89c3"
+    },
+    "assets/visuals/og-image.png": {
+      "bytes": 698262,
+      "sha256": "c902679dd574785f5ae360f56800360807476db4b2a7d015258a013afb58fe41"
+    },
+    "assets/visuals/thread-1-poster.avif": {
+      "bytes": 8861,
+      "sha256": "9380e006df6ee67fdeff2bda56ee1608b6a7fe95940eed8b713cb8e1e177c0f0"
+    },
+    "assets/visuals/thread-1-spectral-2x.avif": {
+      "bytes": 6718,
+      "sha256": "2fd2a168d8794e1d0bc48f722d61d5ef5740a229cbf995de803a49572a282bca"
+    },
+    "assets/visuals/thread-1-spectral-2x.webp": {
+      "bytes": 52070,
+      "sha256": "fc055928acbc6340ef128b6b42603275a8c2a88bf8ec0a387544be7290c14a3b"
+    },
+    "assets/visuals/thread-2-hallucination-2x.avif": {
+      "bytes": 19569,
+      "sha256": "11351539fcacc0af3751b9ca6b35be815f31afba11f39d11533005c095457329"
+    },
+    "assets/visuals/thread-2-hallucination-2x.webp": {
+      "bytes": 74854,
+      "sha256": "1dcd825473134847a2b3f36b8800f55c8eb1561824d8cad899ea57827841ba70"
+    },
+    "assets/visuals/thread-2-poster.avif": {
+      "bytes": 24229,
+      "sha256": "e8fba35f1bb694e4ef4c4855fae87ae050f446d350026ec53f71886fc06f3f61"
+    },
+    "assets/visuals/thread-3-poster.avif": {
+      "bytes": 48863,
+      "sha256": "3686c4c50221689dff01635d0b983654fcb3e30254a2e5300620b5b157966a12"
+    },
+    "assets/visuals/thread-3-rlhf-2x.avif": {
+      "bytes": 30654,
+      "sha256": "ec6c45771a00cb5f47a208131dbcc757e66c0a6b74506509d83c2cbec75cb255"
+    },
+    "assets/visuals/thread-3-rlhf-2x.webp": {
+      "bytes": 92442,
+      "sha256": "5c728e6ebb52f9bf0461e9122e551b106add854600df714f711f309ad2ec77d8"
+    },
+    "results/reports/20260813_112352_3d_exp_12.json": {
+      "bytes": 11561,
+      "sha256": "a0c5af78edc6ddd88de8ec49e09a7aed52db37c1df0002008863643baf296d3e"
+    },
+    "results/reports/20260813_112352_3d_exp_12_results.json": {
+      "bytes": 11510,
+      "sha256": "78c5cadc50917b4e3e3b1f7e55cbba7fcbe093dc9d59dfb247774c79c87cce7d"
+    },
+    "results/reports/20260813_112416_ALL_3D.json": {
+      "bytes": 243868,
+      "sha256": "03d38c80b5765795f15cf4ab8b288dff17f4d027d9d2a4f2aea8e1b2be268d66"
+    },
+    "results/reports/20260813_112416_ALL_3D_results.json": {
+      "bytes": 243817,
+      "sha256": "26f5253e74e9ed58415e07b4b3936fb7d0476159791c497c6eb44c9139250a79"
+    }
+  },
+  "generated_by": "scripts/verify_repo.py --repin",
+  "note": "Pinned sha256 of the evidence layer: visual slots, animation loops, prompts, result reports, citation.",
+  "schema": "rmt-llm-manifest/v1"
+}

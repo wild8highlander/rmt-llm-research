@@ -25,7 +25,7 @@ Hypotheses H2–H5 live in the shared registry
 
 ## Layer map (mirrors science/)
 
-```
+```text
 common/                     instrumentation for real HF models
   hf_model.py               pinned loading, weight sha256, arch resolvers
   generation.py             hand-rolled AR loop: per-step logprobs/entropy,
@@ -107,15 +107,18 @@ them can silently turn a negative into a positive.
 ## Compute notes
 
 - CPU: anything ≤ 1B runs comfortably (a stage-2 pass over 25 items × 3
+
   benchmarks with K=5 samples takes minutes on pythia-70m/0.5B).
+
 - 7B pairs: use `--dtype float16 --device cuda` where available.
 - SAE audit (stage 4 `--sae`) needs `sae_lens` + a Gemma checkpoint and
+
   is intentionally the only optional-heavy path; everything else runs on
   CPU.
 
 ## Data flow between the stages
 
-```
+```text
                  ┌───────────────────────────────────────────────┐
                  │  common: HF loading, passports, schemas, CLI   │
                  └───────────────────────────────────────────────┘

@@ -28,7 +28,7 @@ the equation is quadratic.
 > Equivalently for the resolvent convention $G = -m =
 > \tfrac1N\mathrm{Tr}(zI-C)^{-1}$:
 > $\sigma^2 q z G^2 - \big(z+\sigma^2(q-1)\big)G + 1 = 0$.
-
+>
 > **Corollary 3.1b (closed form).** The physical root of (3.2), analytic
 > on $\mathbb C\setminus[\lambda_-,\lambda_+]$ with $m(z)\sim -1/z$ at
 > infinity, is

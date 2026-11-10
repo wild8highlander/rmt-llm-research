@@ -412,3 +412,20 @@ stats:  ## Show project statistics (LOC, file counts, language breakdown)
 	@find . -type f \( -name '*.py' -o -name '*.jl' -o -name '*.java' -o -name '*.rs' -o -name '*.go' -o -name '*.cpp' -o -name '*.hpp' -o -name '*.R' -o -name '*.js' -o -name '*.jsx' -o -name '*.ts' -o -name '*.tsx' -o -name '*.md' \) \
 	-not -path './.git/*' -not -path '*/node_modules/*' -not -path '*/results/*' \
 	-exec wc -l {} + | tail -1
+
+# ─── Visual layer: deterministic regeneration from assets/prompts.yaml ──────
+.PHONY: images images-% anims anims-% og-image verify-repo verify-repo-manifest
+images:  ## Regenerate all static visual slots -> assets/visuals/
+	$(PYTHON) scripts/gen_images.py --all
+images-%:  ## Regenerate one static slot (make images-hero)
+	$(PYTHON) scripts/gen_images.py --slot $*
+anims:  ## Regenerate all animation loops -> assets/anim/ (+ posters, GIF twins)
+	$(PYTHON) scripts/gen_anims.py --all
+anims-%:  ## Regenerate one animation loop (make anims-hero, anims-cli-demo)
+	$(PYTHON) scripts/gen_anims.py --slot $*
+og-image:  ## Composite the 1200x630 OG image -> assets/visuals/og-image.png
+	$(PYTHON) scripts/compose_og.py
+verify-repo:  ## Evidence gate: MANIFEST sha256 + budgets + alt text + CLI smoke
+	$(PYTHON) scripts/verify_repo.py --all
+verify-repo-manifest:  ## Re-pin MANIFEST.json after regenerating assets
+	$(PYTHON) scripts/verify_repo.py --repin

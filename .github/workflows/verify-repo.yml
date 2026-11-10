@@ -1,0 +1,59 @@
+name: verify-repo
+
+# Evidence gate: pins the visual layer and the pinned result reports by
+# sha256 (MANIFEST.json), enforces the asset size budgets, checks alt text
+# on every <img>/<video> in the Markdown tree, and smoke-tests the CLI.
+# Mirrors `make verify-repo` so a green README claim is always a green run.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "assets/prompts.yaml"
+      - "assets/visuals/**"
+      - "assets/anim/**"
+      - "results/reports/**"
+      - "MANIFEST.json"
+      - "scripts/verify_repo.py"
+      - "scripts/gen_images.py"
+      - "scripts/gen_anims.py"
+      - "scripts/compose_og.py"
+      - "**.md"
+  pull_request:
+    branches: [main]
+    paths:
+      - "assets/prompts.yaml"
+      - "assets/visuals/**"
+      - "assets/anim/**"
+      - "results/reports/**"
+      - "MANIFEST.json"
+      - "scripts/verify_repo.py"
+      - "**.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-repo-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence-gate:
+    name: MANIFEST sha256 + budgets + alt text + CLI smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package
+        run: python -m pip install -e .
+
+      - name: Run the evidence gate
+        run: python scripts/verify_repo.py --all

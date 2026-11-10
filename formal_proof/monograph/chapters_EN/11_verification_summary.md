@@ -22,23 +22,33 @@ python3 run_all.py
 
 ## 11.2 Reproducibility
 
-* Seeds are fixed in every script; results are deterministic to MC noise.
-* Dependencies: `numpy`, `scipy`, `matplotlib`, `pillow` (see
+- Seeds are fixed in every script; results are deterministic to MC noise.
+- Dependencies: `numpy`, `scipy`, `matplotlib`, `pillow` (see
+
   `formal_proof/requirements.txt`). No GPU, no network.
-* Figures land in `formal_proof/assets/figures/`, animations in
+
+- Figures land in `formal_proof/assets/figures/`, animations in
+
   `assets/animations/` — both are committed so the monograph renders
   without rerunning anything.
 
 ## 11.3 Known finite-size effects (documented honestly)
 
-* The largest eigenvalue sits slightly *below* $\lambda_+$ at
+- The largest eigenvalue sits slightly *below* $\lambda_+$ at
+
   subcritical spikes — the Tracy-Widom scale of Chapter 9, not an error.
-* The Johnstone centering leaves an $\mathcal O(N^{-1/2})$ bias in the
+
+- The Johnstone centering leaves an $\mathcal O(N^{-1/2})$ bias in the
+
   standardized TW mean at $N\sim200$; El Karoui's correction
   (`el_karoui_center_scale`) reduces it.
-* The GOE/GUE TW generators converge slowly in $p$; the suite compares
+
+- The GOE/GUE TW generators converge slowly in $p$; the suite compares
+
   *distributions* (two-sample KS), which is robust to that residual
   bias, and reports absolute moments only as diagnostics.
-* Third-order entropy terms appear at $\tau \lesssim 2$; Theorem 8.2 is
+
+- Third-order entropy terms appear at $\tau \lesssim 2$; Theorem 8.2 is
+
   a second-order statement and should not be extrapolated to low
   temperatures.

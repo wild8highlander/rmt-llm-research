@@ -33,7 +33,7 @@
 > слабо дифференцируема. Тогда
 > $\mathbb E[x f(x)] = \gamma^2 \mathbb E[f'(x)]$ и
 > $\mathbb E[x^2 f(x)] = \gamma^2\mathbb E[f] + \gamma^4 \mathbb E[f'']$.
-
+>
 > **Предложение 2.3 (моменты GELU).** Для $x\sim\mathcal N(0,\gamma^2)$ и
 > $\mathrm{GELU}(x) = x\Phi(x)$, при $\varphi_0 = (2\pi)^{-1/2}$:
 > $$\mathbb E[\mathrm{GELU}(x)] = \frac{\gamma^2\varphi_0}{\sqrt{1+\gamma^2}},$$
@@ -60,7 +60,7 @@ $\mathbb E[x\varphi(x)\Phi(x)] = \gamma^2\mathbb E[\varphi(x)^2]/(1+\gamma^2)$
 > $\mathrm{SiLU}(x) = x\,\sigma(x)$. Элементарной замкнутой формы нет;
 > ядро вычисляется точно (до точности квадратуры) тензорной квадратурой
 > Гаусса–Эрмита — `layer_ops.bivariate_kernel`.
-
+>
 > **Предложение 2.5 (преобразование ковариации).** При A3 выходная
 > ковариация GELU-слоя $y = \mathrm{GELU}(Wx)$, $x\sim\mathcal N(0,C)$:
 > $$\mathrm{Cov}(y)_{ab} = K(\gamma_a^2,\gamma_b^2,\rho_{ab}) - \mathbb E[\mathrm{GELU}(u_a)]\,\mathbb E[\mathrm{GELU}(u_b)],$$

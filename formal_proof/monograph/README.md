@@ -22,8 +22,8 @@ produced by the experiment suite.
 
 Per-chapter sources (identical content, chapter-per-file):
 
-* [`chapters_EN/`](chapters_EN/) — 01 scope · 02 layer operator · 03 Silverstein/MP · 04 free probability · 05 BBP · 06 outliers & overlaps · 07 hallucination split · 08 entropy response · 09 Tracy-Widom · 10 optimal filtering · 11 verification · 12 references
-* [`chapters_RU/`](chapters_RU/) — те же главы по-русски
+- [`chapters_EN/`](chapters_EN/) — 01 scope · 02 layer operator · 03 Silverstein/MP · 04 free probability · 05 BBP · 06 outliers & overlaps · 07 hallucination split · 08 entropy response · 09 Tracy-Widom · 10 optimal filtering · 11 verification · 12 references
+- [`chapters_RU/`](chapters_RU/) — те же главы по-русски
 
 **Reading order.** Chapter 1 (scope + assumptions) is mandatory; the
 derivation chain is 2 → 3 → 5 → 6 → 10 with 4, 8, 9 as satellites; 11

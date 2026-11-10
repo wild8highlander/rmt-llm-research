@@ -13,8 +13,8 @@
 The report archive of the cross-language laboratory: for every
 meaningful run, a machine-readable YAML file (parameters, seeds, raw
 metrics) and, where a run warranted narration, a Markdown analysis
-alongside it. Together with [`../charts/`](../charts/README.md) and
-[`../charts_3d/`](../charts_3d/README.md) these reports are the full
+alongside it. Together with [`../charts/`](../charts/) and
+[`../charts_3d/`](../charts_3d/) these reports are the full
 audit trail of what the laboratories did, in what configuration, and
 what came out.
 

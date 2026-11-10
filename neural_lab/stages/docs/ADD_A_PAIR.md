@@ -28,9 +28,11 @@ method varies. Adding a pair to `stage5_rlhf/model_pairs.yaml`:
 
 Then run:
 
-    python3 neural_lab/stages/stage5_rlhf/run_stage5.py --list
-    python3 neural_lab/stages/stage5_rlhf/run_stage5.py --pair <id> \
-        --out results/stage5 --dtype bfloat16 --device cuda   # for 7B+
+```text
+python3 neural_lab/stages/stage5_rlhf/run_stage5.py --list
+python3 neural_lab/stages/stage5_rlhf/run_stage5.py --pair <id> \
+    --out results/stage5 --dtype bfloat16 --device cuda   # for 7B+
+```
 
 Each pair writes `record.json` (schema-validated), a stage-3-compatible
 `fit.json` sidecar (consumed by `run_stage3 --scaling-in`), and a

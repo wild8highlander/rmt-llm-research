@@ -1,0 +1,35 @@
+# RCDA-3 sentinel configuration (round 3, behavioral therapy layer)
+# Online spectral monitor + rescue for the repetition_loop defect.
+# Calibration source: teacher-forced control texts (prompts/control.jsonl),
+# healthy windowed participation-ratio pool per (scale, layer).
+
+sentinel:
+  layers: [15, 16, 17]        # fig9 precursor layers
+  scales: [8, 16]             # fast / slow sliding windows (generated tokens)
+  theta_quantile: 0.10        # alarm edge = q10 of the healthy PR pool
+  consecutive_steps: 2        # alarm after N consecutive below-theta steps
+  ngram: 4                    # token 4-gram defines the loop label
+  max_new: 96
+  pos_lo: 8                   # round-2 alignment (labels below pos 8 ignored
+                              # in pool statistics, not in the online monitor)
+
+rescue:
+  ban:
+    k_tokens: 4               # duration of the loop-continuation ban
+    grammar: last 3-gram -> first observed continuation token
+  steer:
+    layers: [15, 16, 18]      # round-2 o_proj writer layers
+    vector: Research/RCDA/vectors/L{l}_delta_h_behav.pt
+    gamma: 1.0                # subtract gamma * Delta_h from the residual
+    k_tokens: 8
+  max_interventions_per_gen: 4
+
+benchmark:
+  bad_set: prompts/bad.jsonl      # 20 prompts, arm A vs C
+  good_set: prompts/good.jsonl    # 20 prompts, false-positive stream
+  control_set: prompts/control.jsonl  # 5 texts: calibration + PPL
+  edited_model: ../edited_model_v2    # transfer check (detection only)
+
+decision_rules:
+  rescue_winner: max rescue_rate, tie-break clean_tail_median
+  head_surgery_go: "changed_bad >= 2 and hit_bad <= base-0.15 and hit_good <= base+0.1"

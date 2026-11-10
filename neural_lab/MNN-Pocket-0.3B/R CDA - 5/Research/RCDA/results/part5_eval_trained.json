@@ -1,0 +1,39 @@
+{
+ "tag": "trained",
+ "edited_state": "trained_state.safetensors",
+ "n_changed_tensors": 3,
+ "changed": {
+  "model.layers.15.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.03974,
+   "n_weights": 802816
+  },
+  "model.layers.16.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.02719,
+   "n_weights": 802815
+  },
+  "model.layers.18.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.01411,
+   "n_weights": 802814
+  }
+ },
+ "tw": {
+  "model.layers.15.self_attn.o_proj.weight": {
+   "verdict": "pass"
+  },
+  "model.layers.16.self_attn.o_proj.weight": {
+   "verdict": "pass"
+  },
+  "model.layers.18.self_attn.o_proj.weight": {
+   "verdict": "pass"
+  }
+ },
+ "cosine_edit_vs_v": {
+  "model.layers.15.self_attn.o_proj.weight": 0.7249,
+  "model.layers.16.self_attn.o_proj.weight": 0.6383,
+  "model.layers.18.self_attn.o_proj.weight": 0.2919
+ },
+ "rho_bad": 0.35,
+ "rho_good": 0.45,
+ "loop_waste_mean": 31.4,
+ "kl_ctrl": 0.4102
+}

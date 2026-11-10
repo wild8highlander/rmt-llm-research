@@ -46,6 +46,7 @@ from rmt_llm.tracy_widom import (
     tracy_widom_variance,
 )
 
+
 MODULES = (
     "marchenko_pastur", "bbp_transition", "tracy_widom", "nhse",
     "circular_ensembles", "dyson_brownian", "free_probability",

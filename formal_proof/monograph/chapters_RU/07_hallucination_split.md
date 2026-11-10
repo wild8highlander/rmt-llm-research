@@ -14,11 +14,11 @@
 > $$\mathcal H_{\mathrm{signal}} = \mathrm{span}\{\hat v_k : \lambda_k > \lambda_+\},\qquad
 >   \mathcal H_{\mathrm{bulk}} = \mathrm{span}\{\hat v_k : \lambda_k \le \lambda_+\},$$
 > $$\mathcal H = \mathcal H_{\mathrm{signal}} \oplus \mathcal H_{\mathrm{bulk}}.$$
-
+>
 > **Определение 7.2 (проекторное отношение).** Для вектора $x\in\mathcal H$
 > (например, активации последней позиции $x_T^{(L)}$):
 > $$r(x) \;=\; \frac{\|P_{\mathrm{bulk}}\,x\|^2}{\|P_{\mathrm{signal}}\,x\|^2 + \varepsilon}.$$
-
+>
 > **Определение 7.3 (правило флага).** $x$ *доминирован шумом* тогда и
 > только тогда, когда $r(x) > \eta_{\mathrm{crit}}$, где
 > $\eta_{\mathrm{crit}}$ — параметр решающего правила, а не выведенная
@@ -43,11 +43,14 @@
 
 `rmt_fp/hallucination.py` предоставляет:
 
-* `spectral_split(eigs, lambda_plus)` — индексное расщепление определения 7.1;
-* `noise_signal_ratio(x, vecs, eigs, lambda_plus)` — определение 7.2
+- `spectral_split(eigs, lambda_plus)` — индексное расщепление определения 7.1;
+- `noise_signal_ratio(x, vecs, eigs, lambda_plus)` — определение 7.2
+
   точной арифметикой проекторов;
-* `hallucination_flag(...)` — определение 7.3;
-* `spiked_activation_matrix(...)` — синтетический стенд экспериментов
+
+- `hallucination_flag(...)` — определение 7.3;
+- `spiked_activation_matrix(...)` — синтетический стенд экспериментов
+
   (MP-балк + ранговые семантические спайки).
 
 Модуль намеренно тонкий: он делает определение исполняемым и

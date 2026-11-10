@@ -1,0 +1,17 @@
+{
+ "model.layers.15.self_attn.o_proj.weight": {
+  "cols_changed": 63,
+  "n_weights": 56448,
+  "rel_fro": 0.02637
+ },
+ "model.layers.16.self_attn.o_proj.weight": {
+  "cols_changed": 65,
+  "n_weights": 58240,
+  "rel_fro": 0.02603
+ },
+ "model.layers.18.self_attn.o_proj.weight": {
+  "cols_changed": 84,
+  "n_weights": 75264,
+  "rel_fro": 0.01466
+ }
+}
