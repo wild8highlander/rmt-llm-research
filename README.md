@@ -16,7 +16,7 @@
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0003--7299--0701-a6ce39)](https://orcid.org/0009-0003-7299-0701)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/wild8highlander/rmt-llm-research/badge)](https://securityscorecards.dev/viewer/?uri=github.com/wild8highlander/rmt-llm-research)
 [![Codecov](https://codecov.io/gh/wild8highlander/rmt-llm-research/branch/main/graph/badge.svg)](https://codecov.io/gh/wild8highlander/rmt-llm-research)
-[![Tests](https://img.shields.io/badge/tests-171+-green.svg)](./src/rmt_llm/tests/)
+[![Tests](https://img.shields.io/badge/tests-480+-green.svg)](./src/rmt_llm/tests/)
 [![TinyGPT](https://img.shields.io/badge/TinyGPT-modern-blueviolet.svg)](./laboratory/python/lab_en/tiny_gpt.py)
 [![Julia](https://img.shields.io/badge/Julia-RMTLLMVerify-9558B2.svg)](./laboratory/julia/julia/RMTLLMVerify/)
 [![Java](https://img.shields.io/badge/Java-RMTLLMViz-ED8B00.svg)](./laboratory/java/java/rmt-llm-viz/)
@@ -123,6 +123,8 @@ pressure makes that moment arrive quadratically sooner
 - **Docker** reproducible research environment with Python + Julia + Java — `Dockerfile` + `docker-compose.yml`
 - **101 TinyGPT unit tests** in `laboratory/python/lab_en/tests/` covering model, BPE tokenizer, Adam optimizer, backward pass (with numerical gradient check), and end-to-end training
 - **GitHub community files**: issue templates (bug / feature / docs), PR template with checklist, CODEOWNERS, FUNDING, dependabot (9 ecosystems), stale bot, 30 issue labels, SECURITY.md, SUPPORT.md, ARCHITECTURE.md, ROADMAP.md, expanded CONTRIBUTING.md
+- **Repo Janitor** self-healing bot: weekly + on-CI-failure sweeps that auto-fix moved markdown links, stale Dependabot paths, dead external redirects and formatting drift — opens one labelled PR (`repo-janitor.yml`, [`scripts/repo_janitor.py`](scripts/repo_janitor.py))
+- **Maintenance toolbelt** in [`scripts/`](scripts/README.md): evidence gate (`verify_repo.py`), link+anchor checker (`check_links.py`), environment doctor (`env_doctor.py`), honest-numbers badge sync (`repo_stats.py`), atomic version bump (`bump_version.py`) and a release-metadata gate (`release_check.py`) — every claim above is one command away
 - **Release pipeline**: tag-triggered GitHub Release with sdist + wheel + TinyGPT artifacts + Zenodo DOI archive + Docker image to ghcr.io
 - **Makefile** with 30+ targets (`make help`, `make install-dev`, `make test`, `make ci`, `make docker`, …)
 - **EditorConfig** + **markdownlint** + **codespell** for cross-editor consistency

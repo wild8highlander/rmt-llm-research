@@ -100,6 +100,31 @@ format:  ## Format all Python code with ruff
 typecheck:  ## Run mypy type checker
 	$(MYPY) src/ --ignore-missing-imports
 
+# ─── Repo stats & release hygiene ───────────────────────────────────────────
+.PHONY: repo-stats sync-badges doctor janitor check-links bump-version release-check
+
+repo-stats:  ## Live repository health numbers (tests, docs, assets, LOC)
+	$(PYTHON) scripts/repo_stats.py
+
+check-links:  ## Validate relative markdown links + anchors (exit 1 on breakage)
+	$(PYTHON) scripts/check_links.py
+
+sync-badges:  ## Rewrite the README badge wall to live counts
+	$(PYTHON) scripts/repo_stats.py --sync-badges
+
+doctor:  ## Environment doctor: what is missing on this machine?
+	$(PYTHON) scripts/env_doctor.py
+
+janitor:  ## Run the Repo Janitor locally (fix links/paths + offline mode)
+	$(PYTHON) scripts/repo_janitor.py --fix
+
+VERSION ?= patch
+bump-version:  ## Bump the release version everywhere: make bump-version VERSION=minor|major|X.Y.Z
+	$(PYTHON) scripts/bump_version.py $(VERSION)
+
+release-check:  ## Pre-flight gate: version consistency, CHANGELOG, CITATION.cff, .zenodo.json
+	$(PYTHON) scripts/release_check.py
+
 # ─── Testing ────────────────────────────────────────────────────────────────
 .PHONY: test test-fast test-stages test-stages-slow smoke smoke-fast validate-results index-results compare-reports test-slow test-tiny-gpt test-julia test-rust test-go test-cpp test-all test-coverage test-hypothesis test-bench
 test:  ## Run all Python tests (src/rmt_llm/ + laboratory/python/lab_en/)
