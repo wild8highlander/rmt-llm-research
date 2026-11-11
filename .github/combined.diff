@@ -1,0 +1,1513 @@
+diff --git a/.github/dependabot.yml b/.github/dependabot.yml
+index b34d95e..05c60c6 100644
+--- a/.github/dependabot.yml
++++ b/.github/dependabot.yml
+@@ -46,7 +46,7 @@ updates:
+ 
+   # ─── Julia (Project.toml) ────────────────────────────────────────────────
+   - package-ecosystem: "julia"
+-    directory: "/julia/RMTLLMVerify"
++    directory: "/laboratory/julia/julia/RMTLLMVerify"
+     schedule:
+       interval: "monthly"
+     open-pull-requests-limit: 3
+@@ -54,7 +54,7 @@ updates:
+     reviewers: ["wild8highlander"]
+ 
+   - package-ecosystem: "julia"
+-    directory: "/julia/RMTLLMViz"
++    directory: "/laboratory/julia/julia/RMTLLMViz"
+     schedule:
+       interval: "monthly"
+     open-pull-requests-limit: 3
+@@ -93,7 +93,7 @@ updates:
+ 
+   # ─── Java (gradle) ───────────────────────────────────────────────────────
+   - package-ecosystem: "gradle"
+-    directory: "/java/rmt-llm-viz"
++    directory: "/laboratory/java/java/rmt-llm-viz"
+     schedule:
+       interval: "monthly"
+     open-pull-requests-limit: 3
+diff --git a/.github/janitor.yml b/.github/janitor.yml
+new file mode 100644
+index 0000000..e4ba2fa
+--- /dev/null
++++ b/.github/janitor.yml
+@@ -0,0 +1,40 @@
++# =============================================================================
++# Repo Janitor configuration.
++# Consumed by scripts/repo_janitor.py and .github/workflows/repo-janitor.yml.
++# All keys are optional — anything omitted falls back to the defaults in the
++# script, so this file only documents/overrides what differs from them.
++# =============================================================================
++skip_dirs:
++  - ".git"
++  - ".mypy_cache"
++  - ".ruff_cache"
++  - ".venv"
++  - "__pycache__"
++  - "docs/site"
++  - "laboratory/results"
++  - "node_modules"
++  - "results"
++  - "site-build"
++
++dependabot_config: ".github/dependabot.yml"
++mkdocs_config: "mkdocs.yml"
++
++external:
++  timeout_seconds: 12
++  max_workers: 8
++  # 403/405/429 mean "bot-blocked", not dead — treat them as alive.
++  alive_status_codes: [200, 206, 301, 302, 303, 307, 308, 403, 405, 429]
++  moved_status_codes: [301, 308]
++  dead_status_codes: [404, 410]
++  # URLs never to fetch or rewrite (mirrors .markdown-link-check.json).
++  skip_url_patterns:
++    - "^https?://(localhost|127\\.0\\.0\\.1)"
++    - "^https://doi\\.org/10\\.5281/zenodo"
++    - "^https://img\\.shields\\.io"
++    - "^https://api\\.securityscorecards\\.dev"
++    - "^https://codecov\\.io"
++    - "^https://(www\\.)?linkedin\\.com"
++    - "^https://(www\\.)?twitter\\.com"
++    - "^https://x\\.com"
++    - "^https://orcid\\.org"
++  user_agent: "rmt-llm-repo-janitor/1.0 (repository link-health sweep)"
+diff --git a/.github/labels.yml b/.github/labels.yml
+index 95d80e3..dbf6171 100644
+--- a/.github/labels.yml
++++ b/.github/labels.yml
+@@ -75,6 +75,10 @@
+   color: "f1e05a"
+   description: "JS / React / Node.js changes (webapp)"
+ 
++- name: "janitor"
++  color: "0e8a16"
++  description: "Opened by the Repo Janitor self-healing workflow (links, paths, formatting)"
++
+ - name: "julia"
+   color: "9558b2"
+   description: "Julia-specific changes"
+diff --git a/.github/workflows/repo-janitor.yml b/.github/workflows/repo-janitor.yml
+new file mode 100644
+index 0000000..4cd4d77
+--- /dev/null
++++ b/.github/workflows/repo-janitor.yml
+@@ -0,0 +1,151 @@
++# =============================================================================
++# Repo Janitor — the self-healing bot.
++#
++# Where cli-doctor *reports* breakage, the janitor *fixes* it:
++#   * moved/renamed markdown link targets are rewritten,
++#   * stale `directory:` entries in .github/dependabot.yml are repaired,
++#   * broken nav paths in mkdocs.yml are repaired,
++#   * external links that moved permanently (HTTP 301/308) are updated,
++#   * ruff formatting is re-applied, so a formatting drift can never hold
++#     the Lint job hostage again.
++#
++# Deliverables: one PR from the `janitor/auto-fix` branch with everything
++# fixable, and (only when there is nothing to fix but something is broken)
++# an issue with the `janitor` label carrying the unfixable findings.
++#
++# The engine lives in scripts/repo_janitor.py; knobs live in
++# .github/janitor.yml. Run locally:
++#   python scripts/repo_janitor.py --fix --online
++# =============================================================================
++name: Repo Janitor
++
++on:
++  schedule:
++    - cron: "0 5 * * 6" # Saturdays 05:00 UTC — weekly sweep
++  workflow_dispatch:
++    inputs:
++      online:
++        description: "Probe external links over the network"
++        type: boolean
++        default: true
++      create_pr:
++        description: "Open a PR when fixes are available"
++        type: boolean
++        default: true
++  workflow_run:
++    workflows: ["CI — RMT-LLM Verification"]
++    types: [completed]
++    branches: [main]
++
++permissions:
++  contents: write
++  pull-requests: write
++  issues: write
++  actions: write
++
++concurrency:
++  group: repo-janitor
++  cancel-in-progress: false
++
++jobs:
++  janitor:
++    # Scheduled and manual runs always go; the workflow_run trigger is the
++    # CI-failure self-heal and only fires when CI failed on main.
++    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure' }}
++    runs-on: ubuntu-latest
++    timeout-minutes: 15
++    steps:
++      - name: Checkout repository
++        uses: actions/checkout@v7
++        with:
++          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
++
++      - name: Set up Python
++        uses: actions/setup-python@v7
++        with:
++          python-version: "3.12"
++          cache: pip
++          cache-dependency-path: pyproject.toml
++
++      - name: Install tooling
++        run: |
++          pip install --upgrade pip
++          pip install ruff pyyaml
++
++      - name: Sweep for issues and apply fixes
++        # Reports go to runner.temp — outside the worktree, so that
++        # `git status` counts real fixes only.
++        run: |
++          ONLINE=""
++          if [ "${{ github.event_name }}" != "workflow_run" ] && [ "${{ inputs.online || 'true' }}" = "true" ]; then
++            ONLINE="--online"
++          fi
++          python scripts/repo_janitor.py --fix $ONLINE --no-fail --report "$RUNNER_TEMP/janitor-report"
++
++      - name: Self-heal formatting
++        run: |
++          ruff format src/ laboratory/python/ scripts/
++          ruff check --fix --exit-zero src/ laboratory/python/ scripts/
++
++      - name: Collect outcome
++        id: outcome
++        run: |
++          CHANGES=$(git status --porcelain | wc -l | tr -d ' ')
++          UNFIXABLE=$(grep -c "UNFIXABLE:" "$RUNNER_TEMP/janitor-report.md" 2>/dev/null || true)
++          UNFIXABLE=${UNFIXABLE:-0}
++          echo "changes=$CHANGES" >> "$GITHUB_OUTPUT"
++          echo "unfixable=$UNFIXABLE" >> "$GITHUB_OUTPUT"
++          echo "janitor: $CHANGES file(s) changed, $UNFIXABLE unfixable finding(s)"
++
++      - name: Open auto-fix PR
++        id: pr
++        if: steps.outcome.outputs.changes != '0' && inputs.create_pr != false
++        uses: peter-evans/create-pull-request@v7
++        with:
++          branch: janitor/auto-fix
++          delete-branch: true
++          title: "janitor: auto-fix links, paths and formatting"
++          body-path: ${{ runner.temp }}/janitor-report.md
++          labels: |
++            janitor
++            automated
++          commit-message: "janitor: auto-fix repository health issues"
++          committer: repo-janitor[bot] <actions@users.noreply.github.com>
++          author: repo-janitor[bot] <actions@users.noreply.github.com>
++
++      - name: Trigger CI on the janitor branch
++        if: steps.pr.outputs.pull-request-number != ''
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++        run: |
++          gh workflow run ci.yml --ref janitor/auto-fix || \
++            echo "::warning::CI dispatch skipped (workflow may not accept this ref yet)"
++
++      - name: File an issue for unfixable findings
++        # Report to an issue only when no PR carries the findings — otherwise
++        # they are already in the PR body and an issue would duplicate them.
++        if: steps.outcome.outputs.unfixable != '0' && steps.pr.outputs.pull-request-number == ''
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++        run: |
++          gh label create janitor --color "0E8A16" \
++            --description "Created by the Repo Janitor workflow" 2>/dev/null || true
++          ISSUE_NUM=$(gh issue list --label janitor --state open --limit 1 --json number --jq '.[0].number // ""')
++          if [ -n "$ISSUE_NUM" ]; then
++            gh issue comment "$ISSUE_NUM" --body-file "$RUNNER_TEMP/janitor-report.md"
++          else
++            gh issue create \
++              --title "🤖 Repo Janitor: findings that need a human" \
++              --body-file "$RUNNER_TEMP/janitor-report.md" \
++              --label janitor
++          fi
++
++      - name: Upload report artifact
++        if: always()
++        uses: actions/upload-artifact@v7
++        with:
++          name: janitor-report
++          path: |
++            janitor-report.md
++            janitor-report.json
++          retention-days: 30
+diff --git a/CONTRIBUTING.md b/CONTRIBUTING.md
+index 8f5be9e..d8c814e 100644
+--- a/CONTRIBUTING.md
++++ b/CONTRIBUTING.md
+@@ -37,6 +37,31 @@ The TinyGPT laboratory ships its own suite
+    `cli-doctor` workflow.
+ 4. Fill the checklist in the PR template.
+ 
++## Repo Janitor
++
++The `Repo Janitor` workflow is the repository's self-healing bot. On a
++weekly schedule (Saturdays), on demand via *Actions → Repo Janitor → Run
++workflow*, and as a self-heal whenever CI fails on `main`, it runs
++`scripts/repo_janitor.py` to keep the repo tidy:
++
++- rewrites internal markdown links whose target file was moved or renamed;
++- repairs stale `directory:` entries in `.github/dependabot.yml`;
++- repairs broken `nav:` paths in `mkdocs.yml`;
++- updates external links that moved permanently (HTTP 301/308) and reports
++  the dead ones;
++- re-applies `ruff format`, so a formatting drift can never hold the Lint
++  job hostage again.
++
++Everything fixable lands in one PR from the `janitor/auto-fix` branch
++(labelled `janitor`); anything that needs human judgement is filed as an
++issue with the same label. Knobs live in `.github/janitor.yml`. Run it
++locally before opening a docs-heavy PR:
++
++```bash
++python scripts/repo_janitor.py --fix --online   # apply fixes + probe links
++python scripts/repo_janitor.py                  # report only, offline
++```
++
+ ## Where things live
+ 
+ - Roadmap: `docs/ROADMAP.md`
+diff --git a/README.md b/README.md
+index c19ffd0..47a0e6d 100644
+--- a/README.md
++++ b/README.md
+@@ -710,7 +710,7 @@ og-image && make verify-repo-manifest`.
+ 
+ How does TinyGPT compare to other "small transformer" projects?
+ 
+-| Feature | **TinyGPT (this repo)** | [minGPT](https://github.com/karpathy/minGPT) | [nanoGPT](https://github.com/karpathy/nanoGPT) | [PyTorch transformer](https://pytorch.org/docs/stable/generated/torch.nn.Transformer.html) |
++| Feature | **TinyGPT (this repo)** | [minGPT](https://github.com/karpathy/minGPT) | [nanoGPT](https://github.com/karpathy/nanoGPT) | [PyTorch transformer](https://docs.pytorch.org/docs/stable/generated/torch.nn.Transformer.html) |
+ |---------|------------------------|----------------------------------------------|------------------------------------------------|-------------------------------------------------------------------------------------------|
+ | Framework | **Pure NumPy** | PyTorch | PyTorch | PyTorch |
+ | Dependencies | numpy only | torch | torch | torch |
+diff --git a/docs/community/code-of-conduct.md b/docs/community/code-of-conduct.md
+index bcab622..1a651da 100644
+--- a/docs/community/code-of-conduct.md
++++ b/docs/community/code-of-conduct.md
+@@ -69,7 +69,7 @@ All complaints will be reviewed and investigated promptly and fairly.
+ 
+ This Code of Conduct is adapted from the [Contributor Covenant][homepage],
+ version 2.1, available at
+-[https://www.contributor-covenant.org/version/2/1/code_of_conduct.html](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html).
++[https://www.contributor-covenant.org/version/2/1/code_of_conduct/](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
+ 
+ [homepage]: https://www.contributor-covenant.org
+ 
+diff --git a/docs/getting-started/quick-start.md b/docs/getting-started/quick-start.md
+index 594297e..5050787 100644
+--- a/docs/getting-started/quick-start.md
++++ b/docs/getting-started/quick-start.md
+@@ -125,10 +125,10 @@ jupyter notebook notebooks/rmt_llm_verification.ipynb
+ 
+ Or try the new tutorial notebooks (Sprint 6):
+ 
+-- [`01_quickstart.ipynb`](https://github.com/wild8highlander/rmt-llm-research/tree/main/notebooks/01_quickstart.ipynb)
+-- [`02_training_tinygpt.ipynb`](https://github.com/wild8highlander/rmt-llm-research/tree/main/notebooks/02_training_tinygpt.ipynb)
+-- [`03_generation_and_sampling.ipynb`](https://github.com/wild8highlander/rmt-llm-research/tree/main/notebooks/03_generation_and_sampling.ipynb)
+-- [`04_multilingual_labs.ipynb`](https://github.com/wild8highlander/rmt-llm-research/tree/main/notebooks/04_multilingual_labs.ipynb)
++- [`01_quickstart.ipynb`](https://github.com/wild8highlander/rmt-llm-research/blob/main/notebooks/01_quickstart.ipynb)
++- [`02_training_tinygpt.ipynb`](https://github.com/wild8highlander/rmt-llm-research/blob/main/notebooks/02_training_tinygpt.ipynb)
++- [`03_generation_and_sampling.ipynb`](https://github.com/wild8highlander/rmt-llm-research/blob/main/notebooks/03_generation_and_sampling.ipynb)
++- [`04_multilingual_labs.ipynb`](https://github.com/wild8highlander/rmt-llm-research/blob/main/notebooks/04_multilingual_labs.ipynb)
+ 
+ ---
+ 
+diff --git a/scripts/check_links.py b/scripts/check_links.py
+index a4ed28c..9c1cc55 100644
+--- a/scripts/check_links.py
++++ b/scripts/check_links.py
+@@ -10,6 +10,7 @@ images against the filesystem. Skips `.git`, external http(s) links and
+ pure anchors. URL-escapes like `Model%20ZIP/` are decoded before checking.
+ Exit code 1 when any link is broken.
+ """
++
+ import os
+ import re
+ import sys
+@@ -24,8 +25,7 @@ REF = re.compile(r"^\s*\[[^\]]+\]:\s+(\S+)\s*$", re.M)
+ broken = []
+ checked = 0
+ for dirpath, dirnames, filenames in os.walk(ROOT):
+-    dirnames[:] = [d for d in dirnames if d not in (".git", "node_modules",
+-                                                    "__pycache__")]
++    dirnames[:] = [d for d in dirnames if d not in (".git", "node_modules", "__pycache__")]
+     for fn in filenames:
+         if not fn.endswith(".md"):
+             continue
+diff --git a/scripts/gen_banner_gif.py b/scripts/gen_banner_gif.py
+index 368c142..b8a6048 100644
+--- a/scripts/gen_banner_gif.py
++++ b/scripts/gen_banner_gif.py
+@@ -13,6 +13,7 @@ Usage::
+ 
+ Requires matplotlib + Pillow (both in the ``dev`` extra).
+ """
++
+ import os
+ import sys
+ 
+@@ -38,9 +39,9 @@ from rmt_llm.marchenko_pastur import mp_density, mp_sample
+ 
+ # --- scene parameters (q = 0.1, sigma2 = 1: the default activation regime)
+ Q, SIGMA2 = 0.1, 1.0
+-N, T = 480, 4800                     # n/t = q
+-THETA_C = bbp_critical_theta(Q)      # sqrt(q) * sigma2 = 0.3162...
+-LAMBDA_PLUS = (1 + np.sqrt(Q)) ** 2 * SIGMA2   # right MP edge
++N, T = 480, 4800  # n/t = q
++THETA_C = bbp_critical_theta(Q)  # sqrt(q) * sigma2 = 0.3162...
++LAMBDA_PLUS = (1 + np.sqrt(Q)) ** 2 * SIGMA2  # right MP edge
+ THETA_GRID = np.linspace(0.05, 1.4, 96)
+ 
+ # static physics, computed once
+@@ -55,14 +56,25 @@ BG, PANEL = "#0b1020", "#111a2e"
+ TEXT, MUTED = "#e6edf7", "#8fa3c8"
+ AURORA, CYAN, VIOLET, GOLD = "#39ff88", "#46e6e6", "#8a7bff", "#ffcb47"
+ 
+-plt.rcParams.update({
+-    "text.color": TEXT, "axes.edgecolor": MUTED, "axes.labelcolor": TEXT,
+-    "xtick.color": MUTED, "ytick.color": MUTED, "axes.titlecolor": TEXT,
+-})
++plt.rcParams.update(
++    {
++        "text.color": TEXT,
++        "axes.edgecolor": MUTED,
++        "axes.labelcolor": TEXT,
++        "xtick.color": MUTED,
++        "ytick.color": MUTED,
++        "axes.titlecolor": TEXT,
++    }
++)
+ 
+ fig, (ax_s, ax_t) = plt.subplots(
+-    1, 2, figsize=(7.2, 4.05), dpi=100, constrained_layout=True,
+-    gridspec_kw={"width_ratios": [1.45, 1.0]})
++    1,
++    2,
++    figsize=(7.2, 4.05),
++    dpi=100,
++    constrained_layout=True,
++    gridspec_kw={"width_ratios": [1.45, 1.0]},
++)
+ fig.set_facecolor(BG)
+ for ax in (ax_s, ax_t):
+     ax.set_facecolor(PANEL)
+@@ -70,19 +82,21 @@ for ax in (ax_s, ax_t):
+         sp.set_alpha(0.4)
+ 
+ # left: spectrum panel
+-ax_s.hist(bulk, bins=60, density=True, color=CYAN, alpha=0.35,
+-          edgecolor=CYAN, linewidth=0.2, zorder=1)
++ax_s.hist(
++    bulk, bins=60, density=True, color=CYAN, alpha=0.35, edgecolor=CYAN, linewidth=0.2, zorder=1
++)
+ ax_s.plot(lam, rho, color=AURORA, lw=2, zorder=2)
+ ax_s.axvline(LAMBDA_PLUS, color=MUTED, lw=1, ls="--", zorder=2)
+ XMAX = LAMBDA_PLUS * 1.6
+-edge_lbl = ax_s.text(LAMBDA_PLUS + 0.03, 0.9, "MP edge\n$\\lambda_+$",
+-                     color=MUTED, fontsize=7, va="top")
+-spike_v, = ax_s.plot([], [], color=GOLD, lw=1.4, ls=":", zorder=3)
+-spike, = ax_s.plot([], [], marker="v", color=GOLD, markersize=9, zorder=4)
+-out_lbl = ax_s.text(XMAX * 0.99, 1.30, "", color=GOLD, fontsize=8,
+-                    ha="right", va="center")
+-state_lbl = ax_s.text(0.03, 0.97, "", transform=ax_s.transAxes, fontsize=10,
+-                      fontweight="bold", va="top")
++edge_lbl = ax_s.text(
++    LAMBDA_PLUS + 0.03, 0.9, "MP edge\n$\\lambda_+$", color=MUTED, fontsize=7, va="top"
++)
++(spike_v,) = ax_s.plot([], [], color=GOLD, lw=1.4, ls=":", zorder=3)
++(spike,) = ax_s.plot([], [], marker="v", color=GOLD, markersize=9, zorder=4)
++out_lbl = ax_s.text(XMAX * 0.99, 1.30, "", color=GOLD, fontsize=8, ha="right", va="center")
++state_lbl = ax_s.text(
++    0.03, 0.97, "", transform=ax_s.transAxes, fontsize=10, fontweight="bold", va="top"
++)
+ ax_s.set_xlim(0, LAMBDA_PLUS * 1.6)
+ ax_s.set_ylim(0, 1.55)
+ ax_s.set_xlabel("eigenvalue $\\lambda$")
+@@ -90,24 +104,29 @@ ax_s.set_title("spectral snapshot", fontsize=10, pad=8)
+ 
+ # right: lambda_max(theta) trajectory panel
+ ax_t.axhline(LAMBDA_PLUS, color=MUTED, lw=1, ls="--")
+-ax_t.text(0.02, LAMBDA_PLUS + 0.7, "bulk edge $\\lambda_+$", color=MUTED,
+-          fontsize=7)
++ax_t.text(0.02, LAMBDA_PLUS + 0.7, "bulk edge $\\lambda_+$", color=MUTED, fontsize=7)
+ ax_t.axvline(THETA_C, color=VIOLET, lw=1, ls="--")
+ ax_t.axvspan(THETA_C, THETA_GRID[-1], color=VIOLET, alpha=0.10)
+ ax_t.text(THETA_C * 1.1, 0.95, "$\\theta_c$", color=VIOLET, fontsize=9)
+ ax_t.plot(THETA_GRID, lmax_curve, color=AURORA, lw=1.8, zorder=2)
+-marker, = ax_t.plot([], [], "o", color=GOLD, markersize=8, zorder=3)
+-trace, = ax_t.plot([], [], color=GOLD, lw=1.2, alpha=0.5, zorder=2)
++(marker,) = ax_t.plot([], [], "o", color=GOLD, markersize=8, zorder=3)
++(trace,) = ax_t.plot([], [], color=GOLD, lw=1.2, alpha=0.5, zorder=2)
+ ax_t.set_xlabel("signal strength $\\theta$")
+ ax_t.set_ylabel("$\\lambda_{\\max}(\\theta)$")
+ ax_t.set_xlim(THETA_GRID[0], THETA_GRID[-1])
+ ax_t.set_ylim(0, max(lmax_curve) * 1.12)
+ ax_t.set_title("outlier trajectory", fontsize=10, pad=8)
+ 
+-foot = fig.text(0.01, 0.005,
+-                "rendered live by src/rmt_llm: mp_sample · mp_density · "
+-                "bbp_lambda_max  |  wild8highlander/rmt-llm-research",
+-                color=MUTED, fontsize=6, ha="left")
++foot = fig.text(
++    0.01,
++    0.005,
++    "rendered live by src/rmt_llm: mp_sample · mp_density · "
++    "bbp_lambda_max  |  wild8highlander/rmt-llm-research",
++    color=MUTED,
++    fontsize=6,
++    ha="left",
++)
++
+ 
+ def draw(k: int):
+     theta = float(THETA_GRID[k])
+@@ -123,12 +142,14 @@ def draw(k: int):
+     state_lbl.set_text(
+         f"$\\theta={theta:.2f}$  {'>' if super_ else '<'}  "
+         f"$\\theta_c={THETA_C:.2f}$\n"
+-        f"{'SUPERCITICAL — outlier escaped' if super_ else 'subcritical — outlier hidden in bulk'}")
++        f"{'SUPERCITICAL — outlier escaped' if super_ else 'subcritical — outlier hidden in bulk'}"
++    )
+     state_lbl.set_color(GOLD if super_ else MUTED)
+     marker.set_data([theta], [lmax])
+-    trace.set_data(THETA_GRID[:k + 1], lmax_curve[:k + 1])
++    trace.set_data(THETA_GRID[: k + 1], lmax_curve[: k + 1])
+     return spike_v, spike, out_lbl, state_lbl, marker, trace
+ 
++
+ anim = FuncAnimation(fig, draw, frames=len(THETA_GRID), blit=False)
+ out = os.path.join(REPO, "assets", "charts", "bbp_transition_live.gif")
+ anim.save(out, writer=PillowWriter(fps=24))
+diff --git a/scripts/repo_janitor.py b/scripts/repo_janitor.py
+new file mode 100644
+index 0000000..4b1b5c0
+--- /dev/null
++++ b/scripts/repo_janitor.py
+@@ -0,0 +1,802 @@
++#!/usr/bin/env python3
++"""Repo Janitor — find and auto-fix repository-health issues.
++
++The self-healing companion to `check_links.py`: where the doctor only
++reports, the janitor repairs. It
++
++1. rewrites internal markdown links whose target file or directory was
++   moved or renamed (resolved by basename + trailing-path scoring),
++2. repairs stale `directory:` entries in `.github/dependabot.yml`,
++3. repairs broken `nav:` paths in `mkdocs.yml`,
++4. with `--online`, rewrites external http(s) links that moved permanently
++   (301/308 redirect chains) and reports dead ones.
++
++Usage:
++    python scripts/repo_janitor.py                     # report only, offline
++    python scripts/repo_janitor.py --fix               # apply fixes, offline
++    python scripts/repo_janitor.py --fix --online --report janitor-report
++
++Exit codes: 0 = clean or all issues fixed, 1 = unfixable issues remain
++(suppressed with --no-fail), 2 = bad invocation.
++"""
++
++from __future__ import annotations
++
++import argparse
++import concurrent.futures
++import copy
++import dataclasses
++import json
++import os
++import posixpath
++import re
++import sys
++import time
++import urllib.error
++import urllib.request
++from collections.abc import Callable
++from urllib.parse import quote, unquote
++
++import yaml
++
++
++REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
++
++FENCE_RE = re.compile(r"(```.*?```|~~~.*?~~~)", re.S)
++MD_LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)\s]+)\)")
++MD_REF_RE = re.compile(r"^(\s*\[[^\]]+\]:\s+)(\S+)(\s*)$", re.M)
++TARGET_SPLIT_RE = re.compile(r"^([^#?]+)([#?].*)?$")
++
++# Manifest files that prove a package-ecosystem directory is real.
++MANIFESTS: dict[str, tuple[str, ...]] = {
++    "pip": ("pyproject.toml", "setup.py", "setup.cfg"),
++    "npm": ("package.json",),
++    "cargo": ("Cargo.toml",),
++    "gradle": ("build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"),
++    "maven": ("pom.xml",),
++    "gomod": ("go.mod",),
++    "docker": ("Dockerfile",),
++    "julia": ("Project.toml",),
++}
++
++DEFAULT_SKIP_DIRS = [
++    ".git",
++    ".mypy_cache",
++    ".ruff_cache",
++    ".venv",
++    "__pycache__",
++    "docs/site",
++    "laboratory/results",
++    "node_modules",
++    "results",
++    "site-build",
++]
++
++EXTERNAL_DEFAULTS: dict[str, object] = {
++    "timeout_seconds": 12,
++    "max_workers": 8,
++    # 403/405/429 mean "bot-blocked", not dead — treat them as alive.
++    "alive_status_codes": [200, 206, 301, 302, 303, 307, 308, 403, 405, 429],
++    "moved_status_codes": [301, 308],
++    "dead_status_codes": [404, 410],
++    "skip_url_patterns": [
++        r"^https?://(localhost|127\.0\.0\.1)",
++        r"^https://doi\.org/10\.5281/zenodo",
++        r"^https://img\.shields\.io",
++        r"^https://api\.securityscorecards\.dev",
++        r"^https://codecov\.io",
++        r"^https://(www\.)?linkedin\.com",
++        r"^https://(www\.)?twitter\.com",
++        r"^https://x\.com",
++        r"^https://orcid\.org",
++    ],
++    "user_agent": "rmt-llm-repo-janitor/1.0 (repository link-health sweep)",
++}
++
++
++# ─── Data model ──────────────────────────────────────────────────────────────
++@dataclasses.dataclass
++class Fix:
++    """A concrete rewrite the janitor applied (or proposes)."""
++
++    kind: str
++    file: str
++    old: str
++    new: str
++    note: str = ""
++
++    def line(self) -> str:
++        suffix = f" ({self.note})" if self.note else ""
++        return f"- **{self.kind}** `{self.file}`: `{self.old}` -> `{self.new}`{suffix}"
++
++
++@dataclasses.dataclass
++class Problem:
++    """An issue the janitor detected but cannot safely fix itself."""
++
++    kind: str
++    file: str
++    detail: str
++    reason: str = ""
++
++    def line(self) -> str:
++        return f"- UNFIXABLE: **{self.kind}** `{self.file}`: {self.detail} ({self.reason})"
++
++
++@dataclasses.dataclass
++class Stats:
++    internal_links: int = 0
++    external_occurrences: int = 0
++    external_unique: int = 0
++    external_ok: int = 0
++    external_moved: int = 0
++    external_dead: int = 0
++    nav_entries: int = 0
++    dependabot_dirs: int = 0
++
++
++# ─── Configuration ───────────────────────────────────────────────────────────
++class _PermissiveLoader(yaml.SafeLoader):
++    """SafeLoader that tolerates mkdocs `!!python/name:` tags (values become None)."""
++
++
++def _unknown_tag(loader: yaml.Loader, suffix: str, node: yaml.Node) -> None:  # noqa: ARG001
++    return None
++
++
++_PermissiveLoader.add_multi_constructor("tag:yaml.org,2002:python", _unknown_tag)
++
++
++def load_yaml(path: str) -> tuple[dict | None, str]:
++    """Parse a YAML file permissively; return (data, error_message)."""
++    try:
++        with open(path, encoding="utf-8") as fh:
++            data = yaml.load(fh, Loader=_PermissiveLoader) or {}  # noqa: S506 - loader extends SafeLoader; python tags resolve to None
++        return data, ""
++    except (yaml.YAMLError, OSError) as exc:
++        return None, str(exc)
++
++
++def load_config(path: str) -> dict:
++    """Load .github/janitor.yml over the built-in defaults."""
++    cfg: dict = {"skip_dirs": list(DEFAULT_SKIP_DIRS), "external": copy.deepcopy(EXTERNAL_DEFAULTS)}
++    if os.path.exists(path):
++        with open(path, encoding="utf-8") as fh:
++            user = yaml.safe_load(fh) or {}
++        for key, value in user.items():
++            if isinstance(value, dict) and isinstance(cfg.get(key), dict):
++                cfg[key].update(value)
++            else:
++                cfg[key] = value
++    return cfg
++
++
++# ─── Repository index ────────────────────────────────────────────────────────
++class RepoIndex:
++    """Map of basename -> repo-relative paths, built once per run."""
++
++    def __init__(self, root: str, skip_dirs: list[str]) -> None:
++        self.root = root
++        self.files: dict[str, list[str]] = {}
++        self.dirs: dict[str, list[str]] = {}
++        for dirpath, dirnames, filenames in os.walk(root):
++            rel = os.path.relpath(dirpath, root).replace(os.sep, "/")
++            rel = "" if rel == "." else rel
++            keep: list[str] = []
++            for d in dirnames:
++                child = f"{rel}/{d}" if rel else d
++                if d in skip_dirs or child in skip_dirs:
++                    continue
++                keep.append(d)
++                self.dirs.setdefault(d, []).append(child)
++            dirnames[:] = keep
++            for fn in filenames:
++                child = f"{rel}/{fn}" if rel else fn
++                self.files.setdefault(fn, []).append(child)
++
++    def markdown_files(self) -> list[str]:
++        return sorted(p for paths in self.files.values() for p in paths if p.endswith(".md"))
++
++
++def _trail_overlap(old_parts: list[str], cand_parts: list[str]) -> int:
++    """Number of path components shared at the tail of old and candidate."""
++    n = 0
++    for a, b in zip(reversed(old_parts), reversed(cand_parts)):
++        if a != b:
++            break
++        n += 1
++    return n
++
++
++def pick_candidate(old_rel: str, candidates: list[str]) -> str | None:
++    """Choose the most plausible new location for a moved path.
++
++    Prefers the candidate sharing the most trailing path components with the
++    old path; ties are rejected so the janitor never guesses.
++    """
++    if not candidates:
++        return None
++    old_parts = [p for p in old_rel.split("/") if p]
++    scored = sorted(
++        (-_trail_overlap(old_parts, c.split("/")), abs(len(c.split("/")) - len(old_parts)), c)
++        for c in candidates
++    )
++    if len(scored) >= 2 and scored[0][:2] == scored[1][:2]:
++        return None
++    return scored[0][2]
++
++
++# ─── File helpers ────────────────────────────────────────────────────────────
++def read_text(path: str) -> str:
++    with open(path, encoding="utf-8", errors="replace") as fh:
++        return fh.read()
++
++
++def write_text(path: str, text: str) -> None:
++    with open(path, "w", encoding="utf-8", newline="") as fh:
++        fh.write(text)
++
++
++def map_outside_fences(text: str, transform: Callable[[str], str]) -> str:
++    """Apply transform to markdown text but never inside fenced code blocks."""
++    parts = FENCE_RE.split(text)
++    return "".join(p if i % 2 else transform(p) for i, p in enumerate(parts))
++
++
++def _segment_transform(
++    repo: str,
++    md: str,
++    index: RepoIndex,
++    fixes: list[Fix],
++    problems: list[Problem],
++    stats: Stats,
++) -> Callable[[str], str]:
++    md_dir = os.path.dirname(md)
++
++    def transform(seg: str) -> str:
++        def sub_link(m: re.Match[str]) -> str:
++            # re.sub replaces the whole match, so rebuild "[text](target)".
++            target = _fix_internal_target(
++                m.group(2), repo, md_dir, md, index, fixes, problems, stats
++            )
++            return f"[{m.group(1)}]({target})"
++
++        def sub_ref(m: re.Match[str]) -> str:
++            return (
++                m.group(1)
++                + _fix_internal_target(m.group(2), repo, md_dir, md, index, fixes, problems, stats)
++                + m.group(3)
++            )
++
++        seg = MD_LINK_RE.sub(sub_link, seg)
++        return MD_REF_RE.sub(sub_ref, seg)
++
++    return transform
++
++
++def _fix_internal_target(
++    raw: str,
++    repo: str,
++    md_dir: str,
++    md: str,
++    index: RepoIndex,
++    fixes: list[Fix],
++    problems: list[Problem],
++    stats: Stats,
++) -> str:
++    """Return the repaired link target, or the original when untouched."""
++    if raw.startswith(("http://", "https://", "mailto:", "#", "<")):
++        return raw
++    split = TARGET_SPLIT_RE.match(raw)
++    if not split:
++        return raw
++    path_part, suffix = split.group(1) or "", split.group(2) or ""
++    if not path_part:
++        return raw
++    decoded = unquote(path_part)
++    if decoded.startswith(("http://", "https://", "mailto:")):
++        return raw
++    stats.internal_links += 1
++
++    if decoded.startswith("/"):
++        current = os.path.join(repo, decoded.lstrip("/"))
++        old_rel = decoded.lstrip("/")
++    else:
++        current = os.path.normpath(os.path.join(repo, md_dir, decoded))
++        old_rel = posixpath.normpath(
++            posixpath.join(md_dir.replace(os.sep, "/"), decoded.replace(os.sep, "/"))
++        )
++    if os.path.exists(current):
++        return raw
++
++    base = posixpath.basename(decoded)
++    candidates = index.files.get(base, []) + index.dirs.get(base, [])
++    cand = pick_candidate(old_rel, candidates)
++    if cand is None:
++        problems.append(
++            Problem(
++                "internal-link", md, f"`{raw}` -> target not found", "no unambiguous relocation"
++            )
++        )
++        return raw
++    rel = os.path.relpath(os.path.join(repo, cand), os.path.join(repo, md_dir)).replace(os.sep, "/")
++    new_link = quote(rel, safe="/._~") + suffix
++    fixes.append(Fix("internal-link", md, raw, new_link))
++    return new_link
++
++
++def fix_internal_links(
++    repo: str,
++    md_files: list[str],
++    index: RepoIndex,
++    apply: bool,
++    fixes: list[Fix],
++    problems: list[Problem],
++    stats: Stats,
++) -> None:
++    """Rewrite internal markdown links whose target moved."""
++    for md in md_files:
++        text = read_text(os.path.join(repo, md))
++        new_text = map_outside_fences(
++            text, _segment_transform(repo, md, index, fixes, problems, stats)
++        )
++        if new_text != text and apply:
++            write_text(os.path.join(repo, md), new_text)
++
++
++# ─── External links ──────────────────────────────────────────────────────────
++class _RedirectRecorder(urllib.request.HTTPRedirectHandler):
++    """HTTPRedirectHandler that remembers which redirect codes it saw."""
++
++    def __init__(self) -> None:
++        self.statuses: list[int] = []
++
++    def redirect_request(self, req, fp, code, msg, headers, newurl):  # type: ignore[override]
++        self.statuses.append(int(code))
++        return super().redirect_request(req, fp, code, msg, headers, newurl)
++
++
++def _probe(url: str, timeout: int, ua: str) -> tuple[int | None, str, list[int]]:
++    """Return (final status, final URL, redirect codes seen) for a URL."""
++    opener = urllib.request.build_opener(_RedirectRecorder())
++    recorder = next(h for h in opener.handlers if isinstance(h, _RedirectRecorder))
++    code: int | None = None
++    final_url = url
++    for method in ("HEAD", "GET"):
++        recorder.statuses.clear()
++        req = urllib.request.Request(url, method=method, headers={"User-Agent": ua})  # noqa: S310 - http/https enforced by caller
++        try:
++            with opener.open(req, timeout=timeout) as resp:
++                return int(resp.getcode() or 0), str(resp.geturl()), list(recorder.statuses)
++        except urllib.error.HTTPError as exc:
++            code = int(exc.code)
++        except (urllib.error.URLError, OSError, ValueError):
++            code = None
++        # HEAD is often rejected (403/404/405); retry once with GET before
++        # declaring the URL dead.
++        if method == "HEAD" and code in (400, 401, 403, 404, 405, 429):
++            continue
++        return code, final_url, list(recorder.statuses)
++    return code, final_url, []
++
++
++def _external_url_collector(
++    found: dict[str, list[str]],
++    md: str,
++    counter: dict[str, int],
++) -> Callable[[str], str]:
++    def collect(seg: str) -> str:
++        for regex in (MD_LINK_RE, MD_REF_RE):
++            for m in regex.finditer(seg):
++                raw = m.group(2)
++                if raw.startswith(("http://", "https://")):
++                    counter["n"] += 1
++                    files = found.setdefault(raw, [])
++                    if md not in files:
++                        files.append(md)
++        return seg
++
++    return collect
++
++
++def collect_external_urls(repo: str, md_files: list[str]) -> tuple[dict[str, list[str]], int]:
++    """Map raw URL -> markdown files referencing it (outside code fences)."""
++    found: dict[str, list[str]] = {}
++    occurrences = 0
++    for md in md_files:
++        text = read_text(os.path.join(repo, md))
++        counter = {"n": 0}
++        map_outside_fences(text, _external_url_collector(found, md, counter))
++        occurrences += counter["n"]
++    return found, occurrences
++
++
++def check_external_urls(
++    repo: str,
++    md_files: list[str],
++    cfg: dict,
++    apply: bool,
++    fixes: list[Fix],
++    problems: list[Problem],
++    stats: Stats,
++) -> None:
++    """Probe external links; rewrite permanently moved ones, report dead ones."""
++    ext_cfg = cfg["external"]
++    urls, occurrences = collect_external_urls(repo, md_files)
++    stats.external_occurrences += occurrences
++    stats.external_unique += len(urls)
++    skip = [re.compile(p) for p in ext_cfg["skip_url_patterns"]]
++    alive = set(ext_cfg["alive_status_codes"])
++    moved_codes = set(ext_cfg["moved_status_codes"])
++    dead_codes = set(ext_cfg["dead_status_codes"])
++
++    targets = {u: files for u, files in urls.items() if not any(p.search(u) for p in skip)}
++    results: dict[str, tuple[int | None, str, list[int]]] = {}
++    with concurrent.futures.ThreadPoolExecutor(max_workers=int(ext_cfg["max_workers"])) as pool:
++        futures = {
++            pool.submit(_probe, u, int(ext_cfg["timeout_seconds"]), str(ext_cfg["user_agent"])): u
++            for u in targets
++        }
++        for fut in concurrent.futures.as_completed(futures):
++            results[futures[fut]] = fut.result()
++
++    rewrites: dict[str, dict[str, str]] = {}  # md -> {raw -> new_raw}
++    for url, (code, final_url, chain) in sorted(results.items()):
++        if code in alive:
++            stats.external_ok += 1
++        elif code in dead_codes:
++            stats.external_dead += 1
++            problems.append(
++                Problem(
++                    "external-link",
++                    ", ".join(sorted(set(targets[url]))),
++                    f"`{url}` returns HTTP {code}",
++                    "site gone, needs a human decision",
++                )
++            )
++        if code is None:
++            continue
++        if not (set(chain) & moved_codes):
++            continue
++        final = final_url.split("#")[0]
++        if not final.startswith(("http://", "https://")) or final == url.split("#")[0]:
++            continue
++        fragment = "#" + url.split("#", 1)[1] if "#" in url else ""
++        new_raw = final + fragment
++        stats.external_moved += 1
++        for md in sorted(set(targets[url])):
++            rewrites.setdefault(md, {})[url] = new_raw
++            fixes.append(
++                Fix("external-link", md, url, new_raw, f"HTTP {'/'.join(map(str, chain))} redirect")
++            )
++
++    if not apply:
++        return
++    for md, mapping in rewrites.items():
++        path = os.path.join(repo, md)
++        text = read_text(path)
++        write_text(path, map_outside_fences(text, _url_substitutor(mapping)))
++
++
++def _url_substitutor(mapping: dict[str, str]) -> Callable[[str], str]:
++    def substitute(seg: str) -> str:
++        for old, new in mapping.items():
++            seg = seg.replace(old, new)
++        return seg
++
++    return substitute
++
++
++# ─── Dependabot paths ────────────────────────────────────────────────────────
++def _has_manifest(dir_path: str, manifests: tuple[str, ...]) -> bool:
++    if not manifests:
++        return os.path.isdir(dir_path)
++    return any(os.path.exists(os.path.join(dir_path, m)) for m in manifests)
++
++
++def fix_dependabot(
++    repo: str,
++    cfg: dict,
++    index: RepoIndex,
++    apply: bool,
++    fixes: list[Fix],
++    problems: list[Problem],
++    stats: Stats,
++) -> None:
++    """Repair `directory:` entries in dependabot.yml that point nowhere."""
++    rel_cfg = str(cfg.get("dependabot_config", ".github/dependabot.yml"))
++    path = os.path.join(repo, rel_cfg)
++    if not os.path.exists(path):
++        return
++    data, err = load_yaml(path)
++    if data is None:
++        problems.append(Problem("dependabot", rel_cfg, "unparseable YAML", err))
++        return
++    rewrites: list[tuple[str, str]] = []
++    for entry in data.get("updates") or []:
++        eco = str(entry.get("package-ecosystem", ""))
++        directory = str(entry.get("directory", ""))
++        stats.dependabot_dirs += 1
++        if not directory or directory in ("/", "."):
++            continue
++        rel = directory.strip("/")
++        if os.path.exists(os.path.join(repo, rel)):
++            continue
++        last = rel.split("/")[-1]
++        cand_dirs = [
++            c
++            for c in index.dirs.get(last, [])
++            if _has_manifest(os.path.join(repo, c), MANIFESTS.get(eco, ()))
++        ]
++        cand = pick_candidate(rel, cand_dirs)
++        if cand is None:
++            problems.append(
++                Problem(
++                    "dependabot",
++                    rel_cfg,
++                    f"`{eco}` directory `{directory}` does not exist",
++                    "no matching manifest directory found",
++                )
++            )
++            continue
++        new_dir = "/" + cand
++        rewrites.append((directory, new_dir))
++        fixes.append(
++            Fix("dependabot", rel_cfg, directory, new_dir, f"{eco} manifest found in `{cand}`")
++        )
++    if not (apply and rewrites):
++        return
++    text = read_text(path)
++    for old, new in rewrites:
++        pattern = re.compile(r"(directory:\s*)([\"'])" + re.escape(old) + r"\2")
++        text, n = pattern.subn(f'\\g<1>"{new}"', text, count=1)
++        if n == 0:
++            problems.append(
++                Problem(
++                    "dependabot",
++                    rel_cfg,
++                    f"cannot rewrite `{old}`",
++                    "entry not found verbatim in YAML",
++                )
++            )
++    write_text(path, text)
++
++
++# ─── MkDocs navigation ───────────────────────────────────────────────────────
++def _collect_nav_strings(node: object, acc: list[str]) -> None:
++    if isinstance(node, str):
++        acc.append(node)
++    elif isinstance(node, list):
++        for item in node:
++            _collect_nav_strings(item, acc)
++    elif isinstance(node, dict):
++        for value in node.values():
++            _collect_nav_strings(value, acc)
++
++
++def fix_mkdocs_nav(
++    repo: str,
++    cfg: dict,
++    index: RepoIndex,
++    apply: bool,
++    fixes: list[Fix],
++    problems: list[Problem],
++    stats: Stats,
++) -> None:
++    """Repair `nav:` entries in mkdocs.yml whose target file moved."""
++    rel_cfg = str(cfg.get("mkdocs_config", "mkdocs.yml"))
++    path = os.path.join(repo, rel_cfg)
++    if not os.path.exists(path):
++        return
++    data, err = load_yaml(path)
++    if data is None:
++        problems.append(Problem("mkdocs-nav", rel_cfg, "unparseable YAML", err))
++        return
++    docs_dir = str(data.get("docs_dir") or "docs").strip("/")
++    strings: list[str] = []
++    _collect_nav_strings(data.get("nav") or [], strings)
++    rewrites: list[tuple[str, str]] = []
++    for entry in strings:
++        if entry.startswith(("!", "http://", "https://")) or not entry.endswith(".md"):
++            continue
++        stats.nav_entries += 1
++        decoded = unquote(entry)
++        if os.path.exists(os.path.join(repo, docs_dir, decoded)):
++            continue
++        base = posixpath.basename(decoded)
++        cand_files = [c for c in index.files.get(base, []) if c.startswith(docs_dir + "/")]
++        cand = pick_candidate(f"{docs_dir}/{decoded}", cand_files)
++        if cand is None:
++            problems.append(
++                Problem(
++                    "mkdocs-nav",
++                    rel_cfg,
++                    f"nav entry `{entry}` not found under `{docs_dir}/`",
++                    "no unambiguous relocation found",
++                )
++            )
++            continue
++        new_entry = quote(
++            os.path.relpath(os.path.join(repo, cand), os.path.join(repo, docs_dir)).replace(
++                os.sep, "/"
++            ),
++            safe="/._~",
++        )
++        rewrites.append((entry, new_entry))
++        fixes.append(Fix("mkdocs-nav", rel_cfg, entry, new_entry))
++    if not (apply and rewrites):
++        return
++    text = read_text(path)
++    for old, new in rewrites:
++        if f"'{old}'" in text or f'"{old}"' in text:
++            text = text.replace(f"'{old}'", f"'{new}'").replace(f'"{old}"', f'"{new}"')
++        elif text.count(old) == 1:
++            text = text.replace(old, new)
++        else:
++            problems.append(
++                Problem(
++                    "mkdocs-nav",
++                    rel_cfg,
++                    f"cannot safely rewrite `{old}`",
++                    "value appears multiple times in YAML",
++                )
++            )
++    write_text(path, text)
++
++
++# ─── Reporting ───────────────────────────────────────────────────────────────
++def write_reports(
++    fixes: list[Fix],
++    problems: list[Problem],
++    stats: Stats,
++    apply: bool,
++    report_base: str,
++) -> None:
++    """Write a human-readable .md and a machine-readable .json report."""
++    now = time.strftime("%Y-%m-%d %H:%M:%SZ", time.gmtime())
++    status = "applied" if apply else "proposed (rerun with --fix)"
++    by_kind: dict[str, int] = {}
++    for fix in fixes:
++        by_kind[fix.kind] = by_kind.get(fix.kind, 0) + 1
++    prob_by_kind: dict[str, int] = {}
++    for problem in problems:
++        prob_by_kind[problem.kind] = prob_by_kind.get(problem.kind, 0) + 1
++
++    rows = [
++        (
++            "Internal links",
++            stats.internal_links,
++            by_kind.get("internal-link", 0),
++            prob_by_kind.get("internal-link", 0),
++        ),
++        (
++            "External links",
++            stats.external_unique,
++            by_kind.get("external-link", 0),
++            prob_by_kind.get("external-link", 0),
++        ),
++        (
++            "Dependabot paths",
++            stats.dependabot_dirs,
++            by_kind.get("dependabot", 0),
++            prob_by_kind.get("dependabot", 0),
++        ),
++        (
++            "MkDocs nav entries",
++            stats.nav_entries,
++            by_kind.get("mkdocs-nav", 0),
++            prob_by_kind.get("mkdocs-nav", 0),
++        ),
++    ]
++    lines = [
++        f"# Repo Janitor report - {now}",
++        "",
++        f"Mode: fixes **{status}**.",
++        "",
++        "## Summary",
++        "",
++        "| Category | Checked | Fixes | Unfixable |",
++        "|---|---:|---:|---:|",
++    ]
++    lines += [
++        f"| {name} | {checked} | {fixed} | {broken} |" for name, checked, fixed, broken in rows
++    ]
++    lines += [
++        f"| External URLs probed (unique) | {stats.external_unique} | {by_kind.get('external-link', 0)} | {prob_by_kind.get('external-link', 0)} |",
++        "",
++        "## Fixes",
++        "",
++    ]
++    if fixes:
++        lines += [fix.line() for fix in fixes]
++    else:
++        lines.append("No fixes were needed.")
++    lines += ["", "## Unfixable (needs a human)", ""]
++    if problems:
++        lines += [problem.line() for problem in problems]
++    else:
++        lines.append("Nothing unfixable - repository is healthy.")
++
++    write_text(report_base + ".md", "\n".join(lines) + "\n")
++    write_text(
++        report_base + ".json",
++        json.dumps(
++            {
++                "generated": now,
++                "applied": apply,
++                "stats": dataclasses.asdict(stats),
++                "fixes": [dataclasses.asdict(f) for f in fixes],
++                "problems": [dataclasses.asdict(p) for p in problems],
++            },
++            indent=2,
++            ensure_ascii=False,
++        )
++        + "\n",
++    )
++
++
++# ─── Entry point ─────────────────────────────────────────────────────────────
++def main(argv: list[str] | None = None) -> int:
++    parser = argparse.ArgumentParser(
++        description="Repo Janitor - find and auto-fix repository-health issues."
++    )
++    parser.add_argument(
++        "--repo", default=REPO_ROOT, help="repository root (default: this checkout)"
++    )
++    parser.add_argument(
++        "--config", default=None, help="janitor.yml path (default: <repo>/.github/janitor.yml)"
++    )
++    parser.add_argument("--fix", action="store_true", help="apply fixes (default: report only)")
++    parser.add_argument(
++        "--online", action="store_true", help="probe external http(s) links over the network"
++    )
++    parser.add_argument("--report", metavar="BASE", help="write BASE.md and BASE.json report files")
++    parser.add_argument(
++        "--no-fail", action="store_true", help="always exit 0, even with unfixable issues"
++    )
++    args = parser.parse_args(argv)
++
++    repo = os.path.abspath(args.repo)
++    if not os.path.isdir(repo):
++        print(f"repo-janitor: repository root not found: {repo}")
++        return 2
++    cfg = load_config(args.config or os.path.join(repo, ".github", "janitor.yml"))
++    index = RepoIndex(repo, list(cfg["skip_dirs"]))
++    md_files = index.markdown_files()
++
++    fixes: list[Fix] = []
++    problems: list[Problem] = []
++    stats = Stats()
++
++    fix_internal_links(repo, md_files, index, args.fix, fixes, problems, stats)
++    if args.online:
++        check_external_urls(repo, md_files, cfg, args.fix, fixes, problems, stats)
++    fix_dependabot(repo, cfg, index, args.fix, fixes, problems, stats)
++    fix_mkdocs_nav(repo, cfg, index, args.fix, fixes, problems, stats)
++
++    if args.report:
++        write_reports(fixes, problems, stats, args.fix, os.path.abspath(args.report))
++
++    print(
++        f"repo-janitor: {len(md_files)} markdown files, {stats.internal_links} internal links checked"
++    )
++    if args.online:
++        print(
++            f"repo-janitor: {stats.external_unique} external URLs probed "
++            f"({stats.external_ok} ok, {stats.external_moved} moved, {stats.external_dead} dead)"
++        )
++    for fix in fixes:
++        print(f"FIX       {fix.line()}")
++    for problem in problems:
++        print(f"UNFIXABLE {problem.line()}")
++    verdict = (
++        f"{len(fixes)} fixes {'applied' if args.fix else 'proposed'}, {len(problems)} unfixable"
++    )
++    print(f"repo-janitor: {verdict}")
++    if problems and not args.no_fail:
++        return 1
++    return 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/src/rmt_llm/__main__.py b/src/rmt_llm/__main__.py
+index ac9e1c5..fec63dd 100644
+--- a/src/rmt_llm/__main__.py
++++ b/src/rmt_llm/__main__.py
+@@ -1,4 +1,5 @@
+ """``python -m rmt_llm`` entry point (also used by the console script)."""
++
+ import sys
+ 
+ from rmt_llm.cli import main
+diff --git a/src/rmt_llm/cli.py b/src/rmt_llm/cli.py
+index 9ce6538..2d65ed8 100644
+--- a/src/rmt_llm/cli.py
++++ b/src/rmt_llm/cli.py
+@@ -14,6 +14,7 @@ Usage examples::
+     rmt-llm-verify nhse --n-ratio 0.5 --gamma 3.0
+     rmt-llm-verify spacing --n 256 --beta 2
+ """
++
+ from __future__ import annotations
+ 
+ import argparse
+@@ -48,10 +49,18 @@ from rmt_llm.tracy_widom import (
+ 
+ 
+ MODULES = (
+-    "marchenko_pastur", "bbp_transition", "tracy_widom", "nhse",
+-    "circular_ensembles", "dyson_brownian", "free_probability",
+-    "caputo_fractional", "ep_surfaces", "keating_snaith",
+-    "thermodynamics", "constants",
++    "marchenko_pastur",
++    "bbp_transition",
++    "tracy_widom",
++    "nhse",
++    "circular_ensembles",
++    "dyson_brownian",
++    "free_probability",
++    "caputo_fractional",
++    "ep_surfaces",
++    "keating_snaith",
++    "thermodynamics",
++    "constants",
+ )
+ 
+ 
+@@ -70,36 +79,56 @@ def cmd_verify(_args: argparse.Namespace) -> int:
+ 
+     lo, hi = mp_bounds(0.1, 1.0)
+     rho = mp_density(np.linspace(lo, hi, 64), 0.1, 1.0)
+-    checks.append(("marchenko_pastur: density finite",
+-                   bool(np.all(np.isfinite(rho))), f"[{lo:.4f}, {hi:.4f}]"))
++    checks.append(
++        (
++            "marchenko_pastur: density finite",
++            bool(np.all(np.isfinite(rho))),
++            f"[{lo:.4f}, {hi:.4f}]",
++        )
++    )
+ 
+     theta_c = bbp_critical_theta(0.1)
+     lmax = bbp_lambda_max(2.0, 0.1)
+-    checks.append(("bbp_transition: theta_c, lambda_outlier",
+-                   bool(np.isfinite(theta_c) and np.isfinite(lmax)),
+-                   f"theta_c={theta_c:.4f} lambda_max={lmax:.4f} "
+-                   f"supercritical={bbp_is_supercritical(2.0, 0.1)}"))
++    checks.append(
++        (
++            "bbp_transition: theta_c, lambda_outlier",
++            bool(np.isfinite(theta_c) and np.isfinite(lmax)),
++            f"theta_c={theta_c:.4f} lambda_max={lmax:.4f} "
++            f"supercritical={bbp_is_supercritical(2.0, 0.1)}",
++        )
++    )
+ 
+     m, v = tracy_widom_mean(), tracy_widom_variance()
+     cdf = tracy_widom_cdf(np.array([-1.5, 0.0, 1.5]))
+-    checks.append(("tracy_widom: moments + cdf monotone",
+-                   bool(np.isfinite(m) and np.all(np.diff(cdf) >= -1e-12)),
+-                   f"mean={m:.4f} var={v:.4f}"))
++    checks.append(
++        (
++            "tracy_widom: moments + cdf monotone",
++            bool(np.isfinite(m) and np.all(np.diff(cdf) >= -1e-12)),
++            f"mean={m:.4f} var={v:.4f}",
++        )
++    )
+ 
+     w = nhse_winding_number(0.5, 3.0)
+     s = nhse_skin_strength(0.5, 3.0)
+     c = nhse_imag_collapse(0.5, 3.0)
+-    checks.append(("nhse: winding, skin, collapse",
+-                   all(isinstance(x, (int, float)) and np.isfinite(x)
+-                       for x in (w, s, c)),
+-                   f"wind={w} skin={s:.4f} collapse={c:.4f}"))
++    checks.append(
++        (
++            "nhse: winding, skin, collapse",
++            all(isinstance(x, (int, float)) and np.isfinite(x) for x in (w, s, c)),
++            f"wind={w} skin={s:.4f} collapse={c:.4f}",
++        )
++    )
+ 
+     ev = circular_eigenvalues(128, rng=np.random.default_rng(0))
+     sp = nearest_neighbor_spacing(ev)
+     wign = wigner_surmise_circular(sp)
+-    checks.append(("circular_ensembles: eigenvalues + spacing",
+-                   bool(np.isfinite(sp).all() and np.isfinite(wign).all()),
+-                   f"n={len(ev)} mean_spacing={sp.mean():.4f}"))
++    checks.append(
++        (
++            "circular_ensembles: eigenvalues + spacing",
++            bool(np.isfinite(sp).all() and np.isfinite(wign).all()),
++            f"n={len(ev)} mean_spacing={sp.mean():.4f}",
++        )
++    )
+ 
+     ok = all(c[1] for c in checks)
+     for name, passed, detail in checks:
+@@ -113,16 +142,21 @@ def cmd_mp(args: argparse.Namespace) -> int:
+     lam = np.linspace(lo, hi, 128)
+     rho = mp_density(lam, args.q, args.sigma2)
+     peak = float(lam[int(np.argmax(rho))])
+-    out = {"q": args.q, "sigma2": args.sigma2, "support": [lo, hi],
+-           "density_peak": peak,
+-           "mean_density": float(rho.mean())}
++    out = {
++        "q": args.q,
++        "sigma2": args.sigma2,
++        "support": [lo, hi],
++        "density_peak": peak,
++        "mean_density": float(rho.mean()),
++    }
+     print(json.dumps(out, indent=2))
+     return 0
+ 
+ 
+ def cmd_bbp(args: argparse.Namespace) -> int:
+     out = {
+-        "theta": args.theta, "q": args.q,
++        "theta": args.theta,
++        "q": args.q,
+         "theta_critical": bbp_critical_theta(args.q),
+         "lambda_max": bbp_lambda_max(args.theta, args.q),
+         "supercritical": bool(bbp_is_supercritical(args.theta, args.q)),
+@@ -141,14 +175,14 @@ def cmd_tw(args: argparse.Namespace) -> int:
+ 
+ 
+ def cmd_nhse(args: argparse.Namespace) -> int:
+-    ev = nhse_eigenvalues(args.size, args.gamma,
+-                          rng=np.random.default_rng(args.seed))
++    ev = nhse_eigenvalues(args.size, args.gamma, rng=np.random.default_rng(args.seed))
+     out = {
+-        "n_ratio": args.n_ratio, "gamma": args.gamma,
++        "n_ratio": args.n_ratio,
++        "gamma": args.gamma,
+         "winding": int(nhse_winding_number(args.n_ratio, args.gamma)),
+         "skin_strength": float(nhse_skin_strength(args.n_ratio, args.gamma)),
+         "imag_collapse": float(nhse_imag_collapse(args.n_ratio, args.gamma)),
+-        "eigen_re": [float(x) for x in ev.real[:args.size]],
++        "eigen_re": [float(x) for x in ev.real[: args.size]],
+     }
+     print(json.dumps(out, indent=2))
+     return 0
+@@ -158,11 +192,12 @@ def cmd_spacing(args: argparse.Namespace) -> int:
+     ev = circular_eigenvalues(args.n, rng=np.random.default_rng(args.seed))
+     sp = nearest_neighbor_spacing(ev)
+     out = {
+-        "n": args.n, "beta": args.beta,
++        "n": args.n,
++        "beta": args.beta,
+         "mean_spacing": float(sp.mean()),
+-        "spacing_min": float(sp.min()), "spacing_max": float(sp.max()),
+-        "wigner_surmise_at_1": float(wigner_surmise_circular(np.array([1.0]),
+-                                                            args.beta)[0]),
++        "spacing_min": float(sp.min()),
++        "spacing_max": float(sp.max()),
++        "wigner_surmise_at_1": float(wigner_surmise_circular(np.array([1.0]), args.beta)[0]),
+     }
+     print(json.dumps(out, indent=2))
+     return 0
+@@ -170,8 +205,8 @@ def cmd_spacing(args: argparse.Namespace) -> int:
+ 
+ def build_parser() -> argparse.ArgumentParser:
+     p = argparse.ArgumentParser(
+-        prog="rmt-llm-verify",
+-        description="RMT-LLM spectral verification CLI (NumPy core)")
++        prog="rmt-llm-verify", description="RMT-LLM spectral verification CLI (NumPy core)"
++    )
+     sub = p.add_subparsers(dest="command", required=True)
+ 
+     sub.add_parser("info", help="package info and module list")
+@@ -182,13 +217,13 @@ def build_parser() -> argparse.ArgumentParser:
+     sp.add_argument("--sigma2", type=float, default=1.0, help="noise variance")
+ 
+     sp = sub.add_parser("bbp", help="BBP transition: outlier position")
+-    sp.add_argument("--theta", type=float, default=2.0,
+-                    help="signal strength")
++    sp.add_argument("--theta", type=float, default=2.0, help="signal strength")
+     sp.add_argument("--q", type=float, default=0.1)
+ 
+     sp = sub.add_parser("tw", help="Tracy-Widom (beta=2) CDF and moments")
+-    sp.add_argument("--s", type=float, nargs="+", default=[-1.5, 0.0, 1.5],
+-                    help="one or more s values")
++    sp.add_argument(
++        "--s", type=float, nargs="+", default=[-1.5, 0.0, 1.5], help="one or more s values"
++    )
+ 
+     sp = sub.add_parser("nhse", help="non-Hermitian skin effect summary")
+     sp.add_argument("--n-ratio", type=float, default=0.5)
