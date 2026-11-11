@@ -125,10 +125,10 @@ jupyter notebook notebooks/rmt_llm_verification.ipynb
 
 Or try the new tutorial notebooks (Sprint 6):
 
-- [`01_quickstart.ipynb`](https://github.com/wild8highlander/rmt-llm-research/tree/main/notebooks/01_quickstart.ipynb)
-- [`02_training_tinygpt.ipynb`](https://github.com/wild8highlander/rmt-llm-research/tree/main/notebooks/02_training_tinygpt.ipynb)
-- [`03_generation_and_sampling.ipynb`](https://github.com/wild8highlander/rmt-llm-research/tree/main/notebooks/03_generation_and_sampling.ipynb)
-- [`04_multilingual_labs.ipynb`](https://github.com/wild8highlander/rmt-llm-research/tree/main/notebooks/04_multilingual_labs.ipynb)
+- [`01_quickstart.ipynb`](https://github.com/wild8highlander/rmt-llm-research/blob/main/notebooks/01_quickstart.ipynb)
+- [`02_training_tinygpt.ipynb`](https://github.com/wild8highlander/rmt-llm-research/blob/main/notebooks/02_training_tinygpt.ipynb)
+- [`03_generation_and_sampling.ipynb`](https://github.com/wild8highlander/rmt-llm-research/blob/main/notebooks/03_generation_and_sampling.ipynb)
+- [`04_multilingual_labs.ipynb`](https://github.com/wild8highlander/rmt-llm-research/blob/main/notebooks/04_multilingual_labs.ipynb)
 
 ---
 

@@ -1,0 +1,40 @@
+# =============================================================================
+# Repo Janitor configuration.
+# Consumed by scripts/repo_janitor.py and .github/workflows/repo-janitor.yml.
+# All keys are optional — anything omitted falls back to the defaults in the
+# script, so this file only documents/overrides what differs from them.
+# =============================================================================
+skip_dirs:
+  - ".git"
+  - ".mypy_cache"
+  - ".ruff_cache"
+  - ".venv"
+  - "__pycache__"
+  - "docs/site"
+  - "laboratory/results"
+  - "node_modules"
+  - "results"
+  - "site-build"
+
+dependabot_config: ".github/dependabot.yml"
+mkdocs_config: "mkdocs.yml"
+
+external:
+  timeout_seconds: 12
+  max_workers: 8
+  # 403/405/429 mean "bot-blocked", not dead — treat them as alive.
+  alive_status_codes: [200, 206, 301, 302, 303, 307, 308, 403, 405, 429]
+  moved_status_codes: [301, 308]
+  dead_status_codes: [404, 410]
+  # URLs never to fetch or rewrite (mirrors .markdown-link-check.json).
+  skip_url_patterns:
+    - "^https?://(localhost|127\\.0\\.0\\.1)"
+    - "^https://doi\\.org/10\\.5281/zenodo"
+    - "^https://img\\.shields\\.io"
+    - "^https://api\\.securityscorecards\\.dev"
+    - "^https://codecov\\.io"
+    - "^https://(www\\.)?linkedin\\.com"
+    - "^https://(www\\.)?twitter\\.com"
+    - "^https://x\\.com"
+    - "^https://orcid\\.org"
+  user_agent: "rmt-llm-repo-janitor/1.0 (repository link-health sweep)"

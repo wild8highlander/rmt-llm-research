@@ -46,7 +46,7 @@ updates:
 
   # ─── Julia (Project.toml) ────────────────────────────────────────────────
   - package-ecosystem: "julia"
-    directory: "/julia/RMTLLMVerify"
+    directory: "/laboratory/julia/julia/RMTLLMVerify"
     schedule:
       interval: "monthly"
     open-pull-requests-limit: 3
@@ -54,7 +54,7 @@ updates:
     reviewers: ["wild8highlander"]
 
   - package-ecosystem: "julia"
-    directory: "/julia/RMTLLMViz"
+    directory: "/laboratory/julia/julia/RMTLLMViz"
     schedule:
       interval: "monthly"
     open-pull-requests-limit: 3
@@ -93,7 +93,7 @@ updates:
 
   # ─── Java (gradle) ───────────────────────────────────────────────────────
   - package-ecosystem: "gradle"
-    directory: "/java/rmt-llm-viz"
+    directory: "/laboratory/java/java/rmt-llm-viz"
     schedule:
       interval: "monthly"
     open-pull-requests-limit: 3

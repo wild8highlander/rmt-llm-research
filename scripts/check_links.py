@@ -10,6 +10,7 @@ images against the filesystem. Skips `.git`, external http(s) links and
 pure anchors. URL-escapes like `Model%20ZIP/` are decoded before checking.
 Exit code 1 when any link is broken.
 """
+
 import os
 import re
 import sys
@@ -24,8 +25,7 @@ REF = re.compile(r"^\s*\[[^\]]+\]:\s+(\S+)\s*$", re.M)
 broken = []
 checked = 0
 for dirpath, dirnames, filenames in os.walk(ROOT):
-    dirnames[:] = [d for d in dirnames if d not in (".git", "node_modules",
-                                                    "__pycache__")]
+    dirnames[:] = [d for d in dirnames if d not in (".git", "node_modules", "__pycache__")]
     for fn in filenames:
         if not fn.endswith(".md"):
             continue

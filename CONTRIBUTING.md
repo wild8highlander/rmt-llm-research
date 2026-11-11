@@ -37,6 +37,31 @@ The TinyGPT laboratory ships its own suite
    `cli-doctor` workflow.
 4. Fill the checklist in the PR template.
 
+## Repo Janitor
+
+The `Repo Janitor` workflow is the repository's self-healing bot. On a
+weekly schedule (Saturdays), on demand via *Actions → Repo Janitor → Run
+workflow*, and as a self-heal whenever CI fails on `main`, it runs
+`scripts/repo_janitor.py` to keep the repo tidy:
+
+- rewrites internal markdown links whose target file was moved or renamed;
+- repairs stale `directory:` entries in `.github/dependabot.yml`;
+- repairs broken `nav:` paths in `mkdocs.yml`;
+- updates external links that moved permanently (HTTP 301/308) and reports
+  the dead ones;
+- re-applies `ruff format`, so a formatting drift can never hold the Lint
+  job hostage again.
+
+Everything fixable lands in one PR from the `janitor/auto-fix` branch
+(labelled `janitor`); anything that needs human judgement is filed as an
+issue with the same label. Knobs live in `.github/janitor.yml`. Run it
+locally before opening a docs-heavy PR:
+
+```bash
+python scripts/repo_janitor.py --fix --online   # apply fixes + probe links
+python scripts/repo_janitor.py                  # report only, offline
+```
+
 ## Where things live
 
 - Roadmap: `docs/ROADMAP.md`

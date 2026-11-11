@@ -1,0 +1,151 @@
+# =============================================================================
+# Repo Janitor — the self-healing bot.
+#
+# Where cli-doctor *reports* breakage, the janitor *fixes* it:
+#   * moved/renamed markdown link targets are rewritten,
+#   * stale `directory:` entries in .github/dependabot.yml are repaired,
+#   * broken nav paths in mkdocs.yml are repaired,
+#   * external links that moved permanently (HTTP 301/308) are updated,
+#   * ruff formatting is re-applied, so a formatting drift can never hold
+#     the Lint job hostage again.
+#
+# Deliverables: one PR from the `janitor/auto-fix` branch with everything
+# fixable, and (only when there is nothing to fix but something is broken)
+# an issue with the `janitor` label carrying the unfixable findings.
+#
+# The engine lives in scripts/repo_janitor.py; knobs live in
+# .github/janitor.yml. Run locally:
+#   python scripts/repo_janitor.py --fix --online
+# =============================================================================
+name: Repo Janitor
+
+on:
+  schedule:
+    - cron: "0 5 * * 6" # Saturdays 05:00 UTC — weekly sweep
+  workflow_dispatch:
+    inputs:
+      online:
+        description: "Probe external links over the network"
+        type: boolean
+        default: true
+      create_pr:
+        description: "Open a PR when fixes are available"
+        type: boolean
+        default: true
+  workflow_run:
+    workflows: ["CI — RMT-LLM Verification"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: repo-janitor
+  cancel-in-progress: false
+
+jobs:
+  janitor:
+    # Scheduled and manual runs always go; the workflow_run trigger is the
+    # CI-failure self-heal and only fires when CI failed on main.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install tooling
+        run: |
+          pip install --upgrade pip
+          pip install ruff pyyaml
+
+      - name: Sweep for issues and apply fixes
+        # Reports go to runner.temp — outside the worktree, so that
+        # `git status` counts real fixes only.
+        run: |
+          ONLINE=""
+          if [ "${{ github.event_name }}" != "workflow_run" ] && [ "${{ inputs.online || 'true' }}" = "true" ]; then
+            ONLINE="--online"
+          fi
+          python scripts/repo_janitor.py --fix $ONLINE --no-fail --report "$RUNNER_TEMP/janitor-report"
+
+      - name: Self-heal formatting
+        run: |
+          ruff format src/ laboratory/python/ scripts/
+          ruff check --fix --exit-zero src/ laboratory/python/ scripts/
+
+      - name: Collect outcome
+        id: outcome
+        run: |
+          CHANGES=$(git status --porcelain | wc -l | tr -d ' ')
+          UNFIXABLE=$(grep -c "UNFIXABLE:" "$RUNNER_TEMP/janitor-report.md" 2>/dev/null || true)
+          UNFIXABLE=${UNFIXABLE:-0}
+          echo "changes=$CHANGES" >> "$GITHUB_OUTPUT"
+          echo "unfixable=$UNFIXABLE" >> "$GITHUB_OUTPUT"
+          echo "janitor: $CHANGES file(s) changed, $UNFIXABLE unfixable finding(s)"
+
+      - name: Open auto-fix PR
+        id: pr
+        if: steps.outcome.outputs.changes != '0' && inputs.create_pr != false
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: janitor/auto-fix
+          delete-branch: true
+          title: "janitor: auto-fix links, paths and formatting"
+          body-path: ${{ runner.temp }}/janitor-report.md
+          labels: |
+            janitor
+            automated
+          commit-message: "janitor: auto-fix repository health issues"
+          committer: repo-janitor[bot] <actions@users.noreply.github.com>
+          author: repo-janitor[bot] <actions@users.noreply.github.com>
+
+      - name: Trigger CI on the janitor branch
+        if: steps.pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run ci.yml --ref janitor/auto-fix || \
+            echo "::warning::CI dispatch skipped (workflow may not accept this ref yet)"
+
+      - name: File an issue for unfixable findings
+        # Report to an issue only when no PR carries the findings — otherwise
+        # they are already in the PR body and an issue would duplicate them.
+        if: steps.outcome.outputs.unfixable != '0' && steps.pr.outputs.pull-request-number == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create janitor --color "0E8A16" \
+            --description "Created by the Repo Janitor workflow" 2>/dev/null || true
+          ISSUE_NUM=$(gh issue list --label janitor --state open --limit 1 --json number --jq '.[0].number // ""')
+          if [ -n "$ISSUE_NUM" ]; then
+            gh issue comment "$ISSUE_NUM" --body-file "$RUNNER_TEMP/janitor-report.md"
+          else
+            gh issue create \
+              --title "🤖 Repo Janitor: findings that need a human" \
+              --body-file "$RUNNER_TEMP/janitor-report.md" \
+              --label janitor
+          fi
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: janitor-report
+          path: |
+            janitor-report.md
+            janitor-report.json
+          retention-days: 30

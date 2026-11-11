@@ -710,7 +710,7 @@ og-image && make verify-repo-manifest`.
 
 How does TinyGPT compare to other "small transformer" projects?
 
-| Feature | **TinyGPT (this repo)** | [minGPT](https://github.com/karpathy/minGPT) | [nanoGPT](https://github.com/karpathy/nanoGPT) | [PyTorch transformer](https://pytorch.org/docs/stable/generated/torch.nn.Transformer.html) |
+| Feature | **TinyGPT (this repo)** | [minGPT](https://github.com/karpathy/minGPT) | [nanoGPT](https://github.com/karpathy/nanoGPT) | [PyTorch transformer](https://docs.pytorch.org/docs/stable/generated/torch.nn.Transformer.html) |
 |---------|------------------------|----------------------------------------------|------------------------------------------------|-------------------------------------------------------------------------------------------|
 | Framework | **Pure NumPy** | PyTorch | PyTorch | PyTorch |
 | Dependencies | numpy only | torch | torch | torch |

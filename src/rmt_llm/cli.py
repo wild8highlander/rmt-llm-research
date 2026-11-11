@@ -14,6 +14,7 @@ Usage examples::
     rmt-llm-verify nhse --n-ratio 0.5 --gamma 3.0
     rmt-llm-verify spacing --n 256 --beta 2
 """
+
 from __future__ import annotations
 
 import argparse
@@ -48,10 +49,18 @@ from rmt_llm.tracy_widom import (
 
 
 MODULES = (
-    "marchenko_pastur", "bbp_transition", "tracy_widom", "nhse",
-    "circular_ensembles", "dyson_brownian", "free_probability",
-    "caputo_fractional", "ep_surfaces", "keating_snaith",
-    "thermodynamics", "constants",
+    "marchenko_pastur",
+    "bbp_transition",
+    "tracy_widom",
+    "nhse",
+    "circular_ensembles",
+    "dyson_brownian",
+    "free_probability",
+    "caputo_fractional",
+    "ep_surfaces",
+    "keating_snaith",
+    "thermodynamics",
+    "constants",
 )
 
 
@@ -70,36 +79,56 @@ def cmd_verify(_args: argparse.Namespace) -> int:
 
     lo, hi = mp_bounds(0.1, 1.0)
     rho = mp_density(np.linspace(lo, hi, 64), 0.1, 1.0)
-    checks.append(("marchenko_pastur: density finite",
-                   bool(np.all(np.isfinite(rho))), f"[{lo:.4f}, {hi:.4f}]"))
+    checks.append(
+        (
+            "marchenko_pastur: density finite",
+            bool(np.all(np.isfinite(rho))),
+            f"[{lo:.4f}, {hi:.4f}]",
+        )
+    )
 
     theta_c = bbp_critical_theta(0.1)
     lmax = bbp_lambda_max(2.0, 0.1)
-    checks.append(("bbp_transition: theta_c, lambda_outlier",
-                   bool(np.isfinite(theta_c) and np.isfinite(lmax)),
-                   f"theta_c={theta_c:.4f} lambda_max={lmax:.4f} "
-                   f"supercritical={bbp_is_supercritical(2.0, 0.1)}"))
+    checks.append(
+        (
+            "bbp_transition: theta_c, lambda_outlier",
+            bool(np.isfinite(theta_c) and np.isfinite(lmax)),
+            f"theta_c={theta_c:.4f} lambda_max={lmax:.4f} "
+            f"supercritical={bbp_is_supercritical(2.0, 0.1)}",
+        )
+    )
 
     m, v = tracy_widom_mean(), tracy_widom_variance()
     cdf = tracy_widom_cdf(np.array([-1.5, 0.0, 1.5]))
-    checks.append(("tracy_widom: moments + cdf monotone",
-                   bool(np.isfinite(m) and np.all(np.diff(cdf) >= -1e-12)),
-                   f"mean={m:.4f} var={v:.4f}"))
+    checks.append(
+        (
+            "tracy_widom: moments + cdf monotone",
+            bool(np.isfinite(m) and np.all(np.diff(cdf) >= -1e-12)),
+            f"mean={m:.4f} var={v:.4f}",
+        )
+    )
 
     w = nhse_winding_number(0.5, 3.0)
     s = nhse_skin_strength(0.5, 3.0)
     c = nhse_imag_collapse(0.5, 3.0)
-    checks.append(("nhse: winding, skin, collapse",
-                   all(isinstance(x, (int, float)) and np.isfinite(x)
-                       for x in (w, s, c)),
-                   f"wind={w} skin={s:.4f} collapse={c:.4f}"))
+    checks.append(
+        (
+            "nhse: winding, skin, collapse",
+            all(isinstance(x, (int, float)) and np.isfinite(x) for x in (w, s, c)),
+            f"wind={w} skin={s:.4f} collapse={c:.4f}",
+        )
+    )
 
     ev = circular_eigenvalues(128, rng=np.random.default_rng(0))
     sp = nearest_neighbor_spacing(ev)
     wign = wigner_surmise_circular(sp)
-    checks.append(("circular_ensembles: eigenvalues + spacing",
-                   bool(np.isfinite(sp).all() and np.isfinite(wign).all()),
-                   f"n={len(ev)} mean_spacing={sp.mean():.4f}"))
+    checks.append(
+        (
+            "circular_ensembles: eigenvalues + spacing",
+            bool(np.isfinite(sp).all() and np.isfinite(wign).all()),
+            f"n={len(ev)} mean_spacing={sp.mean():.4f}",
+        )
+    )
 
     ok = all(c[1] for c in checks)
     for name, passed, detail in checks:
@@ -113,16 +142,21 @@ def cmd_mp(args: argparse.Namespace) -> int:
     lam = np.linspace(lo, hi, 128)
     rho = mp_density(lam, args.q, args.sigma2)
     peak = float(lam[int(np.argmax(rho))])
-    out = {"q": args.q, "sigma2": args.sigma2, "support": [lo, hi],
-           "density_peak": peak,
-           "mean_density": float(rho.mean())}
+    out = {
+        "q": args.q,
+        "sigma2": args.sigma2,
+        "support": [lo, hi],
+        "density_peak": peak,
+        "mean_density": float(rho.mean()),
+    }
     print(json.dumps(out, indent=2))
     return 0
 
 
 def cmd_bbp(args: argparse.Namespace) -> int:
     out = {
-        "theta": args.theta, "q": args.q,
+        "theta": args.theta,
+        "q": args.q,
         "theta_critical": bbp_critical_theta(args.q),
         "lambda_max": bbp_lambda_max(args.theta, args.q),
         "supercritical": bool(bbp_is_supercritical(args.theta, args.q)),
@@ -141,14 +175,14 @@ def cmd_tw(args: argparse.Namespace) -> int:
 
 
 def cmd_nhse(args: argparse.Namespace) -> int:
-    ev = nhse_eigenvalues(args.size, args.gamma,
-                          rng=np.random.default_rng(args.seed))
+    ev = nhse_eigenvalues(args.size, args.gamma, rng=np.random.default_rng(args.seed))
     out = {
-        "n_ratio": args.n_ratio, "gamma": args.gamma,
+        "n_ratio": args.n_ratio,
+        "gamma": args.gamma,
         "winding": int(nhse_winding_number(args.n_ratio, args.gamma)),
         "skin_strength": float(nhse_skin_strength(args.n_ratio, args.gamma)),
         "imag_collapse": float(nhse_imag_collapse(args.n_ratio, args.gamma)),
-        "eigen_re": [float(x) for x in ev.real[:args.size]],
+        "eigen_re": [float(x) for x in ev.real[: args.size]],
     }
     print(json.dumps(out, indent=2))
     return 0
@@ -158,11 +192,12 @@ def cmd_spacing(args: argparse.Namespace) -> int:
     ev = circular_eigenvalues(args.n, rng=np.random.default_rng(args.seed))
     sp = nearest_neighbor_spacing(ev)
     out = {
-        "n": args.n, "beta": args.beta,
+        "n": args.n,
+        "beta": args.beta,
         "mean_spacing": float(sp.mean()),
-        "spacing_min": float(sp.min()), "spacing_max": float(sp.max()),
-        "wigner_surmise_at_1": float(wigner_surmise_circular(np.array([1.0]),
-                                                            args.beta)[0]),
+        "spacing_min": float(sp.min()),
+        "spacing_max": float(sp.max()),
+        "wigner_surmise_at_1": float(wigner_surmise_circular(np.array([1.0]), args.beta)[0]),
     }
     print(json.dumps(out, indent=2))
     return 0
@@ -170,8 +205,8 @@ def cmd_spacing(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="rmt-llm-verify",
-        description="RMT-LLM spectral verification CLI (NumPy core)")
+        prog="rmt-llm-verify", description="RMT-LLM spectral verification CLI (NumPy core)"
+    )
     sub = p.add_subparsers(dest="command", required=True)
 
     sub.add_parser("info", help="package info and module list")
@@ -182,13 +217,13 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--sigma2", type=float, default=1.0, help="noise variance")
 
     sp = sub.add_parser("bbp", help="BBP transition: outlier position")
-    sp.add_argument("--theta", type=float, default=2.0,
-                    help="signal strength")
+    sp.add_argument("--theta", type=float, default=2.0, help="signal strength")
     sp.add_argument("--q", type=float, default=0.1)
 
     sp = sub.add_parser("tw", help="Tracy-Widom (beta=2) CDF and moments")
-    sp.add_argument("--s", type=float, nargs="+", default=[-1.5, 0.0, 1.5],
-                    help="one or more s values")
+    sp.add_argument(
+        "--s", type=float, nargs="+", default=[-1.5, 0.0, 1.5], help="one or more s values"
+    )
 
     sp = sub.add_parser("nhse", help="non-Hermitian skin effect summary")
     sp.add_argument("--n-ratio", type=float, default=0.5)

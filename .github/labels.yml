@@ -75,6 +75,10 @@
   color: "f1e05a"
   description: "JS / React / Node.js changes (webapp)"
 
+- name: "janitor"
+  color: "0e8a16"
+  description: "Opened by the Repo Janitor self-healing workflow (links, paths, formatting)"
+
 - name: "julia"
   color: "9558b2"
   description: "Julia-specific changes"
