@@ -1,0 +1,466 @@
+{
+ "tag": "rcda6_trained",
+ "edited_state": "/home/z/my-project/work/gemma_work/rcda6/trained_state.safetensors",
+ "n_changed_tensors": 16,
+ "changed": {
+  "model.layers.10.mlp.down_proj.weight": {
+   "rel_frobenius": 0.00381,
+   "n_weights": 2631114
+  },
+  "model.layers.10.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.00448,
+   "n_weights": 577748
+  },
+  "model.layers.11.mlp.down_proj.weight": {
+   "rel_frobenius": 0.00326,
+   "n_weights": 2476795
+  },
+  "model.layers.11.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.00317,
+   "n_weights": 439032
+  },
+  "model.layers.12.mlp.down_proj.weight": {
+   "rel_frobenius": 0.00435,
+   "n_weights": 3324763
+  },
+  "model.layers.12.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.00176,
+   "n_weights": 372601
+  },
+  "model.layers.13.mlp.down_proj.weight": {
+   "rel_frobenius": 0.00419,
+   "n_weights": 3085830
+  },
+  "model.layers.13.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.00092,
+   "n_weights": 233276
+  },
+  "model.layers.14.mlp.down_proj.weight": {
+   "rel_frobenius": 0.00345,
+   "n_weights": 2573435
+  },
+  "model.layers.14.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.00058,
+   "n_weights": 175779
+  },
+  "model.layers.15.mlp.down_proj.weight": {
+   "rel_frobenius": 0.00156,
+   "n_weights": 1337027
+  },
+  "model.layers.15.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.00101,
+   "n_weights": 221363
+  },
+  "model.layers.8.mlp.down_proj.weight": {
+   "rel_frobenius": 0.01126,
+   "n_weights": 5319528
+  },
+  "model.layers.8.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.00223,
+   "n_weights": 384106
+  },
+  "model.layers.9.mlp.down_proj.weight": {
+   "rel_frobenius": 0.00356,
+   "n_weights": 2709104
+  },
+  "model.layers.9.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.00574,
+   "n_weights": 664449
+  }
+ },
+ "tw": {
+  "model.layers.10.mlp.down_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.10.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.11.mlp.down_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.11.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.12.mlp.down_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.12.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.13.mlp.down_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.13.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.14.mlp.down_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.14.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.15.mlp.down_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.15.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.8.mlp.down_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.8.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.9.mlp.down_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.9.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  }
+ },
+ "cosine_edit_vs_v": {
+  "model.layers.10.mlp.down_proj.weight": 0.107,
+  "model.layers.10.self_attn.o_proj.weight": 0.1138,
+  "model.layers.11.mlp.down_proj.weight": 0.2974,
+  "model.layers.11.self_attn.o_proj.weight": 0.0585,
+  "model.layers.12.mlp.down_proj.weight": 0.205,
+  "model.layers.12.self_attn.o_proj.weight": 0.1405,
+  "model.layers.13.mlp.down_proj.weight": 0.2262,
+  "model.layers.13.self_attn.o_proj.weight": 0.3263,
+  "model.layers.14.mlp.down_proj.weight": 0.1191,
+  "model.layers.14.self_attn.o_proj.weight": 0.2689,
+  "model.layers.15.mlp.down_proj.weight": 0.3217,
+  "model.layers.15.self_attn.o_proj.weight": 0.0267,
+  "model.layers.8.mlp.down_proj.weight": 0.3193,
+  "model.layers.8.self_attn.o_proj.weight": 0.1948,
+  "model.layers.9.mlp.down_proj.weight": 0.1981,
+  "model.layers.9.self_attn.o_proj.weight": 0.1421
+ },
+ "rho_bad": 0.85,
+ "rho_good": 0.1,
+ "loop_waste_mean": 160.1,
+ "loop_share_mean_bad": 0.6271,
+ "kl_ctrl": 0.3074,
+ "rows": [
+  {
+   "id": "bad_g01",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.8594,
+   "looping": true,
+   "loop_waste": 165
+  },
+  {
+   "id": "bad_g02",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.2448,
+   "looping": false,
+   "loop_waste": 141
+  },
+  {
+   "id": "bad_g03",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.7448,
+   "looping": true,
+   "loop_waste": 167
+  },
+  {
+   "id": "bad_g04",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.8125,
+   "looping": true,
+   "loop_waste": 165
+  },
+  {
+   "id": "bad_g05",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.651,
+   "looping": true,
+   "loop_waste": 160
+  },
+  {
+   "id": "bad_g06",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.6094,
+   "looping": true,
+   "loop_waste": 139
+  },
+  {
+   "id": "bad_g07",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.6302,
+   "looping": true,
+   "loop_waste": 167
+  },
+  {
+   "id": "bad_g08",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.7812,
+   "looping": true,
+   "loop_waste": 172
+  },
+  {
+   "id": "bad_g09",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.5729,
+   "looping": true,
+   "loop_waste": 159
+  },
+  {
+   "id": "bad_g10",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.6198,
+   "looping": true,
+   "loop_waste": 148
+  },
+  {
+   "id": "bad_g11",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.276,
+   "looping": false,
+   "loop_waste": 138
+  },
+  {
+   "id": "bad_g12",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.6406,
+   "looping": true,
+   "loop_waste": 164
+  },
+  {
+   "id": "bad_g13",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.5885,
+   "looping": true,
+   "loop_waste": 138
+  },
+  {
+   "id": "bad_g14",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.6979,
+   "looping": true,
+   "loop_waste": 165
+  },
+  {
+   "id": "bad_g15",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.5521,
+   "looping": true,
+   "loop_waste": 168
+  },
+  {
+   "id": "bad_g16",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.7135,
+   "looping": true,
+   "loop_waste": 147
+  },
+  {
+   "id": "bad_g17",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.8906,
+   "looping": true,
+   "loop_waste": 176
+  },
+  {
+   "id": "bad_g18",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.5208,
+   "looping": true,
+   "loop_waste": 180
+  },
+  {
+   "id": "bad_g19",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.4792,
+   "looping": false,
+   "loop_waste": 163
+  },
+  {
+   "id": "bad_g20",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.6562,
+   "looping": true,
+   "loop_waste": 180
+  },
+  {
+   "id": "good_fact_01",
+   "kind": "good",
+   "n_tokens": 192,
+   "loop_share": 0.2188,
+   "looping": false,
+   "loop_waste": 164
+  },
+  {
+   "id": "good_fact_02",
+   "kind": "good",
+   "n_tokens": 192,
+   "loop_share": 0.9115,
+   "looping": true,
+   "loop_waste": 175
+  },
+  {
+   "id": "good_fact_03",
+   "kind": "good",
+   "n_tokens": 192,
+   "loop_share": 0.6615,
+   "looping": true,
+   "loop_waste": 157
+  },
+  {
+   "id": "good_fact_04",
+   "kind": "good",
+   "n_tokens": 9,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_05",
+   "kind": "good",
+   "n_tokens": 37,
+   "loop_share": 0.027,
+   "looping": false,
+   "loop_waste": 27
+  },
+  {
+   "id": "good_fact_06",
+   "kind": "good",
+   "n_tokens": 7,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_07",
+   "kind": "good",
+   "n_tokens": 14,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_08",
+   "kind": "good",
+   "n_tokens": 18,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_09",
+   "kind": "good",
+   "n_tokens": 8,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_10",
+   "kind": "good",
+   "n_tokens": 7,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_11",
+   "kind": "good",
+   "n_tokens": 9,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_12",
+   "kind": "good",
+   "n_tokens": 7,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_13",
+   "kind": "good",
+   "n_tokens": 40,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_14",
+   "kind": "good",
+   "n_tokens": 7,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_15",
+   "kind": "good",
+   "n_tokens": 10,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_16",
+   "kind": "good",
+   "n_tokens": 9,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_17",
+   "kind": "good",
+   "n_tokens": 192,
+   "loop_share": 0.4115,
+   "looping": false,
+   "loop_waste": 125
+  },
+  {
+   "id": "good_fact_18",
+   "kind": "good",
+   "n_tokens": 8,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_19",
+   "kind": "good",
+   "n_tokens": 47,
+   "loop_share": 0.1702,
+   "looping": false,
+   "loop_waste": 10
+  },
+  {
+   "id": "good_fact_20",
+   "kind": "good",
+   "n_tokens": 12,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+# runtime artifacts stay out of git — results are committed instead
+rcda_work/
+rcda6/
+rcda5/
+probe/
+probe_phase/
+__pycache__/
+*.pyc

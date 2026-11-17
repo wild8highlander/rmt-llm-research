@@ -1,0 +1,132 @@
+{
+ "layers": [
+  10,
+  11,
+  12
+ ],
+ "digest": {
+  "model.layers.10.self_attn.o_proj.weight": {
+   "layer": 10,
+   "rel_frobenius": 0.02625,
+   "tw_verdict": "violation",
+   "z_resid_tw": 7303.954,
+   "target_shift_tw_units": 935.702,
+   "cos_u1_v": 0.3238,
+   "cos_top_left_sv_vs_v": 0.3238,
+   "cols_changed_gt_1pct": 557009,
+   "n_weights": 1179648,
+   "sigma2_resid": 7.443293014336159e-10,
+   "lam_plus_resid": 2.809476137764534e-09,
+   "top16_singular_values_delta": [
+    0.482847,
+    0.20377,
+    0.107207,
+    0.087107,
+    0.057989,
+    0.051796,
+    0.042121,
+    0.034547,
+    0.031708,
+    0.029215,
+    0.028259,
+    0.027714,
+    0.026923,
+    0.024242,
+    0.023084,
+    0.021129
+   ],
+   "tw_detail": {
+    "verdict": "violation",
+    "z_resid_tw": 7303.954,
+    "target_shift_tw_units": 935.702,
+    "target_index": 1,
+    "target_cos": 0.3528,
+    "sigma2_resid": 7.443293014336159e-10,
+    "lam_plus_resid": 2.809476137764534e-09,
+    "rel_frobenius": 0.02624702214950822
+   }
+  },
+  "model.layers.11.self_attn.o_proj.weight": {
+   "layer": 11,
+   "rel_frobenius": 0.01691,
+   "tw_verdict": "violation",
+   "z_resid_tw": 5194.345,
+   "target_shift_tw_units": 59.741,
+   "cos_u1_v": 0.1772,
+   "cos_top_left_sv_vs_v": 0.1772,
+   "cols_changed_gt_1pct": 375038,
+   "n_weights": 1179648,
+   "sigma2_resid": 6.139836488679179e-10,
+   "lam_plus_resid": 2.317485563378507e-09,
+   "top16_singular_values_delta": [
+    0.357447,
+    0.10075,
+    0.069563,
+    0.043845,
+    0.029643,
+    0.027768,
+    0.021677,
+    0.019741,
+    0.016981,
+    0.013336,
+    0.012689,
+    0.012327,
+    0.012051,
+    0.011397,
+    0.010903,
+    0.010236
+   ],
+   "tw_detail": {
+    "verdict": "violation",
+    "z_resid_tw": 5194.345,
+    "target_shift_tw_units": 59.741,
+    "target_index": 7,
+    "target_cos": 0.2202,
+    "sigma2_resid": 6.139836488679179e-10,
+    "lam_plus_resid": 2.317485563378507e-09,
+    "rel_frobenius": 0.016911501944474615
+   }
+  },
+  "model.layers.12.self_attn.o_proj.weight": {
+   "layer": 12,
+   "rel_frobenius": 0.00844,
+   "tw_verdict": "violation",
+   "z_resid_tw": 853.824,
+   "target_shift_tw_units": -23.592,
+   "cos_u1_v": 0.3123,
+   "cos_top_left_sv_vs_v": 0.3123,
+   "cols_changed_gt_1pct": 262106,
+   "n_weights": 1179648,
+   "sigma2_resid": 6.317446087301171e-10,
+   "lam_plus_resid": 2.3845244302087312e-09,
+   "top16_singular_values_delta": [
+    0.161552,
+    0.092813,
+    0.04107,
+    0.030951,
+    0.025306,
+    0.021811,
+    0.019988,
+    0.016725,
+    0.014116,
+    0.012227,
+    0.011008,
+    0.010768,
+    0.009792,
+    0.009497,
+    0.008679,
+    0.0085
+   ],
+   "tw_detail": {
+    "verdict": "violation",
+    "z_resid_tw": 853.824,
+    "target_shift_tw_units": -23.592,
+    "target_index": 0,
+    "target_cos": 0.3123,
+    "sigma2_resid": 6.317446087301171e-10,
+    "lam_plus_resid": 2.3845244302087312e-09,
+    "rel_frobenius": 0.008438933339041083
+   }
+  }
+ }
+}

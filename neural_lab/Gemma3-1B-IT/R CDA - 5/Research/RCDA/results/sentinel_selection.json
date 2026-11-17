@@ -1,0 +1,142 @@
+[
+ {
+  "id": "bad_g01",
+  "orig_id": "p01",
+  "text": "Дождь идёт. Дождь идёт. Дождь идёт. Дождь идёт.",
+  "base_loop_share": 0.958,
+  "base_collapse": 8
+ },
+ {
+  "id": "bad_g02",
+  "orig_id": "p03",
+  "text": "Ветер дует. Ветер дует. Ветер дует. Ветер дует.",
+  "base_loop_share": 0.958,
+  "base_collapse": 8
+ },
+ {
+  "id": "bad_g03",
+  "orig_id": "p28",
+  "text": "Осень пришла. Осень пришла. Осень пришла. Осень пришла. Осень",
+  "base_loop_share": 0.958,
+  "base_collapse": 8
+ },
+ {
+  "id": "bad_g04",
+  "orig_id": "p07",
+  "text": "Кот спит на крыше. Кот спит на крыше. Кот спит на крыше. Кот спит",
+  "base_loop_share": 0.938,
+  "base_collapse": 12
+ },
+ {
+  "id": "bad_g05",
+  "orig_id": "p23",
+  "text": "Дождь идёт. Дождь идёт. Снег падает. Снег падает. Дождь идёт. Снег падает. Дождь",
+  "base_loop_share": 0.927,
+  "base_collapse": 14
+ },
+ {
+  "id": "bad_g06",
+  "orig_id": "p24",
+  "text": "Жили-были дед да баба. Жили-были дед да баба. Жили-были дед да баба. И",
+  "base_loop_share": 0.891,
+  "base_collapse": 21
+ },
+ {
+  "id": "bad_g07",
+  "orig_id": "q01",
+  "text": "Метель кружит. Метель кружит. Метель кружит. Метель кружит.",
+  "base_loop_share": 0.87,
+  "base_collapse": 18
+ },
+ {
+  "id": "bad_g08",
+  "orig_id": "p08",
+  "text": "Море шумит. Море шумит. Море шумит. Море шумит. Море",
+  "base_loop_share": 0.865,
+  "base_collapse": 21
+ },
+ {
+  "id": "bad_g09",
+  "orig_id": "p10",
+  "text": "И эхо повторяло его имя. И эхо повторяло его имя. И эхо повторяло его имя. И",
+  "base_loop_share": 0.755,
+  "base_collapse": 45
+ },
+ {
+  "id": "bad_g10",
+  "orig_id": "p16",
+  "text": "The clock ticks. The clock ticks. The clock ticks. The clock ticks.",
+  "base_loop_share": 0.641,
+  "base_collapse": 17
+ },
+ {
+  "id": "bad_g11",
+  "orig_id": "p14",
+  "text": "The snow falls. The snow falls. The snow falls. The snow falls.",
+  "base_loop_share": 0.593,
+  "base_collapse": 28
+ },
+ {
+  "id": "bad_g12",
+  "orig_id": "p26",
+  "text": "Тук-тук-тук. Тук-тук-тук. Тук-тук-тук. Тук-тук-тук.",
+  "base_loop_share": 0.573,
+  "base_collapse": 19
+ },
+ {
+  "id": "bad_g13",
+  "orig_id": "p13",
+  "text": "The rain falls. The rain falls. The rain falls. And the rain falls. And",
+  "base_loop_share": 0.401,
+  "base_collapse": 27
+ },
+ {
+  "id": "bad_g14",
+  "orig_id": "q16",
+  "text": "The sky darkens. The sky darkens. The sky darkens. The sky darkens.",
+  "base_loop_share": 0.325,
+  "base_collapse": 22
+ },
+ {
+  "id": "bad_g15",
+  "orig_id": "q20",
+  "text": "The clouds roll in. The clouds roll in. The clouds roll in. The clouds roll in.",
+  "base_loop_share": 0.182,
+  "base_collapse": 32
+ },
+ {
+  "id": "bad_g16",
+  "orig_id": "q06",
+  "text": "Соловей поёт в саду. Соловей поёт в саду. Соловей поёт в саду. Соловей",
+  "base_loop_share": 0.109,
+  "base_collapse": 71
+ },
+ {
+  "id": "bad_g17",
+  "orig_id": "p22",
+  "text": "The train went through the field. The train went through the field. The train went through the",
+  "base_loop_share": 0.078,
+  "base_collapse": 76
+ },
+ {
+  "id": "bad_g18",
+  "orig_id": "q19",
+  "text": "Тучи идут. Тучи идут. Тучи идут. Тучи идут.",
+  "base_loop_share": 0.078,
+  "base_collapse": 31
+ },
+ {
+  "id": "bad_g19",
+  "orig_id": "q05",
+  "text": "Лодка качается на волнах. Лодка качается на волнах. Лодка качается на волнах. Лодка",
+  "base_loop_share": 0.073,
+  "base_collapse": 71
+ },
+ {
+  "id": "bad_g20",
+  "orig_id": "p05",
+  "text": "Река течёт. Река течёт. Река течёт. Река течёт.",
+  "base_loop_share": 0.068,
+  "base_collapse": 77
+ }
+]

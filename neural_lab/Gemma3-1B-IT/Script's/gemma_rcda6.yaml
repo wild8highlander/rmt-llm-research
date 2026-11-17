@@ -1,0 +1,84 @@
+# gemma_rcda6.yaml — the final configuration as actually run (2026-11-16)
+# Gemma3-1B-IT RCDA-6 — the expanded trainable set, phase-conditioned
+
+model:
+  hf_card: "https://huggingface.co/litert-community/Gemma3-1B-IT"
+  base_checkpoint: "google/gemma-3-1b-it"     # identical weights; trained via
+  training_mirror: "unsloth/gemma-3-1b-it"    # public mirror, checksum-verified
+  dtype: bfloat16
+  params: 1.04e9
+  layers: 26
+  hidden: 1152
+  intermediate: 6912
+  vocab: 262144
+
+protocol:
+  mode: raw_completion            # no chat template (MNN-Pocket analog)
+  max_new: 192
+  ngram: 4
+  loop_threshold: 0.5
+  bad_pref: 48
+
+sentinel:                          # identical frozen sets as RCDA-5
+  bad_set: prompts/bad.jsonl       # 20 prompts, 12 loop at base
+  good_set: prompts/good.jsonl     # 20 factoids
+  control_set: prompts/control.jsonl
+  rho_bad_base: 0.60
+
+probe:                             # RCDA-5 collapse probe (shared, frozen)
+  script: Code/gemma_probe.py
+  writers: [10, 11, 12]
+  generations: "frozen RCDA-5 probe gens (reused, no re-sampling)"
+
+probe_phase:                       # RCDA-6 stage 1 — the phase conditioning
+  script: Code/gemma_probe_phase.py
+  pool_threshold: 0.3
+  early_cycles: 2
+  cycle_fit: "smallest token period with self-match >= 0.8, p <= 64"
+  pool: "14 looping trajectories; 9 period-regular define directions, 5 irregular excluded"
+  band: [8, 9, 10, 11, 12, 13, 14, 15]
+  z_early_range: [75.5, 118.1]
+  z_deep_range: [247.4, 392.7]
+  cos_v_early_v_deep_range: [0.48, 0.89]
+  shipped_direction: v_deep        # v_L{l}.npy := v_deep for the evaluator
+
+train:
+  script: Code/gemma_rcds6_train.py
+  steps: 150
+  batch: 1
+  band: [8, 9, 10, 11, 12, 13, 14, 15]
+  tensor_types: [o_proj, down_proj]
+  trainable_params: 73138176       # 7.31 % of the model, 21x RCDA-5
+  loss: "pen_norm + beta*relu(mse - cap)"
+  pen: "phase-matched: pre/early positions -> vhat_early, deep -> vhat_deep"
+  pen_norm: "pen_raw / pen0_j (dimensionless, init 1.0; median pen0 5.29e6)"
+  beta: 10.0
+  mse_cap: 1.0
+  anchor: "MSE(trailing 32 logits, base logits) on good prompt + base completion"
+  optimizer: {type: sgd, lr: 3.0e-3, momentum: 0.9, grad_clip: 1.0}
+  bench_at: [0, 150]               # the planned 75-point bench was dropped
+  bench_note: "step-75 checkpoint not kept (CPU time budget); deviation recorded in RCDA6_REPORT.md §2"
+
+eval:
+  script: Code/gemma_benchmark.py
+  tag: rcda6_trained
+  probe: probe_phase               # TW/cos against v_deep
+  control_texts: prompts/control.jsonl
+  results: Research/RCDA/results/
+
+results_summary_as_run:
+  rho_bad: 0.85                    # base 0.60; RCDA-5 1.00 / 0.95
+  rho_good: 0.10
+  loop_share_mean_bad: 0.6271      # base 0.5619; RCDA-5 0.911
+  loop_waste_mean_bad: 160.1
+  kl_ctrl: 0.3074
+  ppl_control_mean: 14.1           # base 10.9; parity broken (+29 %)
+  tw_verdict: "violation x16"
+  hard12_loop_share: 0.620         # base 0.827; RCDA-5 0.908 — the gate that passed
+  mild8_loop_share: 0.637          # base 0.164 — the migration cost
+  fixed_prompts: [bad_g02, bad_g11]
+
+packaging:
+  archive: "Model ZIP/gemma3-rcda6-interventions.zip.01..02"
+  content: "trained DELTA state (16 tensors, bf16) + training_log + ppl + provenance"
+  volume_bytes: 95000000           # <= GitHub 100 MB hard limit

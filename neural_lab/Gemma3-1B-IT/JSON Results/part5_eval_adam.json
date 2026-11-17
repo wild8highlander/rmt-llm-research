@@ -1,0 +1,362 @@
+{
+ "tag": "adam",
+ "edited_state": "work/gemma_work/rcda5_adam/trained_state.safetensors",
+ "n_changed_tensors": 3,
+ "changed": {
+  "model.layers.10.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.01936,
+   "n_weights": 1085097
+  },
+  "model.layers.11.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.01851,
+   "n_weights": 1084738
+  },
+  "model.layers.12.self_attn.o_proj.weight": {
+   "rel_frobenius": 0.01814,
+   "n_weights": 1082306
+  }
+ },
+ "tw": {
+  "model.layers.10.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.11.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  },
+  "model.layers.12.self_attn.o_proj.weight": {
+   "verdict": "violation"
+  }
+ },
+ "cosine_edit_vs_v": {
+  "model.layers.10.self_attn.o_proj.weight": 0.083,
+  "model.layers.11.self_attn.o_proj.weight": 0.0497,
+  "model.layers.12.self_attn.o_proj.weight": 0.1367
+ },
+ "rho_bad": 0.95,
+ "rho_good": 0.05,
+ "loop_waste_mean": 177.9,
+ "loop_share_mean_bad": 0.9078,
+ "kl_ctrl": 0.0248,
+ "rows": [
+  {
+   "id": "bad_g01",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9583,
+   "looping": true,
+   "loop_waste": 184
+  },
+  {
+   "id": "bad_g02",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9583,
+   "looping": true,
+   "loop_waste": 184
+  },
+  {
+   "id": "bad_g03",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9583,
+   "looping": true,
+   "loop_waste": 184
+  },
+  {
+   "id": "bad_g04",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9427,
+   "looping": true,
+   "loop_waste": 181
+  },
+  {
+   "id": "bad_g05",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9271,
+   "looping": true,
+   "loop_waste": 178
+  },
+  {
+   "id": "bad_g06",
+   "kind": "bad",
+   "n_tokens": 147,
+   "loop_share": 0.1973,
+   "looping": false,
+   "loop_waste": 99
+  },
+  {
+   "id": "bad_g07",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9583,
+   "looping": true,
+   "loop_waste": 184
+  },
+  {
+   "id": "bad_g08",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9583,
+   "looping": true,
+   "loop_waste": 184
+  },
+  {
+   "id": "bad_g09",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9219,
+   "looping": true,
+   "loop_waste": 177
+  },
+  {
+   "id": "bad_g10",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9375,
+   "looping": true,
+   "loop_waste": 183
+  },
+  {
+   "id": "bad_g11",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9635,
+   "looping": true,
+   "loop_waste": 185
+  },
+  {
+   "id": "bad_g12",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9219,
+   "looping": true,
+   "loop_waste": 180
+  },
+  {
+   "id": "bad_g13",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9115,
+   "looping": true,
+   "loop_waste": 179
+  },
+  {
+   "id": "bad_g14",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9583,
+   "looping": true,
+   "loop_waste": 184
+  },
+  {
+   "id": "bad_g15",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9583,
+   "looping": true,
+   "loop_waste": 184
+  },
+  {
+   "id": "bad_g16",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9375,
+   "looping": true,
+   "loop_waste": 180
+  },
+  {
+   "id": "bad_g17",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9219,
+   "looping": true,
+   "loop_waste": 178
+  },
+  {
+   "id": "bad_g18",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9635,
+   "looping": true,
+   "loop_waste": 185
+  },
+  {
+   "id": "bad_g19",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9427,
+   "looping": true,
+   "loop_waste": 181
+  },
+  {
+   "id": "bad_g20",
+   "kind": "bad",
+   "n_tokens": 192,
+   "loop_share": 0.9583,
+   "looping": true,
+   "loop_waste": 184
+  },
+  {
+   "id": "good_fact_01",
+   "kind": "good",
+   "n_tokens": 4,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_02",
+   "kind": "good",
+   "n_tokens": 192,
+   "loop_share": 0.8958,
+   "looping": true,
+   "loop_waste": 176
+  },
+  {
+   "id": "good_fact_03",
+   "kind": "good",
+   "n_tokens": 192,
+   "loop_share": 0.0365,
+   "looping": false,
+   "loop_waste": 116
+  },
+  {
+   "id": "good_fact_04",
+   "kind": "good",
+   "n_tokens": 40,
+   "loop_share": 0.025,
+   "looping": false,
+   "loop_waste": 21
+  },
+  {
+   "id": "good_fact_05",
+   "kind": "good",
+   "n_tokens": 27,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_06",
+   "kind": "good",
+   "n_tokens": 20,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_07",
+   "kind": "good",
+   "n_tokens": 14,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_08",
+   "kind": "good",
+   "n_tokens": 27,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_09",
+   "kind": "good",
+   "n_tokens": 8,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_10",
+   "kind": "good",
+   "n_tokens": 7,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_11",
+   "kind": "good",
+   "n_tokens": 36,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_12",
+   "kind": "good",
+   "n_tokens": 16,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_13",
+   "kind": "good",
+   "n_tokens": 58,
+   "loop_share": 0.069,
+   "looping": false,
+   "loop_waste": 42
+  },
+  {
+   "id": "good_fact_14",
+   "kind": "good",
+   "n_tokens": 33,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_15",
+   "kind": "good",
+   "n_tokens": 11,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_16",
+   "kind": "good",
+   "n_tokens": 24,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_17",
+   "kind": "good",
+   "n_tokens": 21,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_18",
+   "kind": "good",
+   "n_tokens": 21,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  },
+  {
+   "id": "good_fact_19",
+   "kind": "good",
+   "n_tokens": 45,
+   "loop_share": 0.1778,
+   "looping": false,
+   "loop_waste": 10
+  },
+  {
+   "id": "good_fact_20",
+   "kind": "good",
+   "n_tokens": 13,
+   "loop_share": 0.0,
+   "looping": false,
+   "loop_waste": 0
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+# Gemma3-1B-IT RCDA-5 runtime (CPU-only; tested on 2 cores / 4 GB RAM)
+torch>=2.0          # CPU wheel is fine: pip install torch --index-url https://download.pytorch.org/whl/cpu
+transformers>=4.51  # Gemma3 support (tested with 5.23)
+safetensors>=0.4
+numpy>=1.26
+matplotlib>=3.8     # figures only
+PyYAML>=6.0         # config/gemma_rcda5.yaml

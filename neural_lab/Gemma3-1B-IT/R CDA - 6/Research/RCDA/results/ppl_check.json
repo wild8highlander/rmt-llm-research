@@ -1,0 +1,22 @@
+{
+ "base": {
+  "ppl_control_mean": 10.9,
+  "ppl_per_text": [
+   4.2,
+   11.3,
+   11.2,
+   7.9,
+   19.7
+  ]
+ },
+ "trained": {
+  "ppl_control_mean": 14.1,
+  "ppl_per_text": [
+   4.7,
+   14.7,
+   11.8,
+   8.8,
+   30.6
+  ]
+ }
+}

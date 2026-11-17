@@ -1,0 +1,61 @@
+# gemma_rcda5.yaml — the final configuration as actually run (2026-11-16)
+# Gemma3-1B-IT RCDA-5 — the formula as a loss
+
+model:
+  hf_card: "https://huggingface.co/litert-community/Gemma3-1B-IT"
+  base_checkpoint: "google/gemma-3-1b-it"     # identical weights; trained via
+  training_mirror: "unsloth/gemma-3-1b-it"    # public mirror, checksum-verified
+  dtype: bfloat16
+  params: 1.04e9
+  layers: 26
+  hidden: 1152
+  vocab: 262144
+
+protocol:
+  mode: raw_completion            # no chat template (MNN-Pocket analog)
+  max_new: 192                    # loop window [GEMMA-ADAPT]
+  ngram: 4
+  loop_threshold: 0.5
+  bad_pref: 48                    # greedy prefix length for the penalty
+
+sentinel:
+  pool_size: 50
+  selection: top20_by_base_loop_share
+  bad_set: prompts/bad.jsonl      # frozen; 12/20 loop at base
+  rho_bad_base: 0.60
+
+probe:
+  script: Code/gemma_probe.py
+  pool_threshold: 0.3
+  writer_rule: "sliding window 5, best 3 inside"
+  writers: [10, 11, 12]
+  z_diff: [212.595, 219.827, 205.125]
+  v: Research/RCDA/results/rcds5_vectors.npz
+
+train:
+  script: Code/gemma_rcds_train.py
+  steps: 150
+  batch: 1
+  trainable: "model.layers.{10,11,12}.self_attn.o_proj.weight"
+  trainable_params: 3538944
+  loss: "pen_norm + beta*relu(mse - cap)"
+  pen_norm: "mean_l mean_t (vhat_l^T h_t)^2 / pen0_j   # dimensionless"
+  beta: 10.0
+  mse_cap: 1.0
+  anchor: "MSE(trailing 32 logits, base logits) on good prompt + base completion"
+  bench_at: [75, 150]
+  bench_n: 8
+  arms:
+    trained: {optim: sgd,  lr: 3.0e-3, momentum: 0.9, grad_clip: 1.0}
+    adam:    {optim: adam, lr: 3.0e-5, momentum: null, grad_clip: null}
+
+eval:
+  script: Code/gemma_benchmark.py
+  arms: [base, trained, adam]
+  control_texts: prompts/control.jsonl
+  results: Research/RCDA/results/
+
+packaging:
+  archive: "Model ZIP/gemma3-rcds-interventions.zip.01..17"
+  volume_bytes: 95000000          # <= GitHub 100 MB hard limit
+  model_sha256: "90489a1a58383cc3619b1a88465eb2edfaf83a8a3a570ab0a9d611536af6ad5e"
