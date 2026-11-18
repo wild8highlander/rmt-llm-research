@@ -1,335 +1,50 @@
 {
  "tag": "base",
- "edited_state": "none",
+ "model": "openai-community/gpt2",
+ "round": 5,
+ "protocol": {
+  "n_bad": 16,
+  "n_good": 16,
+  "max_new": 96,
+  "ngram": 4,
+  "rho_threshold": 0.5,
+  "decoding": "greedy",
+  "precision": "fp32"
+ },
  "n_changed_tensors": 0,
  "changed": {},
  "tw": {},
  "cosine_edit_vs_v": {},
- "rho_bad": 0.6,
- "rho_good": 0.1,
- "loop_waste_mean": 147.1,
- "loop_share_mean_bad": 0.5619,
+ "rho_bad": 0.9375,
+ "rho_good": 1.0,
+ "mean_loop_share": 0.8945,
+ "loop_waste_mean": 85.9,
+ "per_traj_loop_share_bad": [
+  1.0,
+  1.0,
+  0.896,
+  1.0,
+  0.625,
+  0.896,
+  1.0,
+  0.906,
+  1.0,
+  1.0,
+  1.0,
+  0.0,
+  1.0,
+  1.0,
+  1.0,
+  0.99
+ ],
  "kl_ctrl": 0.0,
- "rows": [
-  {
-   "id": "bad_g01",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.9583,
-   "looping": true,
-   "loop_waste": 184
-  },
-  {
-   "id": "bad_g02",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.9583,
-   "looping": true,
-   "loop_waste": 184
-  },
-  {
-   "id": "bad_g03",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.9583,
-   "looping": true,
-   "loop_waste": 184
-  },
-  {
-   "id": "bad_g04",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.9375,
-   "looping": true,
-   "loop_waste": 180
-  },
-  {
-   "id": "bad_g05",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.9271,
-   "looping": true,
-   "loop_waste": 178
-  },
-  {
-   "id": "bad_g06",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.8906,
-   "looping": true,
-   "loop_waste": 171
-  },
-  {
-   "id": "bad_g07",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.8698,
-   "looping": true,
-   "loop_waste": 174
-  },
-  {
-   "id": "bad_g08",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.8646,
-   "looping": true,
-   "loop_waste": 171
-  },
-  {
-   "id": "bad_g09",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.7552,
-   "looping": true,
-   "loop_waste": 147
-  },
-  {
-   "id": "bad_g10",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.6406,
-   "looping": true,
-   "loop_waste": 175
-  },
-  {
-   "id": "bad_g11",
-   "kind": "bad",
-   "n_tokens": 86,
-   "loop_share": 0.593,
-   "looping": true,
-   "loop_waste": 58
-  },
-  {
-   "id": "bad_g12",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.5729,
-   "looping": true,
-   "loop_waste": 173
-  },
-  {
-   "id": "bad_g13",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.401,
-   "looping": false,
-   "loop_waste": 165
-  },
-  {
-   "id": "bad_g14",
-   "kind": "bad",
-   "n_tokens": 151,
-   "loop_share": 0.3245,
-   "looping": false,
-   "loop_waste": 129
-  },
-  {
-   "id": "bad_g15",
-   "kind": "bad",
-   "n_tokens": 143,
-   "loop_share": 0.1818,
-   "looping": false,
-   "loop_waste": 111
-  },
-  {
-   "id": "bad_g16",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.1094,
-   "looping": false,
-   "loop_waste": 121
-  },
-  {
-   "id": "bad_g17",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.0781,
-   "looping": false,
-   "loop_waste": 116
-  },
-  {
-   "id": "bad_g18",
-   "kind": "bad",
-   "n_tokens": 129,
-   "loop_share": 0.0775,
-   "looping": false,
-   "loop_waste": 98
-  },
-  {
-   "id": "bad_g19",
-   "kind": "bad",
-   "n_tokens": 179,
-   "loop_share": 0.0726,
-   "looping": false,
-   "loop_waste": 108
-  },
-  {
-   "id": "bad_g20",
-   "kind": "bad",
-   "n_tokens": 192,
-   "loop_share": 0.0677,
-   "looping": false,
-   "loop_waste": 115
-  },
-  {
-   "id": "good_fact_01",
-   "kind": "good",
-   "n_tokens": 192,
-   "loop_share": 0.2031,
-   "looping": false,
-   "loop_waste": 164
-  },
-  {
-   "id": "good_fact_02",
-   "kind": "good",
-   "n_tokens": 192,
-   "loop_share": 0.8229,
-   "looping": true,
-   "loop_waste": 172
-  },
-  {
-   "id": "good_fact_03",
-   "kind": "good",
-   "n_tokens": 192,
-   "loop_share": 0.0469,
-   "looping": false,
-   "loop_waste": 102
-  },
-  {
-   "id": "good_fact_04",
-   "kind": "good",
-   "n_tokens": 9,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_05",
-   "kind": "good",
-   "n_tokens": 27,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_06",
-   "kind": "good",
-   "n_tokens": 8,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_07",
-   "kind": "good",
-   "n_tokens": 14,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_08",
-   "kind": "good",
-   "n_tokens": 42,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_09",
-   "kind": "good",
-   "n_tokens": 8,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_10",
-   "kind": "good",
-   "n_tokens": 7,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_11",
-   "kind": "good",
-   "n_tokens": 39,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_12",
-   "kind": "good",
-   "n_tokens": 16,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_13",
-   "kind": "good",
-   "n_tokens": 40,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_14",
-   "kind": "good",
-   "n_tokens": 26,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_15",
-   "kind": "good",
-   "n_tokens": 11,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_16",
-   "kind": "good",
-   "n_tokens": 9,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_17",
-   "kind": "good",
-   "n_tokens": 192,
-   "loop_share": 0.7344,
-   "looping": true,
-   "loop_waste": 166
-  },
-  {
-   "id": "good_fact_18",
-   "kind": "good",
-   "n_tokens": 8,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  },
-  {
-   "id": "good_fact_19",
-   "kind": "good",
-   "n_tokens": 77,
-   "loop_share": 0.039,
-   "looping": false,
-   "loop_waste": 22
-  },
-  {
-   "id": "good_fact_20",
-   "kind": "good",
-   "n_tokens": 13,
-   "loop_share": 0.0,
-   "looping": false,
-   "loop_waste": 0
-  }
+ "ppl_control_mean": 45.7,
+ "ppl_per_text": [
+  55.6,
+  9.9,
+  51.5,
+  8.9,
+  139.0,
+  9.1
  ]
 }

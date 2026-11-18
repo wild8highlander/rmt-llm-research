@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="180" viewBox="0 0 720 180" role="img" aria-label="Gemma3-1B-IT RCDA kit banner: a crimson loop ring melting into a clean cyan spectrum">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B0E14"/>
+      <stop offset="1" stop-color="#101623"/>
+    </linearGradient>
+    <linearGradient id="aur" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38E1C0"/>
+      <stop offset=".35" stop-color="#00D4FF"/>
+      <stop offset=".7" stop-color="#B026FF"/>
+      <stop offset="1" stop-color="#FF6E9C"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="180" fill="url(#bg)"/>
+  <rect x="0" y="168" width="720" height="3" fill="url(#aur)" opacity=".9">
+    <animate attributeName="opacity" values=".55;.95;.55" dur="6s" repeatCount="indefinite"/>
+  </rect>
+  <path d="M40 140 C 90 138, 130 96, 180 96 C 235 96, 260 140, 330 142 L 620 142" fill="none" stroke="#00D4FF" stroke-width="2" opacity=".8"/>
+  <path d="M40 141 C 100 140, 140 110, 185 110 C 240 110, 265 141, 335 142.5 L 620 142.5" fill="none" stroke="#00D4FF" stroke-width="1" opacity=".35"/>
+  <path d="M300 142 L 318 60 L 336 142" fill="none" stroke="#FFB020" stroke-width="2.4">
+    <animate attributeName="d" values="M300 142 L 318 60 L 336 142; M300 142 L 318 96 L 336 142; M300 142 L 318 60 L 336 142" dur="3.2s" repeatCount="indefinite"/>
+  </path>
+  <g transform="translate(560,84)">
+    <circle r="34" fill="none" stroke="#FF3B6B" stroke-width="3.2" stroke-dasharray="213" stroke-dashoffset="0">
+      <animate attributeName="stroke-dashoffset" values="0;128;0" dur="5.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values=".95;.5;.95" dur="5.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="21" fill="none" stroke="#B026FF" stroke-width="2" opacity=".8">
+      <animate attributeName="r" values="21;25;21" dur="5.5s" repeatCount="indefinite"/>
+    </circle>
+    <text x="0" y="-44" text-anchor="middle" fill="#FF3B6B" font-family="monospace" font-size="11">ρ_bad 0.94 → 0.88</text>
+    <text x="0" y="62" text-anchor="middle" fill="#38E1C0" font-family="monospace" font-size="10">pen −72% · KL 0.002 · TW rel pass</text>
+  </g>
+  <text x="40" y="44" fill="#E8ECF1" font-family="Segoe UI, DejaVu Sans, sans-serif" font-size="21" font-weight="600">Gemma3-1B-IT · the RCDA intervention kit</text>
+  <text x="40" y="70" fill="#8A93A6" font-family="Segoe UI, DejaVu Sans, sans-serif" font-size="12.5">probe → scans → formula-as-loss: pen = (vᵀh/‖v‖)² + hard anchor · 150 Adam steps</text>
+</svg>

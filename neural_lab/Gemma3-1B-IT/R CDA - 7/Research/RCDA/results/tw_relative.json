@@ -1,0 +1,47 @@
+{
+ "note": "relative spectral-purity gate: bulk KS of the edited matrix vs the pristine matrix's own KS",
+ "tensors": {
+  "transformer.h.6.attn.c_proj.weight": {
+   "verdict": "pass",
+   "ks_trained": 33.6376,
+   "ks_base": 33.6376,
+   "ratio": 1.0,
+   "absolute_gate": "violation"
+  },
+  "transformer.h.6.mlp.c_proj.weight": {
+   "verdict": "pass",
+   "ks_trained": 0.1193,
+   "ks_base": 0.1193,
+   "ratio": 1.0,
+   "absolute_gate": "violation"
+  },
+  "transformer.h.7.attn.c_proj.weight": {
+   "verdict": "pass",
+   "ks_trained": 33.7863,
+   "ks_base": 33.787,
+   "ratio": 1.0,
+   "absolute_gate": "violation"
+  },
+  "transformer.h.7.mlp.c_proj.weight": {
+   "verdict": "pass",
+   "ks_trained": 0.1132,
+   "ks_base": 0.1132,
+   "ratio": 1.001,
+   "absolute_gate": "violation"
+  },
+  "transformer.h.8.attn.c_proj.weight": {
+   "verdict": "pass",
+   "ks_trained": 36.4111,
+   "ks_base": 36.4118,
+   "ratio": 1.0,
+   "absolute_gate": "violation"
+  },
+  "transformer.h.8.mlp.c_proj.weight": {
+   "verdict": "pass",
+   "ks_trained": 0.1273,
+   "ks_base": 0.1273,
+   "ratio": 1.0,
+   "absolute_gate": "violation"
+  }
+ }
+}

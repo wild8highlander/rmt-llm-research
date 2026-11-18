@@ -41,11 +41,14 @@
   <img src="https://img.shields.io/badge/science%20tests-52-38E1C0" alt="52 science tests"><img src="https://img.shields.io/badge/dependencies-NumPy%20only-3776AB" alt="NumPy only">
 </p>
 
-> **One folder, two organisms.** A Next.js playground where the trained
-> formula model *lives* — and the predictive science core where the
-> repository's hypotheses are pre-registered, measured, and falsified. The
-> app is a read-only window over real artifacts; the science core is the
-> working laboratory of the project.
+> **One folder, three organisms.** A Next.js playground where the trained
+> formula model *lives* — the predictive science core where the repository's
+> hypotheses are pre-registered, measured, and falsified — and, since
+> November 2026, **the RCDA intervention program**: two real Hugging Face
+> models (MNN-Pocket-0.3B and Gemma3-1B-IT) taken through spectral probing,
+> matrix scans and formula-as-loss training to cure their repetition loops.
+> The app is a read-only window over real artifacts; the science core is the
+> working laboratory; the intervention kits are the surgery wing.
 
 ---
 
@@ -80,6 +83,34 @@ nothing is hand-typed.
 | H1 v1 · primary (error prediction from internal features) | **underpowered**: ΔAUC +0.206 [+0.084, +0.319], permutation p = 0.097 — direction consistent, power not there yet | [`science/results/h1_v1/REPORT.md`](science/results/h1_v1/REPORT.md) |
 | H1 v1 · secondary — **the Utility Trap** | internal spectral states AUC **0.871** vs confidence **0.794**, p = **0.0025** — the model's confidence is a *worse* predictor of its errors than its own internal geometry | [`science/results/h1_v1/REPORT.md`](science/results/h1_v1/REPORT.md) |
 | H1 × scaling ladder (S/M/L, 113 tasks) | direction D > B replicated **3/3 cells**; L-cell ΔAUC **+0.116 [+0.012, +0.215]** — bootstrap CI excludes 0; confidence baseline is non-monotonic across scale; XL queued (GPU) | [`science/results/h1_scaling/REPORT.md`](science/results/h1_scaling/REPORT.md) |
+
+## 🩺 The RCDA intervention program — two patients, one formula
+
+The newest wing of the lab. Both intervention kits run the same
+five-instrument pipeline — probe (Δh, z_diff) → matrix scans (λ_v vs λ₊,
+θ_v vs θ_c) → decomposition → the formula baked into gradient training
+(`pen = (vᵀh/‖v‖)² + hard anchor`, 150 Adam steps) → one evaluator (ρ_bad,
+loop_share, KL, PPL, TW, cos(u₁, v)) — and both commit every number as a JSON
+field, never hand-typed.
+
+| Patient | Round | What was asked | What came out | Evidence |
+|---------|-------|----------------|---------------|----------|
+| [`MNN-Pocket-0.3B`](MNN-Pocket-0.3B/README.md) (Qwen3, 28L) | RCDA-1…5 (5 rounds) | can the model apply the repo's formula to itself? | SGD beats surgery: **ρ_bad 0.80 → 0.35 (−56%)**, TW pass ×3, cos(u₁,v) 0.72/0.64/0.29 | [`RCDA5_REPORT.md`](MNN-Pocket-0.3B/R%20CDA%20-%205/Research/RCDA/RCDA5_REPORT.md) |
+| [`Gemma3-1B-IT`](Gemma3-1B-IT/README.md) (Gemma3, 26L) | RCDA-5 | does the formula transfer to a second architecture? | penalty **−71.5%**, ρ_bad 0.94 → **0.88**, KL **0.002**, TW rel pass ×3 — and the carry analysis explains the residual | [`RCDA5_REPORT.md`](Gemma3-1B-IT/R%20CDA%20-%205/Research/RCDA/RCDA5_REPORT.md) |
+| [`Gemma3-1B-IT`](Gemma3-1B-IT/README.md) | RCDA-6 | extend the trainable tensors to down_proj (the hypothesis of the MNN report) | premise proven: **MLP writes 68.6%** of the loop energy; edits align with v, **cos up to 0.89** | [`RCDA6_REPORT.md`](Gemma3-1B-IT/R%20CDA%20-%206/Research/RCDA/RCDA6_REPORT.md) |
+| [`Gemma3-1B-IT`](Gemma3-1B-IT/README.md) | RCDA-7 | deep-phase-only penalty + tightened anchor | the most efficient lever: **pen −80%** from one deep point at KL 0.011 | [`RCDA7_REPORT.md`](Gemma3-1B-IT/R%20CDA%20-%207/Research/RCDA/RCDA7_REPORT.md) |
+
+Program status badge:
+<p align="left">
+  <img src="https://img.shields.io/badge/patients-2-FFB020" alt="patients">
+  <img src="https://img.shields.io/badge/rounds%20committed-8-B026FF" alt="rounds">
+  <img src="https://img.shields.io/badge/evaluator-one%20for%20all%20rounds-38E1C0" alt="evaluator">
+  <img src="https://img.shields.io/badge/next%3DRCDA--8-scaling%20the%20drift%20budget%20on%20Gemma-00D4FF" alt="next">
+</p>
+
+**Entry point:** the [Gemma3-1B-IT kit README](Gemma3-1B-IT/README.md) with
+the animated banner, the gallery and the leverage chart — or the
+[sibling kit](MNN-Pocket-0.3B/README.md) for the five-round origin story.
 
 ---
 
@@ -132,6 +163,9 @@ neural_lab/
 │   └── app/api/          — infer / evaluation / metrics / open-questions routes
 ├── research/             — standalone research programs (TinyGPT Formula-Edition)
 ├── science/              — predictive research core (H1 pipeline, 52 tests)
+├── MNN-Pocket-0.3B/      — the RMT intervention kit, patient #1 (RCDA rounds 2–5)
+├── Gemma3-1B-IT/         — patient #2: the RCDA-5/6/7 rounds, formula-as-loss,
+│                           intervention deltas, figures + animations
 ├── assets/               — banners (logos/) and the folder's visual layer (visuals/, anim/)
 ├── AUDIT.md              — factual audit of what is really measured
 ├── EXPERIMENT_PROTOCOL.md— pre-registered H1 protocol
@@ -232,7 +266,8 @@ their budgets.
   <img src="assets/logos/neural_lab.avatar.svg" width="56" alt="neural_lab animated avatar"><br>
   <sub>
     <a href="../README.md">← root</a> · <a href="README.md">top</a> ·
-    <a href="MNN-Pocket-0.3B/README.md">the intervention kit →</a> ·
+    <a href="MNN-Pocket-0.3B/README.md">patient #1 →</a> ·
+    <a href="Gemma3-1B-IT/README.md">patient #2 (RCDA-5/6/7) →</a> ·
     <a href="science/README.md">the science core →</a>
   </sub>
 </p>

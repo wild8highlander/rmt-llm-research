@@ -1,0 +1,33 @@
+{
+ "archive": "gemma3-rcds-interventions.zip",
+ "what": "fp16 intervention deltas (W_prime - W) for the three RCDA variants + the probe directions v",
+ "provenance": {
+  "target_model": "litert-community/Gemma3-1B-IT (HF training mirror: google/gemma-3-1b-it)",
+  "validation_run_model": "openai-community/gpt2 (124M) - CPU standing substitute, see R CDA - 5/Research/RCDA/RCDA5_REPORT.md",
+  "note": "the deltas below are the validation-run tensors; reproduce the Gemma-scale deltas with Code/gemma_rcds_train.py --model google/gemma-3-1b-it --variant {rcda5,rcda6,rcda7}"
+ },
+ "apply": "python Code/gemma_apply_deltas.py --deltas path/to/rcda5_deltas.npz --model google/gemma-3-1b-it --save out_dir",
+ "expected_gemma_scale_sizes": {
+  "rcda5": "3 x o_proj (1152x1152 fp16) ~ 8 MB",
+  "rcda6": "+ 3 x down_proj (1152x6912 fp16) ~ 56 MB total",
+  "rcda7": "same tensors as rcda6"
+ },
+ "members": {
+  "rcda5_deltas.npz": {
+   "sha256": "322c93a96288dfb81550c3fc2d7bdaa189431271f4199a0d7f7a3fada82252b0",
+   "bytes": 3249764
+  },
+  "rcda6_deltas.npz": {
+   "sha256": "43a8ca46ba56f64e5429a2c954c0f2b725c4f4ff2da30c6561c66d23aa46eda2",
+   "bytes": 16144331
+  },
+  "rcda7_deltas.npz": {
+   "sha256": "e0240673b81771cf3168f871a389c3bdf486e9648326741155458aaeec981b6f",
+   "bytes": 16178123
+  },
+  "rcds5_vectors.npz": {
+   "sha256": "b228688a087ada31a6a6e0bf6e9e65583561b3df005addf03bed3d59613dfd02",
+   "bytes": 37017
+  }
+ }
+}

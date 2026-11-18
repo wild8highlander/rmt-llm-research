@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="RCDA kit avatar: amber spike over a cyan bulk on a dark roundel">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101623"/>
+      <stop offset="1" stop-color="#0B0E14"/>
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="48" r="46" fill="url(#g)" stroke="#232A36"/>
+  <path d="M14 66 C 24 65, 30 52, 40 52 C 50 52, 54 66, 66 67 L 82 67" fill="none" stroke="#00D4FF" stroke-width="2.4"/>
+  <path d="M44 67 L 52 30 L 60 67" fill="none" stroke="#FFB020" stroke-width="2.8">
+    <animate attributeName="d" values="M44 67 L 52 30 L 60 67; M44 67 L 52 48 L 60 67; M44 67 L 52 30 L 60 67" dur="3s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="70" cy="34" r="12" fill="none" stroke="#FF3B6B" stroke-width="2" stroke-dasharray="75" stroke-dashoffset="0">
+    <animate attributeName="stroke-dashoffset" values="0;45;0" dur="5s" repeatCount="indefinite"/>
+  </circle>
+</svg>

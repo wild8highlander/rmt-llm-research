@@ -1,0 +1,31 @@
+{
+ "model": "openai-community/gpt2",
+ "writers": [
+  6,
+  7,
+  8
+ ],
+ "note": "mean (v^T out)^2 over generated positions of the bad set; 'post' = residual stream after the block (hidden_states)",
+ "per_layer": {
+  "6": {
+   "attn": 2.2415,
+   "mlp": 2.7884,
+   "post": 538.8102
+  },
+  "7": {
+   "attn": 2.2142,
+   "mlp": 2.9383,
+   "post": 740.5612
+  },
+  "8": {
+   "attn": 1.5284,
+   "mlp": 7.3225,
+   "post": 565.5681
+  }
+ },
+ "totals": {
+  "attn": 5.9841,
+  "mlp": 13.0492,
+  "mlp_share_of_writes": 0.6856
+ }
+}

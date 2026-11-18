@@ -1,0 +1,107 @@
+{
+ "tag": "trained",
+ "model": "openai-community/gpt2",
+ "round": 7,
+ "protocol": {
+  "n_bad": 16,
+  "n_good": 16,
+  "max_new": 96,
+  "ngram": 4,
+  "rho_threshold": 0.5,
+  "decoding": "greedy",
+  "precision": "fp32"
+ },
+ "n_changed_tensors": 6,
+ "changed": {
+  "transformer.h.6.attn.c_proj.weight": {
+   "rel_frobenius": 0.00466,
+   "n_weights": 589824
+  },
+  "transformer.h.6.mlp.c_proj.weight": {
+   "rel_frobenius": 0.00526,
+   "n_weights": 2359296
+  },
+  "transformer.h.7.attn.c_proj.weight": {
+   "rel_frobenius": 0.00408,
+   "n_weights": 589824
+  },
+  "transformer.h.7.mlp.c_proj.weight": {
+   "rel_frobenius": 0.00462,
+   "n_weights": 2359296
+  },
+  "transformer.h.8.attn.c_proj.weight": {
+   "rel_frobenius": 0.00395,
+   "n_weights": 589824
+  },
+  "transformer.h.8.mlp.c_proj.weight": {
+   "rel_frobenius": 0.00364,
+   "n_weights": 2359296
+  }
+ },
+ "tw": {
+  "transformer.h.6.attn.c_proj.weight": {
+   "verdict": "violation",
+   "ks_distance": 33.6376
+  },
+  "transformer.h.6.mlp.c_proj.weight": {
+   "verdict": "violation",
+   "ks_distance": 0.1193
+  },
+  "transformer.h.7.attn.c_proj.weight": {
+   "verdict": "violation",
+   "ks_distance": 33.7863
+  },
+  "transformer.h.7.mlp.c_proj.weight": {
+   "verdict": "violation",
+   "ks_distance": 0.1132
+  },
+  "transformer.h.8.attn.c_proj.weight": {
+   "verdict": "violation",
+   "ks_distance": 36.4111
+  },
+  "transformer.h.8.mlp.c_proj.weight": {
+   "verdict": "violation",
+   "ks_distance": 0.1273
+  }
+ },
+ "cosine_edit_vs_v": {
+  "transformer.h.6.attn.c_proj.weight": 0.0059,
+  "transformer.h.6.mlp.c_proj.weight": 0.3826,
+  "transformer.h.7.attn.c_proj.weight": 0.0711,
+  "transformer.h.7.mlp.c_proj.weight": 0.558,
+  "transformer.h.8.attn.c_proj.weight": 0.0454,
+  "transformer.h.8.mlp.c_proj.weight": 0.8613
+ },
+ "rho_bad": 0.9375,
+ "rho_good": 1.0,
+ "mean_loop_share": 0.8776,
+ "loop_waste_mean": 84.2,
+ "per_traj_loop_share_bad": [
+  1.0,
+  1.0,
+  0.76,
+  1.0,
+  0.552,
+  0.927,
+  0.958,
+  0.906,
+  1.0,
+  1.0,
+  1.0,
+  0.0,
+  0.969,
+  1.0,
+  1.0,
+  0.969
+ ],
+ "kl_ctrl": 0.011,
+ "ppl_control_mean": 46.3,
+ "ppl_per_text": [
+  55.6,
+  10.2,
+  51.8,
+  8.9,
+  142.1,
+  9.2
+ ]
+}

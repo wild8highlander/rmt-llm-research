@@ -33,6 +33,8 @@
 [![Benchmark](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/benchmark.yml/badge.svg)](https://github.com/wild8highlander/rmt-llm-research/actions/workflows/benchmark.yml)
 [![Property tests](https://img.shields.io/badge/property%20tests-hypothesis-1f6feb.svg)](https://github.com/HypothesisWorks/hypothesis)
 [![Benchmarks](https://img.shields.io/badge/benchmarks-pytest--benchmark-1f6feb.svg)](https://pytest-benchmark.readthedocs.io/)
+[![RCDA program](https://img.shields.io/badge/%F0%9F%A9%BA%20RCDA-intervention%20program-FF3B6B.svg)](neural_lab/Gemma3-1B-IT/README.md)
+[![Patients](https://img.shields.io/badge/patients-MNN--Pocket%200.3B%20%2B%20Gemma3--1B--IT-FFB020.svg)](#-the-rcda-intervention-program-neural_lab)
 
 <p align="center">
   <picture>
@@ -251,6 +253,7 @@ in the docs.
 - [Roadmap](#-roadmap)
 - [Citation](#-citation)
 - [The Research Laboratory](#-research-laboratory-recently-added)
+- [The RCDA intervention program](#-the-rcda-intervention-program-neural_lab)
 - [Contributors](#-contributors)
 - [License](#-license)
 
@@ -362,6 +365,8 @@ graph TD
     N --> N1[web app — Next.js playground]
     N --> N2[research/tinygpt_formula/ — TinyGPT v3 training + scaling]
     N --> N3[science/ — predictive core: H1 protocol, runs, registry]
+    N --> N4[MNN-Pocket-0.3B/ — RMT intervention kit, patient #1]
+    N --> N5[Gemma3-1B-IT/ — RCDA-5/6/7: formula-as-loss on a second patient]
 
     B --> B1[monographs/ — M01–M06 descriptions]
     B --> B2[monographs/en/ + ru/ — RU mirrors]
@@ -926,6 +931,8 @@ The full roadmap is at [`docs/ROADMAP.md`](./docs/ROADMAP.md). Highlights:
 | ✅ | BPE tokenizer (256 merges, pure-Python + NumPy) |
 | ✅ | 30-epoch training (loss 6.23 → 0.0085, match_rate 0% → 6.5%) |
 | ✅ | Production-grade engineering infrastructure (CI, pre-commit, Docker) |
+| ✅ | **RCDA-5 on MNN-Pocket-0.3B** — the formula as a loss cures the repetition loop (ρ_bad 0.80 → 0.35) |
+| ✅ | **RCDA-5/6/7 on Gemma3-1B-IT** — the program transfers to a second architecture: pen −72/−63/−80%, KL ≤ 0.011, edits align with v (cos ≤ 0.89) |
 | ✅ | MkDocs Material documentation + 4 tutorial notebooks |
 | ✅ | Hypothesis property-based tests + pytest-benchmark |
 | 🚧 | Expand training corpus (~2MB → 10MB mixed Python + Russian) |
@@ -999,6 +1006,37 @@ npm install
 npm start                   # Vite + Socket.io server
 # Open http://localhost:5173
 ```
+
+---
+
+## 🩺 The RCDA intervention program (neural_lab)
+
+The laboratory is not only observing models — it is operating on them. The
+**RCDA program** takes a real Hugging Face model with a measurable behavioural
+defect (greedy repetition loops), finds the defect spectrally (probe → matrix
+scans → channel decomposition), and then trains the repository's formula into
+the weights: `pen = (vᵀh/‖v‖)² + β·relu(mse − cap)`, a hard abilities anchor,
+150 Adam steps, one evaluator for every round (ρ_bad / loop_share / KL / PPL /
+Tracy–Widom / cos(u₁, v)).
+
+| Patient | Rounds | Headline |
+|---------|--------|----------|
+| [`MNN-Pocket-0.3B`](neural_lab/MNN-Pocket-0.3B/README.md) (Qwen3 0.3B, 28L) | RCDA-1…5 | **ρ_bad 0.80 → 0.35 (−56%)**, TW pass ×3, cos(u₁,v) 0.72/0.64/0.29 — *"the model found a spectrally clean solution of the same class on its own"* |
+| [`Gemma3-1B-IT`](neural_lab/Gemma3-1B-IT/README.md) (Gemma3 1B, 26L) | RCDA-5/6/7 | penalty **−72% / −63% / −80%** across the three levers, ρ_bad 0.94 → 0.88 at KL **0.002**, MLP-channel diagnosis (68.6% of the loop's write energy), edits align with v (cos ≤ 0.89) — the alignment conclusion replicates on a second architecture |
+
+<p align="center">
+  <img src="neural_lab/Gemma3-1B-IT/Graphic/anims/training-loop.gif" width="380" loading="lazy" alt="pen_norm melting over 150 steps for the three Gemma RCDA variants">
+  <img src="neural_lab/Gemma3-1B-IT/Graphic/anims/defect-melt.gif" width="380" loading="lazy" alt="the defect state morphing across the arms">
+</p>
+<p align="center"><sub><em>
+  Both loops rebuilt from the committed training logs — the frames are the
+  measured trajectories. The full story, the leverage chart and the one-command
+  reproduction live in the <a href="neural_lab/Gemma3-1B-IT/README.md">kit README</a>.
+</em></sub></p>
+
+**Start here:** [the kit README](neural_lab/Gemma3-1B-IT/README.md) →
+[RCDA-5 report](neural_lab/Gemma3-1B-IT/R%20CDA%20-%205/Research/RCDA/RCDA5_REPORT.md) →
+[RCDA-7 report](neural_lab/Gemma3-1B-IT/R%20CDA%20-%207/Research/RCDA/RCDA7_REPORT.md).
 
 ---
 

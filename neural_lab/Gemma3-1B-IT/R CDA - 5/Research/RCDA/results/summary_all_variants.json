@@ -1,0 +1,106 @@
+{
+ "protocol": "16 bad / 16 good prompts, greedy 96, ngram 4, rho = share of trajectories with loop_share >= 0.5",
+ "base": {
+  "rho_bad": 0.9375,
+  "rho_good": 1.0,
+  "mean_loop_share": 0.8945,
+  "loop_waste_mean": 85.9,
+  "kl_ctrl": 0.0,
+  "ppl_control_mean": 45.7
+ },
+ "variants": {
+  "rcda5": {
+   "rho_bad": 0.875,
+   "rho_good": 1.0,
+   "mean_loop_share": 0.8757,
+   "loop_waste_mean": 84.1,
+   "kl_ctrl": 0.0021,
+   "ppl_control_mean": 45.6,
+   "cosine_edit_vs_v": {
+    "transformer.h.6.attn.c_proj.weight": 0.0085,
+    "transformer.h.7.attn.c_proj.weight": 0.0938,
+    "transformer.h.8.attn.c_proj.weight": 0.0532
+   },
+   "tw_relative": {
+    "6.attn": "pass",
+    "7.attn": "pass",
+    "8.attn": "pass"
+   },
+   "tw_ks_ratio_max": 1.0,
+   "pen_norm_descent_pct": 71.5,
+   "pen_norm_first5": 0.964,
+   "pen_norm_last5": 0.275,
+   "rho_mini_at_150": 0.875,
+   "loop_share_mini_at_150": 0.801,
+   "rel_frobenius_max": 0.02258,
+   "trainable_tensors": 3,
+   "lr": 0.0001
+  },
+  "rcda6": {
+   "rho_bad": 0.9375,
+   "rho_good": 1.0,
+   "mean_loop_share": 0.8815,
+   "loop_waste_mean": 84.6,
+   "kl_ctrl": 0.0094,
+   "ppl_control_mean": 46.5,
+   "cosine_edit_vs_v": {
+    "transformer.h.6.attn.c_proj.weight": 0.0064,
+    "transformer.h.6.mlp.c_proj.weight": 0.7434,
+    "transformer.h.7.attn.c_proj.weight": 0.0889,
+    "transformer.h.7.mlp.c_proj.weight": 0.8506,
+    "transformer.h.8.attn.c_proj.weight": 0.0521,
+    "transformer.h.8.mlp.c_proj.weight": 0.8913
+   },
+   "tw_relative": {
+    "6.attn": "pass",
+    "6.mlp": "pass",
+    "7.attn": "pass",
+    "7.mlp": "pass",
+    "8.attn": "pass",
+    "8.mlp": "pass"
+   },
+   "tw_ks_ratio_max": 1.001,
+   "pen_norm_descent_pct": 62.6,
+   "pen_norm_first5": 0.972,
+   "pen_norm_last5": 0.364,
+   "rho_mini_at_150": 0.875,
+   "loop_share_mini_at_150": 0.824,
+   "rel_frobenius_max": 0.00639,
+   "trainable_tensors": 6,
+   "lr": 2e-05
+  },
+  "rcda7": {
+   "rho_bad": 0.9375,
+   "rho_good": 1.0,
+   "mean_loop_share": 0.8776,
+   "loop_waste_mean": 84.2,
+   "kl_ctrl": 0.011,
+   "ppl_control_mean": 46.3,
+   "cosine_edit_vs_v": {
+    "transformer.h.6.attn.c_proj.weight": 0.0059,
+    "transformer.h.6.mlp.c_proj.weight": 0.3826,
+    "transformer.h.7.attn.c_proj.weight": 0.0711,
+    "transformer.h.7.mlp.c_proj.weight": 0.558,
+    "transformer.h.8.attn.c_proj.weight": 0.0454,
+    "transformer.h.8.mlp.c_proj.weight": 0.8613
+   },
+   "tw_relative": {
+    "6.attn": "pass",
+    "6.mlp": "pass",
+    "7.attn": "pass",
+    "7.mlp": "pass",
+    "8.attn": "pass",
+    "8.mlp": "pass"
+   },
+   "tw_ks_ratio_max": 1.001,
+   "pen_norm_descent_pct": 80.0,
+   "pen_norm_first5": 0.953,
+   "pen_norm_last5": 0.19,
+   "rho_mini_at_150": 0.875,
+   "loop_share_mini_at_150": 0.822,
+   "rel_frobenius_max": 0.00526,
+   "trainable_tensors": 6,
+   "lr": 2e-05
+  }
+ }
+}
