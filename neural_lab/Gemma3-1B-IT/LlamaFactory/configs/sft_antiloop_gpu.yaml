@@ -1,0 +1,37 @@
+### LlamaFactory SFT/LoRA config — the anti-loop data arm (full GPU run)
+# Run:  llamafactory-cli train configs/sft_antiloop_gpu.yaml
+# What: the same arm at full scale — bigger effective batch, 3 epochs,
+#       bf16 autocast on a single GPU (>= 16 GB).
+# Data: the frozen dataset data/sft_antiloop.jsonl (see sft_manifest.json)
+
+### model
+model_name_or_path: unsloth/gemma-3-1b-it          # or google/gemma-3-1b-it (gated, license)
+stage: pt
+do_train: true
+finetuning_type: lora
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+lora_rank: 16
+lora_alpha: 32
+
+### dataset
+dataset: antiloop
+dataset_dir: data
+template: gemma
+cutoff_len: 256
+packing: false          # keep every example at position 0 (raw-completion parity)
+overwrite_cache: true
+
+### output
+output_dir: results/sft_arm_gpu/gemma3_sft_lora
+logging_steps: 5
+save_steps: 100
+plot_loss: true
+
+### train
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 2
+learning_rate: 1.0e-4
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: true

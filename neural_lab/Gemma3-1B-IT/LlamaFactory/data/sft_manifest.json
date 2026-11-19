@@ -1,0 +1,17 @@
+{
+ "n_bad_curated": 20,
+ "n_good_self_distilled": 18,
+ "n_good_dropped_looping": [
+  {
+   "id": "good_fact_02",
+   "loop_share": 0.823
+  },
+  {
+   "id": "good_fact_17",
+   "loop_share": 0.734
+  }
+ ],
+ "format": "llamafactory pt stage, {'text': ...}",
+ "cutoff_len": 256,
+ "epochs": 4
+}

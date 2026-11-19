@@ -1,11 +1,12 @@
 <p align="center">
-  <img src="../../assets/logos/gemma-rcda-avatar.svg" width="48" alt="R CDA - 7 avatar">
+  <img src="../assets/logos/gemma-rcda-avatar.svg" width="48" alt="R CDA - 7 avatar">
 </p>
 
 # <sub>🎯</sub> R CDA — 7 · deep-phase-only penalty + tightened anchor
 
 <p align="center">
   <img src="https://img.shields.io/badge/snapshot-round%207-B026FF" alt="snapshot badge">
+  <img src="https://img.shields.io/badge/layer-GPT--2%20stand--in%20validation-FF3B6B" alt="layer badge">
   <img src="https://img.shields.io/badge/pen%20point-deep%20phase%20L8%20only-B026FF" alt="pen badge">
   <img src="https://img.shields.io/badge/pen_norm-−80%25%20(best)-38E1C0" alt="descent badge">
   <img src="https://img.shields.io/badge/anchor-β%3D20%20%C2%B7%20cap%3D0.5-FF3B6B" alt="anchor badge">
@@ -29,6 +30,12 @@ its descent at the lowest KL per point of enforcement — the lever to keep when
 the anchor budget matters, and the configuration the Gemma-scale run should
 inherit.
 
+> **Layer note.** Validation layer (GPT-2 stand-in). The real-model rounds
+> live in [`../Reports MD/`](../Reports%20MD/README.md) (RCDA-5/6) and
+> [`../LlamaFactory/`](../LlamaFactory/README.md) (RCDA-8 — the LlamaFactory
+> round that inherited this lever design: deep-phase directions inside the
+> band penalty, anchor β=10/cap=1.0 at LoRA-appropriate lr).
+
 ## What is inside
 
 | Path | Contents |
@@ -43,5 +50,5 @@ Run: `python ../Code/gemma_rcds_train.py --variant rcda7 --model google/gemma-3-
 ---
 
 <p align="center">
-  <sub><a href="../README.md">← kit root</a> · <a href="Research/RCDA/RCDA7_REPORT.md">the round-7 report →</a> · <a href="../R%20CDA%20-%205/README.md">R CDA - 5 →</a></sub>
+  <sub><a href="../README.md">← kit root</a> · <a href="Research/RCDA/RCDA7_REPORT.md">the round-7 report →</a> · <a href="../LlamaFactory/README.md">the RCDA-8 LlamaFactory round →</a></sub>
 </p>

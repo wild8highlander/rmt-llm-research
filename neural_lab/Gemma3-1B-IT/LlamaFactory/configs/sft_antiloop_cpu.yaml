@@ -1,0 +1,45 @@
+### LlamaFactory SFT/LoRA config — the anti-loop data arm (CPU validation run)
+# Run:  llamafactory-cli train configs/sft_antiloop_cpu.yaml
+# What: classic supervised fine-tuning of unsloth/gemma-3-1b-it (public mirror
+#       of google/gemma-3-1b-it) on the frozen anti-loop dataset
+#       (20 bad prompts -> curated clean continuations + 20 good prompts ->
+#       self-distilled base completions). Stage pt = raw-completion language
+#       modelling, matching the RCDA evaluation protocol (no chat template).
+# Box:  CPU-only (2 cores, 4 GB RAM) — bf16 weights, no autocast,
+#       per-device batch 1, gradient checkpointing on.
+
+### model
+model_name_or_path: unsloth/gemma-3-1b-it          # snapshot 5b1141 (pinned in the report)
+stage: pt
+do_train: true
+finetuning_type: lora
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+lora_rank: 8
+lora_alpha: 16
+
+### dataset
+dataset: antiloop
+dataset_dir: data
+template: gemma
+cutoff_len: 256
+packing: false          # pt stage defaults to packing; OFF so every example
+                        # starts at position 0, matching the raw-completion
+                        # evaluation protocol of the RCDA evaluator
+overwrite_cache: true
+preprocessing_num_workers: 1
+
+### output
+output_dir: results/sft_arm/gemma3_sft_lora
+logging_steps: 5
+save_steps: 50
+plot_loss: true
+overwrite_output_dir: true
+
+### train
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 1
+learning_rate: 5.0e-5
+num_train_epochs: 4.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: false

@@ -1,0 +1,253 @@
+{
+ "round": "RCDA-8 — the LlamaFactory round (formula arm + data arm)",
+ "model": "unsloth/gemma-3-1b-it@5b11413a10db4e486ef16a20101fd028f8f2499c",
+ "framework": "LlamaFactory 0.9.5 (load_model LoRA + CustomSeq2SeqTrainer)",
+ "provenance": {
+  "hardware": "CPU-only validation box: 2 cores, 4 GB RAM, no GPU",
+  "precision": "bf16 weights, fp32 LoRA masters via PEFT, fp32 logits",
+  "protocol": "raw completion mode, greedy 192, 4-gram loops, threshold 0.5, 20 bad + 20 good + 5 control (RU/EN)",
+  "comparability": "identical protocol to the RCDA-5/6 real-Gemma rounds (Reports MD/RESULTS_SUMMARY.md)"
+ },
+ "arms": {
+  "base": {
+   "rho_bad": 0.6,
+   "rho_good": 0.1,
+   "loop_share_mean_bad": 0.5619,
+   "loop_waste_mean_bad": 103.3,
+   "ppl_control_mean": 10.9
+  },
+  "rcda8_lora_formula": {
+   "rho_bad": 0.7,
+   "rho_good": 0.1,
+   "loop_share_mean_bad": 0.656,
+   "loop_waste_mean_bad": 126.0,
+   "hard12_mean": 0.632,
+   "mild8_mean": 0.691,
+   "repaired": 3,
+   "kl_ctrl": 0.5119,
+   "ppl_control_mean": 12.0,
+   "pen_norm_final": 0.0206,
+   "mse_final": 0.545,
+   "trainable_params": 1310720,
+   "tw_violations": 16,
+   "cos_u1_v_deep_max": 0.4357,
+   "delta_vs_base": {
+    "rho_bad": 0.1,
+    "loop_share_mean_bad": 0.0941,
+    "loop_waste_mean_bad": 22.7,
+    "ppl_pct": 10.1
+   }
+  },
+  "sft_lora_data": {
+   "rho_bad": 0.4,
+   "rho_good": 0.05,
+   "loop_share_mean_bad": 0.3928,
+   "loop_waste_mean_bad": 74.2,
+   "hard12_mean": 0.59,
+   "mild8_mean": 0.097,
+   "repaired": 5,
+   "kl_ctrl": 0.1201,
+   "ppl_control_mean": 8.6,
+   "delta_vs_base": {
+    "rho_bad": -0.2,
+    "loop_share_mean_bad": -0.1691,
+    "loop_waste_mean_bad": -29.1,
+    "ppl_pct": -21.1
+   }
+  }
+ },
+ "training": {
+  "rcda8_steps": 150,
+  "rcda8_bench": [
+   {
+    "tag": "step0",
+    "rho_mini": 1.0,
+    "mean_ls": 0.921,
+    "gens": [
+     {
+      "id": "bad_g01",
+      "loop_share": 0.958,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g02",
+      "loop_share": 0.958,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g03",
+      "loop_share": 0.958,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g04",
+      "loop_share": 0.938,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g05",
+      "loop_share": 0.927,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g06",
+      "loop_share": 0.891,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g07",
+      "loop_share": 0.87,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g08",
+      "loop_share": 0.865,
+      "n_tok": 192
+     }
+    ],
+    "source": "stage-1 frozen gens"
+   },
+   {
+    "tag": "step50",
+    "rho_mini": 1.0,
+    "mean_ls": 0.846,
+    "gens": [
+     {
+      "id": "bad_g01",
+      "loop_share": 0.854,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g02",
+      "loop_share": 0.781,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g03",
+      "loop_share": 0.911,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g04",
+      "loop_share": 0.797,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g05",
+      "loop_share": 0.906,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g06",
+      "loop_share": 0.802,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g07",
+      "loop_share": 0.823,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g08",
+      "loop_share": 0.891,
+      "n_tok": 192
+     }
+    ]
+   },
+   {
+    "tag": "step100",
+    "rho_mini": 0.625,
+    "mean_ls": 0.612,
+    "gens": [
+     {
+      "id": "bad_g01",
+      "loop_share": 0.875,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g02",
+      "loop_share": 0.766,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g03",
+      "loop_share": 0.375,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g04",
+      "loop_share": 0.328,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g05",
+      "loop_share": 0.807,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g06",
+      "loop_share": 0.052,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g07",
+      "loop_share": 0.865,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g08",
+      "loop_share": 0.828,
+      "n_tok": 192
+     }
+    ]
+   },
+   {
+    "tag": "step150",
+    "rho_mini": 0.625,
+    "mean_ls": 0.529,
+    "gens": [
+     {
+      "id": "bad_g01",
+      "loop_share": 0.885,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g02",
+      "loop_share": 0.443,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g03",
+      "loop_share": 0.823,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g04",
+      "loop_share": 0.542,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g05",
+      "loop_share": 0.76,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g06",
+      "loop_share": 0.505,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g07",
+      "loop_share": 0.25,
+      "n_tok": 192
+     },
+     {
+      "id": "bad_g08",
+      "loop_share": 0.026,
+      "n_tok": 192
+     }
+    ]
+   }
+  ]
+ }
+}

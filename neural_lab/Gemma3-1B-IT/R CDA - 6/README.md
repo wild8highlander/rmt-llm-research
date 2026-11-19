@@ -1,11 +1,12 @@
 <p align="center">
-  <img src="../../assets/logos/gemma-rcda-avatar.svg" width="48" alt="R CDA - 6 avatar">
+  <img src="../assets/logos/gemma-rcda-avatar.svg" width="48" alt="R CDA - 6 avatar">
 </p>
 
 # <sub>🧩</sub> R CDA — 6 · extend the trainable tensors to down_proj
 
 <p align="center">
   <img src="https://img.shields.io/badge/snapshot-round%206-FFB020" alt="snapshot badge">
+  <img src="https://img.shields.io/badge/layer-GPT--2%20stand--in%20validation-FF3B6B" alt="layer badge">
   <img src="https://img.shields.io/badge/trainable-o_proj%20%2B%20down_proj%20%C3%97%20L6%2F7%2F8-FFB020" alt="tensors badge">
   <img src="https://img.shields.io/badge/MLP%20write%20share-68.6%25-00D4FF" alt="share badge">
   <img src="https://img.shields.io/badge/cos(u1%2Cv)-0.74%E2%80%930.89-B026FF" alt="cos badge">
@@ -30,6 +31,13 @@ scientific payoff: the trained edits align with the measured behavioural
 direction, **|cos(u₁, v)| = 0.74–0.89**. The sibling kit's core claim — *SGD
 converges to a spectrally clean edit pointing along v* — replicates on a
 second architecture.
+
+> **Layer note.** Validation layer (GPT-2 stand-in). The same round on the
+> **real model** — full-matrix band L8–L15, phase-matched directions — is
+> [`../Reports MD/RCDA6_REPORT.md`](../Reports%20MD/RCDA6_REPORT.md)
+> (2/12 repaired, defect migrates, PPL +29 %) and its LoRA successor is
+> [`../LlamaFactory/RCDA8_REPORT.md`](../LlamaFactory/RCDA8_REPORT.md)
+> (3/12 repaired at 56× fewer parameters).
 
 ## What is inside
 

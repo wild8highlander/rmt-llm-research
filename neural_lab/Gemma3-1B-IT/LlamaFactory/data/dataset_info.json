@@ -1,0 +1,8 @@
+{
+  "antiloop": {
+    "file_name": "sft_antiloop.jsonl",
+    "columns": {
+      "prompt": "text"
+    }
+  }
+}

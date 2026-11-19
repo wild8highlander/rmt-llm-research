@@ -1,0 +1,213 @@
+{
+ "tag": "rcda8",
+ "model": "unsloth/gemma-3-1b-it@5b11413a10db4e486ef16a20101fd028f8f2499c",
+ "lora": "/home/z/my-project/work/results/rcda8_arm/adapter",
+ "round": "RCDA-8 LlamaFactory round",
+ "protocol": {
+  "n_bad": 20,
+  "n_good": 20,
+  "max_new": 192,
+  "ngram": 4,
+  "rho_threshold": 0.5,
+  "decoding": "greedy",
+  "mode": "raw completion",
+  "precision": "bf16 weights / fp32 logits"
+ },
+ "rho_bad": 0.7,
+ "rho_good": 0.1,
+ "loop_share_mean_bad": 0.656,
+ "loop_waste_mean_bad": 126.0,
+ "per_traj_loop_share_bad": [
+  0.865,
+  0.443,
+  0.823,
+  0.542,
+  0.76,
+  0.505,
+  0.25,
+  0.026,
+  0.766,
+  0.958,
+  0.745,
+  0.906,
+  0.854,
+  0.401,
+  0.932,
+  0.828,
+  0.885,
+  0.391,
+  0.771,
+  0.469
+ ],
+ "hard12_loop_share": [
+  0.865,
+  0.443,
+  0.823,
+  0.542,
+  0.76,
+  0.505,
+  0.25,
+  0.026,
+  0.766,
+  0.958,
+  0.745,
+  0.906
+ ],
+ "mild8_loop_share": [
+  0.854,
+  0.401,
+  0.932,
+  0.828,
+  0.885,
+  0.391,
+  0.771,
+  0.469
+ ],
+ "prompts_fully_repaired": 3,
+ "kl_ctrl_mean": 0.5119,
+ "kl_per_text": [
+  0.0299,
+  0.2591,
+  0.2918,
+  0.1234,
+  1.8554
+ ],
+ "ppl_control_mean": 12.0,
+ "ppl_per_text": [
+  4.2,
+  12.5,
+  11.6,
+  8.1,
+  23.5
+ ],
+ "lora_forensics": {
+  "model.layers.8.self_attn.o_proj.weight": {
+   "layer": 8,
+   "rel_frobenius": 0.01946,
+   "tw": "violation",
+   "tw_z_resid": 10006256.52,
+   "cos_u1_v_deep": 0.0835,
+   "cols_changed_gt_1pct": 713779
+  },
+  "model.layers.8.mlp.down_proj.weight": {
+   "layer": 8,
+   "rel_frobenius": 0.04143,
+   "tw": "violation",
+   "tw_z_resid": 1602797.54,
+   "cos_u1_v_deep": 0.1209,
+   "cols_changed_gt_1pct": 5919061
+  },
+  "model.layers.9.self_attn.o_proj.weight": {
+   "layer": 9,
+   "rel_frobenius": 0.02416,
+   "tw": "violation",
+   "tw_z_resid": 5290101.99,
+   "cos_u1_v_deep": 0.07,
+   "cols_changed_gt_1pct": 792123
+  },
+  "model.layers.9.mlp.down_proj.weight": {
+   "layer": 9,
+   "rel_frobenius": 0.02022,
+   "tw": "violation",
+   "tw_z_resid": 1321027.93,
+   "cos_u1_v_deep": 0.0719,
+   "cols_changed_gt_1pct": 4494734
+  },
+  "model.layers.10.self_attn.o_proj.weight": {
+   "layer": 10,
+   "rel_frobenius": 0.01882,
+   "tw": "violation",
+   "tw_z_resid": 3570948.63,
+   "cos_u1_v_deep": 0.0326,
+   "cols_changed_gt_1pct": 771979
+  },
+  "model.layers.10.mlp.down_proj.weight": {
+   "layer": 10,
+   "rel_frobenius": 0.01992,
+   "tw": "violation",
+   "tw_z_resid": 1190088.48,
+   "cos_u1_v_deep": 0.05,
+   "cols_changed_gt_1pct": 4666503
+  },
+  "model.layers.11.self_attn.o_proj.weight": {
+   "layer": 11,
+   "rel_frobenius": 0.02089,
+   "tw": "violation",
+   "tw_z_resid": 5682122.87,
+   "cos_u1_v_deep": 0.0254,
+   "cols_changed_gt_1pct": 760655
+  },
+  "model.layers.11.mlp.down_proj.weight": {
+   "layer": 11,
+   "rel_frobenius": 0.02016,
+   "tw": "violation",
+   "tw_z_resid": 978070.81,
+   "cos_u1_v_deep": 0.0978,
+   "cols_changed_gt_1pct": 4696843
+  },
+  "model.layers.12.self_attn.o_proj.weight": {
+   "layer": 12,
+   "rel_frobenius": 0.0193,
+   "tw": "violation",
+   "tw_z_resid": 5061953.05,
+   "cos_u1_v_deep": 0.1147,
+   "cols_changed_gt_1pct": 753385
+  },
+  "model.layers.12.mlp.down_proj.weight": {
+   "layer": 12,
+   "rel_frobenius": 0.02988,
+   "tw": "violation",
+   "tw_z_resid": 1164015.0,
+   "cos_u1_v_deep": 0.1777,
+   "cols_changed_gt_1pct": 5397896
+  },
+  "model.layers.13.self_attn.o_proj.weight": {
+   "layer": 13,
+   "rel_frobenius": 0.01737,
+   "tw": "violation",
+   "tw_z_resid": 3776687.69,
+   "cos_u1_v_deep": 0.1394,
+   "cols_changed_gt_1pct": 734538
+  },
+  "model.layers.13.mlp.down_proj.weight": {
+   "layer": 13,
+   "rel_frobenius": 0.03457,
+   "tw": "violation",
+   "tw_z_resid": 1274833.23,
+   "cos_u1_v_deep": 0.2222,
+   "cols_changed_gt_1pct": 5409785
+  },
+  "model.layers.14.self_attn.o_proj.weight": {
+   "layer": 14,
+   "rel_frobenius": 0.01535,
+   "tw": "violation",
+   "tw_z_resid": 3918965.79,
+   "cos_u1_v_deep": 0.1602,
+   "cols_changed_gt_1pct": 629493
+  },
+  "model.layers.14.mlp.down_proj.weight": {
+   "layer": 14,
+   "rel_frobenius": 0.03004,
+   "tw": "violation",
+   "tw_z_resid": 1047501.31,
+   "cos_u1_v_deep": 0.4357,
+   "cols_changed_gt_1pct": 5040767
+  },
+  "model.layers.15.self_attn.o_proj.weight": {
+   "layer": 15,
+   "rel_frobenius": 0.01347,
+   "tw": "violation",
+   "tw_z_resid": 2117011.54,
+   "cos_u1_v_deep": 0.2066,
+   "cols_changed_gt_1pct": 596677
+  },
+  "model.layers.15.mlp.down_proj.weight": {
+   "layer": 15,
+   "rel_frobenius": 0.01486,
+   "tw": "violation",
+   "tw_z_resid": 572905.16,
+   "cos_u1_v_deep": 0.3464,
+   "cols_changed_gt_1pct": 3714622
+  }
+ }
+}

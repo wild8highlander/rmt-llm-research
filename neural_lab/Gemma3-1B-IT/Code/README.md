@@ -1,17 +1,23 @@
-# 🛠️ Code — the Gemma3 RCDA toolkit
+# 🛠️ Code — the Gemma3 RCDA toolkit (validation layer)
 
 <p align="center">
   <img src="https://img.shields.io/badge/scripts-8-00D4FF" alt="scripts badge">
   <img src="https://img.shields.io/badge/variants-rcda5%20%2F%206%20%2F%207-B026FF" alt="variants badge">
   <img src="https://img.shields.io/badge/arch-adaptive%3A%20GPT--2%20stand--in%20%E2%86%92%20Gemma3-38E1C0" alt="arch badge">
+  <a href="https://github.com/hiyouga/LlamaFactory"><img src="https://img.shields.io/badge/real--model%20round-LlamaFactory%2FRCDA--8-FFB020" alt="rcda8 badge"></a>
   <a href="../README.md"><img src="https://img.shields.io/badge/%E2%86%90-Gemma3--1B--IT-FFB020" alt="parent"></a>
 </p>
 
-One toolkit, one evaluator, three lever settings. The architecture adapter in
-[`rcds_common.py`](rcds_common.py) auto-detects GPT-2 (the CPU validation
-stand-in, `openai-community/gpt2`) vs Gemma3 (`google/gemma-3-1b-it`, the HF
-training mirror of [`litert-community/Gemma3-1B-IT`](https://huggingface.co/litert-community/Gemma3-1B-IT))
-— production runs change **only** the `--model` flag.
+One toolkit, one evaluator, three lever settings. The architecture adapter
+in [`rcds_common.py`](rcds_common.py) auto-detects GPT-2 (the CPU
+validation stand-in, `openai-community/gpt2`) vs Gemma3
+(`google/gemma-3-1b-it` / the ungated mirror `unsloth/gemma-3-1b-it`) —
+production runs change **only** the `--model` flag.
+
+> **Where the real-model training lives.** The RCDA-8 round (the real
+> Gemma, LlamaFactory 0.9.5, formula arm vs data arm) is a separate,
+> self-contained pipeline: [`../LlamaFactory/`](../LlamaFactory/README.md).
+> This folder is the validated machinery it grew out of.
 
 | Script | What it does |
 |--------|--------------|
@@ -48,17 +54,18 @@ provoked and measured on both languages.
 | `good.jsonl` | 16 | natural prompts — the anchor / ability data |
 | `control.jsonl` | 6 | prose paragraphs — KL and PPL measurement |
 
-The stand-in adaptation knobs, all logged into every training log's `args`:
-`--clip 1.0` (stabilises the pen-vs-anchor bang-bang on the smaller model),
-`--anchor_scope good` (the hard hinge applies to the ability data — on the bad
-prefixes the base logits encode the loop itself), `--refresh_every 32`
-(the bad prefixes are re-drawn from the current model so the penalty attacks
-the trajectory the model would actually generate). Every variant uses the
-same recipe; lr is drift-matched to the trainable share
-(1.77M params → 1e-4, 8.85M params → 2e-5).
+The **real-Gemma protocol sets** (20 bad sentinel-selected `bad_g01…g20`
++ 20 good + 5 control) live in [`../JSON Results/`](../JSON%20Results/README.md)
+and are frozen into the RCDA-8 round at
+[`../LlamaFactory/data/`](../LlamaFactory/README.md).
 
----
+## Provenance
 
-<p align="center">
-  <sub><a href="../README.md">← kit root</a> · <a href="../../MNN-Pocket-0.3B/Code/README.md">the sibling kit's code →</a></sub>
-</p>
+The committed artifacts of this folder were produced on the GPT-2 stand-in
+(the validation layer, archived in the
+[main README](../README.md#%EF%B8%8F-archive-the-gpt-2-stand-in-validation-layer));
+`--model google/gemma-3-1b-it` reruns the identical protocol at Gemma
+scale. The real-model rounds have their own folders:
+[`../Reports MD/`](../Reports%20MD/README.md) (scientific record),
+[`../Script's/`](../Script's/README.md) (working scripts),
+[`../LlamaFactory/`](../LlamaFactory/README.md) (the LlamaFactory round).
