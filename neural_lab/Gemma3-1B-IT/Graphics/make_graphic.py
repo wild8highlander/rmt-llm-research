@@ -19,9 +19,9 @@ import numpy as np
 from PIL import Image
 
 KIT = Path(__file__).resolve().parent.parent
-R5 = KIT / "R CDA - 5" / "Research" / "RCDA" / "results"
-R6 = KIT / "R CDA - 6" / "Research" / "RCDA" / "results"
-R7 = KIT / "R CDA - 7" / "Research" / "RCDA" / "results"
+R5 = KIT / "RCDA-5" / "Research" / "RCDA" / "results"
+R6 = KIT / "RCDA-6" / "Research" / "RCDA" / "results"
+R7 = KIT / "RCDA-7" / "Research" / "RCDA" / "results"
 OUT = KIT / "Graphic"
 ANIM = OUT / "anims"
 

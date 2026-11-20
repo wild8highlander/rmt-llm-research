@@ -34,7 +34,7 @@ def main() -> None:
 
     seed_all(0)
     kit = Path(__file__).resolve().parent.parent
-    base_results = kit / "R CDA - 5" / "Research" / "RCDA" / "results"
+    base_results = kit / "RCDA-5" / "Research" / "RCDA" / "results"
     probe = Path(args.probe) if args.probe else base_results / "probe_report.json"
     vectors = Path(args.vectors) if args.vectors else base_results / "rcds5_vectors.npz"
     out = Path(args.out) if args.out else base_results / "rcda6_channel_decomposition.json"

@@ -18,11 +18,11 @@ replace the old ones):
 | `LlamaFactory/` | **NEW folder** — the whole RCDA-8 round (report, pipeline, data, configs, results, adapters, figures) |
 | `README.md` | **REPLACES** the kit README — maximally extended: real-model numbers on top, three-layer provenance, animation wall, the GPT-2 stand-in numbers collapsed into an archive section |
 | `Gemma3-1B-IT.md` | **REPLACES** the patient card — real probe numbers (writers L10/11/12), real baselines |
-| `Code/README.md`, `Docs/README.md`, `Graphic/README.md`, `Graphics/README.md`, `JSON Results/README.md`, `Model ZIP/README.md`, `Model — Z/README.md`, `R CDA - 5/README.md`, `R CDA - 6/README.md`, `R CDA - 7/README.md`, `Reports MD/README.md`, `Script's/README.md`, `assets/README.md` | **NEW or REPLACED** — one README per folder; every one labels its provenance layer (validation / real-Gemma / RCDA-8) and links the round lineage |
+| `Code/README.md`, `Docs/README.md`, `Graphic/README.md`, `Graphics/README.md`, `JSON-Results/README.md`, `Model-ZIP/README.md`, `Model-Z/README.md`, `RCDA-5/README.md`, `RCDA-6/README.md`, `RCDA-7/README.md`, `Reports-MD/README.md`, `Scripts/README.md`, `assets/README.md` | **NEW or REPLACED** — one README per folder; every one labels its provenance layer (validation / real-Gemma / RCDA-8) and links the round lineage |
 
 Nothing else in your repository is touched: all existing files
-(`R CDA - */Research/…`, `JSON Results/*`, `Model ZIP/*`, `Model — Z/*`,
-`Graphic/*`, `Graphics/*`, `Script's/*`, `Reports MD/*`) stay exactly as
+(`R CDA - */Research/…`, `JSON-Results/*`, `Model-ZIP/*`, `Model-Z/*`,
+`Graphic/*`, `Graphics/*`, `Scripts/*`, `Reports-MD/*`) stay exactly as
 they are — the new READMEs document them as the record they already are.
 
 ## Headline of the round (measured, greedy 192, one evaluator)

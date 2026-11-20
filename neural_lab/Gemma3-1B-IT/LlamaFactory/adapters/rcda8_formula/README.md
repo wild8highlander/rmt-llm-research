@@ -13,15 +13,11 @@ tags:
 
 <!-- Provide a quick summary of what the model is/does. -->
 
-
-
 ## Model Details
 
 ### Model Description
 
 <!-- Provide a longer summary of what this model is. -->
-
-
 
 - **Developed by:** [More Information Needed]
 - **Funded by [optional]:** [More Information Needed]
@@ -95,7 +91,6 @@ Use the code below to get started with the model.
 
 [More Information Needed]
 
-
 #### Training Hyperparameters
 
 - **Training regime:** [More Information Needed] <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
@@ -135,8 +130,6 @@ Use the code below to get started with the model.
 [More Information Needed]
 
 #### Summary
-
-
 
 ## Model Examination [optional]
 
@@ -203,6 +196,7 @@ Carbon emissions can be estimated using the [Machine Learning Impact calculator]
 ## Model Card Contact
 
 [More Information Needed]
+
 ### Framework versions
 
 - PEFT 0.18.1

@@ -15,7 +15,7 @@ One script, two pools from the SAME frozen greedy generations (resume-safe):
 
 Everything measured on the model this round actually trains: the public
 snapshot unsloth/gemma-3-1b-it@5b1141... (the same weights the RCDA-5/6
-real-Gemma runs used, per JSON Results/probe_report.json).
+real-Gemma runs used, per JSON-Results/probe_report.json).
 
 Outputs (work/results/probe/):
   gens.jsonl                  frozen greedy generations (192 tok, bad set)

@@ -48,7 +48,7 @@ def main() -> None:
             "protocol": "raw completion mode, greedy 192, 4-gram loops, "
                         "threshold 0.5, 20 bad + 20 good + 5 control (RU/EN)",
             "comparability": "identical protocol to the RCDA-5/6 real-Gemma "
-                             "rounds (Reports MD/RESULTS_SUMMARY.md)",
+                             "rounds (Reports-MD/RESULTS_SUMMARY.md)",
         },
         "arms": {
             "base": {

@@ -6,8 +6,11 @@
 внутреннюю согласованность артефактов и логику скриптов. Никаких запусков модели.
 
 Каждая проверка: PASS / FAIL / WARN с фактическим значением. Выход:
-  rcda9/audit/rcda8_audit.json   — машиночитаемый протокол
-  rcda9/audit/rcda8_audit.md     — человекочитаемый протокол
+  audit/rcda8_audit.json   — машиночитаемый протокол (рядом со скриптом)
+  audit/rcda8_audit.md     — человекочитаемый протокол
+
+Запуск из корня репозитория:
+  python3 neural_lab/Gemma3-1B-IT/audit/rcda8_audit_runner.py
 """
 import json
 import re
@@ -15,9 +18,10 @@ from pathlib import Path
 
 import numpy as np
 
-LF = Path('/home/z/my-project/repo/neural_lab/Gemma3-1B-IT/LlamaFactory')
+AUDIT_DIR = Path(__file__).resolve().parent
+LF = AUDIT_DIR.parent / 'LlamaFactory'
 RES = LF / 'results'
-OUT = Path('/home/z/my-project/rcda9/audit')
+OUT = AUDIT_DIR
 OUT.mkdir(parents=True, exist_ok=True)
 
 checks = []
@@ -260,16 +264,17 @@ n_pass = sum(1 for c in checks if c['status'] == 'PASS')
 n_fail = sum(1 for c in checks if c['status'] == 'FAIL')
 n_warn = sum(1 for c in checks if c['status'] == 'WARN')
 summary = {'total': len(checks), 'pass': n_pass, 'fail': n_fail, 'warn': n_warn}
-(OUT / 'rcda8_audit.json').write_text(json.dumps({'summary': summary, 'checks': checks},
-                                                 indent=1, ensure_ascii=False))
+(OUT / 'rcda8_audit.json').write_text(
+    json.dumps({'summary': summary, 'checks': checks}, indent=1, ensure_ascii=False) + '\n',
+    encoding='utf-8')
 
 lines = ['# Статический аудит RCDA-8 (LlamaFactory round)', '',
          f'**{summary["total"]} проверок: {n_pass} PASS · {n_fail} FAIL · {n_warn} WARN**', '']
 for c in checks:
     mark = {'PASS': 'PASS', 'FAIL': '**FAIL**', 'WARN': 'WARN'}[c['status']]
     lines.append(f"- [{mark}] {c['claim']} — ожидалось: `{c['expected']}`, фактически: `{c['actual']}`"
-                 + (f"  \n  _{c['note']}_" if c['note'] else ''))
-(OUT / 'rcda8_audit.md').write_text('\n'.join(lines), encoding='utf-8')
+                 + (f"  \n  *{c['note']}*" if c['note'] else ''))
+(OUT / 'rcda8_audit.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 print(json.dumps(summary, indent=1))
 for c in checks:
     if c['status'] != 'PASS':

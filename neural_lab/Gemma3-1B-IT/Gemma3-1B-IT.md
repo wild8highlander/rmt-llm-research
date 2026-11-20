@@ -26,7 +26,7 @@ formulas**: the RCDA penalty `pen = (vᵀh/‖v‖)²`, not a generic recipe.
 Why a stand-in ever ran: the Gemma mirror is gated (license acceptance +
 token) and the early capture hardware had no GPU, so the pipeline mechanics
 were validated end-to-end on GPT-2 with an architecture-adaptive loader.
-The real-model runs came later (`Reports MD/`, `JSON Results/`) and the
+The real-model runs came later (`Reports-MD/`, `JSON-Results/`) and the
 RCDA-8 round (`LlamaFactory/`) completes them: same snapshot, same
 protocol, trained through LlamaFactory 0.9.5 on a CPU-only box. What the
 record now holds: the probe replicates byte-exact (writers L10/11/12, ρ_bad

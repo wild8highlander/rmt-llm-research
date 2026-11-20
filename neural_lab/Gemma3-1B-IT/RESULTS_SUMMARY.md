@@ -37,24 +37,24 @@ raw completion mode; 4-gram loop labels, threshold 0.5).
 
 ## What the formula-training buys, round by round
 
-1. **RCDA-5 (the transfer test, `R CDA - 5/`)**: the machinery transfers and
+1. **RCDA-5 (the transfer test, `RCDA-5/`)**: the machinery transfers and
    abilities hold (PPL parity), but the behavioral outcome is *negative* —
    the penalty collapses (−99 %) while every hard looper gets worse
    (0.83 → 0.91) and every mild prompt breaks (0.16 → 0.92). Verdict: the
    penalized direction is a correlate of the loop, not its cause; the edit is
    not spectrally clean (TW ×3).
-2. **RCDA-6 (this round, `R CDA - 6/`)**: the two pre-registered changes —
+2. **RCDA-6 (this round, `RCDA-6/`)**: the two pre-registered changes —
    the wider o_proj+down_proj band and the phase-conditioned directions —
    deliver the **first measured прирост against both the base and RCDA-5**:
-   * **vs RCDA-5 SGD**: loop share −31 % (0.911 → 0.627), ρ_bad −15 %
+   - **vs RCDA-5 SGD**: loop share −31 % (0.911 → 0.627), ρ_bad −15 %
      (1.00 → 0.85), loop waste −11 % (180 → 160);
-   * **vs base, on the subset that defines the defect**: hard-12 loop share
+   - **vs base, on the subset that defines the defect**: hard-12 loop share
      **0.827 → 0.620 (−25 %)**, two prompts fully repaired
      (`bad_g02` 0.96 → 0.24, `bad_g11` 0.59 → 0.28) — the RCDA-5 arms moved
      the same subset the wrong way (→ 0.91);
-   * **the price**: the defect migrates (mild-8 0.16 → 0.64) and the edit
+   - **the price**: the defect migrates (mild-8 0.16 → 0.64) and the edit
      costs abilities drift the small edit did not (PPL +29 %, KL 0.31);
-   * **unchanged**: no TW-clean solution (×16), no convergence of the edit's
+   - **unchanged**: no TW-clean solution (×16), no convergence of the edit's
      top direction to the penalized one — the MNN-Pocket "spectrally clean
      solution of the same class" remains architecture-specific.
 3. **The scaling law this pair of rounds suggests**: the behavioral leverage
@@ -70,8 +70,8 @@ raw completion mode; 4-gram loop labels, threshold 0.5).
 
 | Experiment | Report | Record | Weights |
 | --- | --- | --- | --- |
-| RCDA-5 | [`R CDA - 5/Research/RCDA/RCDA5_REPORT.md`](R%20CDA%20-%205/Research/RCDA/RCDA5_REPORT.md) | `results/` (training logs ×2, part5 evals ×3, probe, digest, vectors) | full checkpoint, 17 volumes ≤ 95 MB |
-| RCDA-6 | [`R CDA - 6/Research/RCDA/RCDA6_REPORT.md`](R%20CDA%20-%206/Research/RCDA/RCDA6_REPORT.md) | `results/` (phase probe, training log, part6 eval + rows + TW, PPL, digest, vectors) | 16-tensor delta, 2 volumes ≤ 91 MB |
+| RCDA-5 | [`RCDA-5/Research/RCDA/RCDA5_REPORT.md`](RCDA-5/Research/RCDA/RCDA5_REPORT.md) | `results/` (training logs ×2, part5 evals ×3, probe, digest, vectors) | full checkpoint, 17 volumes ≤ 95 MB |
+| RCDA-6 | [`RCDA-6/Research/RCDA/RCDA6_REPORT.md`](RCDA-6/Research/RCDA/RCDA6_REPORT.md) | `results/` (phase probe, training log, part6 eval + rows + TW, PPL, digest, vectors) | 16-tensor delta, 2 volumes ≤ 91 MB |
 
 Parent experiment: [`neural_lab/MNN-Pocket-0.3B/R CDA - 5`](../MNN-Pocket-0.3B/R%20CDA%20-%205/README.md)
 — the positive result that started the transfer program.

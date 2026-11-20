@@ -27,7 +27,7 @@ KIT = Path(__file__).resolve().parent.parent
 
 
 def main() -> None:
-    base_res = KIT / "R CDA - 5" / "Research" / "RCDA" / "results"
+    base_res = KIT / "RCDA-5" / "Research" / "RCDA" / "results"
     base_model_sd = None
 
     from rcds_common import load_model

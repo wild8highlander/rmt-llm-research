@@ -20,8 +20,8 @@ from gemma_rcds_train import PenCapture, pen_value
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="openai-community/gpt2")
-    ap.add_argument("--state", default="../R CDA - 5/Research/RCDA/results/rcda5_trained_state.pt")
-    ap.add_argument("--vectors", default="../R CDA - 5/Research/RCDA/results/rcds5_vectors.npz")
+    ap.add_argument("--state", default="../RCDA-5/Research/RCDA/results/rcda5_trained_state.pt")
+    ap.add_argument("--vectors", default="../RCDA-5/Research/RCDA/results/rcds5_vectors.npz")
     args = ap.parse_args()
 
     seed_all(0)
@@ -34,7 +34,7 @@ def main() -> None:
         for name, w in state.items():
             sd[name].copy_(w.float())
 
-    report = json.loads((Path(__file__).parent.parent / "R CDA - 5" / "Research" /
+    report = json.loads((Path(__file__).parent.parent / "RCDA-5" / "Research" /
                          "RCDA" / "results" / "probe_report.json").read_text())
     writers = report["writer_layers"]
     npz = np.load(Path(__file__).parent / args.vectors)

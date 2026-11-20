@@ -4,11 +4,11 @@ Written: November 18, 2026. Covers the two archives of the Gemma3-1B-IT kit.
 
 ## 1. The intervention archive (what this kit ships)
 
-`Model ZIP/gemma3-rcds-interventions.zip` — **35.6 MB, single volume** (under
+`Model-ZIP/gemma3-rcds-interventions.zip` — **35.6 MB, single volume** (under
 the GitHub 100 MB per-file limit, no splitting needed). It contains the fp16
 intervention deltas of all three rounds + the probe directions:
 
-```
+```text
 rcda5_deltas.npz     3 tensors   (o_proj L6/L7/L8)
 rcda6_deltas.npz     6 tensors   (o_proj + down_proj L6/L7/L8)
 rcda7_deltas.npz     6 tensors   (same tensor set, RCDA-7 values)
@@ -18,7 +18,7 @@ manifest.json        per-member SHA-256 + provenance + apply command
 
 ```bash
 # verify
-sha256sum -c SHA256SUMS.txt            # in Model ZIP/
+sha256sum -c SHA256SUMS.txt            # in Model-ZIP/
 # unpack
 unzip gemma3-rcds-interventions.zip -d rcds_interventions/
 # apply to the base model (any of the three variants)

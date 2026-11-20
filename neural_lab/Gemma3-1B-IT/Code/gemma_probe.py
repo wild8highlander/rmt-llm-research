@@ -115,7 +115,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="openai-community/gpt2",
                     help="google/gemma-3-1b-it in production")
-    ap.add_argument("--out", default=None, help="results dir (default: R CDA - 5/Research/RCDA/results)")
+    ap.add_argument("--out", default=None, help="results dir (default: RCDA-5/Research/RCDA/results)")
     ap.add_argument("--n_writers", type=int, default=3)
     ap.add_argument("--max_new", type=int, default=48)
     ap.add_argument("--seed", type=int, default=0)
@@ -123,7 +123,7 @@ def main() -> None:
 
     seed_all(args.seed)
     kit = Path(__file__).resolve().parent.parent
-    out = Path(args.out) if args.out else kit / "R CDA - 5" / "Research" / "RCDA" / "results"
+    out = Path(args.out) if args.out else kit / "RCDA-5" / "Research" / "RCDA" / "results"
     out.mkdir(parents=True, exist_ok=True)
 
     model, tok = load_model(args.model)

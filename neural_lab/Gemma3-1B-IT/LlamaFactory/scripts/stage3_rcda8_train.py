@@ -29,7 +29,7 @@ alternating in the RCDA-6 order. Anchor logits cached fp16 on disk.
 
 Outputs (work/results/rcda8_arm/):
   training_log.json   steps (mse/pen_raw/pen_norm per layer) + benches
-  adapter/            the LoRA adapter (what Model ZIP would ship for RCDA-8)
+  adapter/            the LoRA adapter (what Model-ZIP would ship for RCDA-8)
 """
 from __future__ import annotations
 

@@ -1,7 +1,7 @@
 """rcda8_lab.py — shared runtime for the LlamaFactory round (RCDA-8 + SFT arms).
 
 A faithful port of the frozen Gemma3-1B-IT RCDA protocol (gemma_lab.py of the
-R CDA - 6 round) into the LlamaFactory round, with every constant kept
+RCDA-6 round) into the LlamaFactory round, with every constant kept
 byte-compatible so the numbers stay comparable across rounds:
 
   * raw completion mode (no chat template), greedy decoding
@@ -29,7 +29,7 @@ BAD_PREF = 48
 ANCHOR_TAIL = 32
 
 # The frozen protocol model: public mirror of google/gemma-3-1b-it,
-# snapshot-pinned (the hash matches JSON Results/probe_report.json of the
+# snapshot-pinned (the hash matches JSON-Results/probe_report.json of the
 # RCDA-5 real-Gemma run).
 MODEL_SNAPSHOT = ("unsloth/gemma-3-1b-it@5b11413a10db4e486ef16a20101fd028f8f2499c")
 LOCAL_MODEL = os.environ.get(

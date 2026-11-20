@@ -12,6 +12,7 @@
   <img src="https://img.shields.io/badge/data%20arm-%CF%81%5Fbad%200.60%20%E2%86%92%200.40%20%C2%B7%205%2F12%20repaired-38E1C0" alt="sft badge">
   <img src="https://img.shields.io/badge/abilities-PPL%208.6%20(%E2%88%9221%25)-00D4FF" alt="ppl badge">
   <img src="https://img.shields.io/badge/budget-CPU%202%20cores%20%C2%B7%204%20GB%20%C2%B7%2075%20min-FF3B6B" alt="budget badge">
+  <a href="../RCDA-9/README.md"><img src="https://img.shields.io/badge/next%20round-RCDA--9%20formula%20round-526CFE" alt="rcda9 badge"></a>
   <a href="../README.md"><img src="https://img.shields.io/badge/%E2%86%90-Gemma3--1B--IT-FFB020" alt="parent badge"></a>
 </p>
 
@@ -22,7 +23,10 @@
 > [LlamaFactory](https://github.com/hiyouga/LlamaFactory) on a CPU-only
 > box — the repository's formula `pen = (vᵀh/‖v‖)²` as a LoRA-fine-tuned
 > **formula arm**, versus a stock-LlamaFactory **data arm** on curated
-> anti-loop targets. One frozen evaluator decides.
+> anti-loop targets. One frozen evaluator decides. Its successor — the
+> RCDA-9 formula round that teaches the monograph corpus and re-runs the
+> pen arm, plus the 72-check audit of this round — lives in
+> [`../RCDA-9/`](../RCDA-9/README.md) and [`../audit/`](../audit/README.md).
 
 ---
 
@@ -180,5 +184,7 @@ model = PeftModel.from_pretrained(base_model, "LlamaFactory/adapters/rcda8_formu
   <img src="../assets/logos/gemma-rcda-avatar.svg" width="48" alt="RCDA kit avatar"><br>
   <sub><a href="../README.md">← Gemma3-1B-IT kit</a> ·
   <a href="RCDA8_REPORT.md">the full RCDA-8 report →</a> ·
+  <a href="../RCDA-9/README.md">the RCDA-9 formula round →</a> ·
+  <a href="../audit/README.md">the RCDA-8 audit →</a> ·
   <a href="../../README.md">🏠 repository root</a></sub>
 </p>

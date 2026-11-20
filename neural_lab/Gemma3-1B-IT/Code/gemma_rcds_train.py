@@ -20,7 +20,7 @@ named in the round hypotheses):
 Artifacts per run (canonical locations):
   results/{variant}_training_log.json   steps + pen0 + bench + args
   results/{variant}_trained_state.pt    full edited tensors (fp32, for eval)
-  results/{variant}_deltas.npz          fp16 deltas (Model ZIP content)
+  results/{variant}_deltas.npz          fp16 deltas (Model-ZIP content)
 """
 from __future__ import annotations
 
@@ -137,11 +137,11 @@ def main() -> None:
 
     kit = Path(__file__).resolve().parent.parent
     round_dir = (Path(args.round_dir) if args.round_dir else
-                 kit / {"rcda5": "R CDA - 5", "rcda6": "R CDA - 6",
-                        "rcda7": "R CDA - 7"}[args.variant])
+                 kit / {"rcda5": "RCDA-5", "rcda6": "RCDA-6",
+                        "rcda7": "RCDA-7"}[args.variant])
     out = Path(args.out_dir) if args.out_dir else round_dir / "Research" / "RCDA" / "results"
     out.mkdir(parents=True, exist_ok=True)
-    base_results = kit / "R CDA - 5" / "Research" / "RCDA" / "results"
+    base_results = kit / "RCDA-5" / "Research" / "RCDA" / "results"
 
     probe = Path(args.probe) if args.probe else base_results / "probe_report.json"
     vectors = Path(args.vectors) if args.vectors else base_results / "rcds5_vectors.npz"

@@ -9,7 +9,7 @@ For one arm (base or a trained state) it measures, in one protocol:
                                                          behavioral direction?
 
 Usage (round 5, trained arm):
-  python gemma_benchmark.py --round 5 --tag trained --state ../"R CDA - 5"/.../rcda5_trained_state.pt
+  python gemma_benchmark.py --round 5 --tag trained --state ../"RCDA-5"/.../rcda5_trained_state.pt
 """
 from __future__ import annotations
 
@@ -47,7 +47,7 @@ def main() -> None:
                  kit / f"R CDA - {args.round}")
     out = Path(args.out_dir) if args.out_dir else round_dir / "Research" / "RCDA" / "results"
     out.mkdir(parents=True, exist_ok=True)
-    base_results = kit / "R CDA - 5" / "Research" / "RCDA" / "results"
+    base_results = kit / "RCDA-5" / "Research" / "RCDA" / "results"
 
     state = torch.load(args.state, map_location="cpu") if args.state else None
     if state is None and args.tag == "trained":

@@ -1,10 +1,14 @@
+<p align="center">
+  <img src="../assets/logos/gemma-rcda-avatar.svg" width="48" alt="RCDA kit avatar">
+</p>
+
 # 🛠️ Code — the Gemma3 RCDA toolkit (validation layer)
 
 <p align="center">
   <img src="https://img.shields.io/badge/scripts-8-00D4FF" alt="scripts badge">
   <img src="https://img.shields.io/badge/variants-rcda5%20%2F%206%20%2F%207-B026FF" alt="variants badge">
   <img src="https://img.shields.io/badge/arch-adaptive%3A%20GPT--2%20stand--in%20%E2%86%92%20Gemma3-38E1C0" alt="arch badge">
-  <a href="https://github.com/hiyouga/LlamaFactory"><img src="https://img.shields.io/badge/real--model%20round-LlamaFactory%2FRCDA--8-FFB020" alt="rcda8 badge"></a>
+  <a href="https://github.com/hiyouga/LlamaFactory"><img src="https://img.shields.io/badge/real--model%20rounds-LlamaFactory%20%C2%B7%20RCDA--9-FFB020" alt="rcda8 badge"></a>
   <a href="../README.md"><img src="https://img.shields.io/badge/%E2%86%90-Gemma3--1B--IT-FFB020" alt="parent"></a>
 </p>
 
@@ -15,9 +19,12 @@ validation stand-in, `openai-community/gpt2`) vs Gemma3
 production runs change **only** the `--model` flag.
 
 > **Where the real-model training lives.** The RCDA-8 round (the real
-> Gemma, LlamaFactory 0.9.5, formula arm vs data arm) is a separate,
-> self-contained pipeline: [`../LlamaFactory/`](../LlamaFactory/README.md).
-> This folder is the validated machinery it grew out of.
+> Gemma, LlamaFactory 0.9.5, formula arm vs data arm) and the RCDA-9
+> formula round (the monograph corpus + the pen re-run) are separate,
+> self-contained pipelines:
+> [`../LlamaFactory/`](../LlamaFactory/README.md) and
+> [`../RCDA-9/`](../RCDA-9/README.md). This folder is the validated
+> machinery they grew out of.
 
 | Script | What it does |
 |--------|--------------|
@@ -29,6 +36,13 @@ production runs change **only** the `--model` flag.
 | [`rcds_summarise.py`](rcds_summarise.py) | relative TW gate + `summary_all_variants.json` (the canonical summary every table and figure reads) |
 | [`gemma_apply_deltas.py`](gemma_apply_deltas.py) | rebuild a trained model from untouched base weights + the shipped fp16 deltas |
 | [`diag_prefix_vs_fresh.py`](diag_prefix_vs_fresh.py) | diagnostic: penalty on frozen training prefixes vs the model's own fresh trajectories (prefix-overfitting check) |
+
+## 🎬 What the toolkit produces
+
+| | |
+|---|---|
+| <img src="../Graphic/anims/training-loop.gif" width="380" loading="lazy" alt="Animated: pen_norm melting over 150 steps for the three validation variants"> | <img src="../Graphic/fig16_overview_dashboard.png" width="380" loading="lazy" alt="The one-glance dashboard of the validation layer"> |
+| **the formula melting** — `gemma_rcds_train.py`, all three variants | **the one evaluator** — `gemma_benchmark.py` + `rcds_summarise.py` |
 
 ## The standard chain
 
@@ -54,18 +68,28 @@ provoked and measured on both languages.
 | `good.jsonl` | 16 | natural prompts — the anchor / ability data |
 | `control.jsonl` | 6 | prose paragraphs — KL and PPL measurement |
 
-The **real-Gemma protocol sets** (20 bad sentinel-selected `bad_g01…g20`
-+ 20 good + 5 control) live in [`../JSON Results/`](../JSON%20Results/README.md)
+The **real-Gemma protocol sets** (20 bad sentinel-selected `bad_g01…g20`,
+20 good, 5 control) live in [`../JSON-Results/`](../JSON-Results/README.md)
 and are frozen into the RCDA-8 round at
-[`../LlamaFactory/data/`](../LlamaFactory/README.md).
+[`../LlamaFactory/data/`](../LlamaFactory/README.md) and the RCDA-9 round at
+[`../RCDA-9/data/`](../RCDA-9/README.md).
 
 ## Provenance
 
 The committed artifacts of this folder were produced on the GPT-2 stand-in
 (the validation layer, archived in the
-[main README](../README.md#%EF%B8%8F-archive-the-gpt-2-stand-in-validation-layer));
+[main README](../README.md#-archive--the-gpt-2-stand-in-validation-layer));
 `--model google/gemma-3-1b-it` reruns the identical protocol at Gemma
 scale. The real-model rounds have their own folders:
-[`../Reports MD/`](../Reports%20MD/README.md) (scientific record),
-[`../Script's/`](../Script's/README.md) (working scripts),
-[`../LlamaFactory/`](../LlamaFactory/README.md) (the LlamaFactory round).
+[`../Reports-MD/`](../Reports-MD/README.md) (scientific record),
+[`../Scripts/`](../Scripts/README.md) (working scripts),
+[`../LlamaFactory/`](../LlamaFactory/README.md) (the RCDA-8 round),
+[`../RCDA-9/`](../RCDA-9/README.md) (the formula round).
+
+---
+
+<p align="center">
+  <sub><a href="../README.md">← kit root</a> ·
+  <a href="../RCDA-5/README.md">RCDA-5 →</a> ·
+  <a href="../RCDA-9/README.md">the formula round →</a></sub>
+</p>

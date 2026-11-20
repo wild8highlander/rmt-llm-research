@@ -1,6 +1,6 @@
 """Apply the committed intervention deltas to a fresh base model.
 
-The Model ZIP ships fp16 deltas (W' - W) for every trained tensor of every
+The Model-ZIP ships fp16 deltas (W' - W) for every trained tensor of every
 round; this script rebuilds the trained model from an untouched
 `google/gemma-3-1b-it` (or the validation stand-in) and verifies the result by
 re-running the round benchmark. Nothing else is needed - no fine-tuning, no
