@@ -1,0 +1,66 @@
+{
+ "round": "RCDA-9 formula round",
+ "model": "unsloth/gemma-3-1b-it@5b11413a10db4e486ef16a20101fd028f8f2499c",
+ "arms": {
+  "base": {
+   "rho_bad": 0.6,
+   "rho_good": 0.1,
+   "loop_share_mean_bad": 0.5619,
+   "loop_waste_mean_bad": 103.3,
+   "hard12_loop_share": null,
+   "mild8_loop_share": null,
+   "prompts_fully_repaired": null,
+   "kl_ctrl_mean": 0.0,
+   "ppl_control_mean": 10.9,
+   "corpus_val_ppl": 369.21,
+   "qa_exact": 9,
+   "qa_pairs": 57,
+   "qa_exact_rate": 0.1579,
+   "qa_partial_rate": 0.193,
+   "qa_mean_rel_err": 19745767376.2071,
+   "forensics_tensors": 0
+  },
+  "formulas": {
+   "rho_bad": 0.1,
+   "rho_good": 0.0,
+   "loop_share_mean_bad": 0.1934,
+   "loop_waste_mean_bad": 36.9,
+   "hard12_loop_share": 0.259,
+   "mild8_loop_share": 0.096,
+   "prompts_fully_repaired": 10,
+   "kl_ctrl_mean": 0.0789,
+   "ppl_control_mean": 10.6,
+   "corpus_val_ppl": 99.68,
+   "qa_exact": 4,
+   "qa_pairs": 57,
+   "qa_exact_rate": 0.0702,
+   "qa_partial_rate": 0.1053,
+   "qa_mean_rel_err": 1.7543859649122806e+29,
+   "forensics_tensors": 52
+  },
+  "pen": {
+   "rho_bad": 0.8,
+   "rho_good": 0.15,
+   "loop_share_mean_bad": 0.7849,
+   "loop_waste_mean_bad": 150.7,
+   "hard12_loop_share": 0.825,
+   "mild8_loop_share": 0.725,
+   "prompts_fully_repaired": 1,
+   "kl_ctrl_mean": 0.4212,
+   "ppl_control_mean": 11.4,
+   "corpus_val_ppl": 447.12,
+   "qa_exact": 0,
+   "qa_pairs": 57,
+   "qa_exact_rate": 0.0,
+   "qa_partial_rate": 0.0351,
+   "qa_mean_rel_err": 20297323232.3713,
+   "forensics_tensors": 16
+  }
+ },
+ "pen_descent_pct": -97.2,
+ "notes": [
+  "formulas arm control-PPL drift: -0.3",
+  "formulas arm QA exact: 4/57 vs base 9/57",
+  "pen arm mild-8 migration check: base 0.164 -> pen 0.725"
+ ]
+}

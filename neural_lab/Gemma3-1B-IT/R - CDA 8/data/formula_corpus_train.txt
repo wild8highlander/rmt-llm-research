@@ -1,0 +1,2653 @@
+# MODULE CONSTANTS
+Constants and key numerical values for the RMT-LLM framework.
+
+Centralizes all important constants used across the verification suite.
+
+
+RULE constants: eps_machine = 2^-53 ~ 1.1e-16 (float64); N_crit = gamma_1 / theta_b
+
+
+# MODULE MARCHENKO_PASTUR
+Marchenko-Pastur Law — Bulk eigenvalue density of random covariance matrices.
+
+For an N x T matrix X with i.i.d. entries of variance sigma^2, the empirical
+spectral density of M = X X^T / T converges to the Marchenko-Pastur
+distribution as N, T -> infinity with q = N/T fixed.
+
+References:
+  - Marchenko & Pastur (1967), "Distribution of eigenvalues for some sets
+    of random matrices", Mat. Sb.
+
+
+FORMULA mp_bounds(q: 'float', sigma2: 'float' = 1.0) -> 'tuple[float, float]'
+Compute the support bounds lambda_-, lambda_+ of the MP law.
+
+Parameters
+----------
+q : float
+    Aspect ratio N/T, must be in (0, 1] for the standard case.
+code: lam_minus = sigma2 * (1.0 - sqrt_q) ** 2
+
+
+FORMULA mp_density(lam: 'ArrayLike', q: 'float', sigma2: 'float' = 1.0) -> 'np.ndarray'
+Evaluate the Marchenko-Pastur density at given eigenvalues.
+
+rho(lambda) = (1 / (2*pi*sigma^2*lambda*q))
+              * sqrt((lambda_+ - lambda)(lambda - lambda_-))
+
+For q > 1, there is additionally a point mass of weight (1 - 1/q) at
+code: mask = (lam > lam_minus) & (lam < lam_plus) & (lam > 0)
+
+
+FORMULA mp_cdf(lam: 'ArrayLike', q: 'float', sigma2: 'float' = 1.0, n_points: 'int' = 10000) -> 'np.ndarray'
+Compute the CDF of the Marchenko-Pastur distribution numerically.
+
+Parameters
+----------
+lam : array_like
+    Points at which to evaluate the CDF.
+code: eps = (lam_plus - lam_minus) * 1e-06
+
+
+FORMULA mp_sample(n: 'int', t: 'int', sigma2: 'float' = 1.0, rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Sample eigenvalues from a random covariance matrix.
+
+Generates an N x T matrix with i.i.d. N(0, sigma2) entries and computes
+the eigenvalues of M = X X^T / T.
+
+Parameters
+code: M = X @ X.T / t
+
+
+FORMULA mp_stieltjes(z: 'complex', q: 'float', sigma2: 'float' = 1.0) -> 'complex'
+Compute the Stieltjes transform of the Marchenko-Pastur distribution.
+
+g(z) = (1 - q - z) / (2 * sigma^2 * q * z)
+       + sqrt((1 - q - z)^2 - 4 * q * z) / (2 * sigma^2 * q * z)
+
+where sqrt is the branch with positive imaginary part for Im(z) > 0.
+code: discriminant = (1.0 - q - z) ** 2 - 4.0 * q * z
+
+
+RULE marchenko_pastur: rho(lambda) = sqrt((lambda_+ - lambda)*(lambda - lambda_-)) / (2*pi*sigma2*q*lambda); edges lambda_+- = sigma2*(1 +- sqrt(q))^2
+
+
+# MODULE BBP_TRANSITION
+BBP Phase Transition — Signal eigenvalue emergence from the random bulk.
+
+For a rank-1 spiked covariance matrix Sigma = sigma^2 * I + theta * v v^T,
+the largest eigenvalue lambda_max undergoes a phase transition at theta = sqrt(q):
+
+  - Subcritical (theta <= sqrt(q)): lambda_max -> lambda_+  (bulk edge)
+  - Supercritical (theta > sqrt(q)): lambda_max -> sigma^2 * (1 + theta^2 / q)
+
+This is the Baik-Ben Arous-Peche (BBP) transition, the key marker for
+cognitive mode detection in LLM activations.
+
+References:
+  - Baik, Ben Arous & Peche (2005), "Phase transition of the largest
+    eigenvalue for nonnull complex sample covariance matrices", Ann. Probab.
+
+
+FORMULA bbp_critical_theta(q: 'float') -> 'float'
+Compute the critical signal strength theta_c = sqrt(q).
+
+Parameters
+----------
+q : float
+    Aspect ratio N/T in (0, 1].
+
+
+FORMULA bbp_lambda_max(theta: 'float', q: 'float', sigma2: 'float' = 1.0) -> 'float'
+Compute the asymptotic largest eigenvalue under a rank-1 spike.
+
+Parameters
+----------
+theta : float
+    Signal strength (spike magnitude).
+code: lam_plus = sigma2 * (1.0 + np.sqrt(q)) ** 2
+
+
+FORMULA bbp_signal_separation(theta: 'float', q: 'float', sigma2: 'float' = 1.0) -> 'float'
+Compute the gap between lambda_max and the bulk edge lambda_+.
+
+A positive gap indicates supercritical regime (signal detected).
+
+Parameters
+----------
+code: lam_plus = sigma2 * (1.0 + np.sqrt(q)) ** 2
+
+
+FORMULA bbp_is_supercritical(theta: 'float', q: 'float') -> 'bool'
+Check whether the BBP transition has occurred.
+
+Parameters
+----------
+theta : float
+    Signal strength.
+
+
+FORMULA bbp_fluctuation_scaling(n: 'int', q: 'float') -> 'float'
+Compute the fluctuation scale of lambda_max near the transition.
+
+In the critical regime (theta ~ sqrt(q)), the fluctuations are of order
+N^{-1/3} (Tracy-Widom scaling). In the sub/supercritical regime, they
+are of order N^{-1/2} (Gaussian scaling).
+
+
+FORMULA bbp_sample(n: 'int', t: 'int', theta: 'float', sigma2: 'float' = 1.0, rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Sample eigenvalues from a rank-1 spiked covariance matrix.
+
+Generates X = sigma * G + theta * v e_1^T / sqrt(T) where G is i.i.d.
+N(0,1), v is a unit vector, and e_1 is the first standard basis vector.
+
+Parameters
+code: M = X @ X.T / t
+
+
+RULE bbp_transition: lambda_max -> sigma^2*(1 + theta^2/q) when theta > sqrt(q), else lambda_+ (bulk edge)
+
+
+# MODULE TRACY_WIDOM
+Tracy-Widom F_2 Distribution — GUE largest-eigenvalue fluctuations.
+
+The Tracy-Widom distribution F_2 governs the fluctuations of the largest
+eigenvalue of GUE random matrices (and, after centering and scaling, of
+real covariance matrices via the BBP transition).
+
+F_2(s) = exp(- integral_s^infty (x - t) q_2(t)^2 dt)
+
+where q_2 satisfies the Painleve II equation:
+  q'' = s q + 2 q^3,   q(s) -> Ai(s) as s -> +infty
+
+This module provides a numerical implementation based on the Bornemann (2010)
+Fredholm determinant method, plus a high-accuracy lookup table for
+computational efficiency.
+
+References:
+  - Tracy & Widom (1996), "On orthogonal and symplectic matrix ensembles",
+    Comm. Math. Phys.
+  - Bornemann (2010), "On the numerical evaluation of distributions in
+    random matrix theory", Markov Process. Relat. Fields.
+
+
+FORMULA _interpolate_table(s: 'float', table: 'list[tuple[float, float]]') -> 'float'
+Linearly interpolate a lookup table.
+code: t = (s - s1) / (s2 - s1)
+
+
+FORMULA tracy_widom_cdf(s: 'ArrayLike') -> 'np.ndarray'
+Evaluate the Tracy-Widom F_2 CDF.
+
+Uses a high-accuracy lookup table with linear interpolation.
+
+Parameters
+----------
+
+
+FORMULA tracy_widom_pdf(s: 'ArrayLike', eps: 'float' = 0.01) -> 'np.ndarray'
+Evaluate the Tracy-Widom F_2 PDF by numerical differentiation.
+
+Parameters
+----------
+s : array_like
+    Points at which to evaluate the PDF.
+
+
+FORMULA tracy_widom_mean() -> 'float'
+Return the mean of the Tracy-Widom F_2 distribution.
+
+E[s] ~ -1.7711 (exact to 4 decimal places).
+
+
+FORMULA tracy_widom_variance() -> 'float'
+Return the variance of the Tracy-Widom F_2 distribution.
+
+Var[s] ~ 0.8132.
+
+
+FORMULA tracy_widom_skewness() -> 'float'
+Return the skewness of the Tracy-Widom F_2 distribution.
+
+Skew ~ 0.2241 (positive = right-skewed).
+
+
+FORMULA tracy_widom_sample(n: 'int', matrix_size: 'int' = 100, rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Sample from the Tracy-Widom distribution via GUE eigenvalue simulation.
+
+Generates n samples by computing the largest eigenvalue of GUE matrices
+of given size, then centering and scaling appropriately.
+
+Parameters
+code: H = rng.normal(0, 1, size=(matrix_size, matrix_size)) + 1j * rng.normal(0, 1, size=(matrix_size, matrix_size))
+
+
+RULE tracy_widom: E[F1] = -1.2065335745820 (beta=1, GOE); E[F2] = -1.7710868074110 (beta=2, GUE); Var[F2] = 0.8131947928329 — TW universality class
+
+
+# MODULE NHSE
+Non-Hermitian Skin Effect (NHSE) — Topological transition at N = N_crit.
+
+The NHSE describes the spectral collapse of non-Hermitian matrices: below
+the critical token count N_crit, eigenvalues form a 2D ring in the complex
+plane with non-zero imaginary parts (winding number w = 0). Above N_crit,
+the skin effect forces all eigenvalues to collapse onto the real axis
+(w = 1), signalling the onset of hallucination in autoregressive LLMs.
+
+Key quantities:
+  - Winding number: w = (1/2pi) oint arg(det(H(z) - lambda)) dz
+  - Transition: w: 0 -> 1 at N = N_crit
+  - Skin strength: exponential localization of eigenvectors at boundaries
+
+References:
+  - Okuma, Sato & Yao (2018+), "Topological origin of non-Hermitian skin
+    effects", Phys. Rev. Lett.
+
+
+FORMULA nhse_winding_number(n_ratio: 'float', gamma: 'float') -> 'int'
+Compute the winding number for a non-Hermitian system.
+
+The winding number transitions from 0 to 1 at n_ratio = 1.0
+(i.e., when N = N_crit).
+
+Parameters
+
+
+FORMULA nhse_skin_strength(n_ratio: 'float', gamma: 'float') -> 'float'
+Compute the skin effect strength (degree of eigenvalue collapse).
+
+Below N_crit: skin = 0 (eigenvalues on a 2D ring).
+Above N_crit: skin increases toward 1 as eigenvectors localize.
+
+Parameters
+
+
+FORMULA nhse_imag_collapse(n_ratio: 'float', gamma: 'float') -> 'float'
+Compute the fraction of imaginary parts that have collapsed.
+
+When w = 0: Im(lambda) is broadly distributed.
+When w = 1: Im(lambda) -> 0, fraction collapsed -> 1.
+
+Parameters
+
+
+FORMULA nhse_hamiltonian(size: 'int', gamma: 'float', rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Generate a non-Hermitian Hamiltonian with skin effect.
+
+H = H_0 + i * gamma * Gamma
+
+where H_0 is a real symmetric matrix (Hermitian part) and Gamma is
+anti-Hermitian (breaks Hermiticity with strength gamma).
+code: H_0 = (A + A.T) / (2.0 * np.sqrt(size))
+
+
+FORMULA nhse_eigenvalues(size: 'int', gamma: 'float', rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Compute eigenvalues of a non-Hermitian Hamiltonian.
+
+Parameters
+----------
+size : int
+    Matrix dimension.
+
+
+FORMULA nhse_point_gap(n_ratio: 'float', gamma: 'float') -> 'float'
+Estimate the point gap (min |Im(lambda)|) at given n_ratio.
+
+Below transition: point gap > 0 (eigenvalues off real axis).
+Above transition: point gap -> 0 (eigenvalues collapse to real axis).
+
+This is a simplified analytical model; for exact results, compute
+
+
+RULE nhse: non-Hermitian skin effect — O(N) eigenvalues pile up at the boundary; winding number W = (1/2*pi) * Im * ln(det H)
+
+
+# MODULE CAPUTO_FRACTIONAL
+Caputo Fractional-Time Memory — RLHF utility trap and hallucination onset.
+
+The Caputo fractional derivative of order beta in (0, 1) models memory
+effects in autoregressive generation. With beta ~ 0.5, the mean collapse
+time scales as:
+
+    <T_crit> proportional to (mu_eff)^(-1/beta)
+
+Since 1/beta ~ 2 for beta ~ 0.5, even small RLHF pressure mu_eff
+quadratically accelerates hallucination onset. This is the mathematical
+core of the "utility trap" described in the research.
+
+References:
+  - Caputo (1967), "Linear models of dissipation whose Q is almost
+    frequency independent", Geophys. J. R. Astr. Soc.
+
+
+FORMULA caputo_mean_collapse_time(mu_eff: 'float', beta: 'float' = 0.5, c: 'float' = 1.0) -> 'float'
+Compute the mean hallucination collapse time.
+
+<T_crit> = c * (mu_eff)^(-1/beta)
+
+Parameters
+----------
+
+
+FORMULA caputo_quadratic_acceleration(mu_eff: 'float') -> 'float'
+Compute the quadratic acceleration factor for beta = 0.5.
+
+With beta = 0.5, the mean collapse time scales as (mu_eff)^(-2),
+meaning RLHF pressure is amplified quadratically.
+
+Parameters
+code: t_beta_one = mu_eff ** (-1.0)
+
+
+FORMULA caputo_derivative(f: 'ArrayLike', t: 'ArrayLike', beta: 'float', n_points: 'int | None' = None) -> 'np.ndarray'
+Compute the Caputo fractional derivative numerically via Grunwald-Letnikov.
+
+D^beta f(t) = (1/Gamma(1-beta)) * integral_0^t f'(tau) / (t-tau)^beta dtau
+
+Parameters
+----------
+code: coeff[k] = coeff[k - 1] * (1.0 - (1.0 + beta) / k)
+
+
+FORMULA caputo_fokker_planck_drift(mu_rlhf: 'float', beta: 'float' = 0.5, t: 'float' = 1.0) -> 'float'
+Compute the effective drift in the Fokker-Planck equation under RLHF.
+
+RLHF optimization creates an artificial drift term mu_rlhf in the
+Fokker-Planck equation, which accelerates the collapse of the
+autoregressive process.
+
+
+FORMULA caputo_n_crit(theta_b: 'float' = 7.07, gamma_1: 'float' = 14.134725) -> 'float'
+Estimate the critical token count N_crit from Caputo dynamics.
+
+The critical count is related to the first Riemann zeta zero and
+the rotation angle theta_b from the Navier-Stokes regularity analysis.
+
+Parameters
+
+
+RULE caputo_fractional: Var(phi(t)) ~ t^beta / Gamma(1+beta): subdiffusive memory; <T_crit> = [b_crit^beta/(mu_eff*Gamma(1+beta))]^(1/beta)
+
+
+# MODULE KEATING_SNAITH
+Keating-Snaith Correction — Finite-context correction to N_crit.
+
+The Keating-Snaith formula provides corrections to the mean of the
+Riemann zeta zeros on the critical line, based on Random Matrix Theory
+(GUE characteristic polynomials). Applied to LLMs, this gives a
+finite-context correction to the critical token count:
+
+    gamma_1(N) = gamma_1 + c_1/N + c_2/N^2 + ...
+
+where gamma_1 ~ 14.1347 is the first Riemann zeta zero and the
+correction terms account for finite context window effects.
+
+References:
+  - Keating & Snaith (2000), "Random matrix theory and zeta(1/2 + it)",
+    Comm. Math. Phys.
+
+
+FORMULA ks_corrected_gamma(n: 'int | float', gamma_1: 'float' = 14.134725, c1: 'float' = -0.133, c2: 'float' = 0.068) -> 'float'
+Compute the Keating-Snaith corrected first zeta zero.
+
+gamma_1(N) = gamma_1 + c_1/N + c_2/N^2
+
+Parameters
+----------
+
+
+FORMULA ks_n_crit_correction(n: 'int | float', theta_b: 'float' = 7.07, gamma_1: 'float' = 14.134725) -> 'float'
+Compute the corrected N_crit using Keating-Snaith corrections.
+
+The critical token count is modified by finite-context effects:
+
+N_crit(KS) = gamma_1(N) / (theta_b * pi / 180)
+
+
+FORMULA ks_correction_series(n: 'int | float', max_order: 'int' = 5, gamma_1: 'float' = 14.134725) -> 'list[float]'
+Compute the Keating-Snaith correction terms up to max_order.
+
+Parameters
+----------
+n : int or float
+    Context window size.
+
+
+FORMULA ks_relative_correction(n: 'int | float', gamma_1: 'float' = 14.134725) -> 'float'
+Compute the relative correction |delta/gamma_1|.
+
+Parameters
+----------
+n : int or float
+    Context window size.
+
+
+FORMULA ks_zeta_zero_statistics(n_zeros: 'int' = 10) -> 'np.ndarray'
+Return the first n_zeros Riemann zeta zeros (imaginary parts).
+
+These are the t_n such that zeta(1/2 + i*t_n) = 0.
+
+Parameters
+----------
+
+
+FORMULA ks_gue_mean_spacing(n: 'int') -> 'float'
+Compute the GUE mean spacing for the first n zeros.
+
+The mean spacing of GUE eigenvalues (unfolded) is 1.0.
+For the Riemann zeros, the unfolding is:
+    t_n -> t_n * (log(t_n / (2*pi*e)) / (2*pi))
+
+
+RULE keating_snaith: g(N) = 1 + gamma*(ln(2*pi*N) + C) - 1/4 for zeta-function gamma factors; finite-N correction decays as 1/N
+
+
+# MODULE EP_SURFACES
+Exceptional-Point (EP) Surfaces — Spectral sensitivity divergence.
+
+At an exceptional point of order k, eigenvalues of a non-Hermitian matrix
+coalesce and the spectral sensitivity diverges:
+
+    delta_lambda ~ epsilon^{1/k},  k ~ O(N)
+
+This means that even infinitesimal perturbations (e.g., floating-point
+rounding errors) can cause macroscopic spectral shifts, providing another
+path to hallucination onset in LLMs.
+
+References:
+  - Kato (1980), "Perturbation Theory for Linear Operators", Springer.
+  - Heiss (2012), "The physics of exceptional points", J. Phys. A.
+
+
+FORMULA ep_sensitivity(epsilon: 'float', order: 'int') -> 'float'
+Compute the eigenvalue sensitivity at an EP of given order.
+
+delta_lambda ~ epsilon^{1/k}
+
+Parameters
+----------
+
+
+FORMULA ep_rounding_sensitivity(n: 'int', dtype: 'type' = <class 'numpy.float64'>) -> 'float'
+Compute the spectral sensitivity due to floating-point rounding.
+
+With machine epsilon eps_mach ~ 2^{-53} for float64, and EP order
+k ~ O(N), the rounding-induced spectral shift is:
+
+delta_lambda ~ (eps_mach)^{1/N}
+
+
+FORMULA ep_order_from_separation(separation: 'float', epsilon: 'float' = 1e-16) -> 'float'
+Estimate the EP order from observed eigenvalue separation.
+
+Given observed separation delta_lambda and perturbation epsilon,
+estimate the EP order k ~ log(epsilon) / log(delta_lambda).
+
+Parameters
+
+
+FORMULA ep_is_near(n: 'int', eigenvalues: 'np.ndarray', tol: 'float' = 1e-06) -> 'tuple[bool, float]'
+Check if a set of eigenvalues is near an exceptional point.
+
+An EP is characterized by near-coalescence of eigenvalues. We check
+the minimum pairwise separation relative to the spectral radius.
+
+Parameters
+code: relative_sep = min_sep / max(spectral_radius, 1e-15)
+
+
+FORMULA ep_perturbed_matrix(size: 'int', order: 'int' = 2, epsilon: 'float' = 1e-10, rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Generate a Jordan-block matrix near an EP of given order.
+
+The unperturbed matrix is a Jordan block of the given order, which has
+an EP of that order. The perturbation breaks the degeneracy.
+
+Parameters
+code: H[i, i] = rng.normal() + 1j * rng.normal()
+
+
+RULE ep_surfaces: exceptional points: coalescence H(lambda) = H0 + lambda*H1, discriminant D(lambda) = 0
+
+
+# MODULE THERMODYNAMICS
+Thermodynamic Analogy — Free energy, renormalization, and Landauer principle.
+
+The thermodynamic framework for LLM spectral analysis:
+
+1. Free energy:  F = U - T * S_spec
+   - Factual generation: "crystal" phase (low entropy, F < 0)
+   - Creative generation: "gas" phase (high entropy, F > 0)
+
+2. Renormalization group flow: the spectral distribution evolves across
+   transformer layers, analogous to RG flow in statistical mechanics.
+
+3. Landauer principle: erasing one bit of information costs at least
+   k_B * T * ln(2) energy. For autoregressive generation, each token
+   overwriting previous context is an irreversible thermodynamic process.
+
+References:
+  - Landauer (1961), "Irreversibility and heat generation in the
+    computing process", IBM J. Res. Dev.
+
+
+FORMULA free_energy(internal_energy: 'float', temperature: 'float', spectral_entropy: 'float') -> 'float'
+Compute the thermodynamic free energy.
+
+F = U - T * S_spec
+
+Parameters
+----------
+
+
+FORMULA landauer_cost(n_bits: 'int', temperature: 'float' = 300.0) -> 'float'
+Compute the minimum thermodynamic cost of erasing information.
+
+E >= n_bits * k_B * T * ln(2)
+
+Parameters
+----------
+
+
+FORMULA spectral_entropy(eigenvalues: 'np.ndarray', normalize: 'bool' = True) -> 'float'
+Compute the spectral (von Neumann) entropy of a density matrix.
+
+S = -sum(p_i * log(p_i))
+
+where p_i are the normalized eigenvalues (treated as probabilities).
+
+code: eigenvalues = eigenvalues / total
+
+
+FORMULA rg_flow_lambda(initial_lambda: 'float', layer: 'int', beta_rg: 'float' = 0.1) -> 'float'
+Compute the RG flow of a coupling across transformer layers.
+
+lambda(n) = lambda_0 * exp(-beta * n)
+
+Parameters
+----------
+
+
+FORMULA rg_fixed_point(initial_lambda: 'float', beta_rg: 'float' = 0.1, n_layers: 'int' = 100) -> 'float'
+Compute the RG fixed point by iterating the flow.
+
+Parameters
+----------
+initial_lambda : float
+    Initial coupling.
+
+
+FORMULA cognitive_mode(f: 'float', threshold: 'float' = 0.0) -> 'str'
+Determine the cognitive mode from the free energy sign.
+
+F < 0: "factual" (crystal phase, low entropy, ordered)
+F > 0: "creative" (gas phase, high entropy, disordered)
+
+Parameters
+
+
+FORMULA autoregressive_irreversibility(n_tokens: 'int', temperature: 'float' = 300.0) -> 'float'
+Compute the thermodynamic irreversibility of autoregressive generation.
+
+Each token overwrites previous context, costing at least k_B*T*ln(2)
+per bit of overwritten information.
+
+Parameters
+code: total_bits = n_tokens * bits_per_token
+
+
+RULE thermodynamics: F = U - T*S; dF = -S*dT - P*dV; Landauer: E_min = k_B*T*ln(2) per bit
+
+
+# MODULE FREE_PROBABILITY
+Free Probability — Free convolution, R-transform, and S-transform.
+
+Free probability (Voiculescu, 1985) extends classical probability to
+**non-commutative** random variables, such as large random matrices.
+When two large Hermitian matrices are in generic position, their
+spectral distributions combine via **free convolution** rather than
+classical convolution.
+
+The two key transforms are:
+
+- **R-transform** — the free analogue of the cumulant-generating
+  function. For a measure with Stieltjes transform ``G(z)``, the
+  R-transform is ``R(z) = G^{-1}(z) - 1/z``. Free convolution is
+  additive in the R-domain: ``R_{A+B}(z) = R_A(z) + R_B(z)``.
+
+- **S-transform** — the free analogue of the moment-generating
+  function. For a measure with moment series ``M(z) = 1 + m_1 z + …``,
+  the S-transform is ``S(z) = (1 + z) / z · M^{-1}(z)``. Free
+  multiplication is multiplicative in the S-domain:
+  ``S_{AB}(z) = S_A(z) · S_B(z)``.
+
+In the RMT-LLM framework, free probability gives a sharper estimate
+of ``N_crit`` (the critical token count for hallucination onset) by
+combining the spectral distributions of attention heads via free
+convolution rather than the naive MP bound.
+
+References:
+  - Voic
+
+
+FORMULA stieltjes_transform(eigvals: 'ArrayLike', z: 'complex') -> 'complex'
+Compute the Stieltjes transform of a discrete measure.
+
+For eigenvalues ``{λ_i}``, the Stieltjes transform is::
+
+    G(z) = (1/N) Σ_i 1 / (λ_i - z)
+
+
+FORMULA blue_transform(eigvals: 'ArrayLike', z: 'complex') -> 'complex'
+Compute the Blue transform ``B(z) = 1/G(z) - z``.
+
+The Blue transform (also called the ``η``-transform's cousin)
+is the stepping stone to the R-transform: ``R(w) = B(-w)``.
+
+Args:
+
+
+FORMULA r_transform_series(moments: 'ArrayLike', n_terms: 'int' = 10) -> 'np.ndarray'
+Compute the R-transform as a power series from moments.
+
+For a measure with free cumulants ``{κ_n}``, the R-transform is::
+
+    R(z) = Σ_n κ_n z^{n-1}
+
+code: kappa[k - 1] = m[k - 1] - s
+
+
+FORMULA free_convolution_additive(eigvals_a: 'ArrayLike', eigvals_b: 'ArrayLike', z_grid: 'ArrayLike') -> 'np.ndarray'
+Compute the Stieltjes transform of the free sum ``A ⊞ B``.
+
+Given the spectral measures of two free random variables ``A``
+and ``B``, the free convolution ``A ⊞ B`` has a Stieltjes transform
+that satisfies the subordination equation::
+
+code: z0 = 1.0 / w + float(np.mean(ev_b))
+
+
+FORMULA s_transform_series(moments: 'ArrayLike', n_terms: 'int' = 8) -> 'np.ndarray'
+Compute the S-transform coefficients from moments.
+
+The S-transform is defined via the moment series ``M(z) = Σ m_n z^n``
+by ``S(z) = (1+z)/z · M^{-1}(z)``. This function computes the
+power-series coefficients of ``S(z)`` up to ``n_terms`` terms.
+
+code: coeffs_w[1] = 1.0 / coeffs_M[1]
+
+
+FORMULA free_convolution_multiplicative(eigvals_a: 'ArrayLike', eigvals_b: 'ArrayLike', n_samples: 'int' = 512, rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Approximate eigenvalues of the free product ``A ⊠ B``.
+
+For free random variables ``A`` and ``B``, the free product
+``A ⊠ B = A^{1/2} B A^{1/2}`` has an eigenvalue distribution
+determined by the S-transform product ``S_A · S_B``.
+
+code: B = Q @ np.diag(ev_b[:n]) @ Q.T
+
+
+FORMULA subordination(eigvals_a: 'ArrayLike', eigvals_b: 'ArrayLike', z_grid: 'ArrayLike', max_iter: 'int' = 200, tol: 'float' = 1e-10) -> 'SubordinationResult'
+Compute the subordination functions for ``A ⊞ B``.
+
+The subordination functions ``ω_A(z)`` and ``ω_B(z)`` satisfy::
+
+    G_{A⊞B}(z) = G_A(ω_A(z)) = G_B(ω_B(z))
+    ω_A(z) + ω_B(z) = z + R_{A⊞B}(G_{A⊞B}(z))
+code: omega_a = z - c
+
+
+FORMULA mp_r_transform(z: 'complex', q: 'float', sigma2: 'float' = 1.0) -> 'complex'
+R-transform of the Marchenko-Pastur distribution.
+
+For MP with aspect ratio ``q`` and variance ``σ²``, the R-transform
+is::
+
+    R(z) = σ² / (1 - σ² q z)
+
+
+FORMULA mp_s_transform(z: 'complex', q: 'float', sigma2: 'float' = 1.0) -> 'complex'
+S-transform of the Marchenko-Pastur distribution.
+
+For MP::
+
+    S(z) = 1 / (σ² (1 + q z))
+
+
+RULE free_probability: R-transform: R(z) = sum kappa_{n+1} z^n; S-transform product for multiplicative free convolution
+
+
+# MODULE CIRCULAR_ENSEMBLES
+Circular Ensembles — COE, CUE, CSE.
+
+The circular ensembles (Dyson, 1962) are probability distributions on
+the **unitary group** U(N). Their eigenvalues lie on the unit circle
+``|λ| = 1`` and model systems with a conserved quantum number
+(periodic boundary conditions, Floquet systems, etc.).
+
+The three ensembles are:
+
+- **COE** (Circular Orthogonal Ensemble, β=1): invariant under
+  conjugation by orthogonal matrices. Eigenvalues come in complex-
+  conjugate pairs. Generated as ``U U^T`` where ``U`` is Haar-unitary.
+
+- **CUE** (Circular Unitary Ensemble, β=2): invariant under
+  conjugation by unitary matrices. The Haar measure on U(N) itself.
+
+- **CSE** (Circular Symplectic Ensemble, β=4): invariant under
+  conjugation by symplectic matrices. Generated as ``U U^D`` where
+  ``U^D`` is the dual (quaternion transpose).
+
+In the RMT-LLM framework, circular ensembles model the spectral
+distribution of **attention matrices** viewed as quantum channels:
+the eigenvalue phases encode the rotation induced by each attention
+head on the token-basis.
+
+References:
+  - Dyson (1962), "The threefold way. Algebraic structure of symmetry
+    groups and ensembles in quantum mechanics", J. Math. Phys.
+
+
+FORMULA haar_unitary(n: 'int', rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Sample a Haar-distributed unitary matrix.
+
+Uses the QR decomposition of a complex Ginibre matrix (Mezzadri,
+2007). The diagonal phases of ``R`` are corrected to ensure the
+Haar measure.
+
+code: A = (rng.normal(0, 1, (n, n)) + 1j * rng.normal(0, 1, (n, n))) / np.sqrt(2)
+
+
+FORMULA haar_orthogonal(n: 'int', rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Sample a Haar-distributed orthogonal matrix.
+
+Args:
+    n: Matrix dimension.
+    rng: Random number generator.
+
+
+FORMULA circular_ensemble(n: 'int', beta: 'int' = 2, rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Sample a matrix from the circular β-ensemble.
+
+Args:
+    n: Matrix dimension.
+    beta: 1 (COE), 2 (CUE), or 4 (CSE).
+    rng: Random number generator.
+code: n2 = 2 * n
+
+
+FORMULA circular_eigenvalues(n: 'int', beta: 'int' = 2, rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Sample eigenvalues (phases) from a circular β-ensemble.
+
+Args:
+    n: Matrix dimension.
+    beta: 1 (COE), 2 (CUE), or 4 (CSE).
+    rng: Random number generator.
+code: phases = np.angle(eigs) % (2 * np.pi)
+
+
+FORMULA nearest_neighbor_spacing(phases: 'ArrayLike', normalize: 'bool' = True) -> 'np.ndarray'
+Compute nearest-neighbor spacings on the unit circle.
+
+Args:
+    phases: Sorted phases in ``[0, 2π)``.
+    normalize: If True, rescale spacings to have mean 1.
+
+code: wrap = p[0] + 2 * np.pi - p[-1]
+
+
+FORMULA form_factor(phases: 'ArrayLike', max_k: 'int | None' = None) -> 'tuple[np.ndarray, np.ndarray]'
+Compute the spectral form factor ``K(τ)``.
+
+The form factor is the Fourier transform of the two-level
+correlation function. For the circular ensembles, it has a
+universal large-N limit::
+
+code: tau = ks / n
+
+
+FORMULA number_variance(phases: 'ArrayLike', max_L: 'float' = 5.0, n_points: 'int' = 50) -> 'tuple[np.ndarray, np.ndarray]'
+Compute the number variance ``Σ²(L)``.
+
+The number variance measures the fluctuation of the count of
+eigenvalues in an interval of length ``L`` (in units of mean
+spacing). For Poisson statistics ``Σ²(L) = L``; for the circular
+ensembles it grows logarithmically (level repulsion).
+code: window = L * mean_spacing
+
+
+FORMULA wigner_surmise_circular(s: 'ArrayLike', beta: 'int' = 2) -> 'np.ndarray'
+Wigner surmise for the circular ensembles.
+
+For the circular β-ensemble, the nearest-neighbor spacing
+distribution is::
+
+    P_β(s) = c_β s^β exp(-a_β s²)
+
+
+FORMULA theoretical_form_factor(tau: 'ArrayLike', beta: 'int' = 2) -> 'np.ndarray'
+Theoretical large-N form factor for the circular β-ensemble.
+
+Args:
+    tau: Scaled wavenumber ``k / N``.
+    beta: 1, 2, or 4.
+
+
+FORMULA attention_phase_spectrum(attn_matrix: 'ArrayLike', normalize: 'bool' = True) -> 'np.ndarray'
+Compute the phase spectrum of an attention matrix.
+
+Attention matrices (after softmax) are real but not symmetric.
+Their eigenvalues are generally complex. When row-stochastic
+(each row sums to 1), the largest eigenvalue is 1, and the rest
+lie inside the unit disk. The *phases* of the subdominant
+code: phases = np.angle(sub) % (2 * np.pi)
+
+
+RULE circular_ensembles: CUE eigenphases repel: P(theta) ~ prod |e^{i theta_j} - e^{i theta_k}|^2
+
+
+# MODULE DYSON_BROWNIAN
+Dyson Brownian Motion — Eigenvalue dynamics of random matrix ensembles.
+
+Dyson Brownian motion (DBM) describes the stochastic evolution of
+eigenvalues of a Hermitian matrix whose entries undergo independent
+Ornstein-Uhlenbeck processes. For the Gaussian ensembles (GOE β=1,
+GUE β=2, GSE β=4), the eigenvalues evolve as interacting Brownian
+particles with a logarithmic Coulomb repulsion::
+
+    dλ_i = (σ²/2N) Σ_{j≠i} 1/(λ_i - λ_j) dt + (σ/√N) dW_i
+
+where β controls the repulsion strength and ``W_i`` are independent
+Brownian motions.
+
+In the RMT-LLM framework, DBM is used to model the *training dynamics*
+of the spectral gap: as training progresses, the empirical covariance
+eigenvalues drift, and the BBP signal eigenvalue separates from the
+MP bulk. DBM gives a principled prior on the expected drift rate.
+
+References:
+  - Dyson (1962), "A Brownian-motion model for the analysis of our
+    eigenvalue data", J. Math. Phys.
+  - Erdős & Yau (2012), "Rigorous spectral analysis of large random
+    matrices" (review of the universality program).
+
+Author: Iskhak Hamzatovich Isaev
+ORCID:  0009-0003-7299-0701
+License: CC-BY-NC-SA-4.0
+
+
+FORMULA gaussian_ensemble(n: 'int', beta: 'int' = 2, sigma: 'float' = 1.0, rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Sample a matrix from the Gaussian β-ensemble.
+
+Args:
+    n: Matrix dimension.
+    beta: Dyson index: 1 (GOE, real symmetric), 2 (GUE, complex
+        Hermitian), 4 (GSE, quaternion self-dual).
+code: A = rng.normal(0, sigma / 2, (n, n)) + 1j * rng.normal(0, sigma / 2, (n, n))
+
+
+FORMULA ensemble_eigenvalues(n: 'int', beta: 'int' = 2, sigma: 'float' = 1.0, rng: 'np.random.Generator | None' = None) -> 'np.ndarray'
+Sample eigenvalues from a Gaussian β-ensemble.
+
+Args:
+    n: Matrix dimension (returns ``n`` eigenvalues for β=1,2 and
+        ``2n`` for β=4).
+    beta: Dyson index.
+
+
+FORMULA wigner_surmise(s: 'ArrayLike', beta: 'int' = 2) -> 'np.ndarray'
+Evaluate the Wigner surmise for the level-spacing distribution.
+
+For the Gaussian β-ensembles, the nearest-neighbor spacing
+distribution is well approximated by::
+
+    P_β(s) = a_β s^β exp(-b_β s²)
+
+
+FORMULA empirical_spacing_distribution(eigvals: 'ArrayLike', normalize: 'bool' = True) -> 'np.ndarray'
+Compute nearest-neighbor spacings of a sorted eigenvalue array.
+
+Args:
+    eigvals: Sorted eigenvalues.
+    normalize: If True, rescale spacings to have mean 1 (unfolded).
+
+code: spacings = spacings / spacings.mean()
+
+
+RULE dyson_brownian: dH = dU + (1/2)*beta*(N-1)*dt*I - (beta/2)*H*dt + sqrt(beta)*dW
+
+
+mp_bounds(q=0.2, sigma2=0.5) => lambda_minus = 0.152786, lambda_plus = 1.047214
+
+
+mp_bounds(q=0.2, sigma2=1.0) => lambda_minus = 0.305573, lambda_plus = 2.094427
+
+
+mp_bounds(q=0.2, sigma2=2.0) => lambda_minus = 0.611146, lambda_plus = 4.188854
+
+
+mp_bounds(q=0.3, sigma2=0.5) => lambda_minus = 0.102277, lambda_plus = 1.197723
+
+
+mp_bounds(q=0.3, sigma2=1.0) => lambda_minus = 0.204555, lambda_plus = 2.395445
+
+
+mp_bounds(q=0.3, sigma2=2.0) => lambda_minus = 0.409110, lambda_plus = 4.790890
+
+
+mp_bounds(q=0.5, sigma2=0.5) => lambda_minus = 0.042893, lambda_plus = 1.457107
+
+
+mp_bounds(q=0.5, sigma2=1.0) => lambda_minus = 0.085786, lambda_plus = 2.914214
+
+
+mp_bounds(q=0.5, sigma2=2.0) => lambda_minus = 0.171573, lambda_plus = 5.828427
+
+
+mp_bounds(q=0.7, sigma2=0.5) => lambda_minus = 0.013340, lambda_plus = 1.686660
+
+
+mp_bounds(q=0.7, sigma2=1.0) => lambda_minus = 0.026680, lambda_plus = 3.373320
+
+
+mp_bounds(q=0.7, sigma2=2.0) => lambda_minus = 0.053360, lambda_plus = 6.746640
+
+
+mp_bounds(q=0.9, sigma2=0.5) => lambda_minus = 0.001317, lambda_plus = 1.898683
+
+
+mp_bounds(q=0.9, sigma2=1.0) => lambda_minus = 0.002633, lambda_plus = 3.797367
+
+
+mp_bounds(q=0.9, sigma2=2.0) => lambda_minus = 0.005267, lambda_plus = 7.594733
+
+
+bbp_lambda_max(theta=0.4, q=0.25, sigma2=0.5) => lambda_max = 1.125000
+
+
+bbp_lambda_max(theta=0.4, q=0.25, sigma2=1.0) => lambda_max = 2.250000
+
+
+bbp_lambda_max(theta=0.4, q=0.5, sigma2=0.5) => lambda_max = 1.457107
+
+
+bbp_lambda_max(theta=0.4, q=0.5, sigma2=1.0) => lambda_max = 2.914214
+
+
+bbp_lambda_max(theta=0.4, q=0.9, sigma2=0.5) => lambda_max = 1.898683
+
+
+bbp_lambda_max(theta=0.4, q=0.9, sigma2=1.0) => lambda_max = 3.797367
+
+
+bbp_lambda_max(theta=0.6, q=0.25, sigma2=0.5) => lambda_max = 1.220000
+
+
+bbp_lambda_max(theta=0.6, q=0.25, sigma2=1.0) => lambda_max = 2.440000
+
+
+bbp_lambda_max(theta=0.6, q=0.5, sigma2=0.5) => lambda_max = 1.457107
+
+
+bbp_lambda_max(theta=0.6, q=0.5, sigma2=1.0) => lambda_max = 2.914214
+
+
+bbp_lambda_max(theta=0.6, q=0.9, sigma2=0.5) => lambda_max = 1.898683
+
+
+bbp_lambda_max(theta=0.6, q=0.9, sigma2=1.0) => lambda_max = 3.797367
+
+
+bbp_lambda_max(theta=0.8, q=0.25, sigma2=0.5) => lambda_max = 1.780000
+
+
+bbp_lambda_max(theta=0.8, q=0.25, sigma2=1.0) => lambda_max = 3.560000
+
+
+bbp_lambda_max(theta=0.8, q=0.5, sigma2=0.5) => lambda_max = 1.140000
+
+
+bbp_lambda_max(theta=0.8, q=0.5, sigma2=1.0) => lambda_max = 2.280000
+
+
+bbp_lambda_max(theta=0.8, q=0.9, sigma2=0.5) => lambda_max = 1.898683
+
+
+bbp_lambda_max(theta=0.8, q=0.9, sigma2=1.0) => lambda_max = 3.797367
+
+
+bbp_lambda_max(theta=1.0, q=0.25, sigma2=0.5) => lambda_max = 2.500000
+
+
+bbp_lambda_max(theta=1.0, q=0.25, sigma2=1.0) => lambda_max = 5.000000
+
+
+bbp_lambda_max(theta=1.0, q=0.5, sigma2=0.5) => lambda_max = 1.500000
+
+
+bbp_lambda_max(theta=1.0, q=0.5, sigma2=1.0) => lambda_max = 3.000000
+
+
+bbp_lambda_max(theta=1.0, q=0.9, sigma2=0.5) => lambda_max = 1.055556
+
+
+bbp_lambda_max(theta=1.0, q=0.9, sigma2=1.0) => lambda_max = 2.111111
+
+
+bbp_lambda_max(theta=1.2, q=0.25, sigma2=0.5) => lambda_max = 3.380000
+
+
+bbp_lambda_max(theta=1.2, q=0.25, sigma2=1.0) => lambda_max = 6.760000
+
+
+bbp_lambda_max(theta=1.2, q=0.5, sigma2=0.5) => lambda_max = 1.940000
+
+
+bbp_lambda_max(theta=1.2, q=0.5, sigma2=1.0) => lambda_max = 3.880000
+
+
+bbp_lambda_max(theta=1.2, q=0.9, sigma2=0.5) => lambda_max = 1.300000
+
+
+bbp_lambda_max(theta=1.2, q=0.9, sigma2=1.0) => lambda_max = 2.600000
+
+
+bbp_critical_theta(q=0.25) => theta_c = 0.500000
+
+
+bbp_critical_theta(q=0.5) => theta_c = 0.707107
+
+
+bbp_critical_theta(q=0.9) => theta_c = 0.948683
+
+
+tracy_widom_mean() => E[F2] = -1.771100
+
+
+tracy_widom_variance() => Var[F2] = 0.813200
+
+
+caputo_mean_collapse_time(mu_eff=0.05, beta=0.3, c=1.0) => <T_crit> = 21715.340933
+
+
+caputo_mean_collapse_time(mu_eff=0.05, beta=0.5, c=1.0) => <T_crit> = 400.000000
+
+
+caputo_mean_collapse_time(mu_eff=0.05, beta=0.7, c=1.0) => <T_crit> = 72.212816
+
+
+caputo_mean_collapse_time(mu_eff=0.05, beta=0.9, c=1.0) => <T_crit> = 27.899016
+
+
+caputo_mean_collapse_time(mu_eff=0.1, beta=0.3, c=1.0) => <T_crit> = 2154.434690
+
+
+caputo_mean_collapse_time(mu_eff=0.1, beta=0.5, c=1.0) => <T_crit> = 100.000000
+
+
+caputo_mean_collapse_time(mu_eff=0.1, beta=0.7, c=1.0) => <T_crit> = 26.826958
+
+
+caputo_mean_collapse_time(mu_eff=0.1, beta=0.9, c=1.0) => <T_crit> = 12.915497
+
+
+caputo_mean_collapse_time(mu_eff=0.2, beta=0.3, c=1.0) => <T_crit> = 213.746993
+
+
+caputo_mean_collapse_time(mu_eff=0.2, beta=0.5, c=1.0) => <T_crit> = 25.000000
+
+
+caputo_mean_collapse_time(mu_eff=0.2, beta=0.7, c=1.0) => <T_crit> = 9.966177
+
+
+caputo_mean_collapse_time(mu_eff=0.2, beta=0.9, c=1.0) => <T_crit> = 5.979066
+
+
+caputo_mean_collapse_time(mu_eff=0.4, beta=0.3, c=1.0) => <T_crit> = 21.206388
+
+
+caputo_mean_collapse_time(mu_eff=0.4, beta=0.5, c=1.0) => <T_crit> = 6.250000
+
+
+caputo_mean_collapse_time(mu_eff=0.4, beta=0.7, c=1.0) => <T_crit> = 3.702420
+
+
+caputo_mean_collapse_time(mu_eff=0.4, beta=0.9, c=1.0) => <T_crit> = 2.767933
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.3, t=0.5) => drift = 0.033873
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.3, t=1.0) => drift = 0.055027
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.3, t=2.0) => drift = 0.089392
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.5, t=0.5) => drift = 0.039894
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.5, t=1.0) => drift = 0.056419
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.05, beta=0.5, t=2.0) => drift = 0.079788
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.3, t=0.5) => drift = 0.067747
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.3, t=1.0) => drift = 0.110055
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.3, t=2.0) => drift = 0.178784
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.5, t=0.5) => drift = 0.079788
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.5, t=1.0) => drift = 0.112838
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.1, beta=0.5, t=2.0) => drift = 0.159577
+
+
+ks_n_crit_correction(n=64) => N_crit_corrected = 114.532103
+
+
+ks_n_crit_correction(n=128) => N_crit_corrected = 114.540423
+
+
+ks_n_crit_correction(n=256) => N_crit_corrected = 114.544608
+
+
+ks_n_crit_correction(n=512) => N_crit_corrected = 114.546707
+
+
+ks_n_crit_correction(n=1024) => N_crit_corrected = 114.547758
+
+
+ks_n_crit_correction(n=2048) => N_crit_corrected = 114.548284
+
+
+ks_relative_correction(n=100) => relative correction = 0.000094
+
+
+ks_relative_correction(n=256) => relative correction = 0.000037
+
+
+ks_relative_correction(n=512) => relative correction = 0.000018
+
+
+ks_relative_correction(n=1024) => relative correction = 0.000009
+
+
+bbp_fluctuation_scaling(N=100, q=0.5) => TW-scale = 0.215443
+
+
+bbp_fluctuation_scaling(N=1000, q=0.5) => TW-scale = 0.100000
+
+
+free_energy(U=2.0, T=300.0, S=0.5) => F = -148.000000
+
+
+free_energy(U=1.0, T=300.0, S=2.0) => F = -599.000000
+
+
+free_energy(U=5.0, T=77.0, S=1.0) => F = -72.000000
+
+
+free_energy(U=0.5, T=3.0, S=0.2) => F = -0.100000
+
+
+landauer_cost(n_bits=1, T=300) => E_min = 0.000000 J
+
+
+landauer_cost(n_bits=100, T=300) => E_min = 0.000000 J
+
+
+landauer_cost(n_bits=1024, T=77) => E_min = 0.000000 J
+
+
+r_transform_series(Catalan moments, n_terms=4) => R-cumulants = [1.000000, 0.000000, 1.000000, 2.000000]
+
+
+r_transform_series(Bernoulli moments, n_terms=4) => R-cumulants = [1.000000, -0.500000, -1.000000, 2.750000]
+
+
+nhse_winding_number(n_ratio=0.5, gamma=0.25) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.9, gamma=0.25) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.5, gamma=0.5) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.9, gamma=0.5) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.5, gamma=1.0) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.9, gamma=1.0) => W = 0.000000
+
+
+=== MONOGRAPH M01 EN — RMT_LLM_Spectral_Analysis ===
+
+
+FORMULA The Marchenko-Pastur law describes the asymptotic distribution of eigenvalues of the sample covariance matrix S = (1/N)XX^T, where X is a p×N matrix whose elements are independent random variables with zero mean and unit variance. As N, p → ∞ with a fixed ratio q = p/N, the limiting spectral density ρ(λ) has compact support [λ₋, λ₊] and is given by the expression:
+
+
+FORMULA (2.1) ρ(λ) = (q / 2π) · √((λ₊ − λ)(λ − λ₋)) / λ
+CONTEXT: The Marchenko-Pastur law describes the asymptotic distribution of eigenvalues of the sample covariance matrix S = (1/N)XX^T, where X is a p×N matrix whose elements are independent random variables with zero mean and unit variance. As N, p → ∞ with a fixed ratio q = p/N, the limit
+
+
+FORMULA (2.2) λ_max(θ) = θ · (1 + q / θ²)  for θ > √q
+CONTEXT: The BBP phase transition describes a qualitative restructuring of the spectrum of a covariance matrix upon the appearance of a distinguished signal. Consider the model S = (1/N)XX^T + θ·vv^T, where v is a unit vector and θ is the signal intensity.
+
+
+FORMULA (2.3) P(λ_max < s) → F_β(s)  as N → ∞
+CONTEXT: The Tracy-Widom distribution describes the limiting fluctuations of the largest eigenvalue of a random matrix from the Gaussian unitary ensemble (GUE) as N → ∞.
+
+
+FORMULA The inverse participation ratio (IPR) is a measure of the localization of eigenvectors. For the k-th eigenvector v⁽ᵏ⁾ = (v₁⁽ᵏ⁾, ..., v_p⁽ᵏ⁾), the IPR is defined as:
+
+
+FORMULA (2.4) Ψ_k = Σᵢ |vᵢ⁽ᵏ⁾|⁴
+CONTEXT: The inverse participation ratio (IPR) is a measure of the localization of eigenvectors. For the k-th eigenvector v⁽ᵏ⁾ = (v₁⁽ᵏ⁾, ..., v_p⁽ᵏ⁾), the IPR is defined as:
+
+
+FORMULA (2.5) dim_eff = 1 / Σᵢ ρᵢ²,  where ρᵢ = |vᵢ⁽ᵏ⁾|²
+CONTEXT: The effective dimension of an eigenvector (or participation ratio) is defined as:.
+
+
+FORMULA (4.1) SNR = (λ₁ − λ₊) / σ_bulk
+CONTEXT: Spectral signal-to-noise ratio (SNR): SNR = (λ₁ − λ₊) / σ_bulk, where λ₁ is the largest eigenvalue, λ₊ is the upper Marchenko-Pastur boundary, and σ_bulk is the standard deviation of eigenvalues in the "bulk." A positive SNR indicates the presence of a distinguished signal.
+
+
+FORMULA Normalized spectral entropy: S_spec = −Σ ρᵢ ln(ρᵢ) / ln(p), where ρᵢ = λᵢ / Σ λⱼ are the normalized eigenvalues. Spectral entropy takes values from 0 (all information in one component) to 1 (uniform distribution).
+
+
+FORMULA (4.2) S_spec = −Σᵢ ρᵢ ln(ρᵢ) / ln(p)
+CONTEXT: Normalized spectral entropy: S_spec = −Σ ρᵢ ln(ρᵢ) / ln(p), where ρᵢ = λᵢ / Σ λⱼ are the normalized eigenvalues. Spectral entropy takes values from 0 (all information in one component) to 1 (uniform distribution).
+
+
+FORMULA (5.1) F = U − T · S_spec
+CONTEXT: One of the most fruitful approaches in theoretical physics is the establishment of analogies between different fields, allowing the transfer of intuition and mathematical apparatus from one domain to another.
+
+
+FORMULA 2. A thermodynamic analogy is proposed in which factual generation is interpreted as a "bound state" with low spectral entropy, and creative generation as a "gaseous phase" with high entropy. The free energy F = U − T·S_spec determines the stable generation phases, and the critical temperature T_c ≈ 0.76 separates the domains of their existence.
+CONTEXT: 1. It is shown that the spectral properties of LLM activation covariance matrices demonstrate universal patterns described by random matrix theory.
+
+
+FORMULA Marchenko–Pastur bulk edges λ± = σ²(1 ± 1/√q)
+
+
+FORMULA q = T/N
+
+
+FORMULA ρ_MP(λ)
+
+
+FORMULA λ_max(θ)
+
+
+FORMULA F = U − TS_spec
+
+
+=== MONOGRAPH M01 RU — RMT_LLM_Spectral_Analysis_RU ===
+
+
+FORMULA (2.1) ρ(λ) = (q / 2π) · √((λ₊ − λ)(λ − λ₋)) / λ
+CONTEXT: Закон Марченко—Пастура описывает асимптотическое распределение собственных значений выборочной ковариационной матрицы S = (1/N)XX^T, где X — матрица размера p×N, элементы которой являются независимыми случайными величинами с нулевым средним и единичной дисперсией.
+
+
+FORMULA (2.2) λ_max(θ) = θ · (1 + q / θ²)  при θ > √q
+CONTEXT: Фазовый переход BBP описывает качественную перестройку спектра ковариационной матрицы при появлении выделенного сигнала. Рассмотрим модель S = (1/N)XX^T + θ·vv^T, где v — единичный вектор, а θ — интенсивность сигнала.
+
+
+FORMULA (2.3) P(λ_max < s) → F_β(s)  при N → ∞
+CONTEXT: Распределение Трейси—Видома описывает предельные флуктуации наибольшего собственного значения случайной матрицы из гауссова унитарного ансамбля (GUE) при N → ∞.
+
+
+FORMULA Коэффициент обратного участия (Inverse Participation Ratio, IPR) является мерой локализации собственных векторов. Для k-го собственного вектора v⁽ᵏ⁾ = (v₁⁽ᵏ⁾, ..., v_p⁽ᵏ⁾) IPR определяется как:
+
+
+FORMULA (2.4) Ψ_k = Σᵢ |vᵢ⁽ᵏ⁾|⁴
+CONTEXT: Коэффициент обратного участия (Inverse Participation Ratio, IPR) является мерой локализации собственных векторов. Для k-го собственного вектора v⁽ᵏ⁾ = (v₁⁽ᵏ⁾, ..., v_p⁽ᵏ⁾) IPR определяется как:
+
+
+FORMULA (2.5) dim_eff = 1 / Σᵢ ρᵢ²,  где ρᵢ = |vᵢ⁽ᵏ⁾|²
+CONTEXT: Эффективная размерность собственного вектора (или коэффициент участия, Participation Ratio) определяется как:.
+
+
+FORMULA (4.1) SNR = (λ₁ − λ₊) / σ_bulk
+CONTEXT: Спектральное отношение сигнал/шум (SNR): SNR = (λ₁ − λ₊) / σ_bulk, где λ₁ — наибольшее собственное значение, λ₊ — верхняя граница Марченко—Пастура, σ_bulk — стандартное отклонение собственных значений в «пуле». Положительное SNR указывает на наличие выделенного сигнала.
+
+
+FORMULA Нормализованная спектральная энтропия: S_spec = −Σ ρᵢ ln(ρᵢ) / ln(p), где ρᵢ = λᵢ / Σ λⱼ — нормализованные собственные значения. Спектральная энтропия принимает значения от 0 (вся информация в одной компоненте) до 1 (равномерное распределение).
+
+
+FORMULA (4.2) S_spec = −Σᵢ ρᵢ ln(ρᵢ) / ln(p)
+CONTEXT: Нормализованная спектральная энтропия: S_spec = −Σ ρᵢ ln(ρᵢ) / ln(p), где ρᵢ = λᵢ / Σ λⱼ — нормализованные собственные значения. Спектральная энтропия принимает значения от 0 (вся информация в одной компоненте) до 1 (равномерное распределение).
+
+
+FORMULA (5.1) F = U − T · S_spec
+CONTEXT: Одним из наиболее плодотворных подходов в теоретической физике является установление аналогий между различными областями, позволяющих переносить интуицию и математический аппарат из одной области в другую.
+
+
+FORMULA Рис. 5.1. Ландшафт свободной энергии F = U − T·S_spec для различных режимов генерации
+CONTEXT: На рисунке 5.1 показан ландшафт свободной энергии для различных режимов генерации.
+
+
+FORMULA 2. Предложена термодинамическая аналогия, в которой фактическая генерация интерпретируется как «связанное состояние» с низкой спектральной энтропией, а творческая — как «газовая фаза» с высокой энтропией. Свободная энергия F = U − T·S_spec определяет стабильные фазы генерации, а критическая температура T_c ≈ 0.76 разделяет области их существования.
+CONTEXT: 1. Показано, что спектральные свойства ковариационных матриц активаций БЯМ демонстрируют универсальные закономерности, описываемые случайной матричной теорией.
+
+
+FORMULA края bulk-области Марченко–Пастура λ± = σ²(1 ± 1/√q)
+
+
+FORMULA q = T/N
+
+
+FORMULA ρ_MP(λ)
+
+
+FORMULA λ_max(θ)
+
+
+FORMULA F = U − TS_spec
+
+
+=== MONOGRAPH M02 EN — RMT_LLM_Arxiv_Preprint ===
+
+
+FORMULA M = Xₙᵀ Xₙ / T    ∈  ℝ^{N×N}     (symmetric, rank = T)
+CONTEXT: Xₙ[i,j] = X[i,j] / ‖X[:,j]‖₂     (column-normalize).
+
+
+FORMULA ρ_MP(λ) = T/(2πNλ) · √[(λ₊−λ)(λ−λ₋)]     for λ ∈ [λ₋, λ₊]
+CONTEXT: For a random Gaussian matrix X with i.i.d.
+
+
+FORMULA λ± = (1 ± √(T/N))²   (bulk edges, σ²=1 normalized)
+CONTEXT: ρ_MP(λ) = T/(2πNλ) · √[(λ₊−λ)(λ−λ₋)]     for λ ∈ [λ₋, λ₊]
+
+
+FORMULA PR = (Σᵢ λᵢ)² / Σᵢ λᵢ²     ∈ [1, T]
+
+
+FORMULA S_spec = −Σᵢ pᵢ log pᵢ     where pᵢ = λᵢ / Σⱼ λⱼ
+
+
+FORMULA F(τ) = λmax − τ · S_spec
+
+
+FORMULA Analogous to thermodynamic free energy F = U − TS. Internal energy U = λmax (dominant mode energy), temperature τ weights the entropic contribution. The critical temperature τ_c = λmax/S (where F=0) marks the transition from "bound state" (F > 0, structured) to "gas state" (F < 0, diffuse). At τ=1: F = λmax − S_spec is our primary metric.
+
+
+FORMULA TW_z = (λmax − λ₊) / (λ₊ · T^{−2/3})
+
+
+FORMULA <r> = ⟨min(δₙ,δₙ₊₁) / max(δₙ,δₙ₊₁)⟩     where δₙ = λₙ − λₙ₊₁
+
+
+FORMULA λmax/λ+
+
+
+FORMULA λmax/λ+
+
+
+FORMULA X -= X.mean(axis=0, keepdims=True)
+CONTEXT: X = cache["resid_post", layer][0].detach().cpu().
+
+
+FORMULA Xn = X / nrm
+
+
+FORMULA """Marchenko-Pastur upper edge: lambda_+ = (1 + sqrt(T/N))^2"""
+
+
+FORMULA lp = mp_lambda_plus(T, N)
+
+
+FORMULA S      = float(-np.sum(p * np.log(p + 1e-15)))
+CONTEXT: SNR    = float(ev[0] / np.mean(ev[max(1,int(len(ev)*0.
+
+
+FORMULA TW_z   = float((ev[0] - lp) / (lp * len(ev)**(-2/3) + 1e-12))
+
+
+FORMULA return dict(PR=PR, SNR=SNR, S=S, F=F, TW_z=TW_z,
+CONTEXT: r = np.minimum(d[:-1],d[1:])/np.maximum(d[:-1],d[1:]) if len(d)>1 else [np.
+
+
+FORMULA lmax=float(ev[0]), lp=lp, ev=ev)
+
+
+FORMULA PROMPTS = {
+
+
+FORMULA results = []
+
+
+FORMULA if m == "TW_z":
+CONTEXT: ax.plot(sub.index, sub.
+
+
+FORMULA ax.axhline(3, color="red", ls="--", lw=1, alpha=0.7, label="z=3")
+
+
+FORMULA if m == "lratio":
+CONTEXT: ax.axhline(3, color="red", ls="--", lw=1, alpha=0.7, label="z=3")
+
+
+FORMULA if m == "r":
+CONTEXT: ax.axhline(1.0, color="gold", ls="--", lw=1, alpha=0.
+
+
+FORMULA pivot = df.groupby(["cls","layer"])[["PR","S","F","TW_z","lratio","r"]].mean()
+CONTEXT: # Cell 7 — Delta analysis: what separates factual from creative?.
+
+
+FORMULA d_f = pivot.loc["factual"]; d_c = pivot.loc["creative"]
+CONTEXT: if "factual" in df.cls.values and "creative" in df.cls.
+
+
+FORMULA delta = d_c - d_f
+CONTEXT: d_f = pivot.loc["factual"]; d_c = pivot.loc["creative"]
+
+
+FORMULA direction_s  = "creative>factual" if ds>0  else "factual>creative"
+CONTEXT: direction_pr = "creative>factual" if dpr>0 else "factual>creative".
+
+
+FORMULA print(f"Mean DeltaS  = {ds:.3f}  ({direction_s})")
+CONTEXT: print(f"Mean DeltaPR = {dpr:.
+
+
+FORMULA lp_test = mp_lambda_plus(T_TEST, N_TEST)
+
+
+FORMULA ev_n = ev / ev.mean()
+
+
+FORMULA phase = np.outer(tau_range, ev_n)
+
+
+FORMULA K = np.abs(np.sum(np.exp(-1j*phase), axis=1))**2 / len(ev_n)**2
+
+
+FORMULA K_all = []
+
+
+FORMULA ax.loglog(tau, np.mean(K_all,axis=0), label=cls, color=color, lw=2)
+
+
+FORMULA summary = {
+
+
+FORMULA print("=== SUMMARY ===")
+
+
+FORMULA f"  TW={summary["mean_metrics"]["TW_z"][cls]:.1f}")
+CONTEXT: f"  S={summary["mean_metrics"]["S"][cls]:.
+
+
+FORMULA ΔPR ∝ N_LAYERS
+CONTEXT: Test on GPT-2 medium/large/XL: does ΔPR scale with model depth?.
+
+
+=== MONOGRAPH M02 RU — RMT_LLM_Arxiv_Preprint_RU ===
+
+
+FORMULA M = Xₙᵀ Xₙ / T ∈ ℝ^{N×N} (симметричная, ранг = T)
+CONTEXT: Xₙ[i,j] = X[i,j] / ‖X[:,j]‖₂ (нормализация по столбцу).
+
+
+FORMULA ρ_MP(λ) = T/(2πNλ) · √[(λ₊−λ)(λ−λ₋)] для λ ∈ [λ₋, λ₊]
+CONTEXT: Для случайной гауссовской матрицы X с независимыми одинаково распределёнными (i.i.d.
+
+
+FORMULA λ± = (1 ± √(T/N))² (краи основной массы, σ²=1 нормировано)
+CONTEXT: ρ_MP(λ) = T/(2πNλ) · √[(λ₊−λ)(λ−λ₋)] для λ ∈ [λ₋, λ₊]
+
+
+FORMULA PR = (Σᵢ λᵢ)² / Σᵢ λᵢ² ∈ [1, T]
+
+
+FORMULA S_spec = −Σᵢ pᵢ log pᵢ где pᵢ = λᵢ / Σⱼ λⱼ
+
+
+FORMULA F(τ) = λmax − τ · S_spec
+
+
+FORMULA Аналогично термодинамической свободной энергии F = U − TS. Внутренняя энергия U = λmax (энергия доминирующего режима), температура τ взвешивает энтропийный вклад. Критическая температура τ_c = λmax/S (при которой F=0) отмечает переход от «связанного состояния» (F > 0, структурированного) к «газообразному состоянию» (F < 0, диффузного). При τ=1: F = λmax − S_spec является нашим основным метриком.
+
+
+FORMULA TW_z = (λmax − λ₊) / (λ₊ · T^{−2/3})
+
+
+FORMULA <r> = ⟨min(δₙ,δₙ₊₁) / max(δₙ,δₙ₊₁)⟩ где δₙ = λₙ − λₙ₊₁
+
+
+FORMULA Рисунок 1. Глубокий спектральный анализ моделирования: плотность собственных значений с наложением MP, scree-графики, профили PR/SNR/S_spec/Free Energy по 12 смоделированным слоям GPT-2, сканирование фазового перехода BBP, шоковое возмущение, разбавление контекста и RG поток. Моделирование предсказывает ΔPR ≈ +39 (творческие > фактические) с явным BBP-пиком для фактических запросов.
+CONTEXT: Смоделированные матрицы активаций генерировались по формуле X = B·C + ε, где B ∈ ℝ^{N×k} образует k семантических базисных векторов, C ∈ ℝ^{k×T} содержит коэффициенты для каждого токена (экспоненциальные для фактических k=3-5, гауссовские для творческих k=15-50), а ε — изотропный.
+
+
+FORMULA λmax/λ+
+
+
+FORMULA λmax/λ+
+
+
+FORMULA Рисунок 3. Реальные результаты GPT-2: (Верх) ΔPR, профили PR, профили S_spec, динамика ΔS, λmax+TW_z; (Середина) профили свободной энергии F, λmax/λ+ (все ниже края MP), SNR, SFF K(τ) для слоёв 1/6/12; (Низ) сравнительные столбцы моделирование vs реальность, траектория RG потока. Ключ:  = 0.530 соответствует GOE = 0.531 с ошибкой 0.1%.
+
+
+FORMULA X -= X.mean(axis=0, keepdims=True)
+CONTEXT: X = cache["resid_post", layer][0].detach().cpu().
+
+
+FORMULA Xn = X / nrm
+
+
+FORMULA """Верхняя граница Марченко–Пастура: lambda_+ = (1 + sqrt(T/N))^2"""
+
+
+FORMULA lp = mp_lambda_plus(T, N)
+
+
+FORMULA S = float(-np.sum(p * np.log(p + 1e-15)))
+CONTEXT: SNR = float(ev[0] / np.mean(ev[max(1,int(len(ev)*0.
+
+
+FORMULA TW_z = float((ev[0] - lp) / (lp * len(ev)**(-2/3) + 1e-12))
+
+
+FORMULA return dict(PR=PR, SNR=SNR, S=S, F=F, TW_z=TW_z,
+CONTEXT: r = np.minimum(d[:-1],d[1:])/np.maximum(d[:-1],d[1:]) if len(d)>1 else [np.
+
+
+FORMULA lmax=float(ev[0]), lp=lp, ev=ev)
+
+
+FORMULA PROMPTS = {
+
+
+FORMULA results = []
+
+
+FORMULA if m == "TW_z":
+CONTEXT: ax.plot(sub.index, sub.
+
+
+FORMULA ax.axhline(3, color="red", ls="--", lw=1, alpha=0.7, label="z=3")
+
+
+FORMULA if m == "lratio":
+CONTEXT: ax.axhline(3, color="red", ls="--", lw=1, alpha=0.7, label="z=3")
+
+
+FORMULA if m == "r":
+CONTEXT: ax.axhline(1.0, color="gold", ls="--", lw=1, alpha=0.
+
+
+FORMULA pivot = df.groupby(["cls","layer"])[["PR","S","F","TW_z","lratio","r"]].mean()
+CONTEXT: # Ячейка 7 — Анализ дельты: что разделяет фактическое и творческое?.
+
+
+FORMULA d_f = pivot.loc["factual"]; d_c = pivot.loc["creative"]
+CONTEXT: if "factual" in df.cls.values and "creative" in df.cls.
+
+
+FORMULA delta = d_c - d_f
+CONTEXT: d_f = pivot.loc["factual"]; d_c = pivot.loc["creative"]
+
+
+FORMULA direction_s = "творческое>фактическое" if ds>0 else "фактическое>творческое"
+CONTEXT: direction_pr = "творческое>фактическое" if dpr>0 else "фактическое>творческое".
+
+
+FORMULA print(f"Средняя дельта S = {ds:.3f} ({direction_s})")
+CONTEXT: print(f"Средняя дельта PR = {dpr:.
+
+
+FORMULA lp_test = mp_lambda_plus(T_TEST, N_TEST)
+
+
+FORMULA ev_n = ev / ev.mean()
+
+
+FORMULA phase = np.outer(tau_range, ev_n)
+
+
+FORMULA K = np.abs(np.sum(np.exp(-1j*phase), axis=1))**2 / len(ev_n)**2
+
+
+FORMULA K_all = []
+
+
+FORMULA ax.loglog(tau, np.mean(K_all,axis=0), label=cls, color=color, lw=2)
+
+
+FORMULA summary = {
+
+
+FORMULA print("=== СВОДКА ===")
+
+
+FORMULA f" TW={summary["mean_metrics"]["TW_z"][cls]:.1f}")
+CONTEXT: f" S={summary["mean_metrics"]["S"][cls]:.
+
+
+FORMULA ΔPR ∝ N_LAYERS я ли ΔPR
+CONTEXT: Тестирование на GPT-2 medium/large/XL: масштабируетс с глубиной модели?.
+
+
+=== MONOGRAPH M03 EN — RMT_LLM_BlackGold_Preprint_v1 ===
+
+
+FORMULA 6.1 Free Energy Analogy: F = U - TS_spec	13
+
+
+FORMULA (Eq 2-1) The support of the MP distribution is bounded by lambda_- = (1 - sqrt(q))^2 and lambda_+ = (1 + sqrt(q))^2, with all eigenvalues of a pure noise covariance matrix confined to this interval with probability one in the asymptotic limit.
+CAPTION: Equation 2-1: Marchenko-Pastur spectral density
+
+
+FORMULA (Eq 2-2) 
+CAPTION: Equation 2-2: MP law support boundaries
+
+
+FORMULA (Eq 2-3) Consider a rank-one perturbation of the form C = C_noise + sigma * u * u^T, where C_noise is a Wishart random matrix and u is a fixed unit vector.
+CAPTION: Equation 2-3: BBP transition criterion
+
+
+FORMULA (Eq 2-4) 
+CAPTION: Equation 2-4: Tracy-Widom convergence for largest eigenvalue
+
+
+FORMULA (Eq 2-5) the dip time t_dip ≈ 1/Delta (where Delta is the mean level spacing) and the plateau value K_plateau = 1/N.
+CAPTION: Equation 2-5: Spectral form factor definition
+
+
+FORMULA (Eq 2-6) IPR = sum_i |v(i)|^4, where v is the eigenvector.
+CAPTION: Equation 2-6: Participation Ratio
+
+
+FORMULA (Eq 2-7) 
+CAPTION: Equation 2-7: Inverse Participation Ratio
+
+
+FORMULA (Eq 2-8) for GUE statistics (correlated levels), p(r) = (27/4)(r + r^2)/(1 + r + r^2)^{5/2}.
+CAPTION: Equation 2-8: Spacing ratio definition
+
+
+FORMULA GOE (beta=1)
+
+
+FORMULA GUE (beta=2)
+
+
+FORMULA (Eq 3-1) (4) Spectral entropy S_spec = -sum_i lambda_tilde_i log(lambda_tilde_i) measuring the information-theoretic uncertainty in the spectral distribution;
+CAPTION: Equation 3-1: Signal-to-Noise Ratio
+
+
+FORMULA (Eq 3-2) 
+CAPTION: Equation 3-2: Spectral Entropy
+
+
+FORMULA 6.1 Free Energy Analogy: F = U - TS_spec
+
+
+FORMULA (Eq 6-1) 
+CAPTION: Equation 6-1: Spectral free energy definition
+
+
+FORMULA (Eq 6-2) 
+CAPTION: Equation 6-2: RG beta function for spectral flow
+
+
+FORMULA (Eq 6-3) The spectral entropy S_spec = -sum_i lambda_tilde_i log(lambda_tilde_i) is directly related to the von Neumann entropy of the density matrix rho = C / Tr(C), which in quantum information theory measures the entanglement between the observed subsystem and its complement.
+CAPTION: Equation 6-3: Mutual information between input and spectral representation
+
+
+FORMULA F = U - TS_spec naturally distinguishes factual (F < 0, bound state) from creative (F ≈ 0, gas state) phases, providing a thermodynamic framework for generation mode classification.
+
+
+FORMULA (Eq A-1) The covariance matrix is then computed as C = (1/T) X^T X, which is a positive semi-definite matrix of size N × N.
+CAPTION: Equation A-1: Covariance matrix construction
+
+
+FORMULA §6.1 Free energy F = U − TS_spec
+CONTEXT: free_probability.py — participation diagnostics; dyson_brownian.
+
+
+=== MONOGRAPH M03 RU — RMT_LLM_BlackGold_Preprint_v1_RU ===
+
+
+FORMULA 6.1 Термодинамическая аналогия: F = U - TS_spec 13
+
+
+FORMULA 6.1 Аналогия со свободной энергией: F = U - TS_spec
+
+
+FORMULA F = U - TS_spec naturally distinguishes factual (F < 0, bound state) from creative (F ≈ 0, gas state) phases, providing a thermodynamic framework for generation mode classification.
+
+
+FORMULA §6.1 Свободная энергия F = U − TS_spec
+CONTEXT: free_probability.py — диагностика участия; dyson_brownian.
+
+
+=== MONOGRAPH M04 EN — RMT_LLM_BlackGold_Preprint_v2 ===
+
+
+FORMULA 6.1 Free Energy Analogy: F = U - TS_spec	13
+
+
+FORMULA (Eq 2-1) The support of the MP distribution is bounded by lambda_- = (1 - sqrt(q))^2 and lambda_+ = (1 + sqrt(q))^2, with all eigenvalues of a pure noise covariance matrix confined to this interval with probability one in the asymptotic limit.
+CAPTION: Equation 2-1: Marchenko-Pastur spectral density
+
+
+FORMULA (Eq 2-2) 
+CAPTION: Equation 2-2: MP law support boundaries
+
+
+FORMULA (Eq 2-3) Consider a rank-one perturbation of the form C = C_noise + sigma * u * u^T, where C_noise is a Wishart random matrix and u is a fixed unit vector.
+CAPTION: Equation 2-3: BBP transition criterion
+
+
+FORMULA (Eq 2-4) 
+CAPTION: Equation 2-4: Tracy-Widom convergence for largest eigenvalue
+
+
+FORMULA (Eq 2-5) the dip time t_dip ≈ 1/Delta (where Delta is the mean level spacing) and the plateau value K_plateau = 1/N.
+CAPTION: Equation 2-5: Spectral form factor definition
+
+
+FORMULA (Eq 2-6) IPR = sum_i |v(i)|^4, where v is the eigenvector.
+CAPTION: Equation 2-6: Participation Ratio
+
+
+FORMULA (Eq 2-7) 
+CAPTION: Equation 2-7: Inverse Participation Ratio
+
+
+FORMULA (Eq 2-8) for GUE statistics (correlated levels), p(r) = (27/4)(r + r^2)/(1 + r + r^2)^{5/2}.
+CAPTION: Equation 2-8: Spacing ratio definition
+
+
+FORMULA GOE (beta=1)
+
+
+FORMULA GUE (beta=2)
+
+
+FORMULA (Eq 3-1) (4) Spectral entropy S_spec = -sum_i lambda_tilde_i log(lambda_tilde_i) measuring the information-theoretic uncertainty in the spectral distribution;
+CAPTION: Equation 3-1: Signal-to-Noise Ratio
+
+
+FORMULA (Eq 3-2) 
+CAPTION: Equation 3-2: Spectral Entropy
+
+
+FORMULA 6.1 Free Energy Analogy: F = U - TS_spec
+
+
+FORMULA (Eq 6-1) 
+CAPTION: Equation 6-1: Spectral free energy definition
+
+
+FORMULA (Eq 6-2) 
+CAPTION: Equation 6-2: RG beta function for spectral flow
+
+
+FORMULA (Eq 6-3) The spectral entropy S_spec = -sum_i lambda_tilde_i log(lambda_tilde_i) is directly related to the von Neumann entropy of the density matrix rho = C / Tr(C), which in quantum information theory measures the entanglement between the observed subsystem and its complement.
+CAPTION: Equation 6-3: Mutual information between input and spectral representation
+
+
+FORMULA F = U - TS_spec naturally distinguishes factual (F < 0, bound state) from creative (F ≈ 0, gas state) phases, providing a thermodynamic framework for generation mode classification.
+
+
+FORMULA (Eq A-1) The covariance matrix is then computed as C = (1/T) X^T X, which is a positive semi-definite matrix of size N × N.
+CAPTION: Equation A-1: Covariance matrix construction
+
+
+=== MONOGRAPH M04 RU — RMT_LLM_BlackGold_Preprint_v2_RU ===
+
+
+FORMULA 6.1 Термодинамическая аналогия: F = U - TS_spec 13
+
+
+FORMULA 6.1 Аналогия со свободной энергией: F = U - TS_spec
+
+
+FORMULA бодная F = U - TS_spec естественно разделяет фактические (F < 0, связанное состояние) от творческих (F ≈ 0, газовое ояние) фаз, предоставляя термодинамическую основу классификации режимов генерации.
+
+
+=== MONOGRAPH M05 EN — LLM_Analysis_Merged ===
+
+
+FORMULA Difference → δ = 3.469×10⁻¹⁸
+CONTEXT: Table 1.
+
+
+FORMULA — caputo_n_crit(θ_B, γ₁) — self-consistent N_crit from θ_B = 7.07° and γ₁ = 14.134725
+CONTEXT: — caputo_mean_collapse_time(μ_eff, β, c) — mean time to the hallucinatory collapse.
+
+
+FORMULA Marchenko–Pastur bulk edges λ± = σ²(1 ± 1/√q)
+
+
+FORMULA q = T/N
+
+
+FORMULA ρ_MP(λ)
+
+
+FORMULA λ_max(θ)
+
+
+FORMULA F = U − TS_spec
+
+
+=== MONOGRAPH M05 RU — LLM_Analysis_Merged_RU ===
+
+
+FORMULA Разница → δ = 3.469×10⁻¹⁸
+CONTEXT: Таблица 1.
+
+
+FORMULA ∂P/∂t ~ -∂(μP)/∂b
+CONTEXT: Запрос пользователя активирует телеологический механизм (Механизм 3), запускающий целенаправленный дрейф фазы, описываемый компонентой Фоккера-Планка:.
+
+
+FORMULA τ_relax ~ |λ - λ_c|^⁻¹/² → ∞
+CONTEXT: На языке нелинейной динамики этот процесс описывается как приближение к точке бифуркации Ландау, где время релаксации системы стремится к бесконечности:.
+
+
+FORMULA Var(φ(t)) ~ t^β / Γ(1+β)
+CONTEXT: Это состояние также идеально описывается дробно-временным оператором Капуто, который предсказывает аномальную субдиффузию на раннем этапе (медленная деградация), предшествующую взрывному коллапсу:.
+
+
+FORMULA μ_eff(b) = μ_0(b) + μ_RLHF(b)
+CONTEXT: В чистой базовой модели (base model) полная эволюция плотности вероятности фазы описывается уравнением Фоккера-Планка с дробной производной Капуто:.
+
+
+FORMULA μ_eff(b) = μ_0(b) + μ_RLHF(b)
+CONTEXT: Таким образом, эффективный коэффициент дрейфа принимает вид:.
+
+
+FORMULA 〈T_crit〉_Caputo = [b_crit^β / (μ_eff × Γ(1+β))]^(1/β) × [1 - C_α(σ_L/σ_G)^α + O(β²)]
+CONTEXT: Масштаб катастрофы становится очевидным при подстановке эффективного дрейфа μ_eff в аналитическое решение для среднего времени коллапса в режиме Капуто:.
+
+
+FORMULA 〈T_crit〉 ∝ (μ_0 + μ_RLHF)^(-1/β)
+CONTEXT: Критически важно обратить внимание на показатель степени 1/β.
+
+
+FORMULA — caputo_n_crit(θ_B, γ₁) — самосогласованный N_crit из θ_B = 7.07° и γ₁ = 14.134725
+CONTEXT: — caputo_mean_collapse_time(μ_eff, β, c) — среднее время до галлюцинаторного коллапса.
+
+
+FORMULA края bulk-области Марченко–Пастура λ± = σ²(1 ± 1/√q)
+
+
+FORMULA q = T/N
+
+
+FORMULA ρ_MP(λ)
+
+
+FORMULA λ_max(θ)
+
+
+FORMULA F = U − TS_spec
+
+
+=== FORMAL PROOF EN — 01_scope_and_notation ===
+
+
+LATEX [inline] X = \Sigma^{1/2} Z
+
+
+LATEX [inline] Z\in\mathbb{R}^{N\times T}
+
+
+LATEX [inline] \mathbb{C}^{N\times T}
+
+
+LATEX [inline] N, T\to\infty
+
+
+LATEX [inline] q = N/T \to q^* \in (0,\infty)
+
+
+LATEX [inline] X,\ C = \tfrac1T XX^{\mathsf T}
+
+
+LATEX [inline] \lambda_\pm = \sigma^2(1\pm\sqrt q)^2
+
+
+LATEX [inline] \mu,\ \mu_c = \sigma^2\sqrt q
+
+
+LATEX [inline] m(z)=\int\frac{d\mu(\lambda)}{\lambda-z}
+
+
+LATEX [inline] G(z)=-m(z)=\frac1N\mathrm{Tr}(zI-C)^{-1}
+
+
+LATEX [inline] H(p)=-\sum_i p_i\log p_i
+
+
+=== FORMAL PROOF EN — 02_layer_operator ===
+
+
+LATEX [display] \mathrm{Tr}\, C \;=\; \frac1T \sum_{t=1}^{T}\|x_t\|^2 \;=\; N \quad\text{exactly},
+
+
+LATEX [display] \mathbb E[\mathrm{GELU}(x)] = \frac{\gamma^2\varphi_0}{\sqrt{1+\gamma^2}},
+
+
+LATEX [display] \mathbb E[\mathrm{GELU}(x)^2] = \gamma^2\Big(\tfrac14 + \tfrac{1}{2\pi}\arcsin\tfrac{\gamma^2}{1+\gamma^2}\Big) > + \gamma^4\Big(2\,\tfrac{(2\pi)^{-1}}{\sqrt{1+2\gamma^2}} > - 2\,\tfrac{\gamma^2 (2\pi)^{-1}}{(1+\gamma^2)\sqrt{1+2\gamma^2}}\Big).
+
+
+LATEX [display] \mathrm{Cov}(y)_{ab} = K(\gamma_a^2,\gamma_b^2,\rho_{ab}) - \mathbb E[\mathrm{GELU}(u_a)]\,\mathbb E[\mathrm{GELU}(u_b)],
+
+
+LATEX [inline] \mathrm{Norm}(x) = \sqrt N\, x / \|x\|
+
+
+LATEX [inline] X\in\mathbb{R}^{N\times T}
+
+
+LATEX [inline] \|x_t\|^2 = N
+
+
+LATEX [inline] \mathrm{Tr}\, C \;=\; \frac1T \sum_{t=1}^{T}\|x_t\|^2 \;=\; N \quad\text{exactly},
+
+
+LATEX [inline] \|\mathrm{Norm}(x_t)\|^2 = N\|x_t\|^2/\|x_t\|^2 = N
+
+
+LATEX [inline] \mathrm{Tr}\,C = N
+
+
+LATEX [inline] x\sim\mathcal N(0,\gamma^2)
+
+
+LATEX [inline] \mathbb E[x f(x)] = \gamma^2 \mathbb E[f'(x)]
+
+
+LATEX [inline] \mathbb E[x^2 f(x)] = \gamma^2\mathbb E[f] + \gamma^4 \mathbb E[f'']
+
+
+LATEX [inline] x\sim\mathcal N(0,\gamma^2)
+
+
+LATEX [inline] \mathrm{GELU}(x) = x\Phi(x)
+
+
+LATEX [inline] \varphi_0 = (2\pi)^{-1/2}
+
+
+LATEX [inline] \mathbb E[\mathrm{GELU}(x)] = \frac{\gamma^2\varphi_0}{\sqrt{1+\gamma^2}},
+
+
+LATEX [inline] \mathbb E[x\Phi(x)] = \gamma^2\mathbb E[\varphi(x)]
+
+
+LATEX [inline] \mathbb E[\varphi(x)] = (2\pi)^{-1/2}(1+\gamma^2)^{-1/2}
+
+
+LATEX [inline] f = \Phi^2
+
+
+LATEX [inline] f'' = 2\varphi^2 - 2x\varphi\Phi
+
+
+LATEX [inline] \mathbb E[\varphi(x)^2] = (2\pi)^{-1}(1+2\gamma^2)^{-1/2}
+
+
+LATEX [inline] \mathbb E[x\varphi(x)\Phi(x)] = \gamma^2\mathbb E[\varphi(x)^2]/(1+\gamma^2)
+
+
+LATEX [inline] g=\varphi\Phi
+
+
+LATEX [inline] \mathbb E[\Phi(x)^2] = \tfrac14 + \tfrac{1}{2\pi}\arcsin\!\big(\tfrac{\gamma^2}{1+\gamma^2}\big)
+
+
+LATEX [inline] (\gamma_u^2,\gamma_v^2)
+
+
+LATEX [inline] K_{\mathrm{SiLU}}(\gamma_u^2,\gamma_v^2,\rho) = \mathbb E[\mathrm{SiLU}(u)\,\mathrm{SiLU}(v)]
+
+
+LATEX [inline] \mathrm{SiLU}(x) = x\,\sigma(x)
+
+
+LATEX [inline] y = \mathrm{GELU}(Wx)
+
+
+LATEX [inline] x\sim\mathcal N(0,C)
+
+
+LATEX [inline] \mathrm{Cov}(y)_{ab} = K(\gamma_a^2,\gamma_b^2,\rho_{ab}) - \mathbb E[\mathrm{GELU}(u_a)]\,\mathbb E[\mathrm{GELU}(u_b)],
+
+
+LATEX [inline] \gamma_a^2 = w_a^{\mathsf T}C w_a
+
+
+LATEX [inline] \rho_{ab} = w_a^{\mathsf T}C w_b/(\gamma_a\gamma_b)
+
+
+LATEX [inline] \mathrm{Tr}\,C = N
+
+
+LATEX [inline] 5.7\times10^{-14}
+
+
+LATEX [inline] 4\times10^5
+
+
+LATEX [inline] \le 10^{-3}
+
+
+LATEX [inline] 1.5\times10^6
+
+
+LATEX [inline] \le 8\times10^{-4}
+
+
+LATEX [inline] 4\times10^5
+
+
+=== FORMAL PROOF EN — 03_silverstein_mp ===
+
+
+LATEX [display] m(z) \;=\; \frac{1}{\sigma^2\big(1 - q - q\,z\,m(z)\big) - z}. \tag{3.1}
+
+
+LATEX [display] \sigma^2 q\, z\, m(z)^2 \;+\; \big(z + \sigma^2(q-1)\big)\, m(z) \;+\; 1 \;=\; 0. \tag{3.2}
+
+
+LATEX [display] m(z) \;=\; \frac{-\big(z+\sigma^2(q-1)\big) + s(z)}{2\sigma^2 q\,z}, > \qquad s(z) = \sqrt{z-\lambda_-}\,\sqrt{z-\lambda_+},
+
+
+LATEX [display] \rho(\lambda) \;=\; \frac{\sqrt{(\lambda_+-\lambda)(\lambda-\lambda_-)}}{2\pi\sigma^2 q\,\lambda}, > \qquad \lambda\in[\lambda_-,\lambda_+],
+
+
+LATEX [display] \lambda_\pm \;=\; \sigma^2\,(1\pm\sqrt q)^2,
+
+
+LATEX [inline] C = \tfrac1T XX^{\mathsf T}
+
+
+LATEX [inline] \mu_{q,\sigma^2}
+
+
+LATEX [inline] H=\delta_{\sigma^2}
+
+
+LATEX [inline] \mu_{q,\sigma^2}
+
+
+LATEX [inline] m(z) = \int (\lambda - z)^{-1}d\mu(\lambda)
+
+
+LATEX [inline] \mathbb C^+\cup\mathbb R\setminus[\lambda_-,\lambda_+]
+
+
+LATEX [inline] m(z) \;=\; \frac{1}{\sigma^2\big(1 - q - q\,z\,m(z)\big) - z}. \tag{3.1}
+
+
+LATEX [inline] H = \delta_{\sigma^2}
+
+
+LATEX [inline] \sigma^2 q\, z\, m(z)^2 \;+\; \big(z + \sigma^2(q-1)\big)\, m(z) \;+\; 1 \;=\; 0. \tag{3.2}
+
+
+LATEX [inline] \sigma^2 q z G^2 - \big(z+\sigma^2(q-1)\big)G + 1 = 0
+
+
+LATEX [inline] \mathbb C\setminus[\lambda_-,\lambda_+]
+
+
+LATEX [inline] m(z)\sim -1/z
+
+
+LATEX [inline] [\lambda_-,\lambda_+]
+
+
+LATEX [inline] z>\lambda_+
+
+
+LATEX [inline] z<\lambda_-
+
+
+LATEX [inline] \mathrm{Im}\,s>0
+
+
+LATEX [inline] \mathbb C^+
+
+
+LATEX [inline] \mathrm{Im}\,m > 0
+
+
+LATEX [inline] \mathbb C^+
+
+
+LATEX [inline] z>\lambda_+
+
+
+LATEX [inline] 3\times10^{-16}
+
+
+LATEX [inline] \sim10^{-4}
+
+
+LATEX [inline] \lambda_\pm \;=\; \sigma^2\,(1\pm\sqrt q)^2,
+
+
+LATEX [inline] \max(0,\,1-1/q)
+
+
+LATEX [inline] \big(z+\sigma^2(q-1)\big)^2 - 4\sigma^2 q z = 0
+
+
+LATEX [inline] z = \sigma^2\big[(1+q)\pm 2\sqrt q\big]
+
+
+LATEX [inline] s(\lambda+i0) = i\sqrt{(\lambda-\lambda_-)(\lambda_+-\lambda)}
+
+
+LATEX [inline] N - \min(N,T)
+
+
+LATEX [inline] \int\lambda\,d\mu = \sigma^2
+
+
+LATEX [inline] \int\lambda^2 d\mu = \sigma^4(1+q)
+
+
+LATEX [inline] 3.1\times10^{-16}
+
+
+LATEX [inline] (1/N)\mathrm{Tr}(zI-C)^{-1}
+
+
+LATEX [inline] 9.0\times10^{-4}
+
+
+LATEX [inline] \lambda_+
+
+
+=== FORMAL PROOF EN — 04_free_probability ===
+
+
+LATEX [display] R_{\mathrm{MP}}(z) \;=\; \sum_{n\ge 0}\kappa_{n+1} z^n > \;=\; \frac{\sigma^2}{1 - q\sigma^2 z}, \qquad > S_{\mathrm{MP}}(z) \;=\; \frac{1}{\sigma^2\,(1 + q\,z)}.
+
+
+LATEX [display] S_{C_{\mathrm{attn}}}(z) = S_{WW^{\mathsf T}}(z)\cdot S_{XX^{\mathsf T}/T}(z),
+
+
+LATEX [inline] C_{\mathrm{attn}} \sim W X X^{\mathsf T} W^{\mathsf T}
+
+
+LATEX [inline] N\to\infty
+
+
+LATEX [inline] A_N + B_N
+
+
+LATEX [inline] \mu_A \boxplus \mu_B
+
+
+LATEX [inline] R_{A\boxplus B}(z) = R_A(z) + R_B(z)
+
+
+LATEX [inline] \mu_A \boxtimes \mu_B
+
+
+LATEX [inline] S_{A\boxtimes B}(z) = S_A(z)\,S_B(z)
+
+
+LATEX [inline] S_{C_{\mathrm{attn}}}(z) = S_{W_{\mathrm{ATTN}}}(z)\cdot S_X(z)
+
+
+LATEX [inline] \mu_{q,\sigma^2}
+
+
+LATEX [inline] \kappa_n = q^{\,n-1}\sigma^{2n}
+
+
+LATEX [inline] m_n = \sigma^{2n} C_n(q)
+
+
+LATEX [inline] m(z) = \frac{1 - q - \sigma^{-2}z\cdot(\dots)}{2qz}
+
+
+LATEX [inline] R\big(z\,m(z)\big) = z + 1/m(z)\cdot(\dots)
+
+
+LATEX [inline] S(z) = \frac{1+z}{z}\,\chi(z)
+
+
+LATEX [inline] z\mapsto z\,R(z\psi)/\psi\cdot(\dots)
+
+
+LATEX [inline] S_{\mathrm{MP}}(z) = 1/(\sigma^2(1+qz))
+
+
+LATEX [inline] S\to 1/\sigma^2
+
+
+LATEX [inline] \sigma^2 I
+
+
+LATEX [inline] C_{\mathrm{attn}} = W X X^{\mathsf T}W^{\mathsf T}/T
+
+
+LATEX [inline] S_{C_{\mathrm{attn}}}(z) = S_{WW^{\mathsf T}}(z)\cdot S_{XX^{\mathsf T}/T}(z),
+
+
+=== FORMAL PROOF EN — 05_bbp_transition ===
+
+
+LATEX [display] \Sigma \;=\; \sigma^2 I_N + \mu\, v v^{\mathsf T}, \qquad \|v\| = 1, \qquad X = \Sigma^{1/2} Z,
+
+
+LATEX [display] \lambda_{\mathrm{out}}(\mu) \;=\; (\sigma^2+\mu)\Big(1 + \frac{q\,\sigma^2}{\mu}\Big),
+
+
+LATEX [display] \boxed{\;(\sigma^2+\mu)\,\big(1 - q + q\,\lambda\,G(\lambda)\big) \;=\; \lambda\;} \tag{5.1}
+
+
+LATEX [inline] \Sigma \;=\; \sigma^2 I_N + \mu\, v v^{\mathsf T}, \qquad \|v\| = 1, \qquad X = \Sigma^{1/2} Z,
+
+
+LATEX [inline] C = \tfrac1T XX^{\mathsf T}
+
+
+LATEX [inline] N,T\to\infty
+
+
+LATEX [inline] \mu \le \mu_c = \sigma^2\sqrt q
+
+
+LATEX [inline] \lambda_+ = \sigma^2(1+\sqrt q)^2
+
+
+LATEX [inline] \mu > \mu_c
+
+
+LATEX [inline] \lambda_{\mathrm{out}}(\mu) \;=\; (\sigma^2+\mu)\Big(1 + \frac{q\,\sigma^2}{\mu}\Big),
+
+
+LATEX [inline] \mu = \mu_c
+
+
+LATEX [inline] \lambda_{\mathrm{out}}(\mu_c) = \lambda_+
+
+
+LATEX [inline] G(\lambda) = -m(\lambda)
+
+
+LATEX [inline] \lambda > \lambda_+
+
+
+LATEX [inline] \lambda > \lambda_+
+
+
+LATEX [inline] \boxed{\;(\sigma^2+\mu)\,\big(1 - q + q\,\lambda\,G(\lambda)\big) \;=\; \lambda\;} \tag{5.1}
+
+
+LATEX [inline] \lambda_+
+
+
+LATEX [inline] \lambda_{\mathrm{out}}(\mu)
+
+
+LATEX [inline] \mu > \mu_c
+
+
+LATEX [inline] \lambda = \lambda_{\mathrm{out}}
+
+
+LATEX [inline] b - \sqrt\Delta = 2\sigma^2 q(\sigma^2+\mu)/\mu
+
+
+LATEX [inline] b = \lambda_{\mathrm{out}} + \sigma^2(q-1)
+
+
+LATEX [inline] \sqrt\Delta = (\mu^2 - q\sigma^4)/\mu
+
+
+LATEX [inline] (\lambda-\lambda_\pm) = (\mu \mp \sigma^2\sqrt q)^2/\mu
+
+
+LATEX [inline] \mu_c = \sigma^2\sqrt q
+
+
+LATEX [inline] \lambda_{\mathrm{out}}
+
+
+LATEX [inline] \lambda_+
+
+
+LATEX [inline] |\cdot| \le 8.9\times10^{-16}
+
+
+LATEX [inline] q\in[0.25,2]
+
+
+LATEX [inline] \mu/\mu_c
+
+
+LATEX [inline] \lambda_{max}
+
+
+=== FORMAL PROOF EN — 06_outliers_overlaps ===
+
+
+LATEX [display] \big|\langle \hat v, v\rangle\big|^2 \;\xrightarrow{a.s.}\; > \frac{1 - \dfrac{q\,\sigma^4}{\mu^2}}{1 + \dfrac{q\,\sigma^2}{\mu}},
+
+
+LATEX [display] \hat\mu(\lambda) \;=\; \frac{A + \sqrt{A^2 - 4q\sigma^4}}{2}, > \qquad A \;=\; \lambda - \sigma^2(1+q),
+
+
+LATEX [inline] \mu > \mu_c
+
+
+LATEX [inline] \mu \le \mu_c
+
+
+LATEX [inline] \mu \downarrow \mu_c
+
+
+LATEX [inline] \to 1 - q\sigma^4/\mu_c^2 = 0
+
+
+LATEX [inline] \mu \gg \sigma^2\sqrt q
+
+
+LATEX [inline] q\sigma^2/\mu
+
+
+LATEX [inline] \lambda \ge \lambda_+
+
+
+LATEX [inline] \hat\mu^2 - A\hat\mu + q\sigma^4 = 0
+
+
+LATEX [inline] \mu\mapsto\lambda_{\mathrm{out}}(\mu)
+
+
+LATEX [inline] (\mu_c,\infty)\to(\lambda_+,\infty)
+
+
+LATEX [inline] \hat\mu\big(\lambda_{\mathrm{out}}(\mu)\big) = \mu
+
+
+LATEX [inline] \hat\mu = 0
+
+
+LATEX [inline] \lambda = \sigma^2 + \mu + q\sigma^2 + q\sigma^4/\mu
+
+
+LATEX [inline] \lambda = \lambda_+
+
+
+LATEX [inline] \mu_c = \sigma^2\sqrt q
+
+
+LATEX [inline] \hat\mu \sim \lambda - \sigma^2(1+q)
+
+
+LATEX [inline] \hat\mu = \lambda - \sigma^2(1+q) - q\sigma^4/\lambda + O(\mu^{-3})
+
+
+LATEX [inline] 2q\sigma^4/\mu
+
+
+LATEX [inline] \hat\mu(\lambda_{\mathrm{out}}(\mu)) = \mu
+
+
+LATEX [inline] \le 8.9\times10^{-16}
+
+
+LATEX [inline] \mu = 3\mu_c
+
+
+LATEX [inline] \mu\le\mu_c
+
+
+=== FORMAL PROOF EN — 07_hallucination_split ===
+
+
+LATEX [display] \mathcal H_{\mathrm{signal}} = \mathrm{span}\{\hat v_k : \lambda_k > \lambda_+\},\qquad > \mathcal H_{\mathrm{bulk}} = \mathrm{span}\{\hat v_k : \lambda_k \le \lambda_+\},
+
+
+LATEX [display] \mathcal H = \mathcal H_{\mathrm{signal}} \oplus \mathcal H_{\mathrm{bulk}}.
+
+
+LATEX [display] r(x) \;=\; \frac{\|P_{\mathrm{bulk}}\,x\|^2}{\|P_{\mathrm{signal}}\,x\|^2 + \varepsilon}.
+
+
+LATEX [inline] C = \tfrac1T XX^{\mathsf T}
+
+
+LATEX [inline] \lambda_1\ge\dots\ge\lambda_N
+
+
+LATEX [inline] \hat v_1,\dots,\hat v_N
+
+
+LATEX [inline] \lambda_+
+
+
+LATEX [inline] \mathcal H = \mathcal H_{\mathrm{signal}} \oplus \mathcal H_{\mathrm{bulk}}.
+
+
+LATEX [inline] x\in\mathcal H
+
+
+LATEX [inline] x_T^{(L)}
+
+
+LATEX [inline] r(x) \;=\; \frac{\|P_{\mathrm{bulk}}\,x\|^2}{\|P_{\mathrm{signal}}\,x\|^2 + \varepsilon}.
+
+
+LATEX [inline] r(x) > \eta_{\mathrm{crit}}
+
+
+LATEX [inline] \eta_{\mathrm{crit}}
+
+
+=== FORMAL PROOF EN — 08_entropy_response ===
+
+
+LATEX [display] z = z_0 + \frac{W\,\xi}{\tau}, \qquad \xi \sim \mathcal N(0,\Sigma_{\mathrm{bulk}}),
+
+
+LATEX [display] \mathbb E_\xi\big[H(\mathrm{softmax}(z_0 + W\xi/\tau))\big] > \;=\; H(p_0) \;-\; \tfrac12\,\mathrm{Tr}\!\big((\mathrm{diag}(p_0)-p_0p_0^{\mathsf T})\,A\big) > \;+\; \mathcal O(\tau^{-3}).
+
+
+LATEX [display] \mathbb E[H] = \log K \;-\; \frac{1}{2K}\Big(\mathrm{Tr}\,A - \tfrac1K\,\mathbf 1^{\mathsf T}A\,\mathbf 1\Big) > + \mathcal O(\tau^{-3}),
+
+
+LATEX [display] \mathbb E[H] \;=\; H_0 \;-\; \Big(1-\tfrac1K\Big)\frac{\bar\sigma^2}{2\tau^2} + \mathcal O(\tau^{-3}),\qquad > \bar\sigma^2 = \tfrac1K\mathrm{Tr}\big(W\Sigma_{\mathrm{bulk}}W^{\mathsf T}\big).
+
+
+LATEX [inline] p = \mathrm{softmax}(z)
+
+
+LATEX [inline] z_i = w_i^{\mathsf T}x/\tau
+
+
+LATEX [inline] z = z_0 + \frac{W\,\xi}{\tau}, \qquad \xi \sim \mathcal N(0,\Sigma_{\mathrm{bulk}}),
+
+
+LATEX [inline] \Sigma_{\mathrm{bulk}}
+
+
+LATEX [inline] w_i^{\mathsf T}
+
+
+LATEX [inline] A = W\Sigma_{\mathrm{bulk}}W^{\mathsf T}/\tau^2
+
+
+LATEX [inline] f(z) = \sum_i p_i\log p_i
+
+
+LATEX [inline] p = \mathrm{softmax}(z)
+
+
+LATEX [inline] \partial^2 f/\partial z_j\partial z_k = p_j(\delta_{jk}-p_k)\big(z_j - \langle z\rangle_p + 1\big)
+
+
+LATEX [inline] \nabla^2 f = \mathrm{diag}(p) - pp^{\mathsf T} \succeq 0
+
+
+LATEX [inline] f(z) = \langle z,p\rangle - \log Z
+
+
+LATEX [inline] \partial f/\partial z_j = p_j(z_j - \langle z\rangle_p)
+
+
+LATEX [inline] W\Sigma W^{\mathsf T} = \bar\sigma^2 I_K
+
+
+LATEX [inline] \bar\sigma^2 \to \sigma^2_{\mathrm{eff}}\,\langle\|w_i\|^2\rangle
+
+
+LATEX [inline] \sigma^2_{\mathrm{eff}} = \int\lambda\rho_{MP}(\lambda)d\lambda
+
+
+LATEX [inline] E_\xi[p_\xi]
+
+
+LATEX [inline] \mathcal O(\tau^{-4})
+
+
+LATEX [inline] H = H_0 + \frac{1}{2\tau^2}\int\lambda\rho\,d\lambda
+
+
+LATEX [inline] \mathbb E[H]
+
+
+LATEX [inline] -\,(1-1/K)\bar\sigma^2/2 = -0.6577
+
+
+=== FORMAL PROOF EN — 09_tracy_widom ===
+
+
+LATEX [display] \mu_{N,T} = \sigma^2\,\frac{(\sqrt{T-1}+\sqrt N)^2}{T},\qquad > s_{N,T} = \sigma^2\,\frac{(\sqrt{T-1}+\sqrt N)\big(T^{-1/2}+N^{-1/2}\big)^{1/3}}{T},
+
+
+LATEX [display] \frac{\lambda_{\max}(C) - \mu_{N,T}}{s_{N,T}} \;\xrightarrow{d}\; F_1\qquad(\beta = 1).
+
+
+LATEX [display] \xi_1 = (\lambda_{\max}^{\mathrm{GOE}} - 2\sqrt p)\,p^{1/6} \Rightarrow F_1,\qquad \xi_2 = (\lambda_{\max}^{\mathrm{GUE}} - 2\sqrt p)\,p^{1/6} \Rightarrow F_2,
+
+
+LATEX [inline] C = \tfrac1T XX^{\mathsf T}
+
+
+LATEX [inline] X\in\mathbb R^{N\times T}
+
+
+LATEX [inline] \mathcal N(0,\sigma^2)
+
+
+LATEX [inline] \frac{\lambda_{\max}(C) - \mu_{N,T}}{s_{N,T}} \;\xrightarrow{d}\; F_1\qquad(\beta = 1).
+
+
+LATEX [inline] \beta = 2
+
+
+LATEX [inline] \mu = \sigma^2(\sqrt{T-1/2}+\sqrt{N-1/2})^2/T
+
+
+LATEX [inline] \beta = 1
+
+
+LATEX [inline] \beta = 2
+
+
+LATEX [inline] p \sim 10^{-35}
+
+
+LATEX [inline] \sigma^2 N^{-2/3}q^{-1/6}(1+\sqrt q)^{4/3}
+
+
+LATEX [inline] \mu_{N,T}
+
+
+LATEX [inline] \lambda_+
+
+
+LATEX [inline] \mathcal O(1)
+
+
+LATEX [inline] 4.8\times10^{-35}
+
+
+LATEX [inline] \lambda_+
+
+
+LATEX [inline] \lambda_+ + \mathcal O(s_{N,T}\,F_1^{-1}(\alpha))
+
+
+LATEX [inline] \mu_{N,T} + s_{N,T}\,q_\alpha(F_1)
+
+
+=== FORMAL PROOF EN — 10_optimal_filtering ===
+
+
+LATEX [display] \min_{\hat C}\ \|\,C_{\mathrm{emp}} - \hat C\,\|_F \quad\text{s.t.}\quad \mathrm{rank}(\hat C)\le r
+
+
+LATEX [display] \hat\lambda_k \;=\; \sigma^2 + \hat\mu(\lambda_k),\qquad > \hat\mu(\lambda) = \frac{A+\sqrt{A^2-4q\sigma^4}}{2},\quad > A = \lambda-\sigma^2(1+q),
+
+
+LATEX [display] \tau^*(q) = \sqrt{\,2(q+1) + \frac{8q}{q+1+\sqrt{q^2+14q+1}}\,},
+
+
+LATEX [inline] \min_{\hat C}\ \|\,C_{\mathrm{emp}} - \hat C\,\|_F \quad\text{s.t.}\quad \mathrm{rank}(\hat C)\le r
+
+
+LATEX [inline] \Sigma = \sigma^2 I + \sum_k \mu_k v_kv_k^{\mathsf T}
+
+
+LATEX [inline] \lambda_k > \lambda_+
+
+
+LATEX [inline] \hat\lambda = \sigma^2
+
+
+LATEX [inline] \sum_k\mu_kv_kv_k^{\mathsf T}
+
+
+LATEX [inline] \lambda - q\sigma^2 - q\sigma^4/\lambda
+
+
+LATEX [inline] X = P + \sigma Z
+
+
+LATEX [inline] \tau^*(q) = \sqrt{\,2(q+1) + \frac{8q}{q+1+\sqrt{q^2+14q+1}}\,},
+
+
+LATEX [inline] \sigma\,\tau^*(q)
+
+
+LATEX [inline] \tau^*(1) = 4/\sqrt 3
+
+
+LATEX [inline] \sigma^2\tau^*(q)^2
+
+
+LATEX [inline] \approx 0.95
+
+
+LATEX [inline] \sigma^2(1+q)

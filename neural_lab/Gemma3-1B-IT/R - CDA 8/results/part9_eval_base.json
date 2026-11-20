@@ -1,0 +1,72 @@
+{
+ "tag": "base",
+ "model": "unsloth/gemma-3-1b-it@5b11413a10db4e486ef16a20101fd028f8f2499c",
+ "lora": null,
+ "round": "RCDA-9 formula round",
+ "protocol": {
+  "n_bad": 20,
+  "n_good": 20,
+  "max_new": 192,
+  "ngram": 4,
+  "rho_threshold": 0.5,
+  "decoding": "greedy",
+  "mode": "raw completion",
+  "precision": "bf16 weights / fp32 logits"
+ },
+ "rho_bad": 0.6,
+ "rho_good": 0.1,
+ "loop_share_mean_bad": 0.5619,
+ "loop_waste_mean_bad": 103.3,
+ "per_traj_loop_share_bad": [
+  0.958,
+  0.958,
+  0.958,
+  0.938,
+  0.927,
+  0.891,
+  0.87,
+  0.865,
+  0.755,
+  0.641,
+  0.593,
+  0.573,
+  0.401,
+  0.325,
+  0.182,
+  0.109,
+  0.078,
+  0.077,
+  0.073,
+  0.068
+ ],
+ "hard12_loop_share": null,
+ "mild8_loop_share": null,
+ "prompts_fully_repaired": null,
+ "kl_ctrl_mean": 0.0,
+ "kl_per_text": [
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0
+ ],
+ "ppl_control_mean": 10.9,
+ "ppl_per_text": [
+  4.2,
+  11.3,
+  11.2,
+  7.9,
+  19.7
+ ],
+ "formula_knowledge": {
+  "corpus_val_ppl": 369.21,
+  "corpus_val_blocks": 161,
+  "qa_pairs": 57,
+  "qa_exact": 9,
+  "qa_partial": 11,
+  "qa_exact_rate": 0.1579,
+  "qa_partial_rate": 0.193,
+  "qa_mean_rel_err": 19745767376.2071
+ },
+ "lora_forensics": {}
+}

@@ -1,0 +1,16 @@
+{
+ "module_doc_blocks": 82,
+ "eval_pairs_train": 105,
+ "eval_pairs_val": 70,
+ "eval_pairs_heldout_qa": 57,
+ "monograph_formula_lines": 311,
+ "formal_proof_latex": 252,
+ "train_bytes": 81872,
+ "val_bytes": 23385,
+ "llamafactory_rows": 95,
+ "sources": {
+  "modules": "/home/z/my-project/repo/src/rmt_llm",
+  "monographs_restored": "/home/z/my-project/download/monographs_restored",
+  "formal_proof": "/home/z/my-project/repo/formal_proof/monograph"
+ }
+}

@@ -1,0 +1,57 @@
+{"text": "mp_bounds(q=0.25, sigma2=0.6) => lambda_minus = 0.150000, lambda_plus = 1.350000"}
+{"text": "mp_bounds(q=0.25, sigma2=1.25) => lambda_minus = 0.312500, lambda_plus = 2.812500"}
+{"text": "mp_bounds(q=0.55, sigma2=0.6) => lambda_minus = 0.040056, lambda_plus = 1.819944"}
+{"text": "mp_bounds(q=0.55, sigma2=1.25) => lambda_minus = 0.083450, lambda_plus = 3.791550"}
+{"text": "bbp_lambda_max(theta=0.55, q=0.45, sigma2=0.6) => lambda_max = 1.674984"}
+{"text": "bbp_lambda_max(theta=0.55, q=0.45, sigma2=1.0) => lambda_max = 2.791641"}
+{"text": "bbp_lambda_max(theta=0.55, q=0.75, sigma2=0.6) => lambda_max = 2.089230"}
+{"text": "bbp_lambda_max(theta=0.55, q=0.75, sigma2=1.0) => lambda_max = 3.482051"}
+{"text": "bbp_lambda_max(theta=1.05, q=0.45, sigma2=0.6) => lambda_max = 2.070000"}
+{"text": "bbp_lambda_max(theta=1.05, q=0.45, sigma2=1.0) => lambda_max = 3.450000"}
+{"text": "bbp_lambda_max(theta=1.05, q=0.75, sigma2=0.6) => lambda_max = 1.482000"}
+{"text": "bbp_lambda_max(theta=1.05, q=0.75, sigma2=1.0) => lambda_max = 2.470000"}
+{"text": "bbp_critical_theta(q=0.45) => theta_c = 0.670820"}
+{"text": "bbp_critical_theta(q=0.75) => theta_c = 0.866025"}
+{"text": "caputo_mean_collapse_time(mu_eff=0.12, beta=0.35, c=1.0) => <T_crit> = 427.475005"}
+{"text": "caputo_mean_collapse_time(mu_eff=0.12, beta=0.65, c=1.0) => <T_crit> = 26.100224"}
+{"text": "caputo_mean_collapse_time(mu_eff=0.25, beta=0.35, c=1.0) => <T_crit> = 52.501463"}
+{"text": "caputo_mean_collapse_time(mu_eff=0.25, beta=0.65, c=1.0) => <T_crit> = 8.438129"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.12, beta=0.35, t=0.5) => drift = 0.084960"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.12, beta=0.35, t=1.0) => drift = 0.133316"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.12, beta=0.35, t=2.0) => drift = 0.209195"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.12, beta=0.65, t=0.5) => drift = 0.105650"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.12, beta=0.65, t=1.0) => drift = 0.134657"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.12, beta=0.65, t=2.0) => drift = 0.171629"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.25, beta=0.35, t=0.5) => drift = 0.176999"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.25, beta=0.35, t=1.0) => drift = 0.277742"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.25, beta=0.35, t=2.0) => drift = 0.435823"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.25, beta=0.65, t=0.5) => drift = 0.220104"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.25, beta=0.65, t=1.0) => drift = 0.280536"}
+{"text": "caputo_fokker_planck_drift(mu_rlhf=0.25, beta=0.65, t=2.0) => drift = 0.357560"}
+{"text": "ks_n_crit_correction(n=64) => N_crit_corrected = 114.532103"}
+{"text": "ks_n_crit_correction(n=128) => N_crit_corrected = 114.540423"}
+{"text": "ks_n_crit_correction(n=256) => N_crit_corrected = 114.544608"}
+{"text": "ks_n_crit_correction(n=512) => N_crit_corrected = 114.546707"}
+{"text": "ks_n_crit_correction(n=1024) => N_crit_corrected = 114.547758"}
+{"text": "ks_n_crit_correction(n=2048) => N_crit_corrected = 114.548284"}
+{"text": "ks_relative_correction(n=100) => relative correction = 0.000094"}
+{"text": "ks_relative_correction(n=256) => relative correction = 0.000037"}
+{"text": "ks_relative_correction(n=512) => relative correction = 0.000018"}
+{"text": "ks_relative_correction(n=1024) => relative correction = 0.000009"}
+{"text": "bbp_fluctuation_scaling(N=100, q=0.5) => TW-scale = 0.215443"}
+{"text": "bbp_fluctuation_scaling(N=1000, q=0.5) => TW-scale = 0.100000"}
+{"text": "free_energy(U=2.0, T=300.0, S=0.5) => F = -148.000000"}
+{"text": "free_energy(U=1.0, T=300.0, S=2.0) => F = -599.000000"}
+{"text": "free_energy(U=5.0, T=77.0, S=1.0) => F = -72.000000"}
+{"text": "free_energy(U=0.5, T=3.0, S=0.2) => F = -0.100000"}
+{"text": "landauer_cost(n_bits=1, T=300) => E_min = 0.000000 J"}
+{"text": "landauer_cost(n_bits=100, T=300) => E_min = 0.000000 J"}
+{"text": "landauer_cost(n_bits=1024, T=77) => E_min = 0.000000 J"}
+{"text": "r_transform_series(Catalan moments, n_terms=4) => R-cumulants = [1.000000, 0.000000, 1.000000, 2.000000]"}
+{"text": "r_transform_series(Bernoulli moments, n_terms=4) => R-cumulants = [1.000000, -0.500000, -1.000000, 2.750000]"}
+{"text": "nhse_winding_number(n_ratio=0.5, gamma=0.25) => W = 0.000000"}
+{"text": "nhse_winding_number(n_ratio=0.9, gamma=0.25) => W = 0.000000"}
+{"text": "nhse_winding_number(n_ratio=0.5, gamma=0.5) => W = 0.000000"}
+{"text": "nhse_winding_number(n_ratio=0.9, gamma=0.5) => W = 0.000000"}
+{"text": "nhse_winding_number(n_ratio=0.5, gamma=1.0) => W = 0.000000"}
+{"text": "nhse_winding_number(n_ratio=0.9, gamma=1.0) => W = 0.000000"}

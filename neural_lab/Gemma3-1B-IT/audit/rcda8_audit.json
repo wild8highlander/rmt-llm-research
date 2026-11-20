@@ -1,0 +1,626 @@
+{
+ "summary": {
+  "total": 72,
+  "pass": 70,
+  "fail": 1,
+  "warn": 1
+ },
+ "checks": [
+  {
+   "claim": "probe: z_diff L10 = 212.6",
+   "expected": 212.6,
+   "actual": 212.6,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "probe: z_diff L11 = 219.8",
+   "expected": 219.8,
+   "actual": 219.8,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "probe: z_diff L12 = 205.1",
+   "expected": 205.1,
+   "actual": 205.1,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "probe: rho_mini_strict (pool) = 0.60",
+   "expected": 0.6,
+   "actual": 0.6,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "probe: mean loop_share (bad 20) = 0.562",
+   "expected": 0.562,
+   "actual": 0.562,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "probe: writers = L10/L11/L12",
+   "expected": [
+    10,
+    11,
+    12
+   ],
+   "actual": [
+    10,
+    11,
+    12
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "probe: band z_diff>130 = L6..L16 (отчёт: «their cut» L8–L15)",
+   "expected": "L6-L16",
+   "actual": "L6-L16",
+   "status": "PASS",
+   "note": "отчёт честно отмечает расхождение среза L8–L15 (RCDA-6) vs L6–L16 (этот раунд); penalty band оставлен по пре-регистрации L8–L15"
+  },
+  {
+   "claim": "phase probe: cos(v_e, v_d) в полосе L8–L15 в диапазоне 0.72–0.97",
+   "expected": [
+    0.72,
+    0.97
+   ],
+   "actual": [
+    0.816,
+    0.952
+   ],
+   "status": "PASS",
+   "note": "значения в полосе: [0.952, 0.927, 0.833, 0.905, 0.902, 0.919, 0.901, 0.816]"
+  },
+  {
+   "claim": "train: количество шагов = 150",
+   "expected": 150,
+   "actual": 150,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "train: записей в логе (шаги + бенчи)",
+   "expected": 160,
+   "actual": 160,
+   "status": "WARN",
+   "note": "160 записей = 150 шагов + 10 записей бенчей/служебных; проверено: уникальных step-номеров = 150"
+  },
+  {
+   "claim": "train: lr = 2e-4",
+   "expected": 0.0002,
+   "actual": 0.0002,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "train: beta = 10, cap = 1.0",
+   "expected": [
+    10.0,
+    1.0
+   ],
+   "actual": [
+    10.0,
+    1.0
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "train: band = L8..L15",
+   "expected": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "actual": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "train: LoRA r=16 alpha=32, target o_proj+down_proj (band-masked)",
+   "expected": [
+    16,
+    32,
+    "o_proj,down_proj (band-masked)"
+   ],
+   "actual": [
+    16,
+    32,
+    "o_proj,down_proj (band-masked)"
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "train: trainable params = 1 310 720",
+   "expected": 1310720,
+   "actual": 1310720,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "train: pen_norm first-10 mean = 0.954",
+   "expected": 0.954,
+   "actual": 0.9543,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "train: pen_norm last-10 mean = 0.0206",
+   "expected": 0.0206,
+   "actual": 0.0206,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "train: спад pen = −97.9%",
+   "expected": -97.9,
+   "actual": -97.8,
+   "status": "PASS",
+   "note": "фактический спад -97.8% (0.954 -> 0.0206)"
+  },
+  {
+   "claim": "train: финальный anchor MSE < 1.0 (отчёт: 0.55)",
+   "expected": 0.55,
+   "actual": 0.437,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "bench step0: rho_mini=1.0, mean_ls=0.921",
+   "expected": [
+    1.0,
+    0.921
+   ],
+   "actual": [
+    1.0,
+    0.921
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "bench step50: rho_mini=1.0, mean_ls=0.846",
+   "expected": [
+    1.0,
+    0.846
+   ],
+   "actual": [
+    1.0,
+    0.846
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "bench step100: rho_mini=0.625, mean_ls=0.612",
+   "expected": [
+    0.625,
+    0.612
+   ],
+   "actual": [
+    0.625,
+    0.612
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "bench step150: rho_mini=0.625, mean_ls=0.529",
+   "expected": [
+    0.625,
+    0.529
+   ],
+   "actual": [
+    0.625,
+    0.529
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: шагов = 152",
+   "expected": 152,
+   "actual": 152,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: loss 5.65 -> 1.69",
+   "expected": [
+    5.65,
+    1.69
+   ],
+   "actual": [
+    5.65,
+    1.69
+   ],
+   "status": "PASS",
+   "note": "фактически 5.65 -> 1.69"
+  },
+  {
+   "claim": "sft: датасет 38 строк",
+   "expected": 38,
+   "actual": 38,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "base: rho_bad = 0.60",
+   "expected": 0.6,
+   "actual": 0.6,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "base: rho_good = 0.10",
+   "expected": 0.1,
+   "actual": 0.1,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "base: ls mean bad = 0.562",
+   "expected": 0.562,
+   "actual": 0.5619,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "base: waste = 103.3",
+   "expected": 103.3,
+   "actual": 103.3,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "base: PPL = 10.9",
+   "expected": 10.9,
+   "actual": 10.9,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: rho_bad = 0.70",
+   "expected": 0.7,
+   "actual": 0.7,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: ls mean bad = 0.656",
+   "expected": 0.656,
+   "actual": 0.656,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: waste = 126.0",
+   "expected": 126.0,
+   "actual": 126.0,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: KL = 0.512",
+   "expected": 0.512,
+   "actual": 0.5119,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: PPL = 12.0 (+10.1%)",
+   "expected": 12.0,
+   "actual": 12.0,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: rho_good = 0.10",
+   "expected": 0.1,
+   "actual": 0.1,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: rho_bad = 0.40",
+   "expected": 0.4,
+   "actual": 0.4,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: rho_good = 0.05",
+   "expected": 0.05,
+   "actual": 0.05,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: ls mean bad = 0.393",
+   "expected": 0.393,
+   "actual": 0.3928,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: waste = 74.2",
+   "expected": 74.2,
+   "actual": 74.2,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: KL = 0.120",
+   "expected": 0.12,
+   "actual": 0.1201,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: PPL = 8.6 (−21%)",
+   "expected": 8.6,
+   "actual": 8.6,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "base: hard-12 = 12 промптов с ls>=0.5 (rho_bad 0.6)",
+   "expected": 12,
+   "actual": 12,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: hard-12 ls = 0.632",
+   "expected": 0.632,
+   "actual": 0.632,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: mild-8 ls = 0.691",
+   "expected": 0.691,
+   "actual": 0.691,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: fully repaired = 3/12",
+   "expected": 3,
+   "actual": 3,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: hard-12 ls = 0.59",
+   "expected": 0.59,
+   "actual": 0.59,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: mild-8 ls = 0.097",
+   "expected": 0.097,
+   "actual": 0.097,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "sft: fully repaired = 5/12",
+   "expected": 5,
+   "actual": 5,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "rcda8: миграция дефекта в mild-8 (0.164 -> 0.691)",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "forensics: rel-Frobenius — отчёт заявляет 0.4–1.5%",
+   "expected": [
+    0.004,
+    0.015
+   ],
+   "actual": [
+    0.01347,
+    0.04143
+   ],
+   "status": "FAIL",
+   "note": "РАСХОЖДЕНИЕ: в part8_eval_rcda8.json rel_frobenius = 1.35–4.14% (медиана 2.00%), а в RCDA8_REPORT §4.3 написано «0.4–1.5%». Заявленный диапазон занижен примерно втрое; сам JSON — первоисточник."
+  },
+  {
+   "claim": "forensics: cos(u1, v_deep) <= 0.44",
+   "expected": 0.44,
+   "actual": 0.4357,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "forensics: TW-нарушение во всех 16 тензорах полосы («×16»)",
+   "expected": 16,
+   "actual": 16,
+   "status": "PASS",
+   "note": "тензоров с tw=violation: 16 из 16; z_resid max = 10006256.52"
+  },
+  {
+   "claim": "config sft_cpu: stage pt",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "config sft_cpu: LoRA r=8 alpha=16",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "config sft_cpu: lr 5e-5 cosine",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "config sft_cpu: packing off",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "adapter rcda8: r=16, alpha=32, targets o_proj+down_proj",
+   "expected": [
+    16,
+    32
+   ],
+   "actual": [
+    16,
+    32
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "adapter rcda8: target modules = o_proj,down_proj (26+26)",
+   "expected": "o_proj+down_proj",
+   "actual": "down_proj+o_proj",
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "adapter sft: r=8, alpha=16",
+   "expected": [
+    8,
+    16
+   ],
+   "actual": [
+    8,
+    16
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "data: 20 bad / 20 good / 5 control",
+   "expected": [
+    20,
+    20,
+    5
+   ],
+   "actual": [
+    20,
+    20,
+    5
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "gens_base: 40 строк (20 bad + 20 good; контрольные тексты генераций не пишут)",
+   "expected": 40,
+   "actual": 40,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "gens_rcda8: 40 строк (20 bad + 20 good; контрольные тексты генераций не пишут)",
+   "expected": 40,
+   "actual": 40,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "gens_sft: 40 строк (20 bad + 20 good; контрольные тексты генераций не пишут)",
+   "expected": 40,
+   "actual": 40,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "lab: NGRAM=4, LOOP_THRESHOLD=0.5, MAX_NEW=192, BAD_PREF=48",
+   "expected": [
+    4,
+    0.5,
+    192,
+    48
+   ],
+   "actual": [
+    4,
+    0.5,
+    192,
+    48
+   ],
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "lab: loop-метрика — непересекающиеся повторы 4-грамм (seen[g] <= t-ngram)",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "lab: greedy decoding без чат-шаблона",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "stage3: формула pen = (v^T h / ||v||)^2 (phase-matched)",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "stage3: band mask замораживает адаптеры вне L8–L15",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "stage3: якорь MSE по trailing-32 логитам",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  },
+  {
+   "claim": "model snapshot pin: 5b11413a10db4e486ef16a20101fd028f8f2499c",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "note": ""
+  }
+ ]
+}

@@ -1,0 +1,683 @@
+mp_bounds(q=0.15, sigma2=0.75) => lambda_minus = 0.281552, lambda_plus = 1.443448
+
+
+mp_bounds(q=0.15, sigma2=1.5) => lambda_minus = 0.563105, lambda_plus = 2.886895
+
+
+mp_bounds(q=0.45, sigma2=0.75) => lambda_minus = 0.081269, lambda_plus = 2.093731
+
+
+mp_bounds(q=0.45, sigma2=1.5) => lambda_minus = 0.162539, lambda_plus = 4.187461
+
+
+mp_bounds(q=0.65, sigma2=0.75) => lambda_minus = 0.028161, lambda_plus = 2.446839
+
+
+mp_bounds(q=0.65, sigma2=1.5) => lambda_minus = 0.056323, lambda_plus = 4.893677
+
+
+bbp_lambda_max(theta=0.5, q=0.35, sigma2=0.75) => lambda_max = 1.899912
+
+
+bbp_lambda_max(theta=0.5, q=0.35, sigma2=1.0) => lambda_max = 2.533216
+
+
+bbp_lambda_max(theta=0.5, q=0.65, sigma2=0.75) => lambda_max = 2.446839
+
+
+bbp_lambda_max(theta=0.5, q=0.65, sigma2=1.0) => lambda_max = 3.262452
+
+
+bbp_lambda_max(theta=0.9, q=0.35, sigma2=0.75) => lambda_max = 2.485714
+
+
+bbp_lambda_max(theta=0.9, q=0.35, sigma2=1.0) => lambda_max = 3.314286
+
+
+bbp_lambda_max(theta=0.9, q=0.65, sigma2=0.75) => lambda_max = 1.684615
+
+
+bbp_lambda_max(theta=0.9, q=0.65, sigma2=1.0) => lambda_max = 2.246154
+
+
+bbp_lambda_max(theta=1.1, q=0.35, sigma2=0.75) => lambda_max = 3.342857
+
+
+bbp_lambda_max(theta=1.1, q=0.35, sigma2=1.0) => lambda_max = 4.457143
+
+
+bbp_lambda_max(theta=1.1, q=0.65, sigma2=0.75) => lambda_max = 2.146154
+
+
+bbp_lambda_max(theta=1.1, q=0.65, sigma2=1.0) => lambda_max = 2.861538
+
+
+bbp_critical_theta(q=0.35) => theta_c = 0.591608
+
+
+bbp_critical_theta(q=0.65) => theta_c = 0.806226
+
+
+tracy_widom_mean() => E[F2] = -1.771100
+
+
+tracy_widom_variance() => Var[F2] = 0.813200
+
+
+caputo_mean_collapse_time(mu_eff=0.08, beta=0.4, c=1.0) => <T_crit> = 552.427173
+
+
+caputo_mean_collapse_time(mu_eff=0.08, beta=0.6, c=1.0) => <T_crit> = 67.326084
+
+
+caputo_mean_collapse_time(mu_eff=0.08, beta=0.8, c=1.0) => <T_crit> = 23.503769
+
+
+caputo_mean_collapse_time(mu_eff=0.15, beta=0.4, c=1.0) => <T_crit> = 114.755062
+
+
+caputo_mean_collapse_time(mu_eff=0.15, beta=0.6, c=1.0) => <T_crit> = 23.614635
+
+
+caputo_mean_collapse_time(mu_eff=0.15, beta=0.8, c=1.0) => <T_crit> = 10.712379
+
+
+caputo_mean_collapse_time(mu_eff=0.3, beta=0.4, c=1.0) => <T_crit> = 20.286021
+
+
+caputo_mean_collapse_time(mu_eff=0.3, beta=0.6, c=1.0) => <T_crit> = 7.438144
+
+
+caputo_mean_collapse_time(mu_eff=0.3, beta=0.8, c=1.0) => <T_crit> = 4.504001
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.08, beta=0.4, t=0.5) => drift = 0.059070
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.08, beta=0.4, t=1.0) => drift = 0.089534
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.08, beta=0.4, t=2.0) => drift = 0.135708
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.08, beta=0.6, t=0.5) => drift = 0.068332
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.08, beta=0.6, t=1.0) => drift = 0.090165
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.08, beta=0.6, t=2.0) => drift = 0.118973
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.15, beta=0.4, t=0.5) => drift = 0.110757
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.15, beta=0.4, t=1.0) => drift = 0.167876
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.15, beta=0.4, t=2.0) => drift = 0.254453
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.15, beta=0.6, t=0.5) => drift = 0.128123
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.15, beta=0.6, t=1.0) => drift = 0.169059
+
+
+caputo_fokker_planck_drift(mu_rlhf=0.15, beta=0.6, t=2.0) => drift = 0.223075
+
+
+ks_n_crit_correction(n=64) => N_crit_corrected = 114.532103
+
+
+ks_n_crit_correction(n=128) => N_crit_corrected = 114.540423
+
+
+ks_n_crit_correction(n=256) => N_crit_corrected = 114.544608
+
+
+ks_n_crit_correction(n=512) => N_crit_corrected = 114.546707
+
+
+ks_n_crit_correction(n=1024) => N_crit_corrected = 114.547758
+
+
+ks_n_crit_correction(n=2048) => N_crit_corrected = 114.548284
+
+
+ks_relative_correction(n=100) => relative correction = 0.000094
+
+
+ks_relative_correction(n=256) => relative correction = 0.000037
+
+
+ks_relative_correction(n=512) => relative correction = 0.000018
+
+
+ks_relative_correction(n=1024) => relative correction = 0.000009
+
+
+bbp_fluctuation_scaling(N=100, q=0.5) => TW-scale = 0.215443
+
+
+bbp_fluctuation_scaling(N=1000, q=0.5) => TW-scale = 0.100000
+
+
+free_energy(U=2.0, T=300.0, S=0.5) => F = -148.000000
+
+
+free_energy(U=1.0, T=300.0, S=2.0) => F = -599.000000
+
+
+free_energy(U=5.0, T=77.0, S=1.0) => F = -72.000000
+
+
+free_energy(U=0.5, T=3.0, S=0.2) => F = -0.100000
+
+
+landauer_cost(n_bits=1, T=300) => E_min = 0.000000 J
+
+
+landauer_cost(n_bits=100, T=300) => E_min = 0.000000 J
+
+
+landauer_cost(n_bits=1024, T=77) => E_min = 0.000000 J
+
+
+r_transform_series(Catalan moments, n_terms=4) => R-cumulants = [1.000000, 0.000000, 1.000000, 2.000000]
+
+
+r_transform_series(Bernoulli moments, n_terms=4) => R-cumulants = [1.000000, -0.500000, -1.000000, 2.750000]
+
+
+nhse_winding_number(n_ratio=0.5, gamma=0.25) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.9, gamma=0.25) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.5, gamma=0.5) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.9, gamma=0.5) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.5, gamma=1.0) => W = 0.000000
+
+
+nhse_winding_number(n_ratio=0.9, gamma=1.0) => W = 0.000000
+
+
+=== MONOGRAPH M06 EN — Complex_Analytical_Model_Inevitable_Hallucinations ===
+
+
+FORMULA • Level 1: Phase — φ(N)→γ₁(N)
+
+
+FORMULA • Level 2: Operator — b(N)=(ε̄/κ)·(1-(1-κ)^N)
+
+
+FORMULA The rate of Im(λ_i)→0 collapse is determined by the logarithmic capacity of the spectrum Cap(Σ_N), where g(N) is the Green's function for the spectral set Σ_N. As N→N_crit: Cap(Σ_N)→0, ensuring exponential collapse of imaginary parts.
+CONTEXT: 4.4.
+
+
+FORMULA The transition now has a rigorous justification through three steps: Step 1: A(t) ∈ GinOE (directed asymmetry of the causal mask); Step 2: Winding number w grows with N: at N=N_crit, a topological transition w: 0→1 occurs; Step 3: At w=1 — NHSE: Im(λ_i)→0 (exponentially fast through Cap(Σ_N)); Consequence: Quasi-real Ginibre limit = GUE → Montgomery-Odlyzko theorem → γ₁.
+CONTEXT: 4.5.
+
+
+FORMULA At w=0: stable generation. At w=1: hallucinatory regime. The transition w:0→1 occurs ~5-10% before N_crit — this is an early indicator measurable through attention matrix spectral analysis.
+CONTEXT: 4.6.
+
+
+FORMULA The matrix H_eff at the EP-surface point takes a form with a Jordan cell of size k. As N→N_crit: k ~ O(N) — the Jordan cell becomes macroscopic. This means: degeneracy affects not two but O(N) eigenvalues simultaneously.
+
+
+FORMULA The EP-surface and the NHSE topological transition are connected: when the transition w:0→1 occurs, simultaneous coalescence of O(N) pairs of eigenvalues takes place — this is the crossing of the EP-surface. Two independent theories (NHSE and EP) predict the same moment N_crit.
+
+
+FORMULA The Keating-Snaith correction makes the equation for N_crit self-consistent (N_crit appears on both sides). Solved by one Newton iteration from the initial approximation N_crit^{(0)} = γ₁/(ε̄·p).
+
+
+FORMULA {γₖ}, k = 1…20
+CONTEXT: first imaginary part of the Riemann zeta zeros.
+
+
+FORMULA 0 = accepted · 1 = failure
+
+
+FORMULA γₖ (Im zₖ)
+
+
+FORMULA γₖ (Im zₖ)
+
+
+=== MONOGRAPH M06 RU — Complex_Analytical_Model_Inevitable_Hallucinations_RU ===
+
+
+FORMULA Центральная формула с поправкой Китинг-Снайт:   N_crit(N) = γ₁(N) / (ε̄_eff·p_eff)      γ₁(N) = γ₁ + c/ln(N) + O(1/ln²N)
+CONTEXT: ⛓ Логическая цепь:  NHSE объясняет механизм схлопывания Im(λ)→0 (закрывает Жинибра→GUE) → EP-поверхности объясняют макроскопический характер коллапса → Китинг-Снайт даёт поправку для конечного N → Капуто описывает немарковскую память всей динамики.
+
+
+FORMULA • Уровень 1: фазовый — φ(N)→γ₁(N)
+
+
+FORMULA • Уровень 2: операторный — b(N)=(ε̄/κ)·(1-(1-κ)^N)
+
+
+FORMULA → Im(λ_i)→0 при N→N_crit  (механизм схлопывания строго выведен)
+CONTEXT: [NHSE] Направленная асимметрия → число намотки w≠0.
+
+
+FORMULA Жинибра → GUE (β=2) → теорема Монтгомери-Одлызко
+
+
+FORMULA [Китинг-Снайт] Конечный N → γ₁(N)=γ₁+c/ln(N)
+
+
+FORMULA N_crit = γ₁(N) / (ε̄_eff · p_eff)  ← 10 независимых уравнений
+
+
+FORMULA Im(λ_i)→0 — чёрный ящик
+
+
+FORMULA Механизм: топол. переход w=0→w≠0
+
+
+FORMULA k~O(N), δλ→1 при k→∞
+
+
+FORMULA γ₁(N)=γ₁+c/ln(N) для конечного N
+
+
+FORMULA P(«=1»)
+
+
+FORMULA P(«≈1»)
+
+
+FORMULA Ψ(t) = a(t)+i·b(t)    φ(t)=arctan(b/a)    коллапс при φ→γ₁(N)/N_scale
+
+
+FORMULA Ψ_{t+1} = [Î−Γ̂(t)]·Â(t)·Ψ_t + Ê(t)·ξ(t)    b(N)=(ε̄/κ)·(1−(1−κ)^N)
+
+
+FORMULA ε₀(1+αR)
+
+
+FORMULA σ²/2·∂²/∂b²
+
+
+FORMULA −∂(μP)/∂b
+
+
+FORMULA V(φ) = −(λ−λ_c)φ²/2 + φ⁴/4    τ_relax ~ |λ−λ_c|^{−1/2} → ∞
+
+
+FORMULA 🔧 Закрытый пробел: Переход Жинибра→GUE постулировал Im(λ_i)→0 без механизма. NHSE даёт точный механизм через топологический инвариант.
+CONTEXT: 4.
+
+
+FORMULA Рис. 2. NHSE: топологический переход при N→N_crit
+CONTEXT: 4.3.
+
+
+FORMULA Малый N (w=0, нет NHSE):          Большой N→N_crit (w≠0, NHSE):
+
+
+FORMULA |  · · · · ·                       |·····················
+
+
+FORMULA Переход w: 0→1 строго совпадает с N_crit
+CONTEXT: При w=1: спектр схлопывается на 1D кривую (→GUE).
+
+
+FORMULA Скорость схлопывания Im(λ_i)→0 определяется логарифмической ёмкостью спектра Cap(Σ_N):
+CONTEXT: 4.4.
+
+
+FORMULA Im(λ_i(N)) ~ Cap(Σ_N)^N    Cap(Σ_N) = exp(−1/g(N))
+CONTEXT: Скорость схлопывания Im(λ_i)→0 определяется логарифмической ёмкостью спектра Cap(Σ_N):
+
+
+FORMULA где g(N) — функция Грина для спектрального множества Σ_N. При N→N_crit: Cap(Σ_N)→0, что обеспечивает экспоненциальное схлопывание мнимых частей.
+CONTEXT: Im(λ_i(N)) ~ Cap(Σ_N)^N    Cap(Σ_N) = exp(−1/g(N))
+
+
+FORMULA • Шаг 2: Число намотки w растёт с N: при N=N_crit происходит топологический переход w: 0→1
+CONTEXT: • Шаг 1: A(t) ∈ GinOE (направленная асимметрия каузальной маски).
+
+
+FORMULA • Шаг 3: При w=1 — NHSE: Im(λ_i)→0 (экспоненциально быстро через Cap(Σ_N))
+CONTEXT: • Шаг 2: Число намотки w растёт с N: при N=N_crit происходит топологический переход w: 0→1
+
+
+FORMULA 🔧 Закрытый пробел: Im(λ_i)→0 теперь не постулируется, а выводится: это следствие топологического перехода w:0→1, вызванного насыщением KV-cache. Скорость схлопывания определяется логарифмической ёмкостью и экспоненциальна по N.
+CONTEXT: • Следствие: Квазивещественный предел Жинибра = GUE → теорема Монтгомери-Одлызко → γ₁.
+
+
+FORMULA w(N) = (1/2πi)·∮ Tr[(H_eff−E)^{−1}·∂H_eff/∂k] dk
+CONTEXT: 4.6.
+
+
+FORMULA При w=0: стабильная генерация. При w=1: галлюцинаторный режим. Переход w:0→1 происходит за ~5-10% до N_crit — это ранний индикатор, измеримый через анализ спектра матрицы внимания.
+CONTEXT: w(N) = (1/2πi)·∮ Tr[(H_eff−E)^{−1}·∂H_eff/∂k] dk
+
+
+FORMULA ✓ Верифицируемо: Новый Эксперимент Q: вычислять w(N) для каждого шага диалога. При w→1 — немедленное предупреждение о приближении к N_crit. Это первый топологически защищённый индикатор галлюцинаций.
+CONTEXT: При w=0: стабильная генерация. При w=1: галлюцинаторный режим. Переход w:0→1 происходит за ~5-10% до N_crit — это ранний индикатор, измеримый через анализ спектра матрицы внимания.
+
+
+FORMULA ⟨Ψ(t)·Ψ(t')⟩ ~ |t−t'|^{−β}    β = 1−κ    (связь с коэффициентом затухания)
+CONTEXT: В авторегрессионной модели каждый токен зависит не только от непосредственно предшествующих, но от всего контекста с убывающими весами.
+
+
+FORMULA ^C D_t^β f(t) = (1/Γ(1−β)) · ∫_0^t (t−s)^{−β} · f'(s) ds
+CONTEXT: Дробная производная Капуто порядка β ∈ (0,1) по времени:.
+
+
+FORMULA ^C D_t^β P = −∂/∂b[μ(b)·P] + (σ_G²/2)·∂²P/∂b² + σ_L^α·(−Δ)^{α/2}P
+CONTEXT: 5.3.
+
+
+FORMULA ⟨T_crit⟩_Caputo = [b_crit^β / (μ·Γ(1+β))]^{1/β} · [1 − C_α·(σ_L/σ_G)^α + O(β²)]
+
+
+FORMULA β = 1 − lim_{N→∞} log⟨C(t,t')⟩ / log|t−t'|
+
+
+FORMULA 🔧 Закрытый пробел: EP2 предполагало слияние только двух собственных значений. При размерности матрицы N×N — почему не макроскопическая доля? EP-поверхности отвечают: при N=N_crit сливаются O(N) пар → жорданова клетка размера k~O(N).
+CONTEXT: 6.
+
+
+FORMULA Для матрицы N×N при N→∞: изолированные EP2 образуют (N-1)-мерную гиперповерхность в пространстве параметров. При пересечении этой гиперповерхности (N=N_crit) одновременно вырождаются O(N) пар собственных значений.
+CONTEXT: В пространстве параметров неэрмитова оператора изолированные EP2 (точки слияния двух уровней) при увеличении размерности системы сливаются в непрерывные многообразия — Exceptional Surfaces (ES).
+
+
+FORMULA H_eff(N_crit) ≈ λ_EP·Î + ε·J_k    J_k = (superdiagonal of 1s, k×k)
+CONTEXT: Матрица H_eff в точке EP-поверхности принимает форму с жордановой клеткой размера k:.
+
+
+FORMULA При N→N_crit: k ~ О(N) — жорданова клетка становится макроскопической. Это означает: вырождение затрагивает не два, а O(N) собственных значений одновременно.
+CONTEXT: H_eff(N_crit) ≈ λ_EP·Î + ε·J_k    J_k = (superdiagonal of 1s, k×k)
+
+
+FORMULA δλ ~ ε^{1/k}    при k→∞: δλ → ε^0 = 1    (конечный отклик при ε→0)
+CONTEXT: 6.3.
+
+
+FORMULA При k→∞ даже ε = ε_machine (ошибка округления fp16 ≈ 6×10⁻⁸) вызывает δλ ≈ 1. Это даёт принципиальный вывод:
+CONTEXT: 6.4.
+
+
+FORMULA 🔑 Ключевой результат: При N=N_crit ошибки вычислений в fp16/fp32 становятся необратимыми. Модель не может обработать следующий токен без катастрофического изменения спектра. Галлюцинация неизбежна не только из-за накопления фазы, но и из-за конечной точности арифметики. Это фундаментальное ограничение, непреодолимое без изменения архитектуры.
+CONTEXT: При k→∞ даже ε = ε_machine (ошибка округления fp16 ≈ 6×10⁻⁸) вызывает δλ ≈ 1. Это даёт принципиальный вывод:
+
+
+FORMULA EP-поверхность и топологический переход NHSE связаны: при переходе w:0→1 происходит одновременная коалесценция O(N) пар собственных значений — это и есть пересечение EP-поверхности. Две независимые теории (NHSE и EP) предсказывают один и тот же момент N_crit.
+
+
+FORMULA γ₁(N) = γ₁ + c₁/ln(N) + c₂/ln²(N) + O(1/ln³N)
+CONTEXT: Из гипотезы Китинг-Снайта следует явная поправка к первому нулю:.
+
+
+FORMULA • γ₁ = 14.1347: асимптотическое значение (N→∞)
+
+
+FORMULA N_crit(N) = γ₁(N) / (ε̄_eff·p_eff) = [γ₁ + c₁/ln(N)] / (ε̄_eff·p_eff) + O(1/ln²N)
+
+
+FORMULA 16 |  \  γ₁(N) = 14.13 + 1.076/ln(N)
+
+
+FORMULA При N=100:  γ₁(100)≈14.13+0.234=14.36  (+1.6% к N_crit)
+
+
+FORMULA При N=500:  γ₁(500)≈14.13+0.174=14.30  (+1.2% к N_crit)
+CONTEXT: При N=100:  γ₁(100)≈14.13+0.234=14.36  (+1.6% к N_crit)
+
+
+FORMULA При N=50:   γ₁(50) ≈14.13+0.277=14.41  (+2.0% к N_crit)
+CONTEXT: При N=500:  γ₁(500)≈14.13+0.174=14.30  (+1.2% к N_crit)
+
+
+FORMULA N_crit = [γ₁ + c₁/ln(N_crit)] / (ε̄_eff·p_eff)
+CONTEXT: Поправка Китинг-Снайт делает уравнение для N_crit самосогласованным (N_crit стоит с обеих сторон):.
+
+
+FORMULA Решается одной итерацией Ньютона от начального приближения N_crit^{(0)} = γ₁/(ε̄·p):
+CONTEXT: N_crit = [γ₁ + c₁/ln(N_crit)] / (ε̄_eff·p_eff)
+
+
+FORMULA N_crit^{(1)} = [γ₁ + c₁/ln(N_crit^{(0)})] / (ε̄_eff·p_eff)
+CONTEXT: Решается одной итерацией Ньютона от начального приближения N_crit^{(0)} = γ₁/(ε̄·p):
+
+
+FORMULA F₂(s) = exp(−∫_s^∞(x−s)·q²(x)dx)    σ_TW^{GUE}≈0.9018·N^{−2/3}
+
+
+FORMULA K₀=√(1−ε)·Â(t)              K₁=√ε·Ê(t)
+
+
+FORMULA K₂=√(κ·D(t))·Γ̂(t)          K₃=√(1−κ·D(t)−ε)·ξ̂(t)
+
+
+FORMULA Условие CPTP: Σ_k K_k†·K_k = Î  ✓  F(ρ,ρ₀)<0.85 = коллапс
+CONTEXT: K₂=√(κ·D(t))·Γ̂(t)          K₃=√(1−κ·D(t)−ε)·ξ̂(t)
+
+
+FORMULA N_crit = γ₁(N) / (ε̄_eff·p_eff)    [с поправкой КС]
+
+
+FORMULA Решить b(N)=γ₁(N): b=(ε̄/κ)·(1−(1−κ)^N)
+
+
+FORMULA D_KL(ρ_emp||ρ_GUE)→min, R₂(s)∝s²
+
+
+FORMULA λ_sink=dS/dN|₀, R(N)=R₀·exp(λ_sink·N)
+
+
+FORMULA ^C D_t^β P = −∂(μP)/∂b + (σ²/2)∂²P/∂b² + σ_L^α(−Δ)^{α/2}P
+
+
+FORMULA k(N_crit)~O(N): δλ~ε^{1/k}→1, NHSE: w:0→1
+
+
+FORMULA λ_max(N) → F₂(s), σ_TW^GUE≈0.9018·N^{−2/3}
+
+
+FORMULA w(N_crit)=1; Im(λ_i)→0 через Cap(Σ_N)^N→0
+
+
+FORMULA Var(φ)~t^β/Γ(1+β); β=1−κ; ⟨T_crit⟩∝b_crit^{1/β}
+
+
+FORMULA N_crit = [γ₁+c₁/ln(N_crit)] / (ε̄_eff·p_eff) · (1 + D_L/μ + TW_corr + Kraus_corr) + O(N^{−2/3})
+
+
+FORMULA N_crit^{(1)} = [γ₁ + 1.076/ln(N_crit^{(0)})] / (ε̄_eff·p_eff)    N_crit^{(0)}=γ₁/(ε̄·p)
+CONTEXT: Самосогласованное решение (одна итерация Ньютона):.
+
+
+FORMULA P:0.2                  ▓▓ ← N_deaf (γ₂(N)/γ₁(N)≈1.49)
+
+
+FORMULA Новый предвестник: N_NHSE ≈ 0.90·N_crit (w=1) — за 10% до коллапса
+
+
+FORMULA GUE: R₂(s)∝s²
+
+
+FORMULA λ_d·λ_u≈1.000
+
+
+FORMULA ν≈−0.5
+
+
+FORMULA α∈(1,2)
+
+
+FORMULA N_m≈N_c
+
+
+FORMULA dF/dN→∞
+
+
+FORMULA N_deaf: γ₂/γ₁≈1.49
+
+
+FORMULA Berry phase EP: ≈π
+
+
+FORMULA π±0.30
+
+
+FORMULA w=1 при N_c
+
+
+FORMULA Капуто β=1−κ
+
+
+FORMULA β≈1−κ ±10%
+
+
+FORMULA phases = []
+
+
+FORMULA H_k = H_eff * np.exp(1j * k * np.eye(len(H_eff)))
+CONTEXT: # Сдвиг H_eff по квазиимпульсу k (модуляция диагонали).
+
+
+FORMULA det_val = np.linalg.det(H_k - E_ref * np.eye(len(H_eff)))
+CONTEXT: H_k = H_eff * np.exp(1j * k * np.eye(len(H_eff)))
+
+
+FORMULA attn = get_attention_matrix(model, context_n=N)
+
+
+FORMULA if w == 1:
+
+
+FORMULA print(f'NHSE переход при N={N} (≈N_crit)')
+
+
+FORMULA # Критерий: w переходит 0→1 при N ≈ 0.90·N_crit
+
+
+FORMULA # Автокорреляционная функция C(τ) = ⟨Ψ(t)·Ψ(t+τ)⟩
+
+
+FORMULA C_tau = []
+CONTEXT: # Автокорреляционная функция C(τ) = ⟨Ψ(t)·Ψ(t+τ)⟩
+
+
+FORMULA # Фит: log C(τ) = −β·log τ + const
+
+
+FORMULA slope,_,r,_,_ = linregress(np.log(taus[valid]), np.log(corrs[valid]))
+
+
+FORMULA tol=1e-6)
+CONTEXT: rank = np.linalg.matrix_rank(attn_matrix - lam*np.
+
+
+FORMULA # Фит: log k = η·log N + const → η ≈ 0.5-0.7
+
+
+FORMULA N_crit_1 = (gamma1 + c1/np.log(N_crit_0)) / (eps_eff * p_eff)
+CONTEXT: c1 = 1.
+
+
+FORMULA N_exp = measure_n_crit_experiment_c(model, tok)
+
+
+FORMULA Im(λ_i)→0 — механизм
+
+
+FORMULA w(N_crit)=1; Cap(Σ)^N→0
+
+
+FORMULA ^C D_t^β P; Var~t^β
+
+
+FORMULA k~N^η; δλ~ε^{1/k}→1
+
+
+FORMULA γ₁(N)=γ₁+1.076/ln(N)
+
+
+FORMULA N_crit = [γ₁+1.076/ln(N_crit)] / (ε̄_eff·p_eff)    γ₁ ВЫВОДИТСЯ. N_crit ТОЧЕН. КОЛЛАПС НЕИЗБЕЖЕН.
+
+
+FORMULA ⛓ Логическая цепь: Путь от архитектуры к коллапсу: Каузальная маска → T-симметрия нарушена → Жинибра → NHSE (w:0→1) → Im(λ)→0 → GUE → Монтгомери-Одлызко → γ₁(N) → EP-поверхности → δλ→1 → Капуто (Var~t^β) → взрывной финал → N_crit.
+CONTEXT: N_crit = [γ₁+1.076/ln(N_crit)] / (ε̄_eff·p_eff)    γ₁ ВЫВОДИТСЯ. N_crit ТОЧЕН. КОЛЛАПС НЕИЗБЕЖЕН.
+
+
+FORMULA results = []
+
+
+FORMULA if w_approx == 1:
+
+
+FORMULA series = []
+CONTEXT: """Эксперимент R: β через автокорреляцию""".
+
+
+FORMULA slope,_,r,_,_ = linregress(np.log(taus[valid]),
+
+
+FORMULA print('N_crit (eps=0.001, p=0.01):',
+
+
+FORMULA {γₖ}, k = 1…20
+
+
+FORMULA 0 = принято · 1 = отклонено
+
+
+FORMULA γₖ (Im zₖ)
+
+
+FORMULA γₖ (Im zₖ)
+
+
+=== FORMAL PROOF EN — 11_verification_summary ===
+
+
+LATEX [inline] 3\times10^{-16}
+
+
+LATEX [inline] 9\times10^{-4}
+
+
+LATEX [inline] \lambda_{out}
+
+
+LATEX [inline] 9\times10^{-16}
+
+
+LATEX [inline] p=5\times10^{-35}
+
+
+LATEX [inline] \approx1.0
+
+
+LATEX [inline] 1/\tau^2=0.028
+
+
+LATEX [inline] 5.7\times10^{-14}
+
+
+LATEX [inline] \lambda_+
+
+
+LATEX [inline] \mathcal O(N^{-1/2})
+
+
+LATEX [inline] \tau \lesssim 2
+
+
+=== FORMAL PROOF EN — 12_references ===
+
+
+LATEX [inline] 4/\sqrt 3

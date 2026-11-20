@@ -1,0 +1,40 @@
+### LlamaFactory SFT/LoRA config — the formula-corpus arm of RCDA-9 (full GPU recipe)
+# Run:  llamafactory-cli train configs/sft_formula_gpu.yaml
+# What: the full-scale version of the formula-corpus arm: same dataset and
+#       recipe, sized for a >= 16 GB VRAM box (more epochs, bigger batch,
+#       longer context so every corpus chunk fits whole).
+# Box:  GPU >= 16 GB VRAM.
+
+### model
+model_name_or_path: unsloth/gemma-3-1b-it          # snapshot 5b1141 (pinned in the report)
+stage: pt
+do_train: true
+finetuning_type: lora
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+lora_rank: 16
+lora_alpha: 32
+
+### dataset
+dataset: formulas
+dataset_dir: data
+template: gemma
+cutoff_len: 1024
+packing: false
+overwrite_cache: true
+preprocessing_num_workers: 4
+
+### output
+output_dir: results/formulas_arm_gpu/gemma3_formula_lora
+logging_steps: 10
+save_steps: 100
+plot_loss: true
+overwrite_output_dir: true
+
+### train
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 2
+learning_rate: 1.0e-4
+num_train_epochs: 8.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: true

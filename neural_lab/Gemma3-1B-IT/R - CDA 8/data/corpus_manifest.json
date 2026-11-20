@@ -1,0 +1,20 @@
+{
+ "name": "RCDA-9 formula corpus",
+ "built_by": "build_formula_corpus.py",
+ "fixes_vs_tinygpt": [
+  "RULES[tracy_widom] в tinygpt-корпусе содержала E[F2] = -1.2065335745820 — это E[F1] (beta=1). Код src/rmt_llm/tracy_widom.py возвращает E[F2] = -1.7711 (верно). Здесь правило исправлено: E[F1] = -1.2065, E[F2] = -1.7711, Var[F2] = 0.8132."
+ ],
+ "monograph_notes": [
+  "Уравнения в M03/M04 встроены как PNG-изображения с подписями «Equation N-M:»; в корпусе формулы взяты из сопровождающей прозы (ASCII-формулировки) и связаны с подписями.",
+  "Русские издания M03/M04 содержат артефакты испорченного машинного перевода (обрывки слов: «творческая рация», «ambda_max»); формулы из RU M03/M04 в корпус не включены, канон для этих монографий — EN-издания."
+ ],
+ "splits": {
+  "train": "modules + RULES + M01-M05 (EN+RU) + formal_proof ch1-10 + train-grid pairs",
+  "val": "M06 (EN+RU) + formal_proof ch11-12 + val-grid pairs (PPL на невиданной монографии)",
+  "qa_heldout": "eval pairs на третьей сетке параметров — для QA после обучения"
+ },
+ "sha256": {
+  "formula_corpus_train.txt": "d67f99bede6a890471fc7e5b7fbb2d63d87bf47b9a349881efd9d496793764af",
+  "formula_corpus_val.txt": "f6bb99768d2af1fe8781b1ec7d0c8f7dee4d925ae96aa20cc7f6d12c1d3b3185"
+ }
+}

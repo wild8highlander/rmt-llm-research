@@ -1,0 +1,47 @@
+### LlamaFactory SFT/LoRA config — the formula-corpus arm of RCDA-9 (CPU validation run)
+# Run:  llamafactory-cli train configs/sft_formula_cpu.yaml
+# What: classic supervised fine-tuning of unsloth/gemma-3-1b-it (public mirror
+#       of google/gemma-3-1b-it) on the monograph formula corpus: 95 chunks of
+#       every formula of the restored M01-M06 monographs (EN+RU), the formal
+#       proof chapters 1-10 and the library's own computational pairs.
+#       Stage pt = raw-completion language modelling, matching the RCDA
+#       evaluation protocol (no chat template). Geometry matches the RCDA-8
+#       data arm (LoRA r=8, all-linear) so the two rounds are comparable.
+# Box:  CPU-only (2 cores, 4 GB RAM) — bf16 weights, no autocast,
+#       per-device batch 1, gradient checkpointing on.
+
+### model
+model_name_or_path: unsloth/gemma-3-1b-it          # snapshot 5b1141 (pinned in the report)
+stage: pt
+do_train: true
+finetuning_type: lora
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+lora_rank: 8
+lora_alpha: 16
+
+### dataset
+dataset: formulas
+dataset_dir: data
+template: gemma
+cutoff_len: 512
+packing: false          # pt stage defaults to packing; OFF so every example
+                        # starts at position 0, matching the raw-completion
+                        # evaluation protocol of the RCDA evaluator
+overwrite_cache: true
+preprocessing_num_workers: 1
+
+### output
+output_dir: results/formulas_arm/gemma3_formula_lora
+logging_steps: 5
+save_steps: 50
+plot_loss: true
+overwrite_output_dir: true
+
+### train
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 1
+learning_rate: 5.0e-5
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: false

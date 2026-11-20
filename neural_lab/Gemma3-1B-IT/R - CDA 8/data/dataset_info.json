@@ -1,0 +1,8 @@
+{
+  "formulas": {
+    "file_name": "formula_corpus.jsonl",
+    "columns": {
+      "prompt": "text"
+    }
+  }
+}
