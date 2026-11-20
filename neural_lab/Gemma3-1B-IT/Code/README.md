@@ -23,7 +23,7 @@ production runs change **only** the `--model` flag.
 > formula round (the monograph corpus + the pen re-run) are separate,
 > self-contained pipelines:
 > [`../LlamaFactory/`](../LlamaFactory/README.md) and
-> [`../RCDA-9/`](../RCDA-9/README.md). This folder is the validated
+> [`../RCDA-9/`](../R%20-%20CDA%20%E2%80%94%209/README.md). This folder is the validated
 > machinery they grew out of.
 
 | Script | What it does |
@@ -69,10 +69,10 @@ provoked and measured on both languages.
 | `control.jsonl` | 6 | prose paragraphs — KL and PPL measurement |
 
 The **real-Gemma protocol sets** (20 bad sentinel-selected `bad_g01…g20`,
-20 good, 5 control) live in [`../JSON-Results/`](../JSON-Results/README.md)
+20 good, 5 control) live in [`../JSON-Results/`](../JSON%20Results/README.md)
 and are frozen into the RCDA-8 round at
 [`../LlamaFactory/data/`](../LlamaFactory/README.md) and the RCDA-9 round at
-[`../RCDA-9/data/`](../RCDA-9/README.md).
+[`../RCDA-9/data/`](../R%20-%20CDA%20%E2%80%94%209/README.md).
 
 ## Provenance
 
@@ -81,10 +81,10 @@ The committed artifacts of this folder were produced on the GPT-2 stand-in
 [main README](../README.md#-archive--the-gpt-2-stand-in-validation-layer));
 `--model google/gemma-3-1b-it` reruns the identical protocol at Gemma
 scale. The real-model rounds have their own folders:
-[`../Reports-MD/`](../Reports-MD/README.md) (scientific record),
-[`../Scripts/`](../Scripts/README.md) (working scripts),
+[`../Reports-MD/`](../Reports%20MD/README.md) (scientific record),
+[`../Scripts/`](../Script%27s/README.md) (working scripts),
 [`../LlamaFactory/`](../LlamaFactory/README.md) (the RCDA-8 round),
-[`../RCDA-9/`](../RCDA-9/README.md) (the formula round).
+[`../RCDA-9/`](../R%20-%20CDA%20%E2%80%94%209/README.md) (the formula round).
 
 ---
 

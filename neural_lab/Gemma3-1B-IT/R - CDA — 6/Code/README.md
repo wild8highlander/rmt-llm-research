@@ -40,12 +40,12 @@ python3 gemma_benchmark.py    --model <model-dir> \
 
 Engineering notes from the recorded run (2 cores / 4 GB RAM):
 
-* checkpoints are ATOMIC (`tmp` + `os.replace`) and split into a masters
+- checkpoints are ATOMIC (`tmp` + `os.replace`) and split into a masters
   file (mmap-loaded read-only) and an optimizer file (plain load — a mapped
   storage must never end up inside the optimizer: the first in-place
   momentum update on it stalls the process);
-* the anchor logits live in a fp16 `np.memmap`, not in RAM;
-* generation inside the training process slows ~6–10× under the training
+- the anchor logits live in a fp16 `np.memmap`, not in RAM;
+- generation inside the training process slows ~6–10× under the training
   allocator — run benches/evals in fresh processes
   (`rcda6_minibench.py`, `gemma_benchmark.py` are separate invocations);
-* `use_cache=False` is passed explicitly for the training forwards.
+- `use_cache=False` is passed explicitly for the training forwards.

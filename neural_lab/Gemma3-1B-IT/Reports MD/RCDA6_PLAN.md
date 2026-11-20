@@ -1,4 +1,5 @@
 # RCDA-6 plan — the expanded trainable set with phase-conditioned directions
+
 (pre-registered before the run)
 
 Written: November 16, 2026. This plan was fixed before any RCDA-6 training or

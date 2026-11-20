@@ -96,9 +96,9 @@ field, never hand-typed.
 | Patient | Round | What was asked | What came out | Evidence |
 |---------|-------|----------------|---------------|----------|
 | [`MNN-Pocket-0.3B`](MNN-Pocket-0.3B/README.md) (Qwen3, 28L) | RCDA-1…5 (5 rounds) | can the model apply the repo's formula to itself? | SGD beats surgery: **ρ_bad 0.80 → 0.35 (−56%)**, TW pass ×3, cos(u₁,v) 0.72/0.64/0.29 | [`RCDA5_REPORT.md`](MNN-Pocket-0.3B/R%20CDA%20-%205/Research/RCDA/RCDA5_REPORT.md) |
-| [`Gemma3-1B-IT`](Gemma3-1B-IT/README.md) (Gemma3, 26L) | RCDA-5 | does the formula transfer to a second architecture? | penalty **−71.5%**, ρ_bad 0.94 → **0.88**, KL **0.002**, TW rel pass ×3 — and the carry analysis explains the residual | [`RCDA5_REPORT.md`](Gemma3-1B-IT/R%20CDA%20-%205/Research/RCDA/RCDA5_REPORT.md) |
-| [`Gemma3-1B-IT`](Gemma3-1B-IT/README.md) | RCDA-6 | extend the trainable tensors to down_proj (the hypothesis of the MNN report) | premise proven: **MLP writes 68.6%** of the loop energy; edits align with v, **cos up to 0.89** | [`RCDA6_REPORT.md`](Gemma3-1B-IT/R%20CDA%20-%206/Research/RCDA/RCDA6_REPORT.md) |
-| [`Gemma3-1B-IT`](Gemma3-1B-IT/README.md) | RCDA-7 | deep-phase-only penalty + tightened anchor | the most efficient lever: **pen −80%** from one deep point at KL 0.011 | [`RCDA7_REPORT.md`](Gemma3-1B-IT/R%20CDA%20-%207/Research/RCDA/RCDA7_REPORT.md) |
+| [`Gemma3-1B-IT`](Gemma3-1B-IT/README.md) (Gemma3, 26L) | RCDA-5 | does the formula transfer to a second architecture? | penalty **−71.5%**, ρ_bad 0.94 → **0.88**, KL **0.002**, TW rel pass ×3 — and the carry analysis explains the residual | [`RCDA5_REPORT.md`](Gemma3-1B-IT/R%20-%20CDA%20%E2%80%94%205/Research/RCDA/RCDA5_REPORT.md) |
+| [`Gemma3-1B-IT`](Gemma3-1B-IT/README.md) | RCDA-6 | extend the trainable tensors to down_proj (the hypothesis of the MNN report) | premise proven: **MLP writes 68.6%** of the loop energy; edits align with v, **cos up to 0.89** | [`RCDA6_REPORT.md`](Gemma3-1B-IT/R%20-%20CDA%20%E2%80%94%206/Research/RCDA/RCDA6_REPORT.md) |
+| [`Gemma3-1B-IT`](Gemma3-1B-IT/README.md) | RCDA-7 | deep-phase-only penalty + tightened anchor | the most efficient lever: **pen −80%** from one deep point at KL 0.011 | [`RCDA7_REPORT.md`](Gemma3-1B-IT/R%20-%20CDA%20%E2%80%94%207/Research/RCDA/RCDA7_REPORT.md) |
 
 Program status badge:
 <p align="left">
@@ -236,6 +236,20 @@ model is missing, train it first —
 `python3 research/tinygpt_formula/scripts/train_formula_model.py`
 (~20 min CPU, resumes on restart). If a port is already taken, start with
 `npm run dev -- -p 3001`.
+
+## 🛡️ Repository hygiene — one command per gate
+
+The current tree is the reference state: every gate below runs green on
+`main`, and the repo repairs itself when it drifts (see
+[docs/community/dependabot.md](../docs/community/dependabot.md) for the
+full three-layer policy — Dependabot, janitor, doctors).
+
+```bash
+make verify-repo          # MANIFEST sha256 + asset budgets + alt text + CLI smoke
+make check-links          # every relative link + anchor in the tree
+make fix-links            # repair the drifted ones (fuzzy resolver)
+make test-stages          # offline stage suite (tiny random models)
+```
 
 ## ❓ FAQ
 

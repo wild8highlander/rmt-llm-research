@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{# ─── Extra head: favicon + Open Graph / Twitter card meta ────────────────
+    The site keeps its visual identity on social platforms via the pinned
+    og-image (assets/visuals/og-image.png, mirrored to docs/assets/) and the
+    512x512 aurora favicon (docs/assets/favicon.png).                       #}
+{% block extrahead %}
+  <link rel="icon" type="image/png" href="{{ 'assets/favicon.png' | url }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ (page.meta or {}).title | default(config.site_name, true) }}">
+  <meta property="og:description" content="{{ config.site_description | striptags }}">
+  <meta property="og:image" content="{{ config.site_url }}assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{{ config.site_url }}assets/og-image.png">
+{% endblock %}

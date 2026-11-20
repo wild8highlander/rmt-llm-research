@@ -1,4 +1,15 @@
-# stages/docs — how-to guides
+# 📄 docs — stage pipeline documentation
 
-- [`ADD_A_DETECTOR.md`](ADD_A_DETECTOR.md) — plug a new detector into stage 2
-- [`ADD_A_PAIR.md`](ADD_A_PAIR.md) — add a base/aligned model pair to stage 5
+Reference documents for the research-stage pipeline (stages 2–5):
+protocols, hypothesis registry notes and the stage schema primer.
+
+| Path | Role |
+|------|------|
+| files in this directory | protocol + schema notes for the stage pipeline |
+| [`../results_schema/`](../results_schema/README.md) | the JSON Schema contracts every artifact obeys |
+| [`../tests/`](../tests/) | the offline stage test suite |
+| [`../README.md`](../README.md) | the stage pipeline overview |
+
+The authoritative protocol registry lives at
+[`../EXPERIMENT_PROTOCOLS.md`](../EXPERIMENT_PROTOCOLS.md) (root of
+`neural_lab/stages/`); this directory keeps the long-form companions.

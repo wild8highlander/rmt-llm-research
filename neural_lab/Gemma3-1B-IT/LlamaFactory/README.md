@@ -26,7 +26,7 @@
 > anti-loop targets. One frozen evaluator decides. Its successor — the
 > RCDA-9 formula round that teaches the monograph corpus and re-runs the
 > pen arm, plus the 72-check audit of this round — lives in
-> [`../RCDA-9/`](../RCDA-9/README.md) and [`../audit/`](../audit/README.md).
+> [`../RCDA-9/`](../R%20-%20CDA%20%E2%80%94%209/README.md) and [`../audit/`](../audit/README.md).
 
 ---
 

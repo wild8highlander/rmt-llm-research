@@ -223,8 +223,8 @@ def write_summary_md(path, summaries, pvals, args):
          "| config | Distinct-4 ↑ | RepRate-4 ↓ | collapse med. ↑ | PPL ↓ | PPL ×base | intervened/call | energy kept | p (D4) | p (RR4) |",
          "|---|---|---|---|---|---|---|---|---|---|"]
 
-    def fmt(x, nd=3):
-        return "—" if x is None else (f"{x:.{nd}f}")
+    def fmt(x, ndigits=3):
+        return "—" if x is None else (f"{x:.{ndigits}f}")
 
     for s in summaries:
         pv = pvals.get(s["name"], {})

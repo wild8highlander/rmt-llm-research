@@ -86,12 +86,12 @@ Three conclusions.
 
 ## 4. What this round sets up
 
-The efficiency frontier ([`fig14`](../../../Graphic/fig14_leverage_chart.png))
+The efficiency frontier ([`fig14`](../../../Graphics/fig14_leverage_chart.png))
 shows the descent bought per unit of drift. The next lever named by the
 program — **RCDA-7: deep-phase-only penalty + tightened anchor** —
 concentrates the same actuator set on the single point where the MLP share
 peaks (L8, 83%) and halves the tolerated drift. See
-[`../R CDA - 7/Research/RCDA/RCDA7_REPORT.md`](../../R%20CDA%20-%207/Research/RCDA/RCDA7_REPORT.md).
+[`../R CDA - 7/Research/RCDA/RCDA7_REPORT.md`](../../../R%20-%20CDA%20%E2%80%94%207/Research/RCDA/RCDA7_REPORT.md).
 
 ## 5. Reproduction and artifacts
 

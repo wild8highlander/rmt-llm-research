@@ -46,8 +46,8 @@ explains why, and is exactly what launches RCDA-6.
 | [`Research/RCDA/figures/`](Research/RCDA/figures) | the round's figure copies |
 
 **Start here:** [RCDA-5 report](Research/RCDA/RCDA5_REPORT.md) → then
-[`../R CDA - 6/README.md`](../R%20CDA%20-%206/README.md) and
-[`../R CDA - 7/README.md`](../R%20CDA%20-%207/README.md).
+[`../R CDA - 6/README.md`](../R%20-%20CDA%20%E2%80%94%206/README.md) and
+[`../R CDA - 7/README.md`](../R%20-%20CDA%20%E2%80%94%207/README.md).
 
 ---
 

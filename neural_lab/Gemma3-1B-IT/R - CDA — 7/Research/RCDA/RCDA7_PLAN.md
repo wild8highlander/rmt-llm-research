@@ -21,7 +21,7 @@ less drift.
    double the pressure) — scope `good` unchanged.
 4. **Budget**: lr 2e-5 (drift-matched), 150 Adam steps, refresh 32, clip 1.0.
 5. **Evaluator**: unchanged; the round's primary readouts are the descent
-   percentage and the descent-per-KL ratio ([`fig14`](../../../Graphic/fig14_leverage_chart.png)).
+   percentage and the descent-per-KL ratio ([`fig14`](../../../Graphics/fig14_leverage_chart.png)).
 
 ## Success criteria
 

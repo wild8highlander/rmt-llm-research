@@ -1,9 +1,22 @@
-# Stage 3 — N_crit scaling
+# 🧮 stage 3 — N_crit estimation
 
-Does the spectral threshold scale the way the theory predicts?
+The critical-pressure estimator: fits the Caputo-fractional order and the
+collapse statistics across the pressure grid, producing the N_crit
+surface and the fits that feed stage 5.
 
-- `numeric_tasks.py` — task batteries where hallucination rate is measurable
-- `scaling_test.py` — model-size / dataset-size scaling runs
-- `survival_fit.py` — survival-analysis fit of the N_crit threshold
-- `error_labels.py` — error taxonomy for the fits
-- `run_stage3.py` — entry point
+| Path | Role |
+|------|------|
+| [`run_stage3.py`](run_stage3.py) | the stage entry point (CLI, resumable) |
+| [`../results_schema/`](../results_schema/README.md) | the `fit.json` / `report.json` contracts |
+| [`../README.md`](../README.md) | the pipeline overview |
+
+Offline smoke run (tiny random model, seconds):
+
+```bash
+python neural_lab/stages/stage3_ncrit/run_stage3.py --n-tasks 4 \
+    --max-new-tokens 8 --n-boot 50 --out /tmp/stage3-smoke
+```
+
+Committed pythia-70m smoke artifacts:
+[`../results/smoke_pythia70m/stage3/`](../results/smoke_pythia70m/stage3/)
+(`fit.json` validated against the schema at write time).

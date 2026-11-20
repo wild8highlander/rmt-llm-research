@@ -27,7 +27,7 @@ python Code/gemma_apply_deltas.py --deltas Model\ ZIP/rcda6_deltas.npz \
 ```
 
 > **Provenance.** These deltas are the *validation-run* tensors (GPT-2
-> stand-in, see the [archive section](../README.md#%EF%B8%8F-archive-the-gpt-2-stand-in-validation-layer)
+> stand-in, see the [archive section](../README.md#-archive--the-gpt-2-stand-in-validation-layer)
 > of the main README) — they prove the shipping format and the apply
 > path. The **real-model** trained artifacts are the RCDA-5 SGD full-model
 > archive ([`../Model — Z/`](../Model%20%E2%80%94%20Z/README.md)) and the

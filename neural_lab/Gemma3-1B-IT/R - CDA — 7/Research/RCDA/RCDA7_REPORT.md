@@ -64,7 +64,7 @@ Three conclusions.
 
 ## 3. The leverage chart
 
-[`fig14`](../../../Graphic/fig14_leverage_chart.png) — descent % vs KL:
+[`fig14`](../../../Graphics/fig14_leverage_chart.png) — descent % vs KL:
 
 - RCDA-5: −71.5% at KL 0.0021 — the cheapest descent per drift;
 - RCDA-6: −62.6% at KL 0.0094;

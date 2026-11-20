@@ -49,7 +49,7 @@ recorded exactly as measured.
 - **Step loss (the final form of the training)** — same formula, better
   measured target:
 
-  ```
+  ```text
   L = pen_norm + β · relu(mse − cap)
   pen_norm = pen_raw / pen0_j                       (dimensionless, init 1.0)
   pen_raw  = mean_l mean_t ( v̂_{phase(t), l}ᵀ h_t )²    over band layers l
@@ -175,11 +175,17 @@ Five conclusions from the tables.
 python3 Code/gemma_probe.py --model <gemma-3-1b-it>            # RCDA-5 probe (shared)
 python3 Code/gemma_probe_phase.py --model <gemma-3-1b-it>      # stage 1: phase directions
 python3 Code/gemma_rcds6_train.py  --model <gemma-3-1b-it>     # stage 2: 150-step training
-    --steps 150 --lr 3e-3 --optim sgd --bench-at 999
+
+```text
+--steps 150 --lr 3e-3 --optim sgd --bench-at 999
+```text
 python3 Research/RCDA/tools/rcda6_minibench.py --tag step150   # the step-150 mini-bench
 python3 Code/gemma_benchmark.py    --model <gemma-3-1b-it> \
-    --edited-state <work>/rcda6/trained_state.safetensors \
-    --tag rcda6_trained --out part6 --probe <work>/probe_phase
+
+```text
+--edited-state <work>/rcda6/trained_state.safetensors \
+--tag rcda6_trained --out part6 --probe <work>/probe_phase
+```text
 python3 Research/RCDA/tools/rcda6_ppl.py                       # abilities PPL check
 python3 Research/RCDA/tools/rcda6_analyze.py                   # digest + vectors
 python3 Research/RCDA/tools/rcda6_figures.py                   # figC1–C6
@@ -193,10 +199,10 @@ layers), `part6_eval_rcda6_trained.json` + `part6_rows_rcda6_trained.jsonl`
 `ppl_check.json`, `rcda6_spectral_digest.json`, `rcds6_vectors.npz`
 (v_early/v_deep per band layer, u1, top-16 singular values of each delta);
 `figures/` figC1–C6 (mirrored in `../../Graphic/`). The fine-tuned weights
-ship in [`Model ZIP/`](../../Model%20ZIP/) as a checksummed self-assembling
+ship in [`Model ZIP/`](../Model%20ZIP) as a checksummed self-assembling
 split archive of the **delta state** (16 tensors, 140 MB bf16 → 2 volumes
 ≤ 95 MB) — the base checkpoint it applies to is `google/gemma-3-1b-it`
-itself; see [`Docs/UNPACK_MODEL.md`](../../Docs/UNPACK_MODEL.md).
+itself; see [`Docs/UNPACK_MODEL.md`](../Docs/UNPACK_MODEL.md).
 
 Runtime notes (2 cores / 4 GB, honest): the full program ran on CPU; the
 training sessions were chunked through the 10-step atomic checkpoints

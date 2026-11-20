@@ -1,7 +1,7 @@
 # RCDA-5: the formula as a loss on Gemma3-1B-IT — the baseline round
 
 Written: November 18, 2026. Direct continuation of the sibling kit's
-[RCDA-5](../../../MNN-Pocket-0.3B/R%20CDA%20-%205/Research/RCDA/RCDA5_REPORT.md)
+[RCDA-5](../../../../MNN-Pocket-0.3B/R%20CDA%20-%205/Research/RCDA/RCDA5_REPORT.md)
 by request: *"run the same formula training on the second model and show what
 it gives"*. Same defect, same evaluator, new patient.
 
@@ -36,7 +36,7 @@ checkable claim. All stand-in adaptations are logged in each training log's
 
 **Data.** 16 bilingual bad prompts (echoes, counting, chains — the loop
 provoker), their greedy 48-token prefixes (the penalty data); 16 good prompts
-+ base continuations (the anchor data); 6 control prose paragraphs (KL/PPL).
+plus base continuations (the anchor data); 6 control prose paragraphs (KL/PPL).
 Prefixes are re-drawn from the current model every 32 steps
 (`--refresh_every 32`, online self-labelling) and the anchor hinge applies to
 the ability data (`--anchor_scope good`) — see §4 for why.
@@ -143,10 +143,16 @@ across variants — the tensor-set comparison stays clean.
 ```bash
 python Code/gemma_probe.py                                   # stand-in probe
 python Code/gemma_rcds_train.py --variant rcda5 --steps 150 --lr 1e-4 \
-    --anchor_scope good --refresh_every 32                   # the round
+
+```text
+--anchor_scope good --refresh_every 32                   # the round
+```text
 python Code/gemma_benchmark.py --round 5 --tag base
 python Code/gemma_benchmark.py --round 5 --tag trained \
-    --state "R CDA - 5/Research/RCDA/results/rcda5_trained_state.pt"
+
+```text
+--state "R CDA - 5/Research/RCDA/results/rcda5_trained_state.pt"
+```text
 python Code/rcds_summarise.py                                # relative TW + summary
 ```
 
@@ -158,6 +164,6 @@ Artifacts: `results/` — `probe_report.json`, `rcds5_vectors.npz`,
 figures `fig05–fig16` in `../../Graphic/`.
 
 **Next lever:** the RCDA-6 hypothesis — extend the trainable tensors to
-down_proj ([`../R CDA - 6/`](../../R%20CDA%20-%206/README.md)) — then RCDA-7,
+down_proj ([`../R CDA - 6/`](../../../R%20-%20CDA%20%E2%80%94%206/README.md)) — then RCDA-7,
 the deep-phase-only penalty with the tightened anchor
-([`../R CDA - 7/`](../../R%20CDA%20-%207/README.md)).
+([`../R CDA - 7/`](../../../R%20-%20CDA%20%E2%80%94%207/README.md)).

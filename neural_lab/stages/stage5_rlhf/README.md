@@ -1,9 +1,18 @@
-# Stage 5 — RLHF pairs
+# 🎯 stage 5 — the RLHF response
 
-Effect of preference tuning on the spectral defect:
+The pressure-response stage: sweeps RLHF-like pressure (preference
+optimization strength) against the spectral statistics, producing the
+utility-trap evidence curve for the monograph's thermodynamic claims.
 
-- `model_pairs.yaml` — base/aligned model pairs to compare
-- `compare_pairs.py` — paired spectral + behavioral comparison
-- `run_stage5.py` — entry point
+| Path | Role |
+|------|------|
+| `run_stage5.py` | the stage entry point (CLI) |
+| [`../results_schema/`](../results_schema/README.md) | the artifact contracts it writes under |
+| [`../README.md`](../README.md) | the pipeline overview |
 
-Extending: [`../docs/ADD_A_PAIR.md`](../docs/ADD_A_PAIR.md).
+Slow-lane runs (nightly `stages.yml` workflow) cover the real-model
+sweep; the offline lane runs the tiny-model property tests from
+[`../tests/`](../tests/).
+
+Every written artifact carries `schema_version` and is validated at
+write time by `stages.common.schemas`.

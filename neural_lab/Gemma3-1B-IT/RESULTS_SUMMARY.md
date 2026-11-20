@@ -70,8 +70,8 @@ raw completion mode; 4-gram loop labels, threshold 0.5).
 
 | Experiment | Report | Record | Weights |
 | --- | --- | --- | --- |
-| RCDA-5 | [`RCDA-5/Research/RCDA/RCDA5_REPORT.md`](RCDA-5/Research/RCDA/RCDA5_REPORT.md) | `results/` (training logs ×2, part5 evals ×3, probe, digest, vectors) | full checkpoint, 17 volumes ≤ 95 MB |
-| RCDA-6 | [`RCDA-6/Research/RCDA/RCDA6_REPORT.md`](RCDA-6/Research/RCDA/RCDA6_REPORT.md) | `results/` (phase probe, training log, part6 eval + rows + TW, PPL, digest, vectors) | 16-tensor delta, 2 volumes ≤ 91 MB |
+| RCDA-5 | [`RCDA-5/Research/RCDA/RCDA5_REPORT.md`](R%20-%20CDA%20%E2%80%94%205/Research/RCDA/RCDA5_REPORT.md) | `results/` (training logs ×2, part5 evals ×3, probe, digest, vectors) | full checkpoint, 17 volumes ≤ 95 MB |
+| RCDA-6 | [`RCDA-6/Research/RCDA/RCDA6_REPORT.md`](R%20-%20CDA%20%E2%80%94%206/Research/RCDA/RCDA6_REPORT.md) | `results/` (phase probe, training log, part6 eval + rows + TW, PPL, digest, vectors) | 16-tensor delta, 2 volumes ≤ 91 MB |
 
 Parent experiment: [`neural_lab/MNN-Pocket-0.3B/R CDA - 5`](../MNN-Pocket-0.3B/R%20CDA%20-%205/README.md)
 — the positive result that started the transfer program.

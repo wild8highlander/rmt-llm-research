@@ -42,7 +42,7 @@ along the loop direction `v`.
   of layers **10/11/12** (3 538 944 parameters, 0.35 % of the model).
 - **Step loss (the final form of the training)**:
 
-  ```
+  ```text
   L = pen_norm + β · relu(mse − cap)
   pen_norm = mean_l mean_t ( v̂_lᵀ h_t )² / pen0_j        (dimensionless, init = 1.0)
   mse      = MSE(trailing 32 logits, base logits) on a good prompt
@@ -175,5 +175,5 @@ TW/cos analysis), `training_log_adam.json`, `part5_eval_{base,trained,adam}.json
 singular values of ΔW, u₁), `probe_report.json`, `probe_generations.jsonl`,
 `sentinel_selection.json`; `figures/` fig15 + figG1–G3 (mirrored in
 `../../Graphic/`). The fine-tuned weights (SGD arm) ship in
-[`Model ZIP/`](../../Model%20ZIP/) as a checksummed self-assembling archive
+[`Model ZIP/`](../Model%20ZIP) as a checksummed self-assembling archive
 (17 volumes, each ≤ 95 MB, GitHub-safe).

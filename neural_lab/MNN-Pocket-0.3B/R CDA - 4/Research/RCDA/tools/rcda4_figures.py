@@ -30,7 +30,7 @@ try:
     heads = json.load(open(f"{R4}/rcda3_heads.json"))["head_profiles"]
     tr = json.load(open(f"{R4}/partC/partC_transcript.json"))
     import re as _re
-    ans = json.loads(_re.search(r"\{[\s\S]*?\}", tr["final"]).group(0))
+    parsed = json.loads(_re.search(r"\{[\s\S]*?\}", tr["final"]).group(0))
     inv = {v: k for k, v in sec["mapping"].items()}  # layer -> label
     ax = axs[0]
     w = 0.27
@@ -40,7 +40,7 @@ try:
         x = np.arange(14) + (i - 1) * w
         ax.bar(x, prof, w, color=["#1f77b4", "#ff7f0e", "#2ca02c"][i],
                label=f"L{lay} ({lab})")
-        pick = ans[lab][0]
+        pick = parsed[lab][0]
         ax.scatter([pick + (i - 1) * w], [prof[pick]], marker="v",
                    color="k", zorder=5)
     ax.set_xticks(range(14))

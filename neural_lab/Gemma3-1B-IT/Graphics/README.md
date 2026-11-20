@@ -13,8 +13,8 @@
 </p>
 
 The rendered record of the real-model rounds — every figure is drawn from
-the committed JSONs of [`../JSON-Results/`](../JSON-Results/README.md)
-by the `rcda*_figures.py` renderers of [`../Scripts/`](../Scripts/README.md).
+the committed JSONs of [`../JSON-Results/`](../JSON%20Results/README.md)
+by the `rcda*_figures.py` renderers of [`../Scripts/`](../Script%27s/README.md).
 Project palette: near-black field, cyan MP bulk, amber BBP spike, violet
 structure, crimson defect.
 
@@ -44,7 +44,7 @@ The successor galleries — the RCDA-8 LlamaFactory round (formula arm vs
 data arm, 9 figures + 6 animations from the real model) and the RCDA-9
 formula round (10 figures + 6 animations, including the formula-QA axis) —
 live at [`../LlamaFactory/figures/`](../LlamaFactory/README.md) and
-[`../RCDA-9/figures/`](../RCDA-9/README.md).
+[`../RCDA-9/figures/`](../R%20-%20CDA%20%E2%80%94%209/README.md).
 
 ---
 
@@ -54,7 +54,6 @@ live at [`../LlamaFactory/figures/`](../LlamaFactory/README.md) and
   <a href="../LlamaFactory/figures/">the RCDA-8 gallery →</a> ·
   <a href="../RCDA-9/figures/">the RCDA-9 gallery →</a></sub>
 </p>
-
 
 <p align="center">
   <img src="../assets/logos/gemma-rcda-avatar.svg" width="48" alt="RCDA kit avatar">
@@ -76,7 +75,7 @@ repository: **nothing is hand-typed**. These are the **validation-layer**
 figures (GPT-2 stand-in): they prove the mechanics of the pipeline. The
 real-model figures live in [`../Graphics/`](../Graphics/README.md),
 [`../LlamaFactory/figures/`](../LlamaFactory/README.md) and
-[`../RCDA-9/figures/`](../RCDA-9/README.md).
+[`../RCDA-9/figures/`](../R%20-%20CDA%20%E2%80%94%209/README.md).
 
 ## 🎬 The animations
 

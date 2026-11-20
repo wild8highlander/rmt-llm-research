@@ -23,7 +23,7 @@ repos:
     hooks:
       - id: trailing-whitespace
         name: Trim trailing whitespace
-        exclude: '\.md$'  # Markdown mandates trailing 2 spaces for hard breaks
+        exclude: '\.md$|neural_lab/Gemma3-1B-IT/R - CDA — 8/data/.*'  # md: hard breaks; corpus: research data, byte-pinned
       - id: end-of-file-fixer
         name: Ensure newline at end of file
         exclude: '\.npz$|\.parquet$|\.sqlite$|\.pdf$|\.docx$'
@@ -83,10 +83,10 @@ repos:
       - id: ruff
         name: Ruff lint
         args: [--fix, --exit-non-zero-on-fix]
-        files: ^(src|laboratory/python|python|rmt_llm_viz|scripts)/.*\.py$
+        files: ^(src|laboratory/python|scripts)/.*\.py$
       - id: ruff-format
         name: Ruff format
-        files: ^(src|laboratory/python|python|rmt_llm_viz|scripts)/.*\.py$
+        files: ^(src|laboratory/python|scripts)/.*\.py$
 
   # ─── Mypy — Python type checking (advisory) ───────────────────────────────
   # ─── Vulture — find dead code ─────────────────────────────────────────────
@@ -143,7 +143,7 @@ repos:
 
   # ─── Markdown lint ────────────────────────────────────────────────────────
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.23.2
+    rev: v0.23.3
     hooks:
       - id: markdownlint-cli2
         name: Markdown lint
@@ -246,15 +246,21 @@ repos:
             \.git/.*|
             .*\.lock|
             .*\.csv|
+            .*\.jsonl|
             .*\.npz|
+            .*\.npy|
             .*\.parquet|
             .*\.sqlite|
             .*\.pdf|
             .*\.docx|
             .*\.html|
+            .*\.safetensors|
+            .*\.gguf|
+            .*\.z[0-9]+|
+            .*\.zip\.[0-9]+|
             laboratory/results/.*|
             laboratory/python/[^/]+/results/.*|
-            results/.*|
+            (^|/)results/.*|
             CHANGELOG\.md
           )$
 

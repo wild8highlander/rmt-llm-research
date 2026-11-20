@@ -41,7 +41,7 @@ cd gemma3-rcda6-interventions && python3 verify_rcda6_delta.py
 ```
 
 Expected verdict: `OK — checksum verified` (round-trip verified at packaging
-time). Step-by-step: [`../Docs/UNPACK_MODEL.md`](../Docs/UNPACK_MODEL.md).
+time). Step-by-step: [`../Docs/UNPACK_MODEL.md`](../../Docs/UNPACK_MODEL.md).
 
 ## Apply the delta to the base model
 

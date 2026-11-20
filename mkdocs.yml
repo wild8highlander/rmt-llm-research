@@ -21,17 +21,19 @@ docs_dir: docs
 site_dir: site-build
 
 # README.md files with index.md twins are excluded from the site build
-# (mkdocs >= 1.5 native option — prevents 'conflicts with index.md' warnings);
-# they remain fully rendered on GitHub.
+# (mkdocs >= 1.5 native option — prevents 'conflicts with index.md'
+# warnings); they remain fully rendered on GitHub. The globs cover every
+# nested README (community, getting-started, monographs/*/...), whose
+# GitHub-relative links would otherwise trigger strict-mode warnings.
 exclude_docs: |
   README.md
-  api/README.md
-  architecture/README.md
-  tutorials/README.md
+  */README.md
+  */*/README.md
 
 # ─── Theme ───────────────────────────────────────────────────────────────────
 theme:
   name: material
+  custom_dir: docs/overrides
   language: en
   features:
     - navigation.instant
@@ -223,5 +225,7 @@ nav:
       - Roadmap: community/roadmap.md
       - Security: community/security.md
       - Code of Conduct: community/code-of-conduct.md
+      - Documentation Site (GitHub Pages): community/github-pages.md
+      - Automated Maintenance: community/dependabot.md
       - Research Roadmap: ROADMAP.md
   - Changelog: changelog.md

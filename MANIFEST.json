@@ -305,16 +305,16 @@
       "sha256": "b4d40133089465cc714be5cd2a62bb8e297a502e5358fb0b0c39c184e8defcad"
     },
     "results/reports/20260813_112352_3d_exp_12.json": {
-      "bytes": 11561,
-      "sha256": "a0c5af78edc6ddd88de8ec49e09a7aed52db37c1df0002008863643baf296d3e"
+      "bytes": 17716,
+      "sha256": "cc0783f76920929f9573e65b1961f2baea4cbcfa4372098f9676b77eff09aa05"
     },
     "results/reports/20260813_112352_3d_exp_12_results.json": {
       "bytes": 11510,
       "sha256": "78c5cadc50917b4e3e3b1f7e55cbba7fcbe093dc9d59dfb247774c79c87cce7d"
     },
     "results/reports/20260813_112416_ALL_3D.json": {
-      "bytes": 243868,
-      "sha256": "03d38c80b5765795f15cf4ab8b288dff17f4d027d9d2a4f2aea8e1b2be268d66"
+      "bytes": 472138,
+      "sha256": "9e5cbff4a282504c6a6f1902136a88bcda4e7de3193069156ad8f0c361d1478f"
     },
     "results/reports/20260813_112416_ALL_3D_results.json": {
       "bytes": 243817,

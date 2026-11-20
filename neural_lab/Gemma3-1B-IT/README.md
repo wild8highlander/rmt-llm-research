@@ -27,7 +27,7 @@
 > `unsloth/gemma-3-1b-it` end-to-end through
 > [LlamaFactory](https://github.com/hiyouga/LlamaFactory): the formula as
 > a band-masked LoRA versus stock SFT/LoRA on curated anti-loop targets.
-> The RCDA-9 round ([`RCDA-9/`](RCDA-9/README.md)) goes one level deeper:
+> The RCDA-9 round ([`RCDA-9/`](R%20-%20CDA%20%E2%80%94%209/README.md)) goes one level deeper:
 > every formula of the twelve restored monographs, taught to the model as a
 > 95-chunk corpus — the strongest anti-loop intervention measured on this
 > model (**10/12 repaired, ρ_bad 0.10, no migration**), with a from-scratch
@@ -94,8 +94,8 @@ spectral object.
 | band (z_diff > 130) | L8–L15 (pre-registered) | o_proj + down_proj trainable set of RCDA-6/8/9 | [`probe_phase_report.json`](LlamaFactory/results/probe/probe_phase_report.json) |
 | ρ_bad (base, greedy 192) | **0.60** | 20 bad prompts, 4-gram, threshold 0.5 | [`part8_eval_base.json`](LlamaFactory/results/part8_eval_base.json) |
 | pen descent (RCDA-8 LoRA) | **−97.9 %** | the formula as a loss, 150 steps, 1.31 M params | [`training_log.json`](LlamaFactory/results/rcda8_arm/training_log.json) |
-| pen descent (RCDA-9 re-run) | −97.2 % | same recipe re-trained — magnitudes are not run-stable, signatures are | [`training_log.json`](RCDA-9/results/pen_arm/training_log.json) |
-| hard-12 loop share | 0.827 → 0.632 / 0.590 / **0.259** | RCDA-8 formula / data / RCDA-9 corpus | [`summary_round9.json`](RCDA-9/results/summary_round9.json) |
+| pen descent (RCDA-9 re-run) | −97.2 % | same recipe re-trained — magnitudes are not run-stable, signatures are | [`training_log.json`](R%20-%20CDA%20%E2%80%94%208/results/pen_arm/training_log.json) |
+| hard-12 loop share | 0.827 → 0.632 / 0.590 / **0.259** | RCDA-8 formula / data / RCDA-9 corpus | [`summary_round9.json`](R%20-%20CDA%20%E2%80%94%208/results/summary_round9.json) |
 | fully repaired (of 12) | 3 / 5 / **10** | RCDA-8 formula / data / RCDA-9 corpus | part8 + part9 evals |
 | corpus val PPL (RCDA-9) | 369.2 → **99.7** | held-out monograph M06 + proof ch.11–12, −73 % | part9 evals |
 | KL(base‖arm) | 0.512 / 0.120 / **0.079** | RCDA-8 formula / data / RCDA-9 corpus | part8 + part9 evals |
@@ -109,11 +109,11 @@ spectral object.
 
 | Round | Question | Result | Where |
 |-------|----------|--------|-------|
-| **RCDA-5** (real Gemma) | Does the MNN-Pocket transfer hold on Gemma3? | **No.** Penalty collapses (−99 %) while every hard looper gets *worse* (ρ_bad 0.60 → 1.00 SGD / 0.95 Adam); the penalized direction is a correlate, not the cause. Abilities hold (PPL parity) | [`RCDA-5/`](RCDA-5/README.md) · [`RCDA5_REPORT.md`](Reports-MD/RCDA5_REPORT.md) |
-| **RCDA-6** (real Gemma) | Does the wider band + phase-matched directions pay off? | **Partially.** First behavioral gains of the formula line: hard-12 0.827 → 0.620, 2/12 repaired — but the defect migrates (mild-8 0.16 → 0.64) and abilities drift (PPL +29 %, KL 0.31) | [`RCDA-6/`](RCDA-6/README.md) · [`RCDA6_REPORT.md`](Reports-MD/RCDA6_REPORT.md) |
-| **RCDA-5/6/7** (validation layer) | Does the machinery run end-to-end, architecture-adaptively? | Yes — validated on a GPT-2 stand-in (the archived numbers: pen −72/−63/−80 %, KL ≤ 0.011, TW pass ×3) — *mechanics proven, effect sizes not claimed* | [`RCDA-7/`](RCDA-7/README.md) · [archive below](#-archive--the-gpt-2-stand-in-validation-layer) |
+| **RCDA-5** (real Gemma) | Does the MNN-Pocket transfer hold on Gemma3? | **No.** Penalty collapses (−99 %) while every hard looper gets *worse* (ρ_bad 0.60 → 1.00 SGD / 0.95 Adam); the penalized direction is a correlate, not the cause. Abilities hold (PPL parity) | [`RCDA-5/`](R%20-%20CDA%20%E2%80%94%205/README.md) · [`RCDA5_REPORT.md`](Reports%20MD/RCDA5_REPORT.md) |
+| **RCDA-6** (real Gemma) | Does the wider band + phase-matched directions pay off? | **Partially.** First behavioral gains of the formula line: hard-12 0.827 → 0.620, 2/12 repaired — but the defect migrates (mild-8 0.16 → 0.64) and abilities drift (PPL +29 %, KL 0.31) | [`RCDA-6/`](R%20-%20CDA%20%E2%80%94%206/README.md) · [`RCDA6_REPORT.md`](Reports%20MD/RCDA6_REPORT.md) |
+| **RCDA-5/6/7** (validation layer) | Does the machinery run end-to-end, architecture-adaptively? | Yes — validated on a GPT-2 stand-in (the archived numbers: pen −72/−63/−80 %, KL ≤ 0.011, TW pass ×3) — *mechanics proven, effect sizes not claimed* | [`RCDA-7/`](R%20-%20CDA%20%E2%80%94%207/README.md) · [archive below](#-archive--the-gpt-2-stand-in-validation-layer) |
 | **RCDA-8** (real Gemma, LlamaFactory) | Formula-as-LoRA vs data-as-LoRA, equal budget? | **The formula repairs 3/12 hard loopers (first on this model) at 1.31 M params and −97.9 % penalty — and migrates the defect again; the data arm wins every axis: 5/12, ρ_bad 0.40, mild-8 0.097, KL 0.12, PPL −21 %** | [`LlamaFactory/`](LlamaFactory/README.md) · [`RCDA8_REPORT.md`](LlamaFactory/RCDA8_REPORT.md) |
-| **RCDA-9** (real Gemma, the formula round) | What if the model is *taught* the monograph formulas — as a corpus and as a loss? | **The corpus is the strongest anti-loop intervention measured on this model: 10/12 repaired, ρ_bad 0.10, no migration, KL 0.079 — and it teaches form, not arithmetic (held-out corpus PPL −73 %, exact QA 9→4/57). The pen arm re-run replicates every qualitative signature but not the magnitudes — budget-run honesty. Plus a 72-check audit of RCDA-8 (70 PASS / 1 FAIL documented)** | [`RCDA-9/`](RCDA-9/README.md) · [`RCDA9_REPORT.md`](RCDA-9/RCDA9_REPORT.md) · [`audit/`](audit/README.md) |
+| **RCDA-9** (real Gemma, the formula round) | What if the model is *taught* the monograph formulas — as a corpus and as a loss? | **The corpus is the strongest anti-loop intervention measured on this model: 10/12 repaired, ρ_bad 0.10, no migration, KL 0.079 — and it teaches form, not arithmetic (held-out corpus PPL −73 %, exact QA 9→4/57). The pen arm re-run replicates every qualitative signature but not the magnitudes — budget-run honesty. Plus a 72-check audit of RCDA-8 (70 PASS / 1 FAIL documented)** | [`RCDA-9/`](R%20-%20CDA%20%E2%80%94%209/README.md) · [`RCDA9_REPORT.md`](R%20-%20CDA%20%E2%80%94%209/RCDA9_REPORT.md) · [`audit/`](audit/README.md) |
 
 ---
 
@@ -186,21 +186,21 @@ an artist's impression.</em></sub></p>
 
 | Folder | What lives there |
 |--------|------------------|
-| [`RCDA-9/`](RCDA-9/README.md) | **the formula round**: the monograph corpus arm (10/12 repaired) + the pen-arm re-run + the RCDA-8 audit — report, notes, corpus, configs, scripts, results, adapters, figures |
+| [`RCDA-9/`](R%20-%20CDA%20%E2%80%94%209/README.md) | **the formula round**: the monograph corpus arm (10/12 repaired) + the pen-arm re-run + the RCDA-8 audit — report, notes, corpus, configs, scripts, results, adapters, figures |
 | [`LlamaFactory/`](LlamaFactory/README.md) | **the RCDA-8 round**: the real-model formula arm + data arm, trained through LlamaFactory 0.9.5 — report, logs, adapters, figures, GPU configs |
 | [`audit/`](audit/README.md) | the static RCDA-8 verification: 72 checks, 70 PASS / 1 FAIL documented |
 | [`Code/`](Code/README.md) | the toolkit: `gemma_probe.py`, `gemma_benchmark.py`, `gemma_rcds_train.py` (rcda5\|6\|7), `marchenko_pastur.py`, `rcda6_channel_decomposition.py`, `gemma_apply_deltas.py`, bilingual `prompts/` |
 | [`Docs/`](Docs/README.md) | unpacking the model archives and the split-volume procedure |
-| [`Graphic/`](Graphic/README.md) | validation-layer fig05–fig16 + two animations, rebuilt from `results/` |
+| [`Graphic/`](Graphics/README.md) | validation-layer fig05–fig16 + two animations, rebuilt from `results/` |
 | [`Graphics/`](Graphics/README.md) | the real-Gemma figures of rounds 5–6 (probe, band, training, eval arms, migration) |
-| [`JSON-Results/`](JSON-Results/README.md) | the raw real-Gemma records: probe reports, training logs ×2, part5/part6 evals, rows, PPL checks, sentinel selection |
-| [`Model-ZIP/`](Model-ZIP/README.md) | `gemma3-rcds-interventions.zip` — fp16 deltas of the three validation variants + the v-directions, SHA-256 pinned |
-| [`Model-Z/`](Model-Z/README.md) | the fine-tuned full model (RCDA-5 SGD arm) as a self-assembling 17-volume split archive |
-| [`RCDA-5/`](RCDA-5/README.md) | the canonical validation snapshot: reports, results, vectors, figures |
-| [`RCDA-6/`](RCDA-6/README.md) | the extended-tensor validation round (down_proj channel) |
-| [`RCDA-7/`](RCDA-7/README.md) | the deep-phase + tightened-anchor validation round |
-| [`Reports-MD/`](Reports-MD/README.md) | the real-Gemma scientific record: plans, reports, runbooks, results summary |
-| [`Scripts/`](Scripts/README.md) | the real-Gemma working scripts (probe, phase probe, trainers, benchmark, analysis) |
+| [`JSON-Results/`](JSON%20Results/README.md) | the raw real-Gemma records: probe reports, training logs ×2, part5/part6 evals, rows, PPL checks, sentinel selection |
+| [`Model-ZIP/`](Model%20ZIP/README.md) | `gemma3-rcds-interventions.zip` — fp16 deltas of the three validation variants + the v-directions, SHA-256 pinned |
+| [`Model-Z/`](Model%20%E2%80%94%20Z/README.md) | the fine-tuned full model (RCDA-5 SGD arm) as a self-assembling 17-volume split archive |
+| [`RCDA-5/`](R%20-%20CDA%20%E2%80%94%205/README.md) | the canonical validation snapshot: reports, results, vectors, figures |
+| [`RCDA-6/`](R%20-%20CDA%20%E2%80%94%206/README.md) | the extended-tensor validation round (down_proj channel) |
+| [`RCDA-7/`](R%20-%20CDA%20%E2%80%94%207/README.md) | the deep-phase + tightened-anchor validation round |
+| [`Reports-MD/`](Reports%20MD/README.md) | the real-Gemma scientific record: plans, reports, runbooks, results summary |
+| [`Scripts/`](Script%27s/README.md) | the real-Gemma working scripts (probe, phase probe, trainers, benchmark, analysis) |
 | [`assets/`](assets/README.md) | the kit identity: banner, avatar, divider |
 
 ---
@@ -209,7 +209,7 @@ an artist's impression.</em></sub></p>
 
 | Figure | What it shows |
 |--------|---------------|
-| [`r9-fig01`](RCDA-9/figures/fig01_probe_zdiff.png) … [`r9-fig10`](RCDA-9/figures/fig10_formula_qa.png) | **the RCDA-9 round**: probe re-run, arms defect, formula-knowledge axes, pen descent, forensics, the 10/12 repair matrix, dashboard, corpus loss, formula QA |
+| [`r9-fig01`](R%20-%20CDA%20%E2%80%94%208/figures/fig01_probe_zdiff.png) … [`r9-fig10`](R%20-%20CDA%20%E2%80%94%208/figures/fig10_formula_qa.png) | **the RCDA-9 round**: probe re-run, arms defect, formula-knowledge axes, pen descent, forensics, the 10/12 repair matrix, dashboard, corpus loss, formula QA |
 | [`r-fig01`](LlamaFactory/figures/fig01_probe_zdiff.png) | **the real-model probe** — writers L10/11/12, band L8–L15 |
 | [`r-fig02`](LlamaFactory/figures/fig02_phase_probe.png) | phase directions: z_early vs z_deep, cos(v_e, v_d) per layer |
 | [`r-fig03`](LlamaFactory/figures/fig03_arms_defect.png) | ρ_bad / loop_share / waste across base · formula · data |
@@ -219,7 +219,7 @@ an artist's impression.</em></sub></p>
 | [`r-fig07`](LlamaFactory/figures/fig07_repair_matrix.png) | per-prompt repair heatmap, three arms |
 | [`r-fig08`](LlamaFactory/figures/fig08_dashboard.png) | the RCDA-8 one-glance dashboard |
 | [`r-fig09`](LlamaFactory/figures/fig09_sft_loss.png) | the data arm's training loss |
-| [`fig05`](Graphic/fig05_probe_zdiff_profile.png) … [`fig16`](Graphic/fig16_overview_dashboard.png) | the validation layer (GPT-2 stand-in): probe profile, matrix scan, channel decomposition, pen descent, defect/abilities bars, cosine alignment, spectral purity, leverage chart, PPL parity, dashboard |
+| [`fig05`](Graphics/fig05_probe_zdiff_profile.png) … [`fig16`](Graphics/fig16_overview_dashboard.png) | the validation layer (GPT-2 stand-in): probe profile, matrix scan, channel decomposition, pen descent, defect/abilities bars, cosine alignment, spectral purity, leverage chart, PPL parity, dashboard |
 | [`figG1–G3`](Graphics/) · [`figC1–C5`](Graphics/) | the real-Gemma rounds 5–6: probe layers, spectral purity, eval arms, phase probe, band, migration |
 
 Regenerate the validation layer with `python Graphic/make_graphic.py`,
@@ -234,10 +234,10 @@ the RCDA-9 round with `python RCDA-9/scripts/make_figures.py`
 | I want to… | Time | Go to |
 |------------|------|-------|
 | 🕐 **get the story** | 10 min | [The kit in 60 seconds](#-the-kit-in-60-seconds) → [Headline results](#-headline-results--every-round-one-evaluator) → [the animation wall](#-the-animation-wall) |
-| 🔬 **read the real-model science** | one evening | [`RCDA9_REPORT.md`](RCDA-9/RCDA9_REPORT.md) → [`RCDA8_REPORT.md`](LlamaFactory/RCDA8_REPORT.md) → [`RCDA5_REPORT.md`](Reports-MD/RCDA5_REPORT.md) → [`RCDA6_REPORT.md`](Reports-MD/RCDA6_REPORT.md) |
-| ⚙️ **compare the levers** | 30 min | [`fig14`](Graphic/fig14_leverage_chart.png) (validation) → [`r-fig08`](LlamaFactory/figures/fig08_dashboard.png) (RCDA-8) → [`r9-fig08`](RCDA-9/figures/fig08_dashboard.png) (RCDA-9) → [`summary_round9.json`](RCDA-9/results/summary_round9.json) |
-| 🧪 **train it yourself** | 75–100 min CPU / 1 h GPU | [`RCDA-9/README.md`](RCDA-9/README.md#-reproduce) → [`LlamaFactory/README.md`](LlamaFactory/README.md#-reproduce) → `pipeline.py` (resumable) → GPU configs |
-| 📦 **apply the trained artifacts** | 10 min | [`Model-ZIP/`](Model-ZIP/README.md) (validation deltas) · [`LlamaFactory/adapters/`](LlamaFactory/adapters/) (RCDA-8 LoRA) · [`RCDA-9/results/`](RCDA-9/results) (corpus + pen LoRA) |
+| 🔬 **read the real-model science** | one evening | [`RCDA9_REPORT.md`](R%20-%20CDA%20%E2%80%94%209/RCDA9_REPORT.md) → [`RCDA8_REPORT.md`](LlamaFactory/RCDA8_REPORT.md) → [`RCDA5_REPORT.md`](Reports%20MD/RCDA5_REPORT.md) → [`RCDA6_REPORT.md`](Reports%20MD/RCDA6_REPORT.md) |
+| ⚙️ **compare the levers** | 30 min | [`fig14`](Graphics/fig14_leverage_chart.png) (validation) → [`r-fig08`](LlamaFactory/figures/fig08_dashboard.png) (RCDA-8) → [`r9-fig08`](R%20-%20CDA%20%E2%80%94%208/figures/fig08_dashboard.png) (RCDA-9) → [`summary_round9.json`](R%20-%20CDA%20%E2%80%94%208/results/summary_round9.json) |
+| 🧪 **train it yourself** | 75–100 min CPU / 1 h GPU | [`RCDA-9/README.md`](R%20-%20CDA%20%E2%80%94%209/README.md#-reproduce) → [`LlamaFactory/README.md`](LlamaFactory/README.md#-reproduce) → `pipeline.py` (resumable) → GPU configs |
+| 📦 **apply the trained artifacts** | 10 min | [`Model-ZIP/`](Model%20ZIP/README.md) (validation deltas) · [`LlamaFactory/adapters/`](LlamaFactory/adapters/) (RCDA-8 LoRA) · [`RCDA-9/results/`](R%20-%20CDA%20%E2%80%94%208/results) (corpus + pen LoRA) |
 | 🔍 **verify the claims** | 5 min | [`audit/`](audit/README.md) — the 72-check static audit of RCDA-8, re-runnable with one command |
 
 ---
@@ -281,10 +281,10 @@ the RCDA-9 round on the same box (~100 min end-to-end).
 
 | Layer | Model | Where | What it proves |
 |-------|-------|-------|----------------|
-| **validation** | `openai-community/gpt2` (124 M stand-in) | [`RCDA-5/`](RCDA-5/README.md), [`RCDA-6/`](RCDA-6/README.md), [`RCDA-7/`](RCDA-7/README.md), [`Graphic/`](Graphic/README.md), [`Model-ZIP/`](Model-ZIP/README.md) | the *mechanics*: the formula trains, the penalty melts, edits stay rank-structured, abilities anchor holds — architecture-adaptive code |
-| **real-Gemma rounds** | `unsloth/gemma-3-1b-it` @ `5b1141…` | [`Reports-MD/`](Reports-MD/README.md), [`JSON-Results/`](JSON-Results/README.md), [`Scripts/`](Scripts/README.md), [`Graphics/`](Graphics/README.md), [`Model-Z/`](Model-Z/README.md) | the transfer test and its honest negatives: RCDA-5 inverts (ρ_bad 0.60 → 1.00), RCDA-6 buys the first partial repair and migrates the defect |
+| **validation** | `openai-community/gpt2` (124 M stand-in) | [`RCDA-5/`](R%20-%20CDA%20%E2%80%94%205/README.md), [`RCDA-6/`](R%20-%20CDA%20%E2%80%94%206/README.md), [`RCDA-7/`](R%20-%20CDA%20%E2%80%94%207/README.md), [`Graphic/`](Graphics/README.md), [`Model-ZIP/`](Model%20ZIP/README.md) | the *mechanics*: the formula trains, the penalty melts, edits stay rank-structured, abilities anchor holds — architecture-adaptive code |
+| **real-Gemma rounds** | `unsloth/gemma-3-1b-it` @ `5b1141…` | [`Reports-MD/`](Reports%20MD/README.md), [`JSON-Results/`](JSON%20Results/README.md), [`Scripts/`](Script%27s/README.md), [`Graphics/`](Graphics/README.md), [`Model-Z/`](Model%20%E2%80%94%20Z/README.md) | the transfer test and its honest negatives: RCDA-5 inverts (ρ_bad 0.60 → 1.00), RCDA-6 buys the first partial repair and migrates the defect |
 | **RCDA-8** (LlamaFactory) | same snapshot, via **LlamaFactory 0.9.5** | [`LlamaFactory/`](LlamaFactory/README.md) | the formula as a LoRA (first hard-loop repairs on the real model, 3/12) vs stock SFT (5/12, wins every axis) — one evaluator, equal budget |
-| **RCDA-9** (the formula round) | same snapshot, same framework | [`RCDA-9/`](RCDA-9/README.md), [`audit/`](audit/README.md) | the monograph corpus as the strongest anti-loop intervention (10/12, ρ_bad 0.10, no migration) + the pen re-run + the 72-check audit of the predecessor |
+| **RCDA-9** (the formula round) | same snapshot, same framework | [`RCDA-9/`](R%20-%20CDA%20%E2%80%94%209/README.md), [`audit/`](audit/README.md) | the monograph corpus as the strongest anti-loop intervention (10/12, ρ_bad 0.10, no migration) + the pen re-run + the 72-check audit of the predecessor |
 
 - **Every number is a field of a committed JSON** — `RCDA-N/…/results/`,
   `JSON-Results/`, `LlamaFactory/results/`, `RCDA-9/results/`. No figure or
@@ -293,17 +293,17 @@ the RCDA-9 round on the same box (~100 min end-to-end).
   its budget (150 steps, LoRA r16/r8, 20-prompt suite) is part of the
   record, and the full-scale GPU configs ship in
   [`LlamaFactory/configs/`](LlamaFactory/configs) and
-  [`RCDA-9/configs/`](RCDA-9/configs).
+  [`RCDA-9/configs/`](R%20-%20CDA%20%E2%80%94%208/configs).
 - **LlamaFactory note**: the framework is self-hosted — its demo site
   builds configs; the training itself ran here, through its CLI and
   trainer classes. No results were fabricated, projected, or borrowed.
 - Intervention weights ship four ways: fp16 deltas
-  ([`Model-ZIP/`](Model-ZIP/README.md), validation layer), the
+  ([`Model-ZIP/`](Model%20ZIP/README.md), validation layer), the
   self-assembling full-model archive
-  ([`Model-Z/`](Model-Z/README.md), RCDA-5 SGD arm), peft LoRA adapters
+  ([`Model-Z/`](Model%20%E2%80%94%20Z/README.md), RCDA-5 SGD arm), peft LoRA adapters
   ([`LlamaFactory/adapters/`](LlamaFactory/adapters/), RCDA-8 round) and
   the corpus + pen adapters of the RCDA-9 round
-  ([`RCDA-9/results/`](RCDA-9/results)).
+  ([`RCDA-9/results/`](R%20-%20CDA%20%E2%80%94%208/results)).
 - **Language note** (inherited): experiment *inputs* are bilingual
   (Russian + English); everything a human reads is English. The one
   exception is the audit protocol ([`audit/`](audit/README.md)), kept in

@@ -63,6 +63,7 @@
 | [`compose_og.py`](compose_og.py) | composites the 1200×630 OG text lockup | 🎨 render |
 | [`verify_repo.py`](verify_repo.py) | the evidence gate: MANIFEST sha256 + budgets + alt text + CLI smoke | 🛡 evidence |
 | [`check_links.py`](check_links.py) | relative-link **and anchor** checker (GitHub-style slugs) | 🛡 evidence |
+| [`fix_links.py`](fix_links.py) | fuzzy link **repairer**: punctuation-drifted names, wrong `../` depth, emoji anchors | 🛡 evidence |
 | [`repo_janitor.py`](repo_janitor.py) | the self-healing bot: fixes moved links, stale paths, dead redirects | 🛡 evidence |
 | [`repo_stats.py`](repo_stats.py) | live repo numbers + README badge wall sync (`tests 480+`) | 🩺 hygiene |
 | [`env_doctor.py`](env_doctor.py) | "why doesn't X run here?" — Python, deps, tooling, labs | 🩺 hygiene |
@@ -127,6 +128,15 @@ truth for palette, seeds and budgets.
   (`#rmt_llm.module.item`) are skipped — they are generated at
   docs-build time and verified by `mkdocs build --strict` instead.
   Run: `python scripts/check_links.py` (daily via `cli-doctor.yml`).
+- **[`fix_links.py`](fix_links.py)** — the repair counterpart to the checker.
+  Resolves links whose targets drifted by punctuation and typography
+  (`RCDA-5` → `R - CDA — 5`, `Model-Z` → `Model — Z`, `Scripts` →
+  `Script's`, `JSON-Results` → `JSON Results`), fixes the wrong number of
+  `../` levels by searching the real tree, and rewrites emoji anchors to
+  the exact heading slug. Verify-first and idempotent: only links that do
+  not resolve are touched; every rewrite is re-checked before writing.
+  Run: `make fix-links` (fixes, then re-runs the gate) — used together with
+  the janitor for the cases its basename scoring cannot resolve.
 - **[`repo_janitor.py`](repo_janitor.py)** — the self-healing bot. Where
   the doctor only *reports*, the janitor *repairs*: rewrites internal
   markdown links whose target file moved or was renamed (resolved by

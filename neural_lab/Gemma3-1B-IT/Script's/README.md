@@ -32,13 +32,13 @@ that reproduces the probe byte-exact and trains both arms — lives in
 
 ## Protocol notes that only exist here
 
-* **Raw completion mode** — no chat template; the on-device LiteRT
+- **Raw completion mode** — no chat template; the on-device LiteRT
   prefill/decode path. In chat mode the defect does not manifest
   (sentinel scan: loop_share ≤ 0.09 at 96 tokens).
-* **The 192-token window** — Gemma3-1B-IT is repetition-resistant; the
+- **The 192-token window** — Gemma3-1B-IT is repetition-resistant; the
   loop opens only in long generations (96 → no defect, 192 → hard loops).
-* **Phase labels** — `pre / early / deep` per generated position, with the
+- **Phase labels** — `pre / early / deep` per generated position, with the
   cycle period fitted from the token tail; irregular tails count as deep.
-* **RAM discipline** — anchor logits cached fp16 on disk (memmap), atomic
+- **RAM discipline** — anchor logits cached fp16 on disk (memmap), atomic
   split checkpoints (masters / optimizer state), incremental analysis
   persistence: the rounds ran on a 4 GB CPU box.

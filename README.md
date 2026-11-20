@@ -242,12 +242,14 @@ in the docs.
 - [Verification Package](#-verification-package)
 - [Advanced Visualization Suites](#-advanced-visualization-suites)
 - [Documents](#-documents)
+- [Documentation site (GitHub Pages)](#the-documentation-site-github-pages)
 - [Papers](#-papers)
 - [Key Results](#-key-results)
 - [TinyGPT vs. Alternatives](#-tinygpt-vs-alternatives)
 - [Getting Started](#-getting-started)
 - [Visual Identity](#-visual-identity)
 - [Professional Engineering](#-professional-engineering)
+- [Automated maintenance](#automated-maintenance--three-self-healing-layers)
 - [Evidence & reproducibility](#-evidence--reproducibility)
 - [FAQ](#-faq)
 - [Roadmap](#-roadmap)
@@ -517,6 +519,24 @@ cd laboratory/java/java/rmt-llm-viz
 
 ## 📝 Documents
 
+### The documentation site (GitHub Pages)
+
+The full MkDocs Material site — tutorials, API reference rendered live from
+the source, ADRs, the community pages — builds from [`docs/`](./docs/) with
+strict CI and deploys automatically:
+
+```text
+https://wild8highlander.github.io/rmt-llm-research/
+```
+
+- dark/light aurora palette, instant search (EN+RU), MathJax, Mermaid;
+- every page carries Open Graph / Twitter cards and the pinned og-image;
+- custom 404 page and a generated sitemap.xml.
+
+Pages is a per-repo switch (Settings → Pages → Source: **GitHub Actions**);
+the 2-minute enablement walkthrough and troubleshooting live in
+[docs/community/github-pages.md](./docs/community/github-pages.md).
+
 ### English
 
 | File | Description |
@@ -617,11 +637,15 @@ This repo follows best practices from the best-maintained open-source projects o
 | [`.github/workflows/codeql.yml`](./.github/workflows/codeql.yml) | CodeQL semantic analysis for Python — security + quality queries              |
 | [`.github/workflows/pre-commit.yml`](./.github/workflows/pre-commit.yml) | Run all 30+ pre-commit hooks on every push                                     |
 | [`.github/workflows/markdown-lint.yml`](./.github/workflows/markdown-lint.yml) | markdownlint + link checker                                                    |
+| [`.github/workflows/cli-doctor.yml`](./.github/workflows/cli-doctor.yml) | Daily self-check: `rmt-llm-verify` CLI + the whole link graph; opens an issue on failure |
+| [`.github/workflows/verify-repo.yml`](./.github/workflows/verify-repo.yml) | Evidence gate: MANIFEST sha256, asset budgets, alt text, CLI smoke              |
+| [`.github/workflows/repo-janitor.yml`](./.github/workflows/repo-janitor.yml) | The self-healing bot: rewrites moved links, repairs dependabot/mkdocs paths, opens a PR |
+| [`.github/workflows/stages.yml`](./.github/workflows/stages.yml) | neural_lab stages pipeline: offline tests on push, nightly pythia-70m smoke + schema validation |
 | [`.github/workflows/docker.yml`](./.github/workflows/docker.yml) | Docker build + Trivy vulnerability scan + smoke test                           |
 | [`.github/workflows/release.yml`](./.github/workflows/release.yml) | Tag-triggered release: sdist + wheel + artifacts + Zenodo + Docker publish     |
 | [`.github/workflows/scorecard.yml`](./.github/workflows/scorecard.yml) | OpenSSF Scorecard supply-chain scoring                                         |
 | [`.github/workflows/zenodo.yml`](./.github/workflows/zenodo.yml) | Archive releases to Zenodo (DOI minting)                                       |
-| [`.github/workflows/deploy-docs.yml`](./.github/workflows/deploy-docs.yml) | GitHub Pages deployment                                                        |
+| [`.github/workflows/deploy-docs.yml`](./.github/workflows/deploy-docs.yml) | GitHub Pages deployment (strict MkDocs Material build)                        |
 | [`.github/workflows/benchmark.yml`](./.github/workflows/benchmark.yml)  | pytest-benchmark + hypothesis property tests, nightly trend tracking           |
 | [`.github/labels.yml`](./.github/labels.yml)                            | 30 standardized issue/PR labels (synced by hand or bots)                       |
 | [`.pre-commit-config.yaml`](./.pre-commit-config.yaml)    | 30+ hooks: ruff, ruff-format, mypy, codespell, shellcheck, hadolint, gitleaks  |
@@ -633,7 +657,7 @@ This repo follows best practices from the best-maintained open-source projects o
 | [`.github/ISSUE_TEMPLATE/`](./.github/ISSUE_TEMPLATE/)                 | 4 templates: bug, feature, documentation + config router |
 | [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) | PR template with checklist + breaking-change section     |
 | [`.github/CODEOWNERS`](./.github/CODEOWNERS)                           | Automatic review requests by directory                   |
-| [`.github/dependabot.yml`](./.github/dependabot.yml)                   | 9 ecosystems: pip, actions, julia, npm, cargo, gradle, gomod, docker |
+| [`.github/dependabot.yml`](./.github/dependabot.yml)                   | 11 update blocks / 12 manifests: pip (pyproject + requirements-stages), actions, 2× julia, npm, 2× cargo, gradle, 2× gomod, docker — grouped PRs |
 | [`.github/labels.yml`](./.github/labels.yml)                            | 30 standardized issue/PR labels with colors                                    |
 | [`.github/FUNDING.yml`](./.github/FUNDING.yml)                         | Sponsor buttons                                          |
 | [`.github/SUPPORT.md`](./.github/SUPPORT.md)                           | "Getting help" guide                                     |
@@ -651,12 +675,12 @@ This repo follows best practices from the best-maintained open-source projects o
 | File                          | Purpose                                                                              |
 |-------------------------------|--------------------------------------------------------------------------------------|
 | [`pyproject.toml`](./pyproject.toml) | PEP 621 packaging + ruff + mypy + pytest + coverage config (all in one file)   |
-| [`Makefile`](./Makefile)      | 30+ targets: `make help`, `install-dev`, `test`, `lint`, `ci`, `docker`, `release-tag` |
+| [`Makefile`](./Makefile)      | 60+ targets: `make help`, `install-dev`, `test`, `lint`, `fix-links`, `verify-repo`, `ci`, `docker`, `release-tag` |
 | [`Dockerfile`](./Dockerfile)  | Multi-stage build: Python 3.12 + Julia 1.10 + Java 21, non-root user, HEALTHCHECK   |
 | [`docker-compose.yml`](./docker-compose.yml) | Services: `lab`, `webapp`, `tests`, `tinygpt-train`, `docs`, `jupyter`, `shell` |
 | [`.dockerignore`](./.dockerignore) | Excludes 30+ patterns from Docker build context                                |
 | [`.editorconfig`](./.editorconfig) | Per-language editor settings for 15+ file types (Python, Julia, Java, Rust, Go, C++, R, JS, …) |
-| [`.markdownlint.json`](.markdownlint-cli2.jsonc) | markdownlint config with project-specific proper-names dictionary             |
+| [`.markdownlint-cli2.jsonc`](./.markdownlint-cli2.jsonc) | markdownlint config with project-specific proper-names dictionary             |
 | [`.markdown-link-check.json`](./.markdown-link-check.json) | Link-checker config with retry + ignore patterns                              |
 | [`.gitignore`](./.gitignore)   | Python + Julia + Java + Rust + Go + Node.js + LaTeX + OS files                       |
 
@@ -682,6 +706,29 @@ make test-all       # All 8 languages (slow — needs Julia, Rust, Go, Java, C++
 make ci             # Simulate the full CI pipeline locally
 make test-coverage  # Generate HTML coverage report at htmlcov/index.html
 ```
+
+### Automated maintenance — three self-healing layers
+
+The repository repairs itself on three layers, so the tree on `main` is
+always the reference state:
+
+| Layer | What it fixes | Where |
+|-------|---------------|-------|
+| **Dependabot** — 11 update blocks over 12 manifests (pip, actions, 2× julia, npm, 2× cargo, gradle, 2× gomod, docker) with grouped PRs and scoped commit prefixes | dependency drift | [`.github/dependabot.yml`](./.github/dependabot.yml) |
+| **Repo Janitor** — rewrites moved links, repairs stale `directory:` entries in dependabot.yml and broken `nav:` paths in mkdocs.yml, re-applies ruff format, opens a PR weekly | repository structure | [`scripts/repo_janitor.py`](./scripts/repo_janitor.py) |
+| **Doctors** — daily CLI self-check, link graph gate, MANIFEST evidence gate, markdownlint + pre-commit hygiene gates; failures open labeled issues the day they happen | everything else | [`scripts/check_links.py`](./scripts/check_links.py) |
+
+The newest tool in the kit is [`scripts/fix_links.py`](./scripts/fix_links.py) — a fuzzy
+link repairer that resolves targets whose names drifted by punctuation
+(`Model-Z` → `Model — Z`, `RCDA-5` → `R - CDA — 5`, `Scripts` → `Script's`),
+wrong `../` depth and even emoji anchors. It is verify-first and idempotent:
+
+```bash
+make fix-links       # repair + re-verify in one target
+python scripts/check_links.py   # the gate cli-doctor runs daily
+```
+
+Full policy and coverage table: [docs/community/dependabot.md](./docs/community/dependabot.md).
 
 ---
 
@@ -1035,8 +1082,8 @@ Tracy–Widom / cos(u₁, v)).
 </em></sub></p>
 
 **Start here:** [the kit README](neural_lab/Gemma3-1B-IT/README.md) →
-[RCDA-5 report](neural_lab/Gemma3-1B-IT/R%20CDA%20-%205/Research/RCDA/RCDA5_REPORT.md) →
-[RCDA-7 report](neural_lab/Gemma3-1B-IT/R%20CDA%20-%207/Research/RCDA/RCDA7_REPORT.md).
+[RCDA-5 report](neural_lab/Gemma3-1B-IT/R%20-%20CDA%20%E2%80%94%205/Research/RCDA/RCDA5_REPORT.md) →
+[RCDA-7 report](neural_lab/Gemma3-1B-IT/R%20-%20CDA%20%E2%80%94%207/Research/RCDA/RCDA7_REPORT.md).
 
 ---
 

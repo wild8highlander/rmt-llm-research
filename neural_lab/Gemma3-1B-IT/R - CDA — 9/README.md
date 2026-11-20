@@ -59,16 +59,16 @@
 
 | Symbol | Value | Meaning | Source |
 |--------|-------|---------|--------|
-| probe replication | z_diff **212.6 / 219.8 / 205.1** | writers L10/11/12, identical to RCDA-8 | [`probe_report.json`](results/probe/probe_report.json) |
-| ρ_bad (base → formulas) | 0.60 → **0.10** | the defect collapses outright | [`part9_eval_formulas.json`](results/part9_eval_formulas.json) |
-| ρ_bad (base → pen) | 0.60 → 0.80 | the defect migrates again | [`part9_eval_pen.json`](results/part9_eval_pen.json) |
+| probe replication | z_diff **212.6 / 219.8 / 205.1** | writers L10/11/12, identical to RCDA-8 | [`probe_report.json`](../JSON%20Results/probe_report.json) |
+| ρ_bad (base → formulas) | 0.60 → **0.10** | the defect collapses outright | [`part9_eval_formulas.json`](../R%20-%20CDA%20%E2%80%94%208/results/part9_eval_formulas.json) |
+| ρ_bad (base → pen) | 0.60 → 0.80 | the defect migrates again | [`part9_eval_pen.json`](../R%20-%20CDA%20%E2%80%94%208/results/part9_eval_pen.json) |
 | fully repaired | **10/12** / 1/12 | formulas / pen | part9 evals |
 | mild-8 loop share | 0.164 → **0.096** / 0.725 | no migration / migration | part9 evals |
 | KL(base‖arm) | **0.079** / 0.421 | the price each arm pays | part9 evals |
 | PPL control | 10.9 → **10.6** / 11.4 | abilities preserved / drifted | part9 evals |
 | corpus val PPL | 369.2 → **99.7** / 447.1 | held-out formula blocks | part9 evals |
 | QA exact (held-out grid) | 9 → **4** / 0 of 57 | form learned, arithmetic not | part9 evals |
-| pen descent | **−97.2 %** | the formula as a loss, 150 steps | [`training_log.json`](results/pen_arm/training_log.json) |
+| pen descent | **−97.2 %** | the formula as a loss, 150 steps | [`training_log.json`](../JSON%20Results/training_log.json) |
 | trainable params | 6.52 M / 1.31 M | all-linear LoRA / band-masked LoRA | training logs |
 | RCDA-8 audit | **70/72 PASS · 1 FAIL** | rel-Frobenius claim understated ~3× | [`../audit/`](../audit/README.md) |
 
@@ -118,19 +118,19 @@ flowchart LR
 
 | Figure | What it shows |
 |--------|---------------|
-| [`fig01`](figures/fig01_probe_zdiff.png) | the behavioral probe re-run — writers L10/11/12, band L6–L16 |
-| [`fig02`](figures/fig02_phase_probe.png) | phase directions: cos(v_e, v_d) per layer, band highlighted |
-| [`fig03`](figures/fig03_arms_defect.png) | ρ_bad / loop_share / waste across the three arms |
-| [`fig04`](figures/fig04_abilities.png) | KL, PPL and the formula-knowledge axes |
-| [`fig05`](figures/fig05_pen_descent.png) | the formula melting (−97.2 %) and the anchor under its cap |
-| [`fig06`](figures/fig06_forensics.png) | the pen-arm edit per band tensor: rel-Frobenius, cos(u₁, v_deep) |
-| [`fig07`](figures/fig07_repair_matrix.png) | per-prompt loop_share heatmap — 10 repaired rows go dark |
-| [`fig08`](figures/fig08_dashboard.png) | the one-glance dashboard of the round |
-| [`fig09`](figures/fig09_sft_loss.png) | the formulas arm's LlamaFactory training loss |
-| [`fig10`](figures/fig10_formula_qa.png) | formula QA: exact vs partial matches per arm |
+| [`fig01`](../R%20-%20CDA%20%E2%80%94%208/figures/fig01_probe_zdiff.png) | the behavioral probe re-run — writers L10/11/12, band L6–L16 |
+| [`fig02`](../R%20-%20CDA%20%E2%80%94%208/figures/fig02_phase_probe.png) | phase directions: cos(v_e, v_d) per layer, band highlighted |
+| [`fig03`](../R%20-%20CDA%20%E2%80%94%208/figures/fig03_arms_defect.png) | ρ_bad / loop_share / waste across the three arms |
+| [`fig04`](../R%20-%20CDA%20%E2%80%94%208/figures/fig04_abilities.png) | KL, PPL and the formula-knowledge axes |
+| [`fig05`](../R%20-%20CDA%20%E2%80%94%208/figures/fig05_pen_descent.png) | the formula melting (−97.2 %) and the anchor under its cap |
+| [`fig06`](../R%20-%20CDA%20%E2%80%94%208/figures/fig06_forensics.png) | the pen-arm edit per band tensor: rel-Frobenius, cos(u₁, v_deep) |
+| [`fig07`](../R%20-%20CDA%20%E2%80%94%208/figures/fig07_repair_matrix.png) | per-prompt loop_share heatmap — 10 repaired rows go dark |
+| [`fig08`](../R%20-%20CDA%20%E2%80%94%208/figures/fig08_dashboard.png) | the one-glance dashboard of the round |
+| [`fig09`](../R%20-%20CDA%20%E2%80%94%208/figures/fig09_sft_loss.png) | the formulas arm's LlamaFactory training loss |
+| [`fig10`](../R%20-%20CDA%20%E2%80%94%208/figures/fig10_formula_qa.png) | formula QA: exact vs partial matches per arm |
 
 Everything is rebuilt from the committed JSONs by
-[`scripts/make_figures.py`](scripts/make_figures.py) — nothing hand-typed.
+[`scripts/make_figures.py`](../R%20-%20CDA%20%E2%80%94%208/scripts/make_figures.py) — nothing hand-typed.
 
 ---
 
@@ -140,11 +140,11 @@ Everything is rebuilt from the committed JSONs by
 |------|------------------|
 | [`RCDA9_REPORT.md`](RCDA9_REPORT.md) | **the full scientific report** of the round |
 | [`MONOGRAPH_RESTORE_NOTES.md`](MONOGRAPH_RESTORE_NOTES.md) | how the twelve DOCX editions were recovered from git history (blob SHAs) |
-| [`data/`](data) | the frozen protocol sets, the formula corpus (train/val/QA), `dataset_info.json`, the corpus manifest |
-| [`configs/`](configs) | LlamaFactory YAMLs: the CPU validation run and the full GPU recipe |
-| [`scripts/`](scripts) | the resumable pipeline: probe → corpus → arms → evaluator → summary → figures |
-| [`results/`](results) | every JSON this round's tables read + per-prompt generations + both LoRA adapters |
-| [`figures/`](figures) | 10 static figures + 6 animations, all rebuilt from the JSONs |
+| [`data/`](../R%20-%20CDA%20%E2%80%94%208/data) | the frozen protocol sets, the formula corpus (train/val/QA), `dataset_info.json`, the corpus manifest |
+| [`configs/`](../R%20-%20CDA%20%E2%80%94%208/configs) | LlamaFactory YAMLs: the CPU validation run and the full GPU recipe |
+| [`scripts/`](../R%20-%20CDA%20%E2%80%94%208/scripts) | the resumable pipeline: probe → corpus → arms → evaluator → summary → figures |
+| [`results/`](../R%20-%20CDA%20%E2%80%94%208/results) | every JSON this round's tables read + per-prompt generations + both LoRA adapters |
+| [`figures/`](../R%20-%20CDA%20%E2%80%94%208/figures) | 10 static figures + 6 animations, all rebuilt from the JSONs |
 | [`../audit/`](../audit/README.md) | the static audit of the RCDA-8 round (70/72 PASS, 1 FAIL documented) |
 
 ---
@@ -190,7 +190,7 @@ model = PeftModel.from_pretrained(base_model, "results/formulas_arm/gemma3_formu
   were moved). Formulas were extracted verbatim — numbered equations with
   one line of context, LaTeX theorems, module docstrings and the library's
   own computed pairs. Two honest notes live in
-  [`data/corpus_manifest.json`](data/corpus_manifest.json): the tinygpt
+  [`data/corpus_manifest.json`](../R%20-%20CDA%20%E2%80%94%208/data/corpus_manifest.json): the tinygpt
   RULES table mislabeled E[F1] as E[F2] (fixed here against the code), and
   the RU editions of M03/M04 carry machine-translation damage (formulas
   taken from the EN editions for those two).

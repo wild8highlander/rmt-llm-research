@@ -21,10 +21,10 @@ Everything about turning the shipped archives back into a working model.
 
 | Artifact | Folder | What it is | How to apply |
 |----------|--------|------------|--------------|
-| fp16 deltas (validation layer) | [`../Model-ZIP/`](../Model-ZIP/README.md) | `W′ − W` of the three RCDA variants + the v-directions, 35.6 MB | `Code/gemma_apply_deltas.py` |
-| full fine-tuned model | [`../Model-Z/`](../Model-Z/README.md) | the RCDA-5 SGD arm, base + trained o_proj L10–12, 1.59 GB in 17 self-assembling volumes | `cat` + `unzip` + the unpack script |
+| fp16 deltas (validation layer) | [`../Model-ZIP/`](../Model%20ZIP/README.md) | `W′ − W` of the three RCDA variants + the v-directions, 35.6 MB | `Code/gemma_apply_deltas.py` |
+| full fine-tuned model | [`../Model-Z/`](../Model%20%E2%80%94%20Z/README.md) | the RCDA-5 SGD arm, base + trained o_proj L10–12, 1.59 GB in 17 self-assembling volumes | `cat` + `unzip` + the unpack script |
 | LoRA adapters (RCDA-8) | [`../LlamaFactory/adapters/`](../LlamaFactory/adapters/) | peft adapters of the RCDA-8 formula arm and the SFT data arm | `PeftModel.from_pretrained(base, path)` |
-| LoRA adapters (RCDA-9) | [`../RCDA-9/results/`](../RCDA-9/results) | the formula-corpus arm (10/12 repaired) + the pen re-run | `PeftModel.from_pretrained(base, path)` |
+| LoRA adapters (RCDA-9) | [`../RCDA-9/results/`](../R%20-%20CDA%20%E2%80%94%208/results) | the formula-corpus arm (10/12 repaired) + the pen re-run | `PeftModel.from_pretrained(base, path)` |
 
 ```mermaid
 flowchart LR

@@ -1,0 +1,19 @@
+# =============================================================================
+# requirements-stages.txt — runtime + test dependencies for neural_lab/stages.
+#
+# Mirrors the `stages` and `stages-dev` extras of pyproject.toml so the
+# stages CI lane (.github/workflows/stages.yml) and local `make test-stages`
+# share one dependency set. torch is listed here too for local installs;
+# CI installs the CPU wheel first, which satisfies the same constraint.
+#
+# Sorted alphabetically (enforced by the pre-commit requirements-txt-fixer).
+# =============================================================================
+datasets>=2.0
+hypothesis>=6.0
+jsonschema>=4.0
+pytest>=7.0
+pyyaml>=6.0
+scipy>=1.10
+torch>=2.2
+tqdm>=4.65
+transformers>=4.40

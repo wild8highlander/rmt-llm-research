@@ -25,7 +25,7 @@ tightened from β=10/cap=1.0 to **β=20/cap=0.5** (half the tolerated drift).
 between RCDA-5 and RCDA-6 on the strict full protocol (loop_share 0.8776,
 waste 84.2, ρ_bad 0.9375) with KL 0.011 and PPL parity; relative TW pass ×6;
 the deep edit aligns with v (|cos(u₁, v)| up to 0.86). Reading the three
-rounds together ([`fig14`](../Graphic/fig14_leverage_chart.png)): RCDA-7 buys
+rounds together ([`fig14`](../Graphics/fig14_leverage_chart.png)): RCDA-7 buys
 its descent at the lowest KL per point of enforcement — the lever to keep when
 the anchor budget matters, and the configuration the Gemma-scale run should
 inherit.
