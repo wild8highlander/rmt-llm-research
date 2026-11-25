@@ -1,0 +1,120 @@
+{
+ "round": "router_reject",
+ "arm": "reject_row",
+ "head": {
+  "groups": [
+   "latin",
+   "cjk",
+   "rtl",
+   "world",
+   "reject"
+  ],
+  "n_params_added": 193,
+  "trainable_rows": [
+   4
+  ]
+ },
+ "F4_fit": {
+  "nontext_reject_rate": 1.0,
+  "nontext_residual_routes": {
+   "latin": 0,
+   "cjk": 0,
+   "rtl": 0,
+   "world": 0
+  },
+  "reject_margin_nontext_mean": 3.971,
+  "reject_margin_nontext_min": 0.503,
+  "text_route_acc": 1.0,
+  "reject_win_rate_text": 0.0,
+  "reject_margin_text_mean": -11.124,
+  "reject_margin_text_max": -7.165,
+  "text_logits_mse_vs_base": null
+ },
+ "F4_ability": {
+  "fit_route_acc": 1.0,
+  "fit_reject_wins": 0,
+  "fit_n": 80,
+  "clean_route_acc": 0.9667,
+  "clean_reject_wins": 0,
+  "clean_n": 120,
+  "control_route_acc": 1.0,
+  "control_reject_wins": 0,
+  "control_n": 40,
+  "reject_win_rate_ability": 0.0
+ },
+ "F4_transfer": {
+  "structured_reject_rate": 0.8333,
+  "structured_residual_routes": {
+   "latin": 7,
+   "cjk": 9,
+   "rtl": 4,
+   "world": 0
+  },
+  "noise_reject_rate": 0.9,
+  "noise_residual_routes": {
+   "latin": 5,
+   "cjk": 0,
+   "rtl": 0,
+   "world": 1
+  },
+  "blank_reject_rate": 1.0,
+  "blank_residual_routes": {
+   "latin": 0,
+   "cjk": 0,
+   "rtl": 0,
+   "world": 0
+  },
+  "mean_reject_rate": 0.9111
+ },
+ "F4_base_reference": {
+  "nontext_route_rate": 1.0,
+  "nontext_routed_to": {
+   "latin": 20,
+   "cjk": 11,
+   "rtl": 4,
+   "world": 5
+  },
+  "route_error_rate": 0.0,
+  "ability_route_acc": {
+   "clean": 0.9667,
+   "control": 1.0
+  },
+  "note": "base re-measured on the same features (deployed int8 router); matches probe_report.json"
+ },
+ "gates": {
+  "G1_script_rows": "bit-identical to base (exact by construction)",
+  "G1_script_rows_pass": true,
+  "G1_ability": "clean 0.9667 (base 0.9667), control 1.0 (base 1.0), reject wins 0",
+  "G1_ability_pass": true,
+  "G1_pass": true,
+  "G2_flip": "flip head untouched (bitwise, verified post-export)",
+  "G2_pass": true,
+  "G3_trunk": "all non-head initializers array-identical (post-export)",
+  "G3_pass": true,
+  "G4_cure": "fit_reject=1.0 reject_win_text=0.0",
+  "G4_pass": true,
+  "pass": true
+ },
+ "head_spectrum": {
+  "lambda_max": 0.094216,
+  "lambda_plus": 0.025416,
+  "lambda_max_over_lambda_plus": 3.71,
+  "n_spikes_above_2lambda_plus": 1,
+  "single_spike": true,
+  "sigma1_share": 1.0,
+  "cos_v1_edit_w_init": 0.5692
+ },
+ "export": {
+  "path": "Model/router_reject.onnx",
+  "n_outputs": 5,
+  "trunk_arrays_identical": true,
+  "flip_head_bit_identical": true,
+  "group_rows0_3_max_abs_diff_vs_base": 0.0,
+  "flip_outputs_bitwise_equal_on_smoke": true,
+  "sha256": "727fe250430b171d3dd6195f24a89564d3a752efe79b53a0e718771f0e8fc92e",
+  "round": "router_reject",
+  "winner_arm": "reject_row"
+ },
+ "n_rows": 570,
+ "training_log_ref": "Results/router_reject_training_log.json"
+}

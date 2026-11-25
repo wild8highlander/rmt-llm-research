@@ -1,0 +1,36 @@
+{
+ "arm": "classic",
+ "F1_phantom_rate": 0.0095,
+ "F1_phantom_char_rate": 0.0095,
+ "F1_blank_specificity": 1.0,
+ "F2_loop": {
+  "rho": 0.0,
+  "mean_loop_share": 0.0,
+  "loop_waste_mean": 0.0,
+  "per_traj_loop_share": [
+   0.0,
+   0.0
+  ],
+  "threshold": 0.5
+ },
+ "F3_cer_clean": 0.0094,
+ "F3_cer_degraded": 0.1001,
+ "F3_cer_control": 0.0114,
+ "F3_exact_match_clean": 0.8667,
+ "F6_auc_confidence": 0.001,
+ "F6_auc_geometry": 0.8575,
+ "F6_n_frames": 17246,
+ "control_logits_mse": 0.481529,
+ "control_kl_base_to_arm": 0.009486,
+ "n_changed_tensors": 1,
+ "spectral": {
+  "mix_fc2.2.weight": {
+   "rel_frobenius": 0.03441,
+   "n_weights": 73728,
+   "tw_gate_dks": -0.0001,
+   "tw_verdict": "pass",
+   "cos_u1_v": 0.3214,
+   "sigma1_share": 0.4446
+  }
+ }
+}

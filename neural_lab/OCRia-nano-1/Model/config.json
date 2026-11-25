@@ -1,0 +1,18 @@
+{
+  "name": "OCRia-nano-1",
+  "package": "ocria-nano",
+  "library": "liteparse",
+  "install": "lit models pull ocria-nano",
+  "runtime": "onnxruntime",
+  "components": {
+    "detector": "det.onnx",
+    "router": "router.onnx",
+    "recognizers": {
+      "latin": "rec_latin.onnx",
+      "cjk": "rec_cjk.onnx",
+      "rtl": "rec_rtl.onnx",
+      "world": "rec_world.onnx"
+    },
+    "layout": ["tablenet.onnx", "tablenet.bin"]
+  }
+}

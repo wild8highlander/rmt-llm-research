@@ -1,0 +1,7 @@
+{
+ "n_crops": 48,
+ "exact_string_parity": 0.9792,
+ "mean_abs_conf_deviation": 0.007861,
+ "max_abs_conf_deviation": 0.01745,
+ "note": "fp32 rebuild of the int8 QDQ graph; uint8 activation quantizers with zero_point=0 are exact ReLUs, so the fp32 refresh matches the deployed graph up to quantization round-off of the conv arithmetic."
+}

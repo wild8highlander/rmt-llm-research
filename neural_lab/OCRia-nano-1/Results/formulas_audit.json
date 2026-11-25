@@ -1,0 +1,661 @@
+{
+ "model": "OCRia-nano-1 rec_latin (fp32 rebuild)",
+ "matrices": {
+  "stem/stem.2/Relu": {
+   "shape": [
+    32,
+    1
+   ],
+   "q": 0.0312,
+   "sigma2": 0.1941,
+   "lambda_minus": 0.1316,
+   "lambda_plus": 0.2688,
+   "ks_distance": 0.4811,
+   "silverstein_residual": 7.71e-16,
+   "lambda_max": 0.1941,
+   "outlier_ratio": 0.722
+  },
+  "body/body.0/act/Relu": {
+   "shape": [
+    32,
+    1
+   ],
+   "q": 0.0312,
+   "sigma2": 0.47,
+   "lambda_minus": 0.3185,
+   "lambda_plus": 0.6509,
+   "ks_distance": 0.4811,
+   "silverstein_residual": 4.45e-16,
+   "lambda_max": 0.47,
+   "outlier_ratio": 0.722
+  },
+  "body/body.0/act_1/Relu": {
+   "shape": [
+    64,
+    32
+   ],
+   "q": 0.5,
+   "sigma2": 0.02006,
+   "lambda_minus": 0.001721,
+   "lambda_plus": 0.05846,
+   "ks_distance": 0.2862,
+   "silverstein_residual": 4.48e-16,
+   "lambda_max": 0.098,
+   "outlier_ratio": 1.676
+  },
+  "body/body.1/act/Relu": {
+   "shape": [
+    64,
+    1
+   ],
+   "q": 0.0156,
+   "sigma2": 0.1451,
+   "lambda_minus": 0.1111,
+   "lambda_plus": 0.1837,
+   "ks_distance": 0.4866,
+   "silverstein_residual": 4.44e-16,
+   "lambda_max": 0.1451,
+   "outlier_ratio": 0.79
+  },
+  "body/body.1/pw/Conv": {
+   "shape": [
+    64,
+    64
+   ],
+   "q": 1.0,
+   "sigma2": 0.09644,
+   "lambda_minus": 0.0,
+   "lambda_plus": 0.3858,
+   "ks_distance": 98.9414,
+   "silverstein_residual": 0.0,
+   "lambda_max": 1.062,
+   "outlier_ratio": 2.753
+  },
+  "body/body.2/act/Relu": {
+   "shape": [
+    64,
+    1
+   ],
+   "q": 0.0156,
+   "sigma2": 0.006889,
+   "lambda_minus": 0.005274,
+   "lambda_plus": 0.008719,
+   "ks_distance": 0.4866,
+   "silverstein_residual": 8.89e-16,
+   "lambda_max": 0.006889,
+   "outlier_ratio": 0.79
+  },
+  "body/body.2/act_1/Relu": {
+   "shape": [
+    128,
+    64
+   ],
+   "q": 0.5,
+   "sigma2": 0.006772,
+   "lambda_minus": 0.000581,
+   "lambda_plus": 0.01974,
+   "ks_distance": 0.2124,
+   "silverstein_residual": 3.38e-16,
+   "lambda_max": 0.03691,
+   "outlier_ratio": 1.87
+  },
+  "body/body.3/act/Relu": {
+   "shape": [
+    128,
+    1
+   ],
+   "q": 0.0078,
+   "sigma2": 0.3258,
+   "lambda_minus": 0.2707,
+   "lambda_plus": 0.3859,
+   "ks_distance": 0.4905,
+   "silverstein_residual": 1.11e-15,
+   "lambda_max": 0.3258,
+   "outlier_ratio": 0.844
+  },
+  "body/body.3/pw/Conv": {
+   "shape": [
+    128,
+    128
+   ],
+   "q": 1.0,
+   "sigma2": 0.007254,
+   "lambda_minus": 0.0,
+   "lambda_plus": 0.02901,
+   "ks_distance": 27.1698,
+   "silverstein_residual": 1.24e-16,
+   "lambda_max": 0.07184,
+   "outlier_ratio": 2.476
+  },
+  "body/body.4/act/Relu": {
+   "shape": [
+    128,
+    1
+   ],
+   "q": 0.0078,
+   "sigma2": 0.09449,
+   "lambda_minus": 0.07852,
+   "lambda_plus": 0.1119,
+   "ks_distance": 0.4905,
+   "silverstein_residual": 1.33e-15,
+   "lambda_max": 0.09449,
+   "outlier_ratio": 0.844
+  },
+  "body/body.4/pw/Conv": {
+   "shape": [
+    128,
+    128
+   ],
+   "q": 1.0,
+   "sigma2": 0.02924,
+   "lambda_minus": 0.0,
+   "lambda_plus": 0.1169,
+   "ks_distance": 54.4978,
+   "silverstein_residual": 2.22e-16,
+   "lambda_max": 0.2646,
+   "outlier_ratio": 2.263
+  },
+  "body/body.5/act/Relu": {
+   "shape": [
+    128,
+    1
+   ],
+   "q": 0.0078,
+   "sigma2": 0.0119,
+   "lambda_minus": 0.009893,
+   "lambda_plus": 0.0141,
+   "ks_distance": 0.4905,
+   "silverstein_residual": 1.38e-15,
+   "lambda_max": 0.0119,
+   "outlier_ratio": 0.844
+  },
+  "body/body.5/act_1/Relu": {
+   "shape": [
+    192,
+    128
+   ],
+   "q": 0.6667,
+   "sigma2": 0.002921,
+   "lambda_minus": 9.838e-05,
+   "lambda_plus": 0.00964,
+   "ks_distance": 0.1948,
+   "silverstein_residual": 2.29e-16,
+   "lambda_max": 0.02422,
+   "outlier_ratio": 2.513
+  },
+  "body/body.6/act/Relu": {
+   "shape": [
+    192,
+    1
+   ],
+   "q": 0.0052,
+   "sigma2": 1.168,
+   "lambda_minus": 1.005,
+   "lambda_plus": 1.342,
+   "ks_distance": 0.4922,
+   "silverstein_residual": 2.03e-15,
+   "lambda_max": 1.168,
+   "outlier_ratio": 0.87
+  },
+  "body/body.6/pw/Conv": {
+   "shape": [
+    192,
+    192
+   ],
+   "q": 1.0,
+   "sigma2": 0.005523,
+   "lambda_minus": 0.0,
+   "lambda_plus": 0.02209,
+   "ks_distance": 23.7186,
+   "silverstein_residual": 0.0,
+   "lambda_max": 0.04322,
+   "outlier_ratio": 1.956
+  },
+  "body/body.7/act/Relu": {
+   "shape": [
+    192,
+    1
+   ],
+   "q": 0.0052,
+   "sigma2": 0.2195,
+   "lambda_minus": 0.189,
+   "lambda_plus": 0.2524,
+   "ks_distance": 0.4922,
+   "silverstein_residual": 1.39e-17,
+   "lambda_max": 0.2195,
+   "outlier_ratio": 0.87
+  },
+  "body/body.7/pw/Conv": {
+   "shape": [
+    192,
+    192
+   ],
+   "q": 1.0,
+   "sigma2": 0.01797,
+   "lambda_minus": 0.0,
+   "lambda_plus": 0.07187,
+   "ks_distance": 42.7308,
+   "silverstein_residual": 1.67e-16,
+   "lambda_max": 0.1536,
+   "outlier_ratio": 2.137
+  },
+  "body/body.8/act/Relu": {
+   "shape": [
+    192,
+    1
+   ],
+   "q": 0.0052,
+   "sigma2": 0.001296,
+   "lambda_minus": 0.001116,
+   "lambda_plus": 0.00149,
+   "ks_distance": 0.4922,
+   "silverstein_residual": 2.47e-15,
+   "lambda_max": 0.001296,
+   "outlier_ratio": 0.87
+  },
+  "body/body.8/act_1/Relu": {
+   "shape": [
+    192,
+    192
+   ],
+   "q": 1.0,
+   "sigma2": 0.00131,
+   "lambda_minus": 0.0,
+   "lambda_plus": 0.005239,
+   "ks_distance": 11.5959,
+   "silverstein_residual": 0.0,
+   "lambda_max": 0.01283,
+   "outlier_ratio": 2.45
+  },
+  "mix/mix.0/act/Relu": {
+   "shape": [
+    192,
+    1
+   ],
+   "q": 0.0052,
+   "sigma2": 1.406,
+   "lambda_minus": 1.211,
+   "lambda_plus": 1.617,
+   "ks_distance": 0.4922,
+   "silverstein_residual": 2.22e-15,
+   "lambda_max": 1.406,
+   "outlier_ratio": 0.87
+  },
+  "mix/mix.0/act_1/Relu": {
+   "shape": [
+    384,
+    192
+   ],
+   "q": 0.5,
+   "sigma2": 0.05192,
+   "lambda_minus": 0.004454,
+   "lambda_plus": 0.1513,
+   "ks_distance": 0.141,
+   "silverstein_residual": 1.67e-16,
+   "lambda_max": 0.628,
+   "outlier_ratio": 4.15
+  },
+  "mix/mix.0/fc2/Conv": {
+   "shape": [
+    192,
+    384
+   ],
+   "q": 0.5,
+   "sigma2": 0.002541,
+   "lambda_minus": 0.000218,
+   "lambda_plus": 0.007406,
+   "ks_distance": 0.1276,
+   "silverstein_residual": 2.48e-16,
+   "lambda_max": 0.02034,
+   "outlier_ratio": 2.746
+  },
+  "mix/mix.1/act/Relu": {
+   "shape": [
+    192,
+    1
+   ],
+   "q": 0.0052,
+   "sigma2": 0.2041,
+   "lambda_minus": 0.1757,
+   "lambda_plus": 0.2346,
+   "ks_distance": 0.4922,
+   "silverstein_residual": 9.44e-16,
+   "lambda_max": 0.2041,
+   "outlier_ratio": 0.87
+  },
+  "mix/mix.1/act_1/Relu": {
+   "shape": [
+    384,
+    192
+   ],
+   "q": 0.5,
+   "sigma2": 0.0487,
+   "lambda_minus": 0.004178,
+   "lambda_plus": 0.1419,
+   "ks_distance": 0.0999,
+   "silverstein_residual": 3.51e-16,
+   "lambda_max": 0.6928,
+   "outlier_ratio": 4.881
+  },
+  "mix/mix.1/fc2/Conv": {
+   "shape": [
+    192,
+    384
+   ],
+   "q": 0.5,
+   "sigma2": 0.003897,
+   "lambda_minus": 0.0003343,
+   "lambda_plus": 0.01136,
+   "ks_distance": 0.1156,
+   "silverstein_residual": 1.11e-16,
+   "lambda_max": 0.0446,
+   "outlier_ratio": 3.928
+  },
+  "mix/mix.2/act/Relu": {
+   "shape": [
+    192,
+    1
+   ],
+   "q": 0.0052,
+   "sigma2": 0.1361,
+   "lambda_minus": 0.1171,
+   "lambda_plus": 0.1564,
+   "ks_distance": 0.4922,
+   "silverstein_residual": 1.11e-15,
+   "lambda_max": 0.1361,
+   "outlier_ratio": 0.87
+  },
+  "mix/mix.2/act_1/Relu": {
+   "shape": [
+    384,
+    192
+   ],
+   "q": 0.5,
+   "sigma2": 0.04582,
+   "lambda_minus": 0.003931,
+   "lambda_plus": 0.1335,
+   "ks_distance": 0.0928,
+   "silverstein_residual": 6.68e-16,
+   "lambda_max": 0.643,
+   "outlier_ratio": 4.816
+  },
+  "mix/mix.2/fc2/Conv": {
+   "shape": [
+    192,
+    384
+   ],
+   "q": 0.5,
+   "sigma2": 0.001334,
+   "lambda_minus": 0.0001144,
+   "lambda_plus": 0.003886,
+   "ks_distance": 0.237,
+   "silverstein_residual": 2.78e-16,
+   "lambda_max": 0.0128,
+   "outlier_ratio": 3.294
+  },
+  "head/Conv": {
+   "shape": [
+    792,
+    192
+   ],
+   "q": 0.2424,
+   "sigma2": 0.04727,
+   "lambda_minus": 0.01218,
+   "lambda_plus": 0.1053,
+   "ks_distance": 0.2184,
+   "silverstein_residual": 9.16e-16,
+   "lambda_max": 7.871,
+   "outlier_ratio": 74.756
+  }
+ },
+ "mp_summary": {
+  "n_matrices": 29,
+  "ks_median": 0.4905,
+  "ks_max": 98.9414,
+  "matrices_in_mp_bulk": 0,
+  "verdict": "TRAINED conv weights deviate from the MP bulk (median KS ~0.5) - exactly the 'freeness of trained weights stays open' caveat the parent monograph registers; the MP law is the right null model for ACTIVATION covariances (checked below) and for the bulk-preservation gate on edits, not for raw trained weights"
+ },
+ "mp_activation_covariance": {
+  "state": "mix2 features, RMSNorm-normalised, control corpus",
+  "q": 0.0538,
+  "sigma2": 0.07755,
+  "lambda_plus": 0.1177,
+  "ks_distance_bulk": 0.1331,
+  "n_outliers_above_edge": 130,
+  "verdict": "bulk pass - the normalised layer-operator covariance keeps an MP bulk with a finite signal subspace above the edge, the parent program's signal+bulk picture"
+ },
+ "bbp_spike_scans": {
+  "head/Conv": {
+   "theta_c": 0.4924,
+   "theta_v": 7.0434,
+   "lambda_ratio": 22.275,
+   "supercritical": true
+  }
+ },
+ "bbp_verdict": {
+  "supercritical": [
+   "head/Conv"
+  ],
+  "reading": "the classifier head is supercritical for the hallucination direction: theta_v / theta_c = 7.0434 / 0.4924 - the phantom-text direction is an intended BBP spike of the head matrix"
+ },
+ "bbp_outlier_check": {
+  "matrix": "head/Conv",
+  "q": 0.2424,
+  "mu_grid_over_theta_c": [
+   1.5,
+   2.0,
+   3.0,
+   4.0
+  ],
+  "closed_form": [
+   0.2227,
+   0.2754,
+   0.3816,
+   0.4882
+  ],
+  "pole_equation": [
+   0.2227,
+   0.2754,
+   0.3816,
+   0.4882
+  ],
+  "max_rel_residual": 1.19e-13,
+  "overlap_signal_subspace": [
+   0.9138,
+   0.938,
+   0.9605,
+   0.9711
+  ]
+ },
+ "tracy_widom": {
+  "note": "real activation/weight matrices -> F1 (beta=1) universality class per the parent's beta-correction; z-scores of lambda_max under the Johnstone centre/scale are reported per matrix - moderate positive z = ordinary TW-scale edge, huge z = structured outlier (the head)",
+  "lambda_max_zscores": {
+   "stem/stem.2/Relu": -1.6,
+   "body/body.0/act/Relu": -1.6,
+   "body/body.0/act_1/Relu": 14.01,
+   "body/body.1/act/Relu": -1.71,
+   "body/body.1/pw/Conv": 44.83,
+   "body/body.2/act/Relu": -1.71,
+   "body/body.2/act_1/Relu": 28.32,
+   "body/body.3/act/Relu": -1.79,
+   "body/body.3/pw/Conv": 59.75,
+   "body/body.4/act/Relu": -1.79,
+   "body/body.4/pw/Conv": 51.13,
+   "body/body.5/act/Relu": -1.79,
+   "body/body.5/act_1/Relu": 70.25,
+   "body/body.6/act/Relu": -1.82,
+   "body/body.6/pw/Conv": 50.7,
+   "body/body.7/act/Relu": -1.82,
+   "body/body.7/pw/Conv": 60.24,
+   "body/body.8/act/Relu": -1.82,
+   "body/body.8/act_1/Relu": 76.79,
+   "mix/mix.0/act/Relu": -1.82,
+   "mix/mix.0/act_1/Relu": 212.02,
+   "mix/mix.0/fc2/Conv": 117.54,
+   "mix/mix.1/act/Relu": -1.82,
+   "mix/mix.1/act_1/Relu": 261.18,
+   "mix/mix.1/fc2/Conv": 197.04,
+   "mix/mix.2/act/Relu": -1.82,
+   "mix/mix.2/act_1/Relu": 256.77,
+   "mix/mix.2/fc2/Conv": 154.41,
+   "head/Conv": 6513.08
+  },
+  "z_median": 28.32
+ },
+ "spectral_purity_base": {
+  "per_matrix": {
+   "stem/stem.2/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4811
+   },
+   "body/body.0/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4811
+   },
+   "body/body.0/act_1/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.2983
+   },
+   "body/body.1/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4866
+   },
+   "body/body.1/pw/Conv": {
+    "verdict": "violation",
+    "ks_distance": 98.927
+   },
+   "body/body.2/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4866
+   },
+   "body/body.2/act_1/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.2181
+   },
+   "body/body.3/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4905
+   },
+   "body/body.3/pw/Conv": {
+    "verdict": "violation",
+    "ks_distance": 27.1624
+   },
+   "body/body.4/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4905
+   },
+   "body/body.4/pw/Conv": {
+    "verdict": "violation",
+    "ks_distance": 54.4906
+   },
+   "body/body.5/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4905
+   },
+   "body/body.5/act_1/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.1982
+   },
+   "body/body.6/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4922
+   },
+   "body/body.6/pw/Conv": {
+    "verdict": "violation",
+    "ks_distance": 23.7137
+   },
+   "body/body.7/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4922
+   },
+   "body/body.7/pw/Conv": {
+    "verdict": "violation",
+    "ks_distance": 42.726
+   },
+   "body/body.8/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4922
+   },
+   "body/body.8/act_1/Relu": {
+    "verdict": "violation",
+    "ks_distance": 11.5912
+   },
+   "mix/mix.0/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4922
+   },
+   "mix/mix.0/act_1/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.1429
+   },
+   "mix/mix.0/fc2/Conv": {
+    "verdict": "violation",
+    "ks_distance": 0.1292
+   },
+   "mix/mix.1/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4922
+   },
+   "mix/mix.1/act_1/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.1017
+   },
+   "mix/mix.1/fc2/Conv": {
+    "verdict": "violation",
+    "ks_distance": 0.1173
+   },
+   "mix/mix.2/act/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.4922
+   },
+   "mix/mix.2/act_1/Relu": {
+    "verdict": "violation",
+    "ks_distance": 0.0946
+   },
+   "mix/mix.2/fc2/Conv": {
+    "verdict": "violation",
+    "ks_distance": 0.2387
+   },
+   "head/Conv": {
+    "verdict": "violation",
+    "ks_distance": 0.2201
+   }
+  },
+  "protocol": "base KS recorded per tensor; the benchmark arms pass the gate iff KS(trained) - KS(base) stays below 0.05 on every edited tensor (the parent kits' relative TW verdict)"
+ },
+ "hallucination_split": {
+  "state_space": "mix2 features, 24 structured crops",
+  "n_states": 1988,
+  "q": 0.0966,
+  "n_signal_dirs": 28,
+  "n_bulk_dirs": 164,
+  "noise_signal_ratio_of_v": 0.1611,
+  "verdict": "v is bulk-dominated"
+ },
+ "entropy_response": {
+  "matrix": "head/Conv",
+  "tau": 0.3,
+  "formula_delta_H": -2.92873,
+  "monte_carlo_delta_H": -2.9512,
+  "abs_err": 0.0225,
+  "note": "exact near-uniform response -(1/2)Tr((diag(p)-pp^T)A) vs Monte-Carlo E[H(softmax(z0+Wxi/tau))] - H(uniform); the isotropic closed form of the parent library is a rank-deficient approximation for the 792x192 head and is not used for the verdict"
+ },
+ "shrinker": {
+  "matrix": "head/Conv",
+  "gavish_donoho_rel_err": 0.0839,
+  "inverse_bbp_rel_err": 0.0467,
+  "note": "relative Frobenius error of the two exact spectral reconstruction rules (parent Ch.10) applied to the head's Wishart spectrum; the inverse-BBP shrinker is the one the extended training arm projects its edits through"
+ },
+ "caputo_ncrit": {
+  "gamma_1": 14.134725,
+  "theta_b_deg": 7.07,
+  "beta_caputo": 0.5,
+  "n_crit": 114.55,
+  "ocria_timeline_frames_mean": 121,
+  "reading": "N_crit counts TIMELINE FRAMES for OCR (the decoding horizon per crop), not transformer layers: a 480-px line crops to ~121 CTC frames - below N_crit, so the Caputo inevitability regime is not reached per line; the phantom rate observed (12% of structured crops) is the sub-critical confabulation the formula-as-loss can suppress"
+ },
+ "rmsnorm_trace": {
+  "applicable": false,
+  "note": "OCRia has no RMSNorm layer; the parent's Step-2 trace lemma (Tr C = N) is reported N/A rather than faked"
+ }
+}

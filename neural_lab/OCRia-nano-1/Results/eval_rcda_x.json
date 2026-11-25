@@ -1,0 +1,57 @@
+{
+ "arm": "rcda_x",
+ "F1_phantom_rate": 0.0333,
+ "F1_phantom_char_rate": 0.0476,
+ "F1_blank_specificity": 1.0,
+ "F2_loop": {
+  "rho": 0.0,
+  "mean_loop_share": 0.0,
+  "loop_waste_mean": 0.0,
+  "per_traj_loop_share": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "threshold": 0.5
+ },
+ "F3_cer_clean": 0.0095,
+ "F3_cer_degraded": 0.1096,
+ "F3_cer_control": 0.0172,
+ "F3_exact_match_clean": 0.85,
+ "F6_auc_confidence": 0.0083,
+ "F6_auc_geometry": 0.9017,
+ "F6_n_frames": 17014,
+ "control_logits_mse": 1.370705,
+ "control_kl_base_to_arm": 0.08322,
+ "n_changed_tensors": 3,
+ "spectral": {
+  "mix_fc2.0.weight": {
+   "rel_frobenius": 0.02896,
+   "n_weights": 73728,
+   "tw_gate_dks": -0.0002,
+   "tw_verdict": "pass",
+   "cos_u1_v": 0.7834,
+   "sigma1_share": 0.7498
+  },
+  "mix_fc2.1.weight": {
+   "rel_frobenius": 0.02239,
+   "n_weights": 73728,
+   "tw_gate_dks": -0.0,
+   "tw_verdict": "pass",
+   "cos_u1_v": 0.8486,
+   "sigma1_share": 0.7329
+  },
+  "mix_fc2.2.weight": {
+   "rel_frobenius": 0.02942,
+   "n_weights": 73728,
+   "tw_gate_dks": 0.0006,
+   "tw_verdict": "pass",
+   "cos_u1_v": 0.7888,
+   "sigma1_share": 0.7279
+  }
+ }
+}

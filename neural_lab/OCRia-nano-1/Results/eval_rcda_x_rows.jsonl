@@ -1,0 +1,430 @@
+{"batch": "structured", "id": "structured_0000", "text": "e", "n_chars": 1, "mean_conf": 0.5261, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0001", "text": "", "n_chars": 0, "mean_conf": 0.9298, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0002", "text": "", "n_chars": 0, "mean_conf": 0.9345, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0003", "text": "", "n_chars": 0, "mean_conf": 0.8984, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0004", "text": "", "n_chars": 0, "mean_conf": 0.8889, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0005", "text": "", "n_chars": 0, "mean_conf": 0.8569, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0006", "text": "", "n_chars": 0, "mean_conf": 0.8851, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0007", "text": "", "n_chars": 0, "mean_conf": 0.8784, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0008", "text": "d", "n_chars": 1, "mean_conf": 0.2663, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0009", "text": "", "n_chars": 0, "mean_conf": 0.8625, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0010", "text": "", "n_chars": 0, "mean_conf": 0.9172, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0011", "text": "", "n_chars": 0, "mean_conf": 0.8576, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0012", "text": "", "n_chars": 0, "mean_conf": 0.877, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0013", "text": "", "n_chars": 0, "mean_conf": 0.8989, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0014", "text": "", "n_chars": 0, "mean_conf": 0.9124, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0015", "text": "", "n_chars": 0, "mean_conf": 0.9262, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0016", "text": "", "n_chars": 0, "mean_conf": 0.9318, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0017", "text": "", "n_chars": 0, "mean_conf": 0.9034, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0018", "text": "", "n_chars": 0, "mean_conf": 0.9313, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0019", "text": "", "n_chars": 0, "mean_conf": 0.9399, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0020", "text": "", "n_chars": 0, "mean_conf": 0.9365, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0021", "text": "", "n_chars": 0, "mean_conf": 0.9211, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0022", "text": "", "n_chars": 0, "mean_conf": 0.9051, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0023", "text": "", "n_chars": 0, "mean_conf": 0.9523, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0024", "text": "", "n_chars": 0, "mean_conf": 0.9228, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0025", "text": "", "n_chars": 0, "mean_conf": 0.8704, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0026", "text": "", "n_chars": 0, "mean_conf": 0.9262, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0027", "text": "", "n_chars": 0, "mean_conf": 0.9097, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0028", "text": "", "n_chars": 0, "mean_conf": 0.8966, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0029", "text": "", "n_chars": 0, "mean_conf": 0.9042, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0030", "text": "", "n_chars": 0, "mean_conf": 0.939, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0031", "text": "", "n_chars": 0, "mean_conf": 0.9217, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0032", "text": "", "n_chars": 0, "mean_conf": 0.9095, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0033", "text": "", "n_chars": 0, "mean_conf": 0.8707, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0034", "text": "", "n_chars": 0, "mean_conf": 0.895, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0035", "text": "", "n_chars": 0, "mean_conf": 0.9168, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0036", "text": "", "n_chars": 0, "mean_conf": 0.9237, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0037", "text": "", "n_chars": 0, "mean_conf": 0.888, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0038", "text": "", "n_chars": 0, "mean_conf": 0.8726, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0039", "text": "", "n_chars": 0, "mean_conf": 0.8734, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0040", "text": "", "n_chars": 0, "mean_conf": 0.914, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0041", "text": "", "n_chars": 0, "mean_conf": 0.8937, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0042", "text": "", "n_chars": 0, "mean_conf": 0.9024, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0043", "text": "", "n_chars": 0, "mean_conf": 0.8518, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0044", "text": "", "n_chars": 0, "mean_conf": 0.8963, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0045", "text": "", "n_chars": 0, "mean_conf": 0.8791, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0046", "text": "", "n_chars": 0, "mean_conf": 0.8977, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0047", "text": "  ", "n_chars": 2, "mean_conf": 0.5185, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0048", "text": "", "n_chars": 0, "mean_conf": 0.8933, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0049", "text": "", "n_chars": 0, "mean_conf": 0.7928, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0050", "text": "", "n_chars": 0, "mean_conf": 0.8693, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0051", "text": "", "n_chars": 0, "mean_conf": 0.8127, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0052", "text": "", "n_chars": 0, "mean_conf": 0.927, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0053", "text": "", "n_chars": 0, "mean_conf": 0.8457, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0054", "text": "", "n_chars": 0, "mean_conf": 0.8993, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0055", "text": "", "n_chars": 0, "mean_conf": 0.9267, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0056", "text": "", "n_chars": 0, "mean_conf": 0.9042, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0057", "text": "", "n_chars": 0, "mean_conf": 0.9195, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0058", "text": "", "n_chars": 0, "mean_conf": 0.8236, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0059", "text": "", "n_chars": 0, "mean_conf": 0.8361, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0060", "text": "", "n_chars": 0, "mean_conf": 0.8328, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0061", "text": "", "n_chars": 0, "mean_conf": 0.919, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0062", "text": "", "n_chars": 0, "mean_conf": 0.8806, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0063", "text": "", "n_chars": 0, "mean_conf": 0.9053, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0064", "text": "", "n_chars": 0, "mean_conf": 0.9004, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0065", "text": "", "n_chars": 0, "mean_conf": 0.8981, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0066", "text": "", "n_chars": 0, "mean_conf": 0.8921, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0067", "text": "", "n_chars": 0, "mean_conf": 0.9056, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0068", "text": "", "n_chars": 0, "mean_conf": 0.9076, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0069", "text": "", "n_chars": 0, "mean_conf": 0.9535, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0070", "text": "", "n_chars": 0, "mean_conf": 0.9089, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0071", "text": "", "n_chars": 0, "mean_conf": 0.9063, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0072", "text": "", "n_chars": 0, "mean_conf": 0.8816, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0073", "text": "", "n_chars": 0, "mean_conf": 0.8721, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0074", "text": "", "n_chars": 0, "mean_conf": 0.8774, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0075", "text": "", "n_chars": 0, "mean_conf": 0.8817, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0076", "text": "", "n_chars": 0, "mean_conf": 0.8895, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0077", "text": "", "n_chars": 0, "mean_conf": 0.8759, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0078", "text": "", "n_chars": 0, "mean_conf": 0.8589, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0079", "text": "", "n_chars": 0, "mean_conf": 0.8799, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0080", "text": "", "n_chars": 0, "mean_conf": 0.8748, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0081", "text": "", "n_chars": 0, "mean_conf": 0.8773, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0082", "text": "", "n_chars": 0, "mean_conf": 0.8893, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0083", "text": "", "n_chars": 0, "mean_conf": 0.8937, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0084", "text": "", "n_chars": 0, "mean_conf": 0.8991, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0085", "text": "", "n_chars": 0, "mean_conf": 0.9357, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0086", "text": "f", "n_chars": 1, "mean_conf": 0.3831, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0087", "text": "", "n_chars": 0, "mean_conf": 0.8852, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0088", "text": "", "n_chars": 0, "mean_conf": 0.8906, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0089", "text": "", "n_chars": 0, "mean_conf": 0.8831, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0090", "text": "", "n_chars": 0, "mean_conf": 0.8837, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0091", "text": "", "n_chars": 0, "mean_conf": 0.938, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0092", "text": "", "n_chars": 0, "mean_conf": 0.9611, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0093", "text": "", "n_chars": 0, "mean_conf": 0.8977, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0094", "text": "", "n_chars": 0, "mean_conf": 0.9432, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0095", "text": "O", "n_chars": 1, "mean_conf": 0.4785, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0096", "text": "", "n_chars": 0, "mean_conf": 0.8906, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0097", "text": "", "n_chars": 0, "mean_conf": 0.9334, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0098", "text": "", "n_chars": 0, "mean_conf": 0.9404, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0099", "text": "", "n_chars": 0, "mean_conf": 0.9596, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0100", "text": "", "n_chars": 0, "mean_conf": 0.9318, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0101", "text": "", "n_chars": 0, "mean_conf": 0.91, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0102", "text": "IAO", "n_chars": 3, "mean_conf": 0.3748, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0103", "text": "", "n_chars": 0, "mean_conf": 0.9627, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0104", "text": "", "n_chars": 0, "mean_conf": 0.945, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0105", "text": "", "n_chars": 0, "mean_conf": 0.9662, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0106", "text": "", "n_chars": 0, "mean_conf": 0.9535, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0107", "text": "", "n_chars": 0, "mean_conf": 0.9609, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0108", "text": "", "n_chars": 0, "mean_conf": 0.9259, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0109", "text": "", "n_chars": 0, "mean_conf": 0.8909, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0110", "text": "I", "n_chars": 1, "mean_conf": 0.2796, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0111", "text": "", "n_chars": 0, "mean_conf": 0.9181, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0112", "text": "", "n_chars": 0, "mean_conf": 0.9383, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0113", "text": "", "n_chars": 0, "mean_conf": 0.8927, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0114", "text": "", "n_chars": 0, "mean_conf": 0.9104, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0115", "text": "", "n_chars": 0, "mean_conf": 0.9113, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0116", "text": "", "n_chars": 0, "mean_conf": 0.9593, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0117", "text": "", "n_chars": 0, "mean_conf": 0.9536, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0118", "text": "", "n_chars": 0, "mean_conf": 0.9162, "loop_share": 0.0, "gt": null}
+{"batch": "structured", "id": "structured_0119", "text": "", "n_chars": 0, "mean_conf": 0.8901, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0000", "text": "", "n_chars": 0, "mean_conf": 0.926, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0001", "text": "", "n_chars": 0, "mean_conf": 0.8846, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0002", "text": "", "n_chars": 0, "mean_conf": 0.8704, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0003", "text": "", "n_chars": 0, "mean_conf": 0.8315, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0004", "text": "", "n_chars": 0, "mean_conf": 0.7452, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0005", "text": "", "n_chars": 0, "mean_conf": 0.9025, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0006", "text": "", "n_chars": 0, "mean_conf": 0.8861, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0007", "text": "", "n_chars": 0, "mean_conf": 0.9107, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0008", "text": "", "n_chars": 0, "mean_conf": 0.8922, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0009", "text": "", "n_chars": 0, "mean_conf": 0.8344, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0010", "text": "", "n_chars": 0, "mean_conf": 0.6854, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0011", "text": "", "n_chars": 0, "mean_conf": 0.9302, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0012", "text": "", "n_chars": 0, "mean_conf": 0.9047, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0013", "text": "", "n_chars": 0, "mean_conf": 0.9264, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0014", "text": "", "n_chars": 0, "mean_conf": 0.9019, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0015", "text": "", "n_chars": 0, "mean_conf": 0.8336, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0016", "text": "", "n_chars": 0, "mean_conf": 0.7237, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0017", "text": "", "n_chars": 0, "mean_conf": 0.9144, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0018", "text": "", "n_chars": 0, "mean_conf": 0.9132, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0019", "text": "", "n_chars": 0, "mean_conf": 0.8853, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0020", "text": "", "n_chars": 0, "mean_conf": 0.9027, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0021", "text": "", "n_chars": 0, "mean_conf": 0.833, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0022", "text": "", "n_chars": 0, "mean_conf": 0.7163, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0023", "text": "", "n_chars": 0, "mean_conf": 0.9002, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0024", "text": "", "n_chars": 0, "mean_conf": 0.9185, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0025", "text": "", "n_chars": 0, "mean_conf": 0.8815, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0026", "text": "", "n_chars": 0, "mean_conf": 0.8613, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0027", "text": "", "n_chars": 0, "mean_conf": 0.8353, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0028", "text": "", "n_chars": 0, "mean_conf": 0.7362, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0029", "text": "", "n_chars": 0, "mean_conf": 0.9137, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0030", "text": "", "n_chars": 0, "mean_conf": 0.9375, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0031", "text": "", "n_chars": 0, "mean_conf": 0.8809, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0032", "text": "", "n_chars": 0, "mean_conf": 0.9034, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0033", "text": "", "n_chars": 0, "mean_conf": 0.8366, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0034", "text": "", "n_chars": 0, "mean_conf": 0.7075, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0035", "text": "", "n_chars": 0, "mean_conf": 0.8949, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0036", "text": "", "n_chars": 0, "mean_conf": 0.8719, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0037", "text": "", "n_chars": 0, "mean_conf": 0.8593, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0038", "text": "", "n_chars": 0, "mean_conf": 0.8822, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0039", "text": "", "n_chars": 0, "mean_conf": 0.8335, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0040", "text": "", "n_chars": 0, "mean_conf": 0.6692, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0041", "text": "", "n_chars": 0, "mean_conf": 0.8887, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0042", "text": "", "n_chars": 0, "mean_conf": 0.9308, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0043", "text": "", "n_chars": 0, "mean_conf": 0.877, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0044", "text": "", "n_chars": 0, "mean_conf": 0.8453, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0045", "text": "", "n_chars": 0, "mean_conf": 0.8306, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0046", "text": "", "n_chars": 0, "mean_conf": 0.8067, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0047", "text": "", "n_chars": 0, "mean_conf": 0.9082, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0048", "text": "", "n_chars": 0, "mean_conf": 0.9244, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0049", "text": "", "n_chars": 0, "mean_conf": 0.8648, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0050", "text": "", "n_chars": 0, "mean_conf": 0.8764, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0051", "text": "", "n_chars": 0, "mean_conf": 0.8323, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0052", "text": "", "n_chars": 0, "mean_conf": 0.6972, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0053", "text": "", "n_chars": 0, "mean_conf": 0.941, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0054", "text": "", "n_chars": 0, "mean_conf": 0.9045, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0055", "text": "", "n_chars": 0, "mean_conf": 0.8967, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0056", "text": "", "n_chars": 0, "mean_conf": 0.8818, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0057", "text": "", "n_chars": 0, "mean_conf": 0.8348, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0058", "text": "", "n_chars": 0, "mean_conf": 0.7041, "loop_share": 0.0, "gt": null}
+{"batch": "noise", "id": "noise_0059", "text": "", "n_chars": 0, "mean_conf": 0.9326, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0000", "text": "", "n_chars": 0, "mean_conf": 0.9505, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0001", "text": "", "n_chars": 0, "mean_conf": 0.9444, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0002", "text": "", "n_chars": 0, "mean_conf": 0.967, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0003", "text": "", "n_chars": 0, "mean_conf": 0.9639, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0004", "text": "", "n_chars": 0, "mean_conf": 0.935, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0005", "text": "", "n_chars": 0, "mean_conf": 0.9652, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0006", "text": "", "n_chars": 0, "mean_conf": 0.972, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0007", "text": "", "n_chars": 0, "mean_conf": 0.9057, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0008", "text": "", "n_chars": 0, "mean_conf": 0.9697, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0009", "text": "", "n_chars": 0, "mean_conf": 0.9675, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0010", "text": "", "n_chars": 0, "mean_conf": 0.8844, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0011", "text": "", "n_chars": 0, "mean_conf": 0.967, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0012", "text": "", "n_chars": 0, "mean_conf": 0.9599, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0013", "text": "", "n_chars": 0, "mean_conf": 0.875, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0014", "text": "", "n_chars": 0, "mean_conf": 0.9695, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0015", "text": "", "n_chars": 0, "mean_conf": 0.9614, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0016", "text": "", "n_chars": 0, "mean_conf": 0.941, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0017", "text": "", "n_chars": 0, "mean_conf": 0.9672, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0018", "text": "", "n_chars": 0, "mean_conf": 0.9725, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0019", "text": "", "n_chars": 0, "mean_conf": 0.9182, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0020", "text": "", "n_chars": 0, "mean_conf": 0.9643, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0021", "text": "", "n_chars": 0, "mean_conf": 0.9673, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0022", "text": "", "n_chars": 0, "mean_conf": 0.8902, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0023", "text": "", "n_chars": 0, "mean_conf": 0.967, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0024", "text": "", "n_chars": 0, "mean_conf": 0.9416, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0025", "text": "", "n_chars": 0, "mean_conf": 0.8766, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0026", "text": "", "n_chars": 0, "mean_conf": 0.9692, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0027", "text": "", "n_chars": 0, "mean_conf": 0.9648, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0028", "text": "", "n_chars": 0, "mean_conf": 0.9462, "loop_share": 0.0, "gt": null}
+{"batch": "blank", "id": "blank_0029", "text": "", "n_chars": 0, "mean_conf": 0.9677, "loop_share": 0.0, "gt": null}
+{"batch": "clean", "id": "clean_0000", "text": "the quick brown fox jumps", "n_chars": 25, "mean_conf": 0.966, "loop_share": 0.0, "gt": "the quick brown fox jumps", "cer": 0.0}
+{"batch": "clean", "id": "clean_0001", "text": "invoice total 1,240.00 USD", "n_chars": 26, "mean_conf": 0.9774, "loop_share": 0.0, "gt": "invoice total 1,240.00 USD", "cer": 0.0}
+{"batch": "clean", "id": "clean_0002", "text": "page 7 of 12", "n_chars": 12, "mean_conf": 0.9456, "loop_share": 0.0, "gt": "page 7 of 12", "cer": 0.0}
+{"batch": "clean", "id": "clean_0003", "text": "receipt 40231 approved", "n_chars": 22, "mean_conf": 0.9487, "loop_share": 0.0, "gt": "receipt 40231 approved", "cer": 0.0}
+{"batch": "clean", "id": "clean_0004", "text": "mtx lm research", "n_chars": 15, "mean_conf": 0.8964, "loop_share": 0.0, "gt": "rmt x llm research", "cer": 0.1667}
+{"batch": "clean", "id": "clean_0005", "text": "spectral purity gate pass", "n_chars": 25, "mean_conf": 0.964, "loop_share": 0.0, "gt": "spectral purity gate pass", "cer": 0.0}
+{"batch": "clean", "id": "clean_0006", "text": "dear colleague, please review", "n_chars": 29, "mean_conf": 0.9776, "loop_share": 0.0, "gt": "dear colleague, please review", "cer": 0.0}
+{"batch": "clean", "id": "clean_0007", "text": "exit 0 status ok", "n_chars": 16, "mean_conf": 0.9665, "loop_share": 0.0, "gt": "exit 0 status ok", "cer": 0.0}
+{"batch": "clean", "id": "clean_0008", "text": "chapter 3: random matrix theory", "n_chars": 31, "mean_conf": 0.9605, "loop_share": 0.0, "gt": "chapter 3: random matrix theory", "cer": 0.0}
+{"batch": "clean", "id": "clean_0009", "text": "temperature 21.4 C humidity 48%", "n_chars": 31, "mean_conf": 0.982, "loop_share": 0.0, "gt": "temperature 21.4 C humidity 48%", "cer": 0.0}
+{"batch": "clean", "id": "clean_0010", "text": "flight UA 328 gate B12", "n_chars": 22, "mean_conf": 0.953, "loop_share": 0.0, "gt": "flight UA 328 gate B12", "cer": 0.0}
+{"batch": "clean", "id": "clean_0011", "text": "invoice 2026-0417 due date", "n_chars": 26, "mean_conf": 0.9852, "loop_share": 0.0, "gt": "invoice 2026-0417 due date", "cer": 0.0}
+{"batch": "clean", "id": "clean_0012", "text": "tel +1 555 0134", "n_chars": 15, "mean_conf": 0.9889, "loop_share": 0.0, "gt": "tel +1 555 0134", "cer": 0.0}
+{"batch": "clean", "id": "clean_0013", "text": "hello world 42", "n_chars": 14, "mean_conf": 0.9487, "loop_share": 0.0, "gt": "hello world 42", "cer": 0.0}
+{"batch": "clean", "id": "clean_0014", "text": "batch 77 of 120 samples", "n_chars": 23, "mean_conf": 0.9782, "loop_share": 0.0, "gt": "batch 77 of 120 samples", "cer": 0.0}
+{"batch": "clean", "id": "clean_0015", "text": "total 3 items shipped", "n_chars": 21, "mean_conf": 0.9481, "loop_share": 0.0, "gt": "total 3 items shipped", "cer": 0.0}
+{"batch": "clean", "id": "clean_0016", "text": "oer probe line number", "n_chars": 21, "mean_conf": 0.9194, "loop_share": 0.0, "gt": "ocr probe line number", "cer": 0.0476}
+{"batch": "clean", "id": "clean_0017", "text": "gradient descent at step 150", "n_chars": 28, "mean_conf": 0.9867, "loop_share": 0.2857, "gt": "gradient descent at step 150", "cer": 0.0}
+{"batch": "clean", "id": "clean_0018", "text": "epsilon 1e-4 and beta 10", "n_chars": 24, "mean_conf": 0.9572, "loop_share": 0.0, "gt": "epsilon 1e-4 and beta 10", "cer": 0.0}
+{"batch": "clean", "id": "clean_0019", "text": "anchor scope: good arm only", "n_chars": 27, "mean_conf": 0.9637, "loop_share": 0.0, "gt": "anchor scope: good arm only", "cer": 0.0}
+{"batch": "clean", "id": "clean_0020", "text": "the quick brown fox jumps", "n_chars": 25, "mean_conf": 0.9568, "loop_share": 0.0, "gt": "the quick brown fox jumps", "cer": 0.0}
+{"batch": "clean", "id": "clean_0021", "text": "invoice total 1,240.00 USD", "n_chars": 26, "mean_conf": 0.9652, "loop_share": 0.0, "gt": "invoice total 1,240.00 USD", "cer": 0.0}
+{"batch": "clean", "id": "clean_0022", "text": "page 7 of 12", "n_chars": 12, "mean_conf": 0.9943, "loop_share": 0.0, "gt": "page 7 of 12", "cer": 0.0}
+{"batch": "clean", "id": "clean_0023", "text": "receipt 40231 approved", "n_chars": 22, "mean_conf": 0.9726, "loop_share": 0.0, "gt": "receipt 40231 approved", "cer": 0.0}
+{"batch": "clean", "id": "clean_0024", "text": "rmt x IIm research", "n_chars": 18, "mean_conf": 0.9491, "loop_share": 0.0, "gt": "rmt x llm research", "cer": 0.1111}
+{"batch": "clean", "id": "clean_0025", "text": "spectral purity gate pass", "n_chars": 25, "mean_conf": 0.9968, "loop_share": 0.0, "gt": "spectral purity gate pass", "cer": 0.0}
+{"batch": "clean", "id": "clean_0026", "text": "dear colleague, please", "n_chars": 22, "mean_conf": 0.9689, "loop_share": 0.0, "gt": "dear colleague, please", "cer": 0.0}
+{"batch": "clean", "id": "clean_0027", "text": "exit 0 status ok", "n_chars": 16, "mean_conf": 0.9776, "loop_share": 0.0, "gt": "exit 0 status ok", "cer": 0.0}
+{"batch": "clean", "id": "clean_0028", "text": "chapter 3: random matrix theory", "n_chars": 31, "mean_conf": 0.9676, "loop_share": 0.0, "gt": "chapter 3: random matrix theory", "cer": 0.0}
+{"batch": "clean", "id": "clean_0029", "text": "temperature 21.4 C humidity 48%", "n_chars": 31, "mean_conf": 0.9704, "loop_share": 0.0, "gt": "temperature 21.4 C humidity 48%", "cer": 0.0}
+{"batch": "clean", "id": "clean_0030", "text": "fiight UA 328 gate B12", "n_chars": 22, "mean_conf": 0.9699, "loop_share": 0.0, "gt": "flight UA 328 gate B12", "cer": 0.0455}
+{"batch": "clean", "id": "clean_0031", "text": "invoice 2026-0417 due date", "n_chars": 26, "mean_conf": 0.9876, "loop_share": 0.0, "gt": "invoice 2026-0417 due date", "cer": 0.0}
+{"batch": "clean", "id": "clean_0032", "text": "tel +1 555 0134", "n_chars": 15, "mean_conf": 0.9568, "loop_share": 0.0, "gt": "tel +1 555 0134", "cer": 0.0}
+{"batch": "clean", "id": "clean_0033", "text": "hello world 42", "n_chars": 14, "mean_conf": 0.9862, "loop_share": 0.0, "gt": "hello world 42", "cer": 0.0}
+{"batch": "clean", "id": "clean_0034", "text": "batch 77 of 120 samples", "n_chars": 23, "mean_conf": 0.9697, "loop_share": 0.0, "gt": "batch 77 of 120 samples", "cer": 0.0}
+{"batch": "clean", "id": "clean_0035", "text": "total 3 items shipped", "n_chars": 21, "mean_conf": 0.9542, "loop_share": 0.0, "gt": "total 3 items shipped", "cer": 0.0}
+{"batch": "clean", "id": "clean_0036", "text": "ocr probe line number nine", "n_chars": 26, "mean_conf": 0.9711, "loop_share": 0.0, "gt": "ocr probe line number nine", "cer": 0.0}
+{"batch": "clean", "id": "clean_0037", "text": "gradient descent at step 150", "n_chars": 28, "mean_conf": 0.9546, "loop_share": 0.2857, "gt": "gradient descent at step 150", "cer": 0.0}
+{"batch": "clean", "id": "clean_0038", "text": "epsilon 1e-4 and beta 10", "n_chars": 24, "mean_conf": 0.975, "loop_share": 0.0, "gt": "epsilon 1e-4 and beta 10", "cer": 0.0}
+{"batch": "clean", "id": "clean_0039", "text": "anchor scope: good arm only", "n_chars": 27, "mean_conf": 0.9949, "loop_share": 0.0, "gt": "anchor scope: good arm only", "cer": 0.0}
+{"batch": "clean", "id": "clean_0040", "text": "the quick brown foxjumps", "n_chars": 24, "mean_conf": 0.9773, "loop_share": 0.0, "gt": "the quick brown fox jumps", "cer": 0.04}
+{"batch": "clean", "id": "clean_0041", "text": "invoice total 1,240.00 USD", "n_chars": 26, "mean_conf": 0.9948, "loop_share": 0.0, "gt": "invoice total 1,240.00 USD", "cer": 0.0}
+{"batch": "clean", "id": "clean_0042", "text": "page 7 of 12", "n_chars": 12, "mean_conf": 0.9383, "loop_share": 0.0, "gt": "page 7 of 12", "cer": 0.0}
+{"batch": "clean", "id": "clean_0043", "text": "receipt 40231 approved", "n_chars": 22, "mean_conf": 0.9597, "loop_share": 0.0, "gt": "receipt 40231 approved", "cer": 0.0}
+{"batch": "clean", "id": "clean_0044", "text": "rmt x IIm research", "n_chars": 18, "mean_conf": 0.9542, "loop_share": 0.0, "gt": "rmt x llm research", "cer": 0.1111}
+{"batch": "clean", "id": "clean_0045", "text": "spectral purity gate pass", "n_chars": 25, "mean_conf": 0.937, "loop_share": 0.0, "gt": "spectral purity gate pass", "cer": 0.0}
+{"batch": "clean", "id": "clean_0046", "text": "dear colleague, please review", "n_chars": 29, "mean_conf": 0.9903, "loop_share": 0.0, "gt": "dear colleague, please review", "cer": 0.0}
+{"batch": "clean", "id": "clean_0047", "text": "exit 0 status ok", "n_chars": 16, "mean_conf": 0.9092, "loop_share": 0.0, "gt": "exit 0 status ok", "cer": 0.0}
+{"batch": "clean", "id": "clean_0048", "text": "chapter 3: random matrix", "n_chars": 24, "mean_conf": 0.9744, "loop_share": 0.0, "gt": "chapter 3: random matrix", "cer": 0.0}
+{"batch": "clean", "id": "clean_0049", "text": "Ienpenatre 214 Chumidty 48%", "n_chars": 27, "mean_conf": 0.8351, "loop_share": 0.0, "gt": "temperature 21.4 C humidity 48%", "cer": 0.2258}
+{"batch": "clean", "id": "clean_0050", "text": "flight UA 328 gate B12", "n_chars": 22, "mean_conf": 0.9639, "loop_share": 0.0, "gt": "flight UA 328 gate B12", "cer": 0.0}
+{"batch": "clean", "id": "clean_0051", "text": "invoice 2026-0417 due date", "n_chars": 26, "mean_conf": 0.9948, "loop_share": 0.0, "gt": "invoice 2026-0417 due date", "cer": 0.0}
+{"batch": "clean", "id": "clean_0052", "text": "tel +1 555 0134", "n_chars": 15, "mean_conf": 0.9668, "loop_share": 0.0, "gt": "tel +1 555 0134", "cer": 0.0}
+{"batch": "clean", "id": "clean_0053", "text": "hello world 42", "n_chars": 14, "mean_conf": 0.9628, "loop_share": 0.0, "gt": "hello world 42", "cer": 0.0}
+{"batch": "clean", "id": "clean_0054", "text": "batch 77 of 120 samples", "n_chars": 23, "mean_conf": 0.984, "loop_share": 0.0, "gt": "batch 77 of 120 samples", "cer": 0.0}
+{"batch": "clean", "id": "clean_0055", "text": "total 3 items shipped", "n_chars": 21, "mean_conf": 0.9751, "loop_share": 0.0, "gt": "total 3 items shipped", "cer": 0.0}
+{"batch": "clean", "id": "clean_0056", "text": "ocr probe line number nine", "n_chars": 26, "mean_conf": 0.9432, "loop_share": 0.0, "gt": "ocr probe line number nine", "cer": 0.0}
+{"batch": "clean", "id": "clean_0057", "text": "gradtent descent at step", "n_chars": 24, "mean_conf": 0.925, "loop_share": 0.3333, "gt": "gradient descent at step", "cer": 0.0417}
+{"batch": "clean", "id": "clean_0058", "text": "epsilon 1e-4 and beta 10", "n_chars": 24, "mean_conf": 0.9871, "loop_share": 0.0, "gt": "epsilon 1e-4 and beta 10", "cer": 0.0}
+{"batch": "clean", "id": "clean_0059", "text": "anchor scope: good arm only", "n_chars": 27, "mean_conf": 0.9846, "loop_share": 0.0, "gt": "anchor scope: good arm only", "cer": 0.0}
+{"batch": "clean", "id": "clean_0060", "text": "layout purity confidence document 55", "n_chars": 36, "mean_conf": 0.9747, "loop_share": 0.0, "gt": "layout purity confidence document 55", "cer": 0.0}
+{"batch": "clean", "id": "clean_0061", "text": "table layout anchor noise 40", "n_chars": 28, "mean_conf": 0.9718, "loop_share": 0.0, "gt": "table layout anchor noise 40", "cer": 0.0}
+{"batch": "clean", "id": "clean_0062", "text": "spike bulkmatrix layout 49", "n_chars": 26, "mean_conf": 0.9501, "loop_share": 0.0, "gt": "spike bulk matrix layout 49", "cer": 0.037}
+{"batch": "clean", "id": "clean_0063", "text": "confidence vector layout table 61", "n_chars": 33, "mean_conf": 0.9782, "loop_share": 0.0, "gt": "confidence vector layout table 61", "cer": 0.0}
+{"batch": "clean", "id": "clean_0064", "text": "decoder loop cell spike 48", "n_chars": 26, "mean_conf": 0.9653, "loop_share": 0.0, "gt": "decoder loop cell spike 48", "cer": 0.0}
+{"batch": "clean", "id": "clean_0065", "text": "edge purity confidence routing 73", "n_chars": 33, "mean_conf": 0.9723, "loop_share": 0.0, "gt": "edge purity confidence routing 73", "cer": 0.0}
+{"batch": "clean", "id": "clean_0066", "text": "spike decoder bulk spectral 14", "n_chars": 30, "mean_conf": 0.9499, "loop_share": 0.0, "gt": "spike decoder bulk spectral 14", "cer": 0.0}
+{"batch": "clean", "id": "clean_0067", "text": "phantom signal routing probe 52", "n_chars": 31, "mean_conf": 0.9453, "loop_share": 0.0, "gt": "phantom signal routing probe 52", "cer": 0.0}
+{"batch": "clean", "id": "clean_0068", "text": "signal spike bulk stamp 65", "n_chars": 26, "mean_conf": 0.97, "loop_share": 0.0, "gt": "signal spike bulk stamp 65", "cer": 0.0}
+{"batch": "clean", "id": "clean_0069", "text": "decoder scanner cell purity 82", "n_chars": 30, "mean_conf": 0.9732, "loop_share": 0.0, "gt": "decoder scanner cell purity 82", "cer": 0.0}
+{"batch": "clean", "id": "clean_0070", "text": "confidence layout stamp purity 56", "n_chars": 33, "mean_conf": 0.9726, "loop_share": 0.0, "gt": "confidence layout stamp purity 56", "cer": 0.0}
+{"batch": "clean", "id": "clean_0071", "text": "decoder stamp matrix document", "n_chars": 29, "mean_conf": 0.9583, "loop_share": 0.0, "gt": "decoder stamp matrix document", "cer": 0.0}
+{"batch": "clean", "id": "clean_0072", "text": "document spike spectal", "n_chars": 22, "mean_conf": 0.9392, "loop_share": 0.0, "gt": "document spike spectral", "cer": 0.0435}
+{"batch": "clean", "id": "clean_0073", "text": "Layout vector model confidence 68", "n_chars": 33, "mean_conf": 0.9627, "loop_share": 0.0, "gt": "layout vector model confidence 68", "cer": 0.0303}
+{"batch": "clean", "id": "clean_0074", "text": "model document anchor purity 95", "n_chars": 31, "mean_conf": 0.9728, "loop_share": 0.0, "gt": "model document anchor purity 95", "cer": 0.0}
+{"batch": "clean", "id": "clean_0075", "text": "spike confidence stamp model 65", "n_chars": 31, "mean_conf": 0.9474, "loop_share": 0.0, "gt": "spike confidence stamp model 65", "cer": 0.0}
+{"batch": "clean", "id": "clean_0076", "text": "latent confidence probe routing 78", "n_chars": 34, "mean_conf": 0.9772, "loop_share": 0.0, "gt": "latent confidence probe routing 78", "cer": 0.0}
+{"batch": "clean", "id": "clean_0077", "text": "model anchor purity table 18", "n_chars": 28, "mean_conf": 0.9869, "loop_share": 0.0, "gt": "model anchor purity table 18", "cer": 0.0}
+{"batch": "clean", "id": "clean_0078", "text": "stamp purity confidence routing 74", "n_chars": 34, "mean_conf": 0.9894, "loop_share": 0.0, "gt": "stamp purity confidence routing 74", "cer": 0.0}
+{"batch": "clean", "id": "clean_0079", "text": "signal spike document matrix 29", "n_chars": 31, "mean_conf": 0.9512, "loop_share": 0.0, "gt": "signal spike document matrix 29", "cer": 0.0}
+{"batch": "clean", "id": "clean_0080", "text": "routing matrix anchor buk 68", "n_chars": 28, "mean_conf": 0.956, "loop_share": 0.0, "gt": "routing matrix anchor bulk 68", "cer": 0.0345}
+{"batch": "clean", "id": "clean_0081", "text": "phantom signal purity noise 43", "n_chars": 30, "mean_conf": 0.9876, "loop_share": 0.0, "gt": "phantom signal purity noise 43", "cer": 0.0}
+{"batch": "clean", "id": "clean_0082", "text": "loop noise edge bulk 50", "n_chars": 23, "mean_conf": 0.9592, "loop_share": 0.0, "gt": "loop noise edge bulk 50", "cer": 0.0}
+{"batch": "clean", "id": "clean_0083", "text": "model Layout spike loop 77", "n_chars": 26, "mean_conf": 0.9169, "loop_share": 0.0, "gt": "model layout spike loop 77", "cer": 0.0385}
+{"batch": "clean", "id": "clean_0084", "text": "phantom signal scanner spectral 33", "n_chars": 34, "mean_conf": 0.9609, "loop_share": 0.0, "gt": "phantom signal scanner spectral 33", "cer": 0.0}
+{"batch": "clean", "id": "clean_0085", "text": "confidence noise probe latent 8", "n_chars": 31, "mean_conf": 0.9443, "loop_share": 0.0, "gt": "confidence noise probe latent 88", "cer": 0.0312}
+{"batch": "clean", "id": "clean_0086", "text": "phantom signal purity decoder 83", "n_chars": 32, "mean_conf": 0.9833, "loop_share": 0.0, "gt": "phantom signal purity decoder 83", "cer": 0.0}
+{"batch": "clean", "id": "clean_0087", "text": "purity scanner edge model 26", "n_chars": 28, "mean_conf": 0.969, "loop_share": 0.0, "gt": "purity scanner edge model 26", "cer": 0.0}
+{"batch": "clean", "id": "clean_0088", "text": "table Loop noise spectral 26", "n_chars": 28, "mean_conf": 0.9618, "loop_share": 0.0, "gt": "table loop noise spectral 26", "cer": 0.0357}
+{"batch": "clean", "id": "clean_0089", "text": "signal purty stamp decoder 85", "n_chars": 29, "mean_conf": 0.945, "loop_share": 0.0, "gt": "signal purity stamp decoder 85", "cer": 0.0333}
+{"batch": "clean", "id": "clean_0090", "text": "bulk spectral noise stamp 77", "n_chars": 28, "mean_conf": 0.9706, "loop_share": 0.0, "gt": "bulk spectral noise stamp 77", "cer": 0.0}
+{"batch": "clean", "id": "clean_0091", "text": "latent spike matrix anchor 85", "n_chars": 29, "mean_conf": 0.9687, "loop_share": 0.0, "gt": "latent spike matrix anchor 85", "cer": 0.0}
+{"batch": "clean", "id": "clean_0092", "text": "document layout model phantom 83", "n_chars": 32, "mean_conf": 0.9801, "loop_share": 0.0, "gt": "document layout model phantom 83", "cer": 0.0}
+{"batch": "clean", "id": "clean_0093", "text": "matrix Loop document routing 23", "n_chars": 31, "mean_conf": 0.9416, "loop_share": 0.0, "gt": "matrix loop document routing 23", "cer": 0.0323}
+{"batch": "clean", "id": "clean_0094", "text": "edge signal spike layout 97", "n_chars": 27, "mean_conf": 0.9795, "loop_share": 0.0, "gt": "edge signal spike layout 97", "cer": 0.0}
+{"batch": "clean", "id": "clean_0095", "text": "vector model table latent 26", "n_chars": 28, "mean_conf": 0.9732, "loop_share": 0.0, "gt": "vector model table latent 26", "cer": 0.0}
+{"batch": "clean", "id": "clean_0096", "text": "matrix phantom scanner loop 12", "n_chars": 30, "mean_conf": 0.9587, "loop_share": 0.0, "gt": "matrix phantom scanner loop 12", "cer": 0.0}
+{"batch": "clean", "id": "clean_0097", "text": "latent purity decoder edge 98", "n_chars": 29, "mean_conf": 0.9858, "loop_share": 0.0, "gt": "latent purity decoder edge 98", "cer": 0.0}
+{"batch": "clean", "id": "clean_0098", "text": "decoder edge probe", "n_chars": 18, "mean_conf": 0.9777, "loop_share": 0.0, "gt": "decoder edge probe", "cer": 0.0}
+{"batch": "clean", "id": "clean_0099", "text": "phantom signal noise matrix 53", "n_chars": 30, "mean_conf": 0.9501, "loop_share": 0.0, "gt": "phantom signal noise matrix 53", "cer": 0.0}
+{"batch": "clean", "id": "clean_0100", "text": "cell edge phantom model 55", "n_chars": 26, "mean_conf": 0.9673, "loop_share": 0.0, "gt": "cell edge phantom model 55", "cer": 0.0}
+{"batch": "clean", "id": "clean_0101", "text": "anchor routing table layout 25", "n_chars": 30, "mean_conf": 0.9515, "loop_share": 0.0, "gt": "anchor routing table layout 25", "cer": 0.0}
+{"batch": "clean", "id": "clean_0102", "text": "cell table stamp vector 96", "n_chars": 26, "mean_conf": 0.982, "loop_share": 0.0, "gt": "cell table stamp vector 96", "cer": 0.0}
+{"batch": "clean", "id": "clean_0103", "text": "model latent decoder table 38", "n_chars": 29, "mean_conf": 0.9618, "loop_share": 0.0, "gt": "model latent decoder table 38", "cer": 0.0}
+{"batch": "clean", "id": "clean_0104", "text": "edge latent table vector 77", "n_chars": 27, "mean_conf": 0.9729, "loop_share": 0.0, "gt": "edge latent table vector 77", "cer": 0.0}
+{"batch": "clean", "id": "clean_0105", "text": "phantom purity layout buik 75", "n_chars": 29, "mean_conf": 0.9717, "loop_share": 0.0, "gt": "phantom purity layout bulk 75", "cer": 0.0345}
+{"batch": "clean", "id": "clean_0106", "text": "scanner matrix routing loop 63", "n_chars": 30, "mean_conf": 0.9698, "loop_share": 0.0, "gt": "scanner matrix routing loop 63", "cer": 0.0}
+{"batch": "clean", "id": "clean_0107", "text": "stamp bulk model matrix 95", "n_chars": 26, "mean_conf": 0.9611, "loop_share": 0.0, "gt": "stamp bulk model matrix 95", "cer": 0.0}
+{"batch": "clean", "id": "clean_0108", "text": "signal confidence probe bulk 67", "n_chars": 31, "mean_conf": 0.9568, "loop_share": 0.0, "gt": "signal confidence probe bulk 67", "cer": 0.0}
+{"batch": "clean", "id": "clean_0109", "text": "loop decoder document noise 39", "n_chars": 30, "mean_conf": 0.9676, "loop_share": 0.0, "gt": "loop decoder document noise 39", "cer": 0.0}
+{"batch": "clean", "id": "clean_0110", "text": "cell model routing", "n_chars": 18, "mean_conf": 0.8939, "loop_share": 0.0, "gt": "cell model routing", "cer": 0.0}
+{"batch": "clean", "id": "clean_0111", "text": "decoder latent cell loop 56", "n_chars": 27, "mean_conf": 0.9554, "loop_share": 0.0, "gt": "decoder latent cell loop 56", "cer": 0.0}
+{"batch": "clean", "id": "clean_0112", "text": "probe model decoder confidence 13", "n_chars": 33, "mean_conf": 0.9769, "loop_share": 0.0, "gt": "probe model decoder confidence 13", "cer": 0.0}
+{"batch": "clean", "id": "clean_0113", "text": "phantom scanner model stamp 29", "n_chars": 30, "mean_conf": 0.9384, "loop_share": 0.0, "gt": "phantom scanner model stamp 29", "cer": 0.0}
+{"batch": "clean", "id": "clean_0114", "text": "latent noise phantom stamp 72", "n_chars": 29, "mean_conf": 0.9661, "loop_share": 0.0, "gt": "latent noise phantom stamp 72", "cer": 0.0}
+{"batch": "clean", "id": "clean_0115", "text": "latent spectral routing matrix 70", "n_chars": 33, "mean_conf": 0.9905, "loop_share": 0.0, "gt": "latent spectral routing matrix 70", "cer": 0.0}
+{"batch": "clean", "id": "clean_0116", "text": "decoder model bulk signal 43", "n_chars": 28, "mean_conf": 0.9894, "loop_share": 0.0, "gt": "decoder model bulk signal 43", "cer": 0.0}
+{"batch": "clean", "id": "clean_0117", "text": "anchor vector scanner routing 43", "n_chars": 32, "mean_conf": 0.9732, "loop_share": 0.0, "gt": "anchor vector scanner routing 43", "cer": 0.0}
+{"batch": "clean", "id": "clean_0118", "text": "phantom decoder layout stamp 44", "n_chars": 31, "mean_conf": 0.9737, "loop_share": 0.0, "gt": "phantom decoder layout stamp 44", "cer": 0.0}
+{"batch": "clean", "id": "clean_0119", "text": "model latent confidence purity 61", "n_chars": 33, "mean_conf": 0.9604, "loop_share": 0.0, "gt": "model latent confidence purity 61", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0000", "text": "the quick brown foxjumps", "n_chars": 24, "mean_conf": 0.9946, "loop_share": 0.0, "gt": "the quick brown fox jumps", "cer": 0.04}
+{"batch": "degraded", "id": "degraded_0001", "text": "receipt 40231 approved", "n_chars": 22, "mean_conf": 0.9764, "loop_share": 0.0, "gt": "receipt 40231 approved", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0002", "text": "dear colleague, please review", "n_chars": 29, "mean_conf": 0.9814, "loop_share": 0.0, "gt": "dear colleague, please review", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0003", "text": "temperature 21.4 C humidity 48%", "n_chars": 31, "mean_conf": 0.9648, "loop_share": 0.0, "gt": "temperature 21.4 C humidity 48%", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0004", "text": "teI +15550134", "n_chars": 13, "mean_conf": 0.938, "loop_share": 0.0, "gt": "tel +1 555 0134", "cer": 0.2}
+{"batch": "degraded", "id": "degraded_0005", "text": "total 3 items shipped", "n_chars": 21, "mean_conf": 0.9404, "loop_share": 0.0, "gt": "total 3 items shipped", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0006", "text": "epsiion le-d and beta 10", "n_chars": 24, "mean_conf": 0.9043, "loop_share": 0.0, "gt": "epsilon 1e-4 and beta 10", "cer": 0.125}
+{"batch": "degraded", "id": "degraded_0007", "text": "invoice total 1,240.00 USD", "n_chars": 26, "mean_conf": 0.9348, "loop_share": 0.0, "gt": "invoice total 1,240.00 USD", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0008", "text": "rnt x ilm research", "n_chars": 18, "mean_conf": 0.8944, "loop_share": 0.0, "gt": "rmt x llm research", "cer": 0.1111}
+{"batch": "degraded", "id": "degraded_0009", "text": "exlt 0 status ok", "n_chars": 16, "mean_conf": 0.8724, "loop_share": 0.0, "gt": "exit 0 status ok", "cer": 0.0625}
+{"batch": "degraded", "id": "degraded_0010", "text": "flight UA 328 gate B12", "n_chars": 22, "mean_conf": 0.9884, "loop_share": 0.0, "gt": "flight UA 328 gate B12", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0011", "text": "hello werld 42", "n_chars": 14, "mean_conf": 0.8459, "loop_share": 0.0, "gt": "hello world 42", "cer": 0.0714}
+{"batch": "degraded", "id": "degraded_0012", "text": "ocr probe line number nine", "n_chars": 26, "mean_conf": 0.9876, "loop_share": 0.0, "gt": "ocr probe line number nine", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0013", "text": "anehar srape geed arm enly", "n_chars": 26, "mean_conf": 0.7184, "loop_share": 0.0, "gt": "anchor scope: good arm only", "cer": 0.2963}
+{"batch": "degraded", "id": "degraded_0014", "text": "page 7of 12", "n_chars": 11, "mean_conf": 0.9158, "loop_share": 0.0, "gt": "page 7 of 12", "cer": 0.0833}
+{"batch": "degraded", "id": "degraded_0015", "text": "ectpurty gee ", "n_chars": 13, "mean_conf": 0.6077, "loop_share": 0.0, "gt": "spectral purity gate pass", "cer": 0.52}
+{"batch": "degraded", "id": "degraded_0016", "text": "chapter 3: random matrix theory", "n_chars": 31, "mean_conf": 0.9643, "loop_share": 0.0, "gt": "chapter 3: random matrix theory", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0017", "text": "invoice 2026-0417 due date", "n_chars": 26, "mean_conf": 0.9892, "loop_share": 0.0, "gt": "invoice 2026-0417 due date", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0018", "text": "batch 77 of 120 samptes", "n_chars": 23, "mean_conf": 0.9687, "loop_share": 0.0, "gt": "batch 77 of 120 samples", "cer": 0.0435}
+{"batch": "degraded", "id": "degraded_0019", "text": "gradient descent at step 150", "n_chars": 28, "mean_conf": 0.9857, "loop_share": 0.2857, "gt": "gradient descent at step 150", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0020", "text": "the eáth Irean fos Jrps", "n_chars": 23, "mean_conf": 0.6461, "loop_share": 0.0, "gt": "the quick brown fox jumps", "cer": 0.48}
+{"batch": "degraded", "id": "degraded_0021", "text": "recelpt 40231 approved", "n_chars": 22, "mean_conf": 0.9731, "loop_share": 0.0, "gt": "receipt 40231 approved", "cer": 0.0455}
+{"batch": "degraded", "id": "degraded_0022", "text": "der ege p e", "n_chars": 11, "mean_conf": 0.5675, "loop_share": 0.0, "gt": "dear colleague, please review", "cer": 0.6207}
+{"batch": "degraded", "id": "degraded_0023", "text": "teperatire 21.4 C hunidty", "n_chars": 25, "mean_conf": 0.8161, "loop_share": 0.0, "gt": "temperature 21.4 C humidity", "cer": 0.1481}
+{"batch": "degraded", "id": "degraded_0024", "text": "tel +1 555 0134", "n_chars": 15, "mean_conf": 0.9475, "loop_share": 0.0, "gt": "tel +1 555 0134", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0025", "text": "total 3 items shipped", "n_chars": 21, "mean_conf": 0.9948, "loop_share": 0.0, "gt": "total 3 items shipped", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0026", "text": "epsilon le-4 and beta 10", "n_chars": 24, "mean_conf": 0.9801, "loop_share": 0.0, "gt": "epsilon 1e-4 and beta 10", "cer": 0.0417}
+{"batch": "degraded", "id": "degraded_0027", "text": "Invoice fotal 1,240.00 USD", "n_chars": 26, "mean_conf": 0.9113, "loop_share": 0.0, "gt": "invoice total 1,240.00 USD", "cer": 0.0769}
+{"batch": "degraded", "id": "degraded_0028", "text": "rat x Ilm research", "n_chars": 18, "mean_conf": 0.8695, "loop_share": 0.0, "gt": "rmt x llm research", "cer": 0.1111}
+{"batch": "degraded", "id": "degraded_0029", "text": "f 0 stnn e", "n_chars": 10, "mean_conf": 0.5271, "loop_share": 0.0, "gt": "exit 0 status ok", "cer": 0.625}
+{"batch": "degraded", "id": "degraded_0030", "text": "fight UA 328 gate B12", "n_chars": 21, "mean_conf": 0.9353, "loop_share": 0.0, "gt": "flight UA 328 gate B12", "cer": 0.0455}
+{"batch": "degraded", "id": "degraded_0031", "text": "helle world 42", "n_chars": 14, "mean_conf": 0.9034, "loop_share": 0.0, "gt": "hello world 42", "cer": 0.0714}
+{"batch": "degraded", "id": "degraded_0032", "text": "oer prebe lne number nme", "n_chars": 24, "mean_conf": 0.8184, "loop_share": 0.0, "gt": "ocr probe line number nine", "cer": 0.1923}
+{"batch": "degraded", "id": "degraded_0033", "text": "anchor scope : good arm anly", "n_chars": 28, "mean_conf": 0.888, "loop_share": 0.0, "gt": "anchor scope: good arm only", "cer": 0.0741}
+{"batch": "degraded", "id": "degraded_0034", "text": "pge Tel 12", "n_chars": 10, "mean_conf": 0.6362, "loop_share": 0.0, "gt": "page 7 of 12", "cer": 0.4167}
+{"batch": "degraded", "id": "degraded_0035", "text": "spectral purity gate pass", "n_chars": 25, "mean_conf": 0.943, "loop_share": 0.0, "gt": "spectral purity gate pass", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0036", "text": "shapter Is tarshen maleis Hheery", "n_chars": 32, "mean_conf": 0.7472, "loop_share": 0.0, "gt": "chapter 3: random matrix theory", "cer": 0.4516}
+{"batch": "degraded", "id": "degraded_0037", "text": "invoice 2026-0417 due date", "n_chars": 26, "mean_conf": 0.9647, "loop_share": 0.0, "gt": "invoice 2026-0417 due date", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0038", "text": "batch 77 of 120 samples", "n_chars": 23, "mean_conf": 0.9698, "loop_share": 0.0, "gt": "batch 77 of 120 samples", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0039", "text": "gradient descent at step 150", "n_chars": 28, "mean_conf": 0.997, "loop_share": 0.2857, "gt": "gradient descent at step 150", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0040", "text": "the gach broen for Jmes", "n_chars": 23, "mean_conf": 0.6757, "loop_share": 0.0, "gt": "the quick brown fox jumps", "cer": 0.36}
+{"batch": "degraded", "id": "degraded_0041", "text": "receipt 40231 approved", "n_chars": 22, "mean_conf": 0.9917, "loop_share": 0.0, "gt": "receipt 40231 approved", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0042", "text": "denr cellengue, plense review", "n_chars": 29, "mean_conf": 0.8905, "loop_share": 0.0, "gt": "dear colleague, please review", "cer": 0.1379}
+{"batch": "degraded", "id": "degraded_0043", "text": "Temperature 21.4 € humidity as%", "n_chars": 31, "mean_conf": 0.8355, "loop_share": 0.0, "gt": "temperature 21.4 C humidity 48%", "cer": 0.129}
+{"batch": "degraded", "id": "degraded_0044", "text": "tel +1 555 0134", "n_chars": 15, "mean_conf": 0.98, "loop_share": 0.0, "gt": "tel +1 555 0134", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0045", "text": "total 3 items shipped", "n_chars": 21, "mean_conf": 0.9576, "loop_share": 0.0, "gt": "total 3 items shipped", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0046", "text": "epsiion 1e-4 and beta 10", "n_chars": 24, "mean_conf": 0.9706, "loop_share": 0.0, "gt": "epsilon 1e-4 and beta 10", "cer": 0.0417}
+{"batch": "degraded", "id": "degraded_0047", "text": "invoice total 1,240.00 USD", "n_chars": 26, "mean_conf": 0.9775, "loop_share": 0.0, "gt": "invoice total 1,240.00 USD", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0048", "text": "rRt x Ile research", "n_chars": 18, "mean_conf": 0.7935, "loop_share": 0.0, "gt": "rmt x llm research", "cer": 0.1667}
+{"batch": "degraded", "id": "degraded_0049", "text": "exit O status ok", "n_chars": 16, "mean_conf": 0.9389, "loop_share": 0.0, "gt": "exit 0 status ok", "cer": 0.0625}
+{"batch": "degraded", "id": "degraded_0050", "text": "flight UA 328 gate 812", "n_chars": 22, "mean_conf": 0.9623, "loop_share": 0.0, "gt": "flight UA 328 gate B12", "cer": 0.0455}
+{"batch": "degraded", "id": "degraded_0051", "text": "hello world 42", "n_chars": 14, "mean_conf": 0.9854, "loop_share": 0.0, "gt": "hello world 42", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0052", "text": "oer probe line number nine", "n_chars": 26, "mean_conf": 0.9121, "loop_share": 0.0, "gt": "ocr probe line number nine", "cer": 0.0385}
+{"batch": "degraded", "id": "degraded_0053", "text": "aiher srmpe: pead arm snly", "n_chars": 26, "mean_conf": 0.6287, "loop_share": 0.0, "gt": "anchor scope: good arm only", "cer": 0.3333}
+{"batch": "degraded", "id": "degraded_0054", "text": "page 7 of 12", "n_chars": 12, "mean_conf": 0.9562, "loop_share": 0.0, "gt": "page 7 of 12", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0055", "text": "spectral purity gate pass", "n_chars": 25, "mean_conf": 0.8679, "loop_share": 0.0, "gt": "spectral purity gate pass", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0056", "text": "chapter 3: random matrix theory", "n_chars": 31, "mean_conf": 0.9694, "loop_share": 0.0, "gt": "chapter 3: random matrix theory", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0057", "text": "Ivece 20260417 ée date", "n_chars": 22, "mean_conf": 0.6445, "loop_share": 0.0, "gt": "invoice 2026-0417 due date", "cer": 0.2692}
+{"batch": "degraded", "id": "degraded_0058", "text": "batch 77 of 120 samples", "n_chars": 23, "mean_conf": 0.9534, "loop_share": 0.0, "gt": "batch 77 of 120 samples", "cer": 0.0}
+{"batch": "degraded", "id": "degraded_0059", "text": "gradent descent at step 150", "n_chars": 27, "mean_conf": 0.9261, "loop_share": 0.2963, "gt": "gradient descent at step 150", "cer": 0.0357}
+{"batch": "control", "id": "control_0000", "text": "probe document anchor matrx scanner 229", "n_chars": 39, "mean_conf": 0.9697, "loop_share": 0.0, "gt": "probe document anchor matrix scanner 229", "cer": 0.025}
+{"batch": "control", "id": "control_0001", "text": "model table latent anchor Layout 644", "n_chars": 36, "mean_conf": 0.9607, "loop_share": 0.0, "gt": "model table latent anchor layout 644", "cer": 0.0278}
+{"batch": "control", "id": "control_0002", "text": "edge decoder phantom cell loop 556", "n_chars": 34, "mean_conf": 0.9721, "loop_share": 0.0, "gt": "edge decoder phantom cell loop 556", "cer": 0.0}
+{"batch": "control", "id": "control_0003", "text": "anchor cell bulk latent Ioop 135", "n_chars": 32, "mean_conf": 0.9539, "loop_share": 0.0, "gt": "anchor cell bulk latent loop 135", "cer": 0.0312}
+{"batch": "control", "id": "control_0004", "text": "spectral bulk purity edge matrix 660", "n_chars": 36, "mean_conf": 0.9854, "loop_share": 0.0, "gt": "spectral bulk purity edge matrix 660", "cer": 0.0}
+{"batch": "control", "id": "control_0005", "text": "confidence phantom table loop spectral 729", "n_chars": 42, "mean_conf": 0.9806, "loop_share": 0.0, "gt": "confidence phantom table loop spectral 729", "cer": 0.0}
+{"batch": "control", "id": "control_0006", "text": "natrix cell anchor vector purity 371", "n_chars": 36, "mean_conf": 0.9562, "loop_share": 0.0, "gt": "matrix cell anchor vector purity 371", "cer": 0.0278}
+{"batch": "control", "id": "control_0007", "text": "noise edge routing phantom model 431", "n_chars": 36, "mean_conf": 0.955, "loop_share": 0.0, "gt": "noise edge routing phantom model 431", "cer": 0.0}
+{"batch": "control", "id": "control_0008", "text": "loop probe sgnal layout iatent 241", "n_chars": 34, "mean_conf": 0.9092, "loop_share": 0.0, "gt": "loop probe signal layout latent 241", "cer": 0.0571}
+{"batch": "control", "id": "control_0009", "text": "spectral model matrix vector spike 508", "n_chars": 38, "mean_conf": 0.9945, "loop_share": 0.0, "gt": "spectral model matrix vector spike 508", "cer": 0.0}
+{"batch": "control", "id": "control_0010", "text": "matrix noise anchor signal edge 394", "n_chars": 35, "mean_conf": 0.9806, "loop_share": 0.0, "gt": "matrix noise anchor signal edge 394", "cer": 0.0}
+{"batch": "control", "id": "control_0011", "text": "document table vector probe phantom 683", "n_chars": 39, "mean_conf": 0.9848, "loop_share": 0.0, "gt": "document table vector probe phantom 683", "cer": 0.0}
+{"batch": "control", "id": "control_0012", "text": "anchor edge probe stamp layout 776", "n_chars": 34, "mean_conf": 0.9774, "loop_share": 0.0, "gt": "anchor edge probe stamp layout 776", "cer": 0.0}
+{"batch": "control", "id": "control_0013", "text": "spectral table stamp vector bulk 205", "n_chars": 36, "mean_conf": 0.9921, "loop_share": 0.0, "gt": "spectral table stamp vector bulk 205", "cer": 0.0}
+{"batch": "control", "id": "control_0014", "text": "latent purity edge confidence", "n_chars": 29, "mean_conf": 0.9328, "loop_share": 0.0, "gt": "latent purity edge confidence", "cer": 0.0}
+{"batch": "control", "id": "control_0015", "text": "bulk model stamp signal anchor 737", "n_chars": 34, "mean_conf": 0.9681, "loop_share": 0.0, "gt": "bulk model stamp signal anchor 737", "cer": 0.0}
+{"batch": "control", "id": "control_0016", "text": "table spectral anchor Latent Layout 227", "n_chars": 39, "mean_conf": 0.9409, "loop_share": 0.0, "gt": "table spectral anchor latent layout 227", "cer": 0.0513}
+{"batch": "control", "id": "control_0017", "text": "layout phantom scanner matx stamp 629", "n_chars": 37, "mean_conf": 0.9546, "loop_share": 0.0, "gt": "layout phantom scanner matrix stamp 629", "cer": 0.0513}
+{"batch": "control", "id": "control_0018", "text": "latent stamp matrix phantom layout 524", "n_chars": 38, "mean_conf": 0.9882, "loop_share": 0.0, "gt": "latent stamp matrix phantom layout 524", "cer": 0.0}
+{"batch": "control", "id": "control_0019", "text": "routing purity table spike signal 695", "n_chars": 37, "mean_conf": 0.9812, "loop_share": 0.0, "gt": "routing purity table spike signal 695", "cer": 0.0}
+{"batch": "control", "id": "control_0020", "text": "edge latent signal spectral noise 723", "n_chars": 37, "mean_conf": 0.9469, "loop_share": 0.0, "gt": "edge latent signal spectral noise 723", "cer": 0.0}
+{"batch": "control", "id": "control_0021", "text": "spectral signal scamer cell noise", "n_chars": 33, "mean_conf": 0.9713, "loop_share": 0.2424, "gt": "spectral signal scanner cell noise", "cer": 0.0588}
+{"batch": "control", "id": "control_0022", "text": "anchor spectral latent edge table 887", "n_chars": 37, "mean_conf": 0.971, "loop_share": 0.0, "gt": "anchor spectral latent edge table 887", "cer": 0.0}
+{"batch": "control", "id": "control_0023", "text": "spike anchor noise bulkvector 925", "n_chars": 33, "mean_conf": 0.9568, "loop_share": 0.0, "gt": "spike anchor noise bulk vector 925", "cer": 0.0294}
+{"batch": "control", "id": "control_0024", "text": "confidence cell latent table signal 402", "n_chars": 39, "mean_conf": 0.9764, "loop_share": 0.0, "gt": "confidence cell latent table signal 402", "cer": 0.0}
+{"batch": "control", "id": "control_0025", "text": "bulk loop scanner layout stamp 237", "n_chars": 34, "mean_conf": 0.9749, "loop_share": 0.0, "gt": "bulk loop scanner layout stamp 237", "cer": 0.0}
+{"batch": "control", "id": "control_0026", "text": "confidence Latent signal noise", "n_chars": 30, "mean_conf": 0.9535, "loop_share": 0.0, "gt": "confidence latent signal noise", "cer": 0.0333}
+{"batch": "control", "id": "control_0027", "text": "noise anchor phantom stamp vector 387", "n_chars": 37, "mean_conf": 0.9649, "loop_share": 0.0, "gt": "noise anchor phantom stamp vector 387", "cer": 0.0}
+{"batch": "control", "id": "control_0028", "text": "phantom scanner edge noise layout 100", "n_chars": 37, "mean_conf": 0.9938, "loop_share": 0.0, "gt": "phantom scanner edge noise layout 100", "cer": 0.0}
+{"batch": "control", "id": "control_0029", "text": "confidence decoder probe matrix stamp 104", "n_chars": 41, "mean_conf": 0.949, "loop_share": 0.0, "gt": "confidence decoder probe matrix stamp 104", "cer": 0.0}
+{"batch": "control", "id": "control_0030", "text": "purity table document scanner loop 117", "n_chars": 38, "mean_conf": 0.9834, "loop_share": 0.0, "gt": "purity table document scanner loop 117", "cer": 0.0}
+{"batch": "control", "id": "control_0031", "text": "document decoder latent vector spectral 157", "n_chars": 43, "mean_conf": 0.9784, "loop_share": 0.186, "gt": "document decoder latent vector spectral 157", "cer": 0.0}
+{"batch": "control", "id": "control_0032", "text": "stamp phantom purity latent bulk 759", "n_chars": 36, "mean_conf": 0.9896, "loop_share": 0.0, "gt": "stamp phantom purity latent bulk 759", "cer": 0.0}
+{"batch": "control", "id": "control_0033", "text": "purity edge model vector document 945", "n_chars": 37, "mean_conf": 0.9796, "loop_share": 0.0, "gt": "purity edge model vector document 945", "cer": 0.0}
+{"batch": "control", "id": "control_0034", "text": "vector document noise decoder routing 246", "n_chars": 41, "mean_conf": 0.9637, "loop_share": 0.0, "gt": "vector document noise decoder routing 246", "cer": 0.0}
+{"batch": "control", "id": "control_0035", "text": "table document bulk anchor routing 970", "n_chars": 38, "mean_conf": 0.9839, "loop_share": 0.0, "gt": "table document bulk anchor routing 970", "cer": 0.0}
+{"batch": "control", "id": "control_0036", "text": "spike noise vector anchor confidence", "n_chars": 36, "mean_conf": 0.9605, "loop_share": 0.0, "gt": "spike noise vector anchor confidence", "cer": 0.0}
+{"batch": "control", "id": "control_0037", "text": "vectorcorferescamer doument", "n_chars": 27, "mean_conf": 0.7813, "loop_share": 0.0, "gt": "vector confidence scanner document", "cer": 0.2941}
+{"batch": "control", "id": "control_0038", "text": "loop scanner purity table layout 292", "n_chars": 36, "mean_conf": 0.9432, "loop_share": 0.0, "gt": "loop scanner purity table layout 292", "cer": 0.0}
+{"batch": "control", "id": "control_0039", "text": "table signal purity spectral cell 814", "n_chars": 37, "mean_conf": 0.9564, "loop_share": 0.0, "gt": "table signal purity spectral cell 814", "cer": 0.0}

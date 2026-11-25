@@ -1,0 +1,1024 @@
+{
+ "round": "router_reject",
+ "model": "llamaindex/OCRia-nano-1 router.onnx (deployed graph)",
+ "args": {
+  "steps": 960,
+  "lr_row": 0.002,
+  "lr_full": 0.001,
+  "seed": 0,
+  "bench_at": [
+   0,
+   320,
+   640,
+   960
+  ],
+  "anchor_cap": 0.02,
+  "anchor_beta": 10.0,
+  "gate_cure": 0.9,
+  "gate_ability_slack": 0.02
+ },
+ "base_recheck": {
+  "route_error_rate": 0.0,
+  "nontext_routed_to": {
+   "latin": 20,
+   "cjk": 11,
+   "rtl": 4,
+   "world": 5
+  },
+  "ability_route_acc": {
+   "clean": 0.9667,
+   "control": 1.0
+  }
+ },
+ "init": {
+  "kind": "LDA prototype",
+  "w_norm": 2.7555
+ },
+ "arms": {
+  "reject_row": {
+   "arm": "reject_row",
+   "args": {
+    "steps": 960,
+    "lr": 0.002,
+    "seed": 0,
+    "grad_clip": 1.0,
+    "anchor_beta": 10.0,
+    "anchor_cap": null,
+    "cycle": "violation-driven (refresh every 32): violators sampled 3:1 nt:text; early stop at convergence",
+    "lr_schedule": "constant, x0.5 at steps [320, 640]",
+    "anchor_scope": "text = fit router text + clean + control (the ability corpora)",
+    "trainable_rows": [
+     4
+    ],
+    "biases": "reject bias trainable; script biases frozen (parity)",
+    "n_trainable": 193
+   },
+   "init": {
+    "kind": "LDA prototype (mu_nt - mu_text, midpoint bias)",
+    "w_norm": 2.7555,
+    "script_row_norm_median": 2.7555
+   },
+   "final": {
+    "fit": {
+     "nontext_reject_rate": 1.0,
+     "nontext_residual_routes": {
+      "latin": 0,
+      "cjk": 0,
+      "rtl": 0,
+      "world": 0
+     },
+     "reject_margin_nontext_mean": 3.971,
+     "reject_margin_nontext_min": 0.503,
+     "text_route_acc": 1.0,
+     "reject_win_rate_text": 0.0,
+     "reject_margin_text_mean": -11.124,
+     "reject_margin_text_max": -7.165,
+     "text_logits_mse_vs_base": null
+    },
+    "ability": {
+     "fit_route_acc": 1.0,
+     "fit_reject_wins": 0,
+     "fit_n": 80,
+     "clean_route_acc": 0.9667,
+     "clean_reject_wins": 0,
+     "clean_n": 120,
+     "control_route_acc": 1.0,
+     "control_reject_wins": 0,
+     "control_n": 40,
+     "reject_win_rate_ability": 0.0
+    },
+    "transfer": {
+     "structured_reject_rate": 0.8333,
+     "structured_residual_routes": {
+      "latin": 7,
+      "cjk": 9,
+      "rtl": 4,
+      "world": 0
+     },
+     "noise_reject_rate": 0.9,
+     "noise_residual_routes": {
+      "latin": 5,
+      "cjk": 0,
+      "rtl": 0,
+      "world": 1
+     },
+     "blank_reject_rate": 1.0,
+     "blank_residual_routes": {
+      "latin": 0,
+      "cjk": 0,
+      "rtl": 0,
+      "world": 0
+     },
+     "mean_reject_rate": 0.9111
+    }
+   },
+   "rel_frobenius_row4_vs_init": 1.54355,
+   "rel_frobenius_vs_W4": 0.76556,
+   "bench": [
+    {
+     "step": 0,
+     "fit": {
+      "nontext_reject_rate": 0.925,
+      "nontext_residual_routes": {
+       "latin": 0,
+       "cjk": 1,
+       "rtl": 2,
+       "world": 0
+      },
+      "reject_margin_nontext_mean": 5.927,
+      "reject_margin_nontext_min": -2.996,
+      "text_route_acc": 1.0,
+      "reject_win_rate_text": 0.0,
+      "reject_margin_text_mean": -10.897,
+      "reject_margin_text_max": -3.034,
+      "text_logits_mse_vs_base": null
+     },
+     "ability": {
+      "fit_route_acc": 1.0,
+      "fit_reject_wins": 0,
+      "fit_n": 80,
+      "clean_route_acc": 0.6917,
+      "clean_reject_wins": 36,
+      "clean_n": 120,
+      "control_route_acc": 0.725,
+      "control_reject_wins": 11,
+      "control_n": 40,
+      "reject_win_rate_ability": 0.2938
+     },
+     "transfer": {
+      "structured_reject_rate": 0.8917,
+      "structured_residual_routes": {
+       "latin": 1,
+       "cjk": 7,
+       "rtl": 4,
+       "world": 1
+      },
+      "noise_reject_rate": 0.9833,
+      "noise_residual_routes": {
+       "latin": 1,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "blank_reject_rate": 1.0,
+      "blank_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "mean_reject_rate": 0.9583
+     }
+    },
+    {
+     "step": 320,
+     "fit": {
+      "nontext_reject_rate": 1.0,
+      "nontext_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "reject_margin_nontext_mean": 5.139,
+      "reject_margin_nontext_min": 1.043,
+      "text_route_acc": 1.0,
+      "reject_win_rate_text": 0.0,
+      "reject_margin_text_mean": -10.423,
+      "reject_margin_text_max": -5.944,
+      "text_logits_mse_vs_base": null
+     },
+     "ability": {
+      "fit_route_acc": 1.0,
+      "fit_reject_wins": 0,
+      "fit_n": 80,
+      "clean_route_acc": 0.9417,
+      "clean_reject_wins": 5,
+      "clean_n": 120,
+      "control_route_acc": 0.9,
+      "control_reject_wins": 4,
+      "control_n": 40,
+      "reject_win_rate_ability": 0.0563
+     },
+     "transfer": {
+      "structured_reject_rate": 0.925,
+      "structured_residual_routes": {
+       "latin": 3,
+       "cjk": 3,
+       "rtl": 3,
+       "world": 0
+      },
+      "noise_reject_rate": 0.9833,
+      "noise_residual_routes": {
+       "latin": 1,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "blank_reject_rate": 1.0,
+      "blank_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "mean_reject_rate": 0.9694
+     }
+    },
+    {
+     "step": 640,
+     "fit": {
+      "nontext_reject_rate": 0.975,
+      "nontext_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 1
+      },
+      "reject_margin_nontext_mean": 3.755,
+      "reject_margin_nontext_min": -0.049,
+      "text_route_acc": 1.0,
+      "reject_win_rate_text": 0.0,
+      "reject_margin_text_mean": -11.717,
+      "reject_margin_text_max": -7.791,
+      "text_logits_mse_vs_base": null
+     },
+     "ability": {
+      "fit_route_acc": 1.0,
+      "fit_reject_wins": 0,
+      "fit_n": 80,
+      "clean_route_acc": 0.9667,
+      "clean_reject_wins": 0,
+      "clean_n": 120,
+      "control_route_acc": 1.0,
+      "control_reject_wins": 0,
+      "control_n": 40,
+      "reject_win_rate_ability": 0.0
+     },
+     "transfer": {
+      "structured_reject_rate": 0.75,
+      "structured_residual_routes": {
+       "latin": 9,
+       "cjk": 13,
+       "rtl": 7,
+       "world": 1
+      },
+      "noise_reject_rate": 0.8667,
+      "noise_residual_routes": {
+       "latin": 5,
+       "cjk": 1,
+       "rtl": 0,
+       "world": 2
+      },
+      "blank_reject_rate": 1.0,
+      "blank_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "mean_reject_rate": 0.8722
+     }
+    },
+    {
+     "step": 960,
+     "fit": {
+      "nontext_reject_rate": 1.0,
+      "nontext_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "reject_margin_nontext_mean": 3.971,
+      "reject_margin_nontext_min": 0.503,
+      "text_route_acc": 1.0,
+      "reject_win_rate_text": 0.0,
+      "reject_margin_text_mean": -11.124,
+      "reject_margin_text_max": -7.165,
+      "text_logits_mse_vs_base": null
+     },
+     "ability": {
+      "fit_route_acc": 1.0,
+      "fit_reject_wins": 0,
+      "fit_n": 80,
+      "clean_route_acc": 0.9667,
+      "clean_reject_wins": 0,
+      "clean_n": 120,
+      "control_route_acc": 1.0,
+      "control_reject_wins": 0,
+      "control_n": 40,
+      "reject_win_rate_ability": 0.0
+     },
+     "transfer": {
+      "structured_reject_rate": 0.8333,
+      "structured_residual_routes": {
+       "latin": 7,
+       "cjk": 9,
+       "rtl": 4,
+       "world": 0
+      },
+      "noise_reject_rate": 0.9,
+      "noise_residual_routes": {
+       "latin": 5,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 1
+      },
+      "blank_reject_rate": 1.0,
+      "blank_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "mean_reject_rate": 0.9111
+     }
+    }
+   ],
+   "violations": [
+    {
+     "step": 0,
+     "n_violating_nt": 3,
+     "n_violating_text": 48
+    },
+    {
+     "step": 32,
+     "n_violating_nt": 0,
+     "n_violating_text": 73
+    },
+    {
+     "step": 64,
+     "n_violating_nt": 2,
+     "n_violating_text": 39
+    },
+    {
+     "step": 96,
+     "n_violating_nt": 1,
+     "n_violating_text": 46
+    },
+    {
+     "step": 128,
+     "n_violating_nt": 0,
+     "n_violating_text": 66
+    },
+    {
+     "step": 160,
+     "n_violating_nt": 0,
+     "n_violating_text": 30
+    },
+    {
+     "step": 192,
+     "n_violating_nt": 10,
+     "n_violating_text": 10
+    },
+    {
+     "step": 224,
+     "n_violating_nt": 5,
+     "n_violating_text": 11
+    },
+    {
+     "step": 256,
+     "n_violating_nt": 0,
+     "n_violating_text": 20
+    },
+    {
+     "step": 288,
+     "n_violating_nt": 2,
+     "n_violating_text": 10
+    },
+    {
+     "step": 320,
+     "n_violating_nt": 0,
+     "n_violating_text": 11
+    },
+    {
+     "step": 352,
+     "n_violating_nt": 0,
+     "n_violating_text": 8
+    },
+    {
+     "step": 384,
+     "n_violating_nt": 9,
+     "n_violating_text": 4
+    },
+    {
+     "step": 416,
+     "n_violating_nt": 3,
+     "n_violating_text": 6
+    },
+    {
+     "step": 448,
+     "n_violating_nt": 0,
+     "n_violating_text": 8
+    },
+    {
+     "step": 480,
+     "n_violating_nt": 0,
+     "n_violating_text": 6
+    },
+    {
+     "step": 512,
+     "n_violating_nt": 8,
+     "n_violating_text": 4
+    },
+    {
+     "step": 544,
+     "n_violating_nt": 1,
+     "n_violating_text": 4
+    },
+    {
+     "step": 576,
+     "n_violating_nt": 0,
+     "n_violating_text": 6
+    },
+    {
+     "step": 608,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 640,
+     "n_violating_nt": 1,
+     "n_violating_text": 4
+    },
+    {
+     "step": 672,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 704,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 736,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 768,
+     "n_violating_nt": 2,
+     "n_violating_text": 4
+    },
+    {
+     "step": 800,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 832,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 864,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 896,
+     "n_violating_nt": 2,
+     "n_violating_text": 4
+    },
+    {
+     "step": 928,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    }
+   ],
+   "converged_at": null,
+   "wall_time_s": 0.4,
+   "gates": {
+    "G1_script_rows": "bit-identical to base (exact by construction)",
+    "G1_script_rows_pass": true,
+    "G1_ability": "clean 0.9667 (base 0.9667), control 1.0 (base 1.0), reject wins 0",
+    "G1_ability_pass": true,
+    "G1_pass": true,
+    "G2_flip": "flip head untouched (bitwise, verified post-export)",
+    "G2_pass": true,
+    "G3_trunk": "all non-head initializers array-identical (post-export)",
+    "G3_pass": true,
+    "G4_cure": "fit_reject=1.0 reject_win_text=0.0",
+    "G4_pass": true,
+    "pass": true
+   },
+   "export": {
+    "path": "Model/router_reject.onnx",
+    "n_outputs": 5,
+    "trunk_arrays_identical": true,
+    "flip_head_bit_identical": true,
+    "group_rows0_3_max_abs_diff_vs_base": 0.0,
+    "flip_outputs_bitwise_equal_on_smoke": true,
+    "sha256": "727fe250430b171d3dd6195f24a89564d3a752efe79b53a0e718771f0e8fc92e",
+    "round": "router_reject",
+    "winner_arm": "reject_row"
+   },
+   "spectrum": {
+    "lambda_max": 0.094216,
+    "lambda_plus": 0.025416,
+    "lambda_max_over_lambda_plus": 3.71,
+    "n_spikes_above_2lambda_plus": 1,
+    "single_spike": true,
+    "sigma1_share": 1.0,
+    "cos_v1_edit_w_init": 0.5692
+   }
+  },
+  "reject_full": {
+   "arm": "reject_full",
+   "args": {
+    "steps": 960,
+    "lr": 0.001,
+    "seed": 0,
+    "grad_clip": 1.0,
+    "anchor_beta": 10.0,
+    "anchor_cap": 0.02,
+    "cycle": "violation-driven (refresh every 32): violators sampled 3:1 nt:text; early stop at convergence",
+    "lr_schedule": "constant, x0.5 at steps [320, 640]",
+    "anchor_scope": "text = fit router text + clean + control (the ability corpora)",
+    "trainable_rows": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "biases": "reject bias trainable; script biases frozen (parity)",
+    "n_trainable": 961
+   },
+   "init": {
+    "kind": "LDA prototype (mu_nt - mu_text, midpoint bias)",
+    "w_norm": 2.7555,
+    "script_row_norm_median": 2.7555
+   },
+   "final": {
+    "fit": {
+     "nontext_reject_rate": 1.0,
+     "nontext_residual_routes": {
+      "latin": 0,
+      "cjk": 0,
+      "rtl": 0,
+      "world": 0
+     },
+     "reject_margin_nontext_mean": 4.332,
+     "reject_margin_nontext_min": 0.327,
+     "text_route_acc": 1.0,
+     "reject_win_rate_text": 0.0,
+     "reject_margin_text_mean": -11.179,
+     "reject_margin_text_max": -6.699,
+     "text_logits_mse_vs_base": 6.149375
+    },
+    "ability": {
+     "fit_route_acc": 1.0,
+     "fit_reject_wins": 0,
+     "fit_n": 80,
+     "clean_route_acc": 0.975,
+     "clean_reject_wins": 2,
+     "clean_n": 120,
+     "control_route_acc": 1.0,
+     "control_reject_wins": 0,
+     "control_n": 40,
+     "reject_win_rate_ability": 0.0125
+    },
+    "transfer": {
+     "structured_reject_rate": 0.8417,
+     "structured_residual_routes": {
+      "latin": 9,
+      "cjk": 6,
+      "rtl": 3,
+      "world": 1
+     },
+     "noise_reject_rate": 0.9167,
+     "noise_residual_routes": {
+      "latin": 3,
+      "cjk": 0,
+      "rtl": 0,
+      "world": 2
+     },
+     "blank_reject_rate": 1.0,
+     "blank_residual_routes": {
+      "latin": 0,
+      "cjk": 0,
+      "rtl": 0,
+      "world": 0
+     },
+     "mean_reject_rate": 0.9195
+    }
+   },
+   "rel_frobenius_row4_vs_init": 1.2293,
+   "rel_frobenius_vs_W4": 0.70024,
+   "bench": [
+    {
+     "step": 0,
+     "fit": {
+      "nontext_reject_rate": 0.925,
+      "nontext_residual_routes": {
+       "latin": 0,
+       "cjk": 1,
+       "rtl": 2,
+       "world": 0
+      },
+      "reject_margin_nontext_mean": 5.927,
+      "reject_margin_nontext_min": -2.996,
+      "text_route_acc": 1.0,
+      "reject_win_rate_text": 0.0,
+      "reject_margin_text_mean": -10.897,
+      "reject_margin_text_max": -3.034,
+      "text_logits_mse_vs_base": 0.0
+     },
+     "ability": {
+      "fit_route_acc": 1.0,
+      "fit_reject_wins": 0,
+      "fit_n": 80,
+      "clean_route_acc": 0.6917,
+      "clean_reject_wins": 36,
+      "clean_n": 120,
+      "control_route_acc": 0.725,
+      "control_reject_wins": 11,
+      "control_n": 40,
+      "reject_win_rate_ability": 0.2938
+     },
+     "transfer": {
+      "structured_reject_rate": 0.8917,
+      "structured_residual_routes": {
+       "latin": 1,
+       "cjk": 7,
+       "rtl": 4,
+       "world": 1
+      },
+      "noise_reject_rate": 0.9833,
+      "noise_residual_routes": {
+       "latin": 1,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "blank_reject_rate": 1.0,
+      "blank_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "mean_reject_rate": 0.9583
+     }
+    },
+    {
+     "step": 320,
+     "fit": {
+      "nontext_reject_rate": 1.0,
+      "nontext_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "reject_margin_nontext_mean": 5.686,
+      "reject_margin_nontext_min": 0.84,
+      "text_route_acc": 1.0,
+      "reject_win_rate_text": 0.0,
+      "reject_margin_text_mean": -9.795,
+      "reject_margin_text_max": -4.543,
+      "text_logits_mse_vs_base": 2.5122
+     },
+     "ability": {
+      "fit_route_acc": 1.0,
+      "fit_reject_wins": 0,
+      "fit_n": 80,
+      "clean_route_acc": 0.8667,
+      "clean_reject_wins": 14,
+      "clean_n": 120,
+      "control_route_acc": 0.9,
+      "control_reject_wins": 4,
+      "control_n": 40,
+      "reject_win_rate_ability": 0.1125
+     },
+     "transfer": {
+      "structured_reject_rate": 0.9417,
+      "structured_residual_routes": {
+       "latin": 2,
+       "cjk": 2,
+       "rtl": 3,
+       "world": 0
+      },
+      "noise_reject_rate": 0.9833,
+      "noise_residual_routes": {
+       "latin": 1,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "blank_reject_rate": 1.0,
+      "blank_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "mean_reject_rate": 0.975
+     }
+    },
+    {
+     "step": 640,
+     "fit": {
+      "nontext_reject_rate": 1.0,
+      "nontext_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "reject_margin_nontext_mean": 4.72,
+      "reject_margin_nontext_min": 0.542,
+      "text_route_acc": 1.0,
+      "reject_win_rate_text": 0.0,
+      "reject_margin_text_mean": -10.954,
+      "reject_margin_text_max": -6.726,
+      "text_logits_mse_vs_base": 3.732124
+     },
+     "ability": {
+      "fit_route_acc": 1.0,
+      "fit_reject_wins": 0,
+      "fit_n": 80,
+      "clean_route_acc": 0.9583,
+      "clean_reject_wins": 4,
+      "clean_n": 120,
+      "control_route_acc": 0.975,
+      "control_reject_wins": 1,
+      "control_n": 40,
+      "reject_win_rate_ability": 0.0312
+     },
+     "transfer": {
+      "structured_reject_rate": 0.8917,
+      "structured_residual_routes": {
+       "latin": 6,
+       "cjk": 4,
+       "rtl": 3,
+       "world": 0
+      },
+      "noise_reject_rate": 0.95,
+      "noise_residual_routes": {
+       "latin": 2,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 1
+      },
+      "blank_reject_rate": 1.0,
+      "blank_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "mean_reject_rate": 0.9472
+     }
+    },
+    {
+     "step": 960,
+     "fit": {
+      "nontext_reject_rate": 1.0,
+      "nontext_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "reject_margin_nontext_mean": 4.332,
+      "reject_margin_nontext_min": 0.327,
+      "text_route_acc": 1.0,
+      "reject_win_rate_text": 0.0,
+      "reject_margin_text_mean": -11.179,
+      "reject_margin_text_max": -6.699,
+      "text_logits_mse_vs_base": 6.149375
+     },
+     "ability": {
+      "fit_route_acc": 1.0,
+      "fit_reject_wins": 0,
+      "fit_n": 80,
+      "clean_route_acc": 0.975,
+      "clean_reject_wins": 2,
+      "clean_n": 120,
+      "control_route_acc": 1.0,
+      "control_reject_wins": 0,
+      "control_n": 40,
+      "reject_win_rate_ability": 0.0125
+     },
+     "transfer": {
+      "structured_reject_rate": 0.8417,
+      "structured_residual_routes": {
+       "latin": 9,
+       "cjk": 6,
+       "rtl": 3,
+       "world": 1
+      },
+      "noise_reject_rate": 0.9167,
+      "noise_residual_routes": {
+       "latin": 3,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 2
+      },
+      "blank_reject_rate": 1.0,
+      "blank_residual_routes": {
+       "latin": 0,
+       "cjk": 0,
+       "rtl": 0,
+       "world": 0
+      },
+      "mean_reject_rate": 0.9195
+     }
+    }
+   ],
+   "violations": [
+    {
+     "step": 0,
+     "n_violating_nt": 3,
+     "n_violating_text": 48
+    },
+    {
+     "step": 32,
+     "n_violating_nt": 0,
+     "n_violating_text": 68
+    },
+    {
+     "step": 64,
+     "n_violating_nt": 1,
+     "n_violating_text": 57
+    },
+    {
+     "step": 96,
+     "n_violating_nt": 0,
+     "n_violating_text": 68
+    },
+    {
+     "step": 128,
+     "n_violating_nt": 0,
+     "n_violating_text": 51
+    },
+    {
+     "step": 160,
+     "n_violating_nt": 2,
+     "n_violating_text": 26
+    },
+    {
+     "step": 192,
+     "n_violating_nt": 0,
+     "n_violating_text": 40
+    },
+    {
+     "step": 224,
+     "n_violating_nt": 0,
+     "n_violating_text": 30
+    },
+    {
+     "step": 256,
+     "n_violating_nt": 2,
+     "n_violating_text": 19
+    },
+    {
+     "step": 288,
+     "n_violating_nt": 0,
+     "n_violating_text": 23
+    },
+    {
+     "step": 320,
+     "n_violating_nt": 0,
+     "n_violating_text": 20
+    },
+    {
+     "step": 352,
+     "n_violating_nt": 0,
+     "n_violating_text": 17
+    },
+    {
+     "step": 384,
+     "n_violating_nt": 1,
+     "n_violating_text": 12
+    },
+    {
+     "step": 416,
+     "n_violating_nt": 0,
+     "n_violating_text": 17
+    },
+    {
+     "step": 448,
+     "n_violating_nt": 0,
+     "n_violating_text": 11
+    },
+    {
+     "step": 480,
+     "n_violating_nt": 3,
+     "n_violating_text": 11
+    },
+    {
+     "step": 512,
+     "n_violating_nt": 0,
+     "n_violating_text": 10
+    },
+    {
+     "step": 544,
+     "n_violating_nt": 0,
+     "n_violating_text": 10
+    },
+    {
+     "step": 576,
+     "n_violating_nt": 2,
+     "n_violating_text": 5
+    },
+    {
+     "step": 608,
+     "n_violating_nt": 0,
+     "n_violating_text": 8
+    },
+    {
+     "step": 640,
+     "n_violating_nt": 0,
+     "n_violating_text": 6
+    },
+    {
+     "step": 672,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 704,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 736,
+     "n_violating_nt": 5,
+     "n_violating_text": 4
+    },
+    {
+     "step": 768,
+     "n_violating_nt": 0,
+     "n_violating_text": 3
+    },
+    {
+     "step": 800,
+     "n_violating_nt": 0,
+     "n_violating_text": 4
+    },
+    {
+     "step": 832,
+     "n_violating_nt": 3,
+     "n_violating_text": 3
+    },
+    {
+     "step": 864,
+     "n_violating_nt": 0,
+     "n_violating_text": 3
+    },
+    {
+     "step": 896,
+     "n_violating_nt": 0,
+     "n_violating_text": 3
+    },
+    {
+     "step": 928,
+     "n_violating_nt": 1,
+     "n_violating_text": 1
+    }
+   ],
+   "converged_at": null,
+   "wall_time_s": 0.5,
+   "gates": {
+    "G1_script_rows": "fit route_acc=1.0 anchor mse=6.149375",
+    "G1_script_rows_pass": false,
+    "G1_ability": "clean 0.975 (base 0.9667), control 1.0 (base 1.0), reject wins 2",
+    "G1_ability_pass": false,
+    "G1_pass": false,
+    "G2_flip": "flip head untouched (bitwise, verified post-export)",
+    "G2_pass": null,
+    "G3_trunk": "all non-head initializers array-identical (post-export)",
+    "G3_pass": null,
+    "G4_cure": "fit_reject=1.0 reject_win_text=0.0",
+    "G4_pass": true,
+    "pass": false
+   }
+  }
+ },
+ "winner": "reject_row",
+ "spectral": {
+  "lambda_max": 0.094216,
+  "lambda_plus": 0.025416,
+  "lambda_max_over_lambda_plus": 3.71,
+  "n_spikes_above_2lambda_plus": 1,
+  "single_spike": true,
+  "sigma1_share": 1.0,
+  "cos_v1_edit_w_init": 0.5692
+ },
+ "export": {
+  "path": "Model/router_reject.onnx",
+  "n_outputs": 5,
+  "trunk_arrays_identical": true,
+  "flip_head_bit_identical": true,
+  "group_rows0_3_max_abs_diff_vs_base": 0.0,
+  "flip_outputs_bitwise_equal_on_smoke": true,
+  "sha256": "727fe250430b171d3dd6195f24a89564d3a752efe79b53a0e718771f0e8fc92e",
+  "round": "router_reject",
+  "winner_arm": "reject_row"
+ }
+}

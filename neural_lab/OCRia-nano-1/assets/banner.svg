@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="220" viewBox="0 0 900 220">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="0.55" stop-color="#101a38"/>
+      <stop offset="1" stop-color="#1a1030"/>
+    </linearGradient>
+    <linearGradient id="spike" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#f472b6"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="220" rx="14" fill="url(#bg)"/>
+  <g opacity="0.5" stroke="#232b45" stroke-width="1">
+    <line x1="40" y1="180" x2="860" y2="180"/><line x1="40" y1="140" x2="860" y2="140"/>
+    <line x1="40" y1="100" x2="860" y2="100"/><line x1="40" y1="60" x2="860" y2="60"/>
+  </g>
+  <path d="M40,178 C120,176 180,172 240,168 C330,162 420,150 520,140 C620,130 700,112 760,80 C800,58 830,30 846,14"
+        fill="none" stroke="url(#spike)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M40,178 C150,177 260,176 380,174 C520,172 660,170 860,168"
+        fill="none" stroke="url(#line)" stroke-width="3.5" opacity="0.9"/>
+  <circle cx="846" cy="14" r="9" fill="#fbbf24"/>
+  <circle cx="846" cy="14" r="16" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.5"/>
+  <text x="48" y="42" font-family="Menlo,Consolas,monospace" font-size="30" font-weight="bold" fill="#e6edf3">OCRia-nano-1 × RCDA</text>
+  <text x="48" y="72" font-family="Menlo,Consolas,monospace" font-size="15" fill="#9aa3b5">all six hallucination families · all twelve formulas · one evaluator</text>
+  <text x="840" y="200" text-anchor="end" font-family="Menlo,Consolas,monospace" font-size="13" fill="#fbbf24">λv / λ₊ = 22.3 — SUPERCRITICAL</text>
+  <text x="48" y="200" font-family="Menlo,Consolas,monospace" font-size="13" fill="#34d399">phantom −94%</text>
+</svg>

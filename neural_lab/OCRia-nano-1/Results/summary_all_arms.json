@@ -1,0 +1,516 @@
+{
+ "model": "llamaindex/OCRia-nano-1 (rec_latin fp32 rebuild + router with the round-3 reject head)",
+ "protocol": {
+  "n_nontext": 210,
+  "n_clean": 120,
+  "conf_emit": 0.5,
+  "loop_ngram": 4,
+  "loop_threshold": 0.5,
+  "probe_seed": 0
+ },
+ "deployed_int8_phantom_rate": 0.119,
+ "fp32_rebuild_phantom_rate": 0.1571,
+ "arms": {
+  "base": {
+   "arm": "base",
+   "F1_phantom_rate": 0.1571,
+   "F1_phantom_char_rate": 0.2667,
+   "F1_blank_specificity": 1.0,
+   "F2_loop": {
+    "rho": 0.0,
+    "mean_loop_share": 0.0,
+    "loop_waste_mean": 0.0,
+    "per_traj_loop_share": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "threshold": 0.5
+   },
+   "F3_cer_clean": 0.0089,
+   "F3_cer_degraded": 0.0834,
+   "F3_cer_control": 0.0078,
+   "F3_exact_match_clean": 0.8833,
+   "F6_auc_confidence": 0.0961,
+   "F6_auc_geometry": 0.8344,
+   "F6_n_frames": 16990,
+   "control_logits_mse": 0.0,
+   "control_kl_base_to_arm": 0.0,
+   "n_changed_tensors": 0
+  },
+  "classic": {
+   "arm": "classic",
+   "F1_phantom_rate": 0.0095,
+   "F1_phantom_char_rate": 0.0095,
+   "F1_blank_specificity": 1.0,
+   "F2_loop": {
+    "rho": 0.0,
+    "mean_loop_share": 0.0,
+    "loop_waste_mean": 0.0,
+    "per_traj_loop_share": [
+     0.0,
+     0.0
+    ],
+    "threshold": 0.5
+   },
+   "F3_cer_clean": 0.0094,
+   "F3_cer_degraded": 0.1001,
+   "F3_cer_control": 0.0114,
+   "F3_exact_match_clean": 0.8667,
+   "F6_auc_confidence": 0.001,
+   "F6_auc_geometry": 0.8575,
+   "F6_n_frames": 17246,
+   "control_logits_mse": 0.481529,
+   "control_kl_base_to_arm": 0.009486,
+   "n_changed_tensors": 1,
+   "spectral": {
+    "mix_fc2.2.weight": {
+     "rel_frobenius": 0.03441,
+     "n_weights": 73728,
+     "tw_gate_dks": -0.0001,
+     "tw_verdict": "pass",
+     "cos_u1_v": 0.3214,
+     "sigma1_share": 0.4446
+    }
+   }
+  },
+  "rcda_x": {
+   "arm": "rcda_x",
+   "F1_phantom_rate": 0.0333,
+   "F1_phantom_char_rate": 0.0476,
+   "F1_blank_specificity": 1.0,
+   "F2_loop": {
+    "rho": 0.0,
+    "mean_loop_share": 0.0,
+    "loop_waste_mean": 0.0,
+    "per_traj_loop_share": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "threshold": 0.5
+   },
+   "F3_cer_clean": 0.0095,
+   "F3_cer_degraded": 0.1096,
+   "F3_cer_control": 0.0172,
+   "F3_exact_match_clean": 0.85,
+   "F6_auc_confidence": 0.0083,
+   "F6_auc_geometry": 0.9017,
+   "F6_n_frames": 17014,
+   "control_logits_mse": 1.370705,
+   "control_kl_base_to_arm": 0.08322,
+   "n_changed_tensors": 3,
+   "spectral": {
+    "mix_fc2.0.weight": {
+     "rel_frobenius": 0.02896,
+     "n_weights": 73728,
+     "tw_gate_dks": -0.0002,
+     "tw_verdict": "pass",
+     "cos_u1_v": 0.7834,
+     "sigma1_share": 0.7498
+    },
+    "mix_fc2.1.weight": {
+     "rel_frobenius": 0.02239,
+     "n_weights": 73728,
+     "tw_gate_dks": -0.0,
+     "tw_verdict": "pass",
+     "cos_u1_v": 0.8486,
+     "sigma1_share": 0.7329
+    },
+    "mix_fc2.2.weight": {
+     "rel_frobenius": 0.02942,
+     "n_weights": 73728,
+     "tw_gate_dks": 0.0006,
+     "tw_verdict": "pass",
+     "cos_u1_v": 0.7888,
+     "sigma1_share": 0.7279
+    }
+   }
+  }
+ },
+ "router_round": {
+  "round": "router_reject",
+  "winner_arm": "reject_row",
+  "gates_pass": true,
+  "F4_fit_nontext_reject_rate": 1.0,
+  "F4_fit_text_route_acc": 1.0,
+  "F4_ability_reject_win_rate": 0.0,
+  "F4_ability_route_acc": {
+   "clean": 0.9667,
+   "control": 1.0
+  },
+  "F4_transfer_mean_reject_rate": 0.9111,
+  "F4_transfer_per_family": {
+   "structured": 0.8333,
+   "noise": 0.9,
+   "blank": 1.0
+  },
+  "head_spectrum": {
+   "lambda_max": 0.094216,
+   "lambda_plus": 0.025416,
+   "lambda_max_over_lambda_plus": 3.71,
+   "n_spikes_above_2lambda_plus": 1,
+   "single_spike": true,
+   "sigma1_share": 1.0,
+   "cos_v1_edit_w_init": 0.5692
+  },
+  "export": {
+   "path": "Model/router_reject.onnx",
+   "trunk_arrays_identical": true,
+   "flip_head_bit_identical": true,
+   "group_rows0_3_max_abs_diff_vs_base": 0.0,
+   "sha256": "727fe250430b171d3dd6195f24a89564d3a752efe79b53a0e718771f0e8fc92e"
+  }
+ },
+ "deltas_vs_base": {
+  "classic": {
+   "phantom_rate_pp": -14.76,
+   "phantom_rate_rel": 0.0605,
+   "cer_clean_pp": 0.05,
+   "cer_degraded_pp": 1.67
+  },
+  "rcda_x": {
+   "phantom_rate_pp": -12.38,
+   "phantom_rate_rel": 0.212,
+   "cer_clean_pp": 0.06,
+   "cer_degraded_pp": 2.62
+  }
+ },
+ "probe": {
+  "writers": [
+   "mix2",
+   "mix1",
+   "mix0"
+  ],
+  "supercritical": [
+   "Conv"
+  ],
+  "utility_trap": {
+   "n_frames": 2579,
+   "auc_confidence": 0.0646,
+   "auc_geometry_minus_v": 0.9766,
+   "verdict": "geometry wins: confidence is the WORSE predictor of the recogniser's own phantom frames - the parent program's Utility Trap replicated on OCR"
+  },
+  "router": {
+   "group_order": [
+    "latin",
+    "cjk",
+    "rtl",
+    "world"
+   ],
+   "route_error_rate": 0.0,
+   "n_text": 80,
+   "flip_miss_rate": {
+    "latin": 0.0,
+    "cyr": 0.0,
+    "arabic": 0.0,
+    "cjk": 0.25
+   },
+   "nontext_route_rate": 1.0,
+   "nontext_routed_to": {
+    "latin": 20,
+    "cjk": 11,
+    "rtl": 4,
+    "world": 5
+   },
+   "n_nontext": 40
+  },
+  "detector": {
+   "text": {
+    "phantom_boxes_per_page": 14.0,
+    "hot_fraction": 0.1141
+   },
+   "blank": {
+    "phantom_boxes_per_page": 0.0,
+    "hot_fraction": 0.0
+   },
+   "noise": {
+    "phantom_boxes_per_page": 0.0,
+    "hot_fraction": 0.0
+   },
+   "structured": {
+    "phantom_boxes_per_page": 0.0,
+    "hot_fraction": 0.0003
+   },
+   "note": "prob>0.55 blobs larger than 40 px counted as line boxes; textless pages should score ~0"
+  },
+  "stages": {
+   "stem": {
+    "status": "pre_timeline",
+    "note": "height>1: no per-frame state on the CTC timeline"
+   },
+   "body0": {
+    "status": "pre_timeline",
+    "note": "height>1: no per-frame state on the CTC timeline"
+   },
+   "body1": {
+    "status": "pre_timeline",
+    "note": "height>1: no per-frame state on the CTC timeline"
+   },
+   "body2": {
+    "status": "pre_timeline",
+    "note": "height>1: no per-frame state on the CTC timeline"
+   },
+   "body3": {
+    "status": "pre_timeline",
+    "note": "height>1: no per-frame state on the CTC timeline"
+   },
+   "body4": {
+    "status": "pre_timeline",
+    "note": "height>1: no per-frame state on the CTC timeline"
+   },
+   "body5": {
+    "status": "pre_timeline",
+    "note": "height>1: no per-frame state on the CTC timeline"
+   },
+   "body6": {
+    "status": "pre_timeline",
+    "note": "height>1: no per-frame state on the CTC timeline"
+   },
+   "body7": {
+    "status": "pre_timeline",
+    "note": "height>1: no per-frame state on the CTC timeline"
+   },
+   "body8": {
+    "n_emit": 31,
+    "n_abst": 16959,
+    "z_diff": 8.736,
+    "auc_geometry": 0.9572,
+    "delta_mean": 0.0056,
+    "z_vs_clean": 4.792
+   },
+   "mix0": {
+    "n_emit": 31,
+    "n_abst": 16959,
+    "z_diff": 13.848,
+    "auc_geometry": 0.9855,
+    "delta_mean": 0.0036,
+    "z_vs_clean": 7.65
+   },
+   "mix1": {
+    "n_emit": 31,
+    "n_abst": 16959,
+    "z_diff": 14.221,
+    "auc_geometry": 0.9885,
+    "delta_mean": -0.0484,
+    "z_vs_clean": 6.1
+   },
+   "mix2": {
+    "n_emit": 31,
+    "n_abst": 16959,
+    "z_diff": 14.451,
+    "auc_geometry": 0.9932,
+    "delta_mean": -0.0167,
+    "z_vs_clean": 11.694
+   },
+   "head": {
+    "n_emit": 31,
+    "n_abst": 16959,
+    "z_diff": 5.702,
+    "auc_geometry": 0.8344,
+    "delta_mean": 0.6107,
+    "z_vs_clean": 3.453
+   }
+  },
+  "matrix_scans": {
+   "act_1": {
+    "lambda_v": 0.0035,
+    "lambda_plus": 0.0052,
+    "lambda_ratio": 0.6765,
+    "theta_v": 1.645,
+    "theta_c": 1.0,
+    "sigma2": 0.0013,
+    "q": 1.0,
+    "supercritical": false,
+    "stage": "body8"
+   },
+   "fc2": {
+    "lambda_v": 0.0026,
+    "lambda_plus": 0.0039,
+    "lambda_ratio": 0.6619,
+    "theta_v": 1.3888,
+    "theta_c": 0.7071,
+    "sigma2": 0.0013,
+    "q": 0.5,
+    "supercritical": false,
+    "stage": "mix2"
+   },
+   "Conv": {
+    "lambda_v": 2.3453,
+    "lambda_plus": 0.1053,
+    "lambda_ratio": 22.2749,
+    "theta_v": 7.0434,
+    "theta_c": 0.4924,
+    "sigma2": 0.0473,
+    "q": 0.2424,
+    "supercritical": true,
+    "stage": "head"
+   }
+  }
+ },
+ "formulas_audit": {
+  "mp_summary": {
+   "n_matrices": 29,
+   "ks_median": 0.4905,
+   "ks_max": 98.9414,
+   "matrices_in_mp_bulk": 0,
+   "verdict": "TRAINED conv weights deviate from the MP bulk (median KS ~0.5) - exactly the 'freeness of trained weights stays open' caveat the parent monograph registers; the MP law is the right null model for ACTIVATION covariances (checked below) and for the bulk-preservation gate on edits, not for raw trained weights"
+  },
+  "mp_activation_covariance": {
+   "state": "mix2 features, RMSNorm-normalised, control corpus",
+   "q": 0.0538,
+   "sigma2": 0.07755,
+   "lambda_plus": 0.1177,
+   "ks_distance_bulk": 0.1331,
+   "n_outliers_above_edge": 130,
+   "verdict": "bulk pass - the normalised layer-operator covariance keeps an MP bulk with a finite signal subspace above the edge, the parent program's signal+bulk picture"
+  },
+  "bbp_spike_scans": {
+   "head/Conv": {
+    "theta_c": 0.4924,
+    "theta_v": 7.0434,
+    "lambda_ratio": 22.275,
+    "supercritical": true
+   }
+  },
+  "bbp_verdict": {
+   "supercritical": [
+    "head/Conv"
+   ],
+   "reading": "the classifier head is supercritical for the hallucination direction: theta_v / theta_c = 7.0434 / 0.4924 - the phantom-text direction is an intended BBP spike of the head matrix"
+  },
+  "bbp_outlier_check": {
+   "matrix": "head/Conv",
+   "q": 0.2424,
+   "mu_grid_over_theta_c": [
+    1.5,
+    2.0,
+    3.0,
+    4.0
+   ],
+   "closed_form": [
+    0.2227,
+    0.2754,
+    0.3816,
+    0.4882
+   ],
+   "pole_equation": [
+    0.2227,
+    0.2754,
+    0.3816,
+    0.4882
+   ],
+   "max_rel_residual": 1.19e-13,
+   "overlap_signal_subspace": [
+    0.9138,
+    0.938,
+    0.9605,
+    0.9711
+   ]
+  },
+  "tracy_widom": {
+   "note": "real activation/weight matrices -> F1 (beta=1) universality class per the parent's beta-correction; z-scores of lambda_max under the Johnstone centre/scale are reported per matrix - moderate positive z = ordinary TW-scale edge, huge z = structured outlier (the head)",
+   "lambda_max_zscores": {
+    "stem/stem.2/Relu": -1.6,
+    "body/body.0/act/Relu": -1.6,
+    "body/body.0/act_1/Relu": 14.01,
+    "body/body.1/act/Relu": -1.71,
+    "body/body.1/pw/Conv": 44.83,
+    "body/body.2/act/Relu": -1.71,
+    "body/body.2/act_1/Relu": 28.32,
+    "body/body.3/act/Relu": -1.79,
+    "body/body.3/pw/Conv": 59.75,
+    "body/body.4/act/Relu": -1.79,
+    "body/body.4/pw/Conv": 51.13,
+    "body/body.5/act/Relu": -1.79,
+    "body/body.5/act_1/Relu": 70.25,
+    "body/body.6/act/Relu": -1.82,
+    "body/body.6/pw/Conv": 50.7,
+    "body/body.7/act/Relu": -1.82,
+    "body/body.7/pw/Conv": 60.24,
+    "body/body.8/act/Relu": -1.82,
+    "body/body.8/act_1/Relu": 76.79,
+    "mix/mix.0/act/Relu": -1.82,
+    "mix/mix.0/act_1/Relu": 212.02,
+    "mix/mix.0/fc2/Conv": 117.54,
+    "mix/mix.1/act/Relu": -1.82,
+    "mix/mix.1/act_1/Relu": 261.18,
+    "mix/mix.1/fc2/Conv": 197.04,
+    "mix/mix.2/act/Relu": -1.82,
+    "mix/mix.2/act_1/Relu": 256.77,
+    "mix/mix.2/fc2/Conv": 154.41,
+    "head/Conv": 6513.08
+   },
+   "z_median": 28.32
+  },
+  "hallucination_split": {
+   "state_space": "mix2 features, 24 structured crops",
+   "n_states": 1988,
+   "q": 0.0966,
+   "n_signal_dirs": 28,
+   "n_bulk_dirs": 164,
+   "noise_signal_ratio_of_v": 0.1611,
+   "verdict": "v is bulk-dominated"
+  },
+  "entropy_response": {
+   "matrix": "head/Conv",
+   "tau": 0.3,
+   "formula_delta_H": -2.92873,
+   "monte_carlo_delta_H": -2.9512,
+   "abs_err": 0.0225,
+   "note": "exact near-uniform response -(1/2)Tr((diag(p)-pp^T)A) vs Monte-Carlo E[H(softmax(z0+Wxi/tau))] - H(uniform); the isotropic closed form of the parent library is a rank-deficient approximation for the 792x192 head and is not used for the verdict"
+  },
+  "shrinker": {
+   "matrix": "head/Conv",
+   "gavish_donoho_rel_err": 0.0839,
+   "inverse_bbp_rel_err": 0.0467,
+   "note": "relative Frobenius error of the two exact spectral reconstruction rules (parent Ch.10) applied to the head's Wishart spectrum; the inverse-BBP shrinker is the one the extended training arm projects its edits through"
+  },
+  "caputo_ncrit": {
+   "gamma_1": 14.134725,
+   "theta_b_deg": 7.07,
+   "beta_caputo": 0.5,
+   "n_crit": 114.55,
+   "ocria_timeline_frames_mean": 121,
+   "reading": "N_crit counts TIMELINE FRAMES for OCR (the decoding horizon per crop), not transformer layers: a 480-px line crops to ~121 CTC frames - below N_crit, so the Caputo inevitability regime is not reached per line; the phantom rate observed (12% of structured crops) is the sub-critical confabulation the formula-as-loss can suppress"
+  },
+  "rmsnorm_trace": {
+   "applicable": false,
+   "note": "OCRia has no RMSNorm layer; the parent's Step-2 trace lemma (Tr C = N) is reported N/A rather than faked"
+  }
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "kit": "OCRia-nano-1 hallucination intervention kit",
+ "parent_program": "RCDA (neural_lab, rmt-llm-research)",
+ "model_repo": "https://huggingface.co/llamaindex/OCRia-nano-1",
+ "model_files_sha256": {
+  "config.json": "558aef7160c4e271b1d81297d5d924b5c6bab8d082a1df9b292ba0311bf9a58d",
+  "det.meta.json": "ada6b3c5de0800eb43fa81dbec714d47cd2a712a22952ef23cf38c805b27350e",
+  "det.onnx": "70ea641d74c4d7d3acb734002cc1507350d8350ad44aeedc6f8ac6017dbcff7a",
+  "rec_cjk.charset.json": "0e48eca81c1c0afa5a3e081fdf5fcbdc669e746e7e0a7f264e85ac76c496035b",
+  "rec_cjk.onnx": "ad7154b54a549dbfead48dd49142bcc76ee168cb0cd874f6efacab543f0b9262",
+  "rec_latin.charset.json": "d386eea5691a4f3d9e40f48a3979cf859caf626c3ec43214c7911a713e1f4ed0",
+  "rec_latin.onnx": "7ac8f6815b4b127f244c14f86c51f65224c82e022c1ee71f867f2be955be4da4",
+  "rec_rtl.charset.json": "8ad9b8f6c1bdc17b42a2351948e84a73c487f5bed7f783bc5e8474efad126a80",
+  "rec_rtl.meta.json": "31fd2893cc4d48ec50b4b21a1f113f527ae9a4ac1b3ea395b0cc5969f56d46b5",
+  "rec_rtl.onnx": "9ccee36bb07b81ef310c6b50e707adabe8c6b92caea61105213686ea8977f4cf",
+  "rec_world.charset.json": "ebfd39142cec3f267eda2b81b42966ac9b0f73841a52285770f4db40a016d689",
+  "rec_world.onnx": "c57d01a945d741886d356bdedc636f0572d0810c6a7c2f26dbb9ce0466b92220",
+  "router.onnx": "daccb2e3ce3891b7cb95037ada3861e05fd288d7678d2a1e662d9483e04dd361",
+  "router_reject.meta.json": "21c58203b909765e2c84c496d84450b52bc7e49f4a5eb161a09c6848fd0a7103",
+  "router_reject.onnx": "727fe250430b171d3dd6195f24a89564d3a752efe79b53a0e718771f0e8fc92e",
+  "tablenet.bin": "27b5f3ff2d6842d397a21954026b1e6411e8b35085b0b32c616e67e33852d1b4",
+  "tablenet.onnx": "3b913866067d6e43f73a4e4c9c1eace955b7959447043cc39ea1d30e4c552a95"
+ },
+ "seeds": {
+  "probe": 0,
+  "corpora": 7,
+  "train": 0,
+  "bench": 0
+ },
+ "environment": {
+  "python": "3.12.16",
+  "numpy": "2.1.3",
+  "torch": "2.15.0+cpu",
+  "onnxruntime": "1.32.0",
+  "pillow": "11.3.0",
+  "matplotlib": "3.9.2",
+  "platform": "Linux-5.10.134-013.15.kangaroo.al8.x86_64-x86_64-with-glibc2.41",
+  "processor": "x86_64"
+ }
+}

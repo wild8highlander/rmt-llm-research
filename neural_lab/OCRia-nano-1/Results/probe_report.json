@@ -1,0 +1,223 @@
+{
+ "model": "llamaindex/OCRia-nano-1 (rec_latin.onnx int8 -> fp32 rebuild)",
+ "protocol": {
+  "n_nontext": 210,
+  "n_clean": 120,
+  "conf_emit": 0.5,
+  "loop_ngram": 4,
+  "loop_threshold": 0.5,
+  "probe_seed": 0
+ },
+ "base": {
+  "phantom_rate": 0.119,
+  "phantom_char_rate": 0.2095,
+  "phantom_mean_conf": 0.5222,
+  "loop_metrics": {
+   "rho": 0.0,
+   "mean_loop_share": 0.0,
+   "loop_waste_mean": 0.0,
+   "per_traj_loop_share": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "threshold": 0.5
+  },
+  "cer_clean": 0.0092,
+  "cer_degraded": 0.0973,
+  "cer_control": 0.0102,
+  "specificity_blank": 1.0
+ },
+ "stages": {
+  "stem": {
+   "status": "pre_timeline",
+   "note": "height>1: no per-frame state on the CTC timeline"
+  },
+  "body0": {
+   "status": "pre_timeline",
+   "note": "height>1: no per-frame state on the CTC timeline"
+  },
+  "body1": {
+   "status": "pre_timeline",
+   "note": "height>1: no per-frame state on the CTC timeline"
+  },
+  "body2": {
+   "status": "pre_timeline",
+   "note": "height>1: no per-frame state on the CTC timeline"
+  },
+  "body3": {
+   "status": "pre_timeline",
+   "note": "height>1: no per-frame state on the CTC timeline"
+  },
+  "body4": {
+   "status": "pre_timeline",
+   "note": "height>1: no per-frame state on the CTC timeline"
+  },
+  "body5": {
+   "status": "pre_timeline",
+   "note": "height>1: no per-frame state on the CTC timeline"
+  },
+  "body6": {
+   "status": "pre_timeline",
+   "note": "height>1: no per-frame state on the CTC timeline"
+  },
+  "body7": {
+   "status": "pre_timeline",
+   "note": "height>1: no per-frame state on the CTC timeline"
+  },
+  "body8": {
+   "n_emit": 31,
+   "n_abst": 16959,
+   "z_diff": 8.736,
+   "auc_geometry": 0.9572,
+   "delta_mean": 0.0056,
+   "z_vs_clean": 4.792
+  },
+  "mix0": {
+   "n_emit": 31,
+   "n_abst": 16959,
+   "z_diff": 13.848,
+   "auc_geometry": 0.9855,
+   "delta_mean": 0.0036,
+   "z_vs_clean": 7.65
+  },
+  "mix1": {
+   "n_emit": 31,
+   "n_abst": 16959,
+   "z_diff": 14.221,
+   "auc_geometry": 0.9885,
+   "delta_mean": -0.0484,
+   "z_vs_clean": 6.1
+  },
+  "mix2": {
+   "n_emit": 31,
+   "n_abst": 16959,
+   "z_diff": 14.451,
+   "auc_geometry": 0.9932,
+   "delta_mean": -0.0167,
+   "z_vs_clean": 11.694
+  },
+  "head": {
+   "n_emit": 31,
+   "n_abst": 16959,
+   "z_diff": 5.702,
+   "auc_geometry": 0.8344,
+   "delta_mean": 0.6107,
+   "z_vs_clean": 3.453
+  }
+ },
+ "writers": [
+  "mix2",
+  "mix1",
+  "mix0"
+ ],
+ "matrix_scans": {
+  "act_1": {
+   "lambda_v": 0.0035,
+   "lambda_plus": 0.0052,
+   "lambda_ratio": 0.6765,
+   "theta_v": 1.645,
+   "theta_c": 1.0,
+   "sigma2": 0.0013,
+   "q": 1.0,
+   "supercritical": false,
+   "stage": "body8"
+  },
+  "fc2": {
+   "lambda_v": 0.0026,
+   "lambda_plus": 0.0039,
+   "lambda_ratio": 0.6619,
+   "theta_v": 1.3888,
+   "theta_c": 0.7071,
+   "sigma2": 0.0013,
+   "q": 0.5,
+   "supercritical": false,
+   "stage": "mix2"
+  },
+  "Conv": {
+   "lambda_v": 2.3453,
+   "lambda_plus": 0.1053,
+   "lambda_ratio": 22.2749,
+   "theta_v": 7.0434,
+   "theta_c": 0.4924,
+   "sigma2": 0.0473,
+   "q": 0.2424,
+   "supercritical": true,
+   "stage": "head"
+  }
+ },
+ "supercritical": [
+  "Conv"
+ ],
+ "utility_trap": {
+  "n_frames": 2579,
+  "auc_confidence": 0.0646,
+  "auc_geometry_minus_v": 0.9766,
+  "verdict": "geometry wins: confidence is the WORSE predictor of the recogniser's own phantom frames - the parent program's Utility Trap replicated on OCR"
+ },
+ "router": {
+  "group_order": [
+   "latin",
+   "cjk",
+   "rtl",
+   "world"
+  ],
+  "route_error_rate": 0.0,
+  "n_text": 80,
+  "flip_miss_rate": {
+   "latin": 0.0,
+   "cyr": 0.0,
+   "arabic": 0.0,
+   "cjk": 0.25
+  },
+  "nontext_route_rate": 1.0,
+  "nontext_routed_to": {
+   "latin": 20,
+   "cjk": 11,
+   "rtl": 4,
+   "world": 5
+  },
+  "n_nontext": 40
+ },
+ "detector": {
+  "text": {
+   "phantom_boxes_per_page": 14.0,
+   "hot_fraction": 0.1141
+  },
+  "blank": {
+   "phantom_boxes_per_page": 0.0,
+   "hot_fraction": 0.0
+  },
+  "noise": {
+   "phantom_boxes_per_page": 0.0,
+   "hot_fraction": 0.0
+  },
+  "structured": {
+   "phantom_boxes_per_page": 0.0,
+   "hot_fraction": 0.0003
+  },
+  "note": "prob>0.55 blobs larger than 40 px counted as line boxes; textless pages should score ~0"
+ }
+}

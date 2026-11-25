@@ -1,0 +1,29 @@
+{
+ "model": "llamaindex/OCRia-nano-1 router + reject (round router_reject)",
+ "parent": "router.onnx (deployed, sha256-pinned in RUN_PASSPORT.json)",
+ "group_order": [
+  "latin",
+  "cjk",
+  "rtl",
+  "world",
+  "reject"
+ ],
+ "reject_definition": "class 4 = textless crop; abstain from routing",
+ "winner_arm": "reject_row",
+ "parent_sha256": "daccb2e3ce3891b7cb95037ada3861e05fd288d7678d2a1e662d9483e04dd361",
+ "sha256": "727fe250430b171d3dd6195f24a89564d3a752efe79b53a0e718771f0e8fc92e",
+ "gates": {
+  "G1_script_rows": "bit-identical to base (exact by construction)",
+  "G1_script_rows_pass": true,
+  "G1_ability": "clean 0.9667 (base 0.9667), control 1.0 (base 1.0), reject wins 0",
+  "G1_ability_pass": true,
+  "G1_pass": true,
+  "G2_flip": "flip head untouched (bitwise, verified post-export)",
+  "G2_pass": true,
+  "G3_trunk": "all non-head initializers array-identical (post-export)",
+  "G3_pass": true,
+  "G4_cure": "fit_reject=1.0 reject_win_text=0.0",
+  "G4_pass": true,
+  "pass": true
+ }
+}
